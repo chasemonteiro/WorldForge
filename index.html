@@ -30,49 +30,30 @@
 html, body { height: 100%; overflow: hidden; }
 body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', serif; font-size: 16px; line-height: 1.6; }
 
-/* ── Layout ── */
 #app { display: flex; height: 100vh; overflow: hidden; }
 
-.sidebar {
-  width: 240px; min-width: 240px;
-  background: var(--bg2); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden;
-}
+/* ── Sidebar ── */
+.sidebar { width: 240px; min-width: 240px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
 .sidebar-logo { padding: 20px 16px 14px; border-bottom: 1px solid var(--border); }
 .sidebar-logo h1 { font-family: 'Cinzel Decorative', serif; font-size: 15px; color: var(--gold); letter-spacing: .04em; line-height: 1.3; }
 .sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: .08em; text-transform: uppercase; }
-
 .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
 .nav-section { padding: 12px 16px 4px; font-size: 10px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; font-family: 'Cinzel', serif; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 16px; cursor: pointer; transition: background .15s, color .15s;
-  font-size: 14px; color: var(--cream); border-left: 2px solid transparent;
-  user-select: none;
-}
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 16px; cursor: pointer; transition: background .15s, color .15s; font-size: 14px; color: var(--cream); border-left: 2px solid transparent; user-select: none; }
 .nav-item:hover { background: var(--bg3); }
 .nav-item.active { background: var(--bg3); border-left-color: var(--gold); color: var(--gold2); }
 .nav-count { margin-left: auto; font-size: 11px; color: var(--muted); }
-
 .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
 
+/* ── Main ── */
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-.topbar {
-  height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0;
-}
+.topbar { height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; }
 .topbar h2 { font-family: 'Cinzel', serif; font-size: 15px; color: var(--cream); flex: 1; letter-spacing: .04em; }
-
 .content { flex: 1; overflow-y: auto; padding: 24px; }
 .content.no-pad { padding: 0; display: flex; flex-direction: column; }
 
 /* ── Buttons ── */
-.btn {
-  padding: 7px 14px; border-radius: var(--r); border: 1px solid var(--border2);
-  background: var(--bg3); color: var(--cream); cursor: pointer;
-  font-family: 'EB Garamond', serif; font-size: 14px; transition: all .15s;
-}
+.btn { padding: 7px 14px; border-radius: var(--r); border: 1px solid var(--border2); background: var(--bg3); color: var(--cream); cursor: pointer; font-family: 'EB Garamond', serif; font-size: 14px; transition: all .15s; }
 .btn:hover { background: var(--border); color: var(--gold2); }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn-gold { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
@@ -83,11 +64,7 @@ body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', s
 
 /* ── Cards ── */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 14px; }
-.card {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 16px; cursor: pointer; transition: border-color .15s, transform .15s;
-  position: relative; overflow: hidden;
-}
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; cursor: pointer; transition: border-color .15s, transform .15s; position: relative; overflow: hidden; }
 .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
 .card.char::before    { background: var(--red); }
 .card.faction::before { background: var(--indigo); }
@@ -100,33 +77,13 @@ body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', s
 .card p { font-size: 13px; color: var(--cream); opacity: .85; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
 .tag { padding: 2px 8px; border-radius: 20px; font-size: 11px; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); }
-
-.add-card {
-  background: transparent; border: 1px dashed var(--border2); border-radius: var(--r);
-  padding: 16px; cursor: pointer; color: var(--muted);
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: border-color .15s, color .15s; min-height: 120px;
-  font-family: 'EB Garamond', serif; font-size: 14px;
-}
+.add-card { background: transparent; border: 1px dashed var(--border2); border-radius: var(--r); padding: 16px; cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color .15s, color .15s; min-height: 120px; font-family: 'EB Garamond', serif; font-size: 14px; }
 .add-card:hover { border-color: var(--gold); color: var(--gold); }
 
 /* ── Detail Panel ── */
-.detail-overlay {
-  position: fixed; inset: 0; z-index: 90;
-  pointer-events: none;
-}
-.detail-panel {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 520px;
-  background: var(--bg2); border-left: 1px solid var(--border);
-  display: flex; flex-direction: column; z-index: 100;
-  transform: translateX(100%); transition: transform .25s ease;
-  pointer-events: all;
-}
+.detail-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 520px; background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transform: translateX(100%); transition: transform .25s ease; }
 .detail-panel.open { transform: translateX(0); }
-.detail-header {
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
+.detail-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
 .detail-header h2 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold2); flex: 1; }
 .detail-body { flex: 1; overflow-y: auto; padding: 20px; }
 .detail-section { margin-bottom: 18px; }
@@ -138,23 +95,12 @@ body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', s
 .badge-location{ background: rgba(42,107,107,.2);  border: 1px solid var(--teal);   color: #60c0c0; }
 .badge-magic   { background: rgba(201,151,58,.15); border: 1px solid var(--gold);   color: var(--gold2); }
 .badge-history { background: rgba(42,107,58,.2);   border: 1px solid var(--green);  color: #60c080; }
-
 .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-.detail-actions { display: flex; gap: 8px; margin-top: 8px; }
 
 /* ── Modal ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200;
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-}
-.modal {
-  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r);
-  width: 100%; max-width: 560px; max-height: 88vh; display: flex; flex-direction: column;
-}
-.modal-header {
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 8px;
-}
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r); width: 100%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
 .modal-header h3 { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold2); flex: 1; }
 .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
 .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
@@ -162,34 +108,21 @@ body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', s
 /* ── Forms ── */
 .form-group { margin-bottom: 14px; }
 .form-label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; font-family: 'Cinzel', serif; }
-.form-input, .form-textarea {
-  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--r); color: var(--cream); padding: 8px 12px;
-  font-family: 'EB Garamond', serif; font-size: 14px; transition: border-color .15s;
-}
+.form-input, .form-textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r); color: var(--cream); padding: 8px 12px; font-family: 'EB Garamond', serif; font-size: 14px; transition: border-color .15s; }
 .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--gold); }
 .form-textarea { min-height: 90px; resize: vertical; }
 
-/* ── Stats / Dashboard ── */
+/* ── Stats ── */
 .stats-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
-.stat-card {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 16px; text-align: center; cursor: pointer; transition: border-color .15s;
-}
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; text-align: center; cursor: pointer; transition: border-color .15s; }
 .stat-card:hover { border-color: var(--border2); }
 .stat-num { font-family: 'Cinzel Decorative', serif; font-size: 28px; color: var(--gold); }
 .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
 .stat-icon { font-size: 22px; margin-bottom: 4px; }
-
 .section-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--muted); margin-bottom: 12px; letter-spacing: .06em; text-transform: uppercase; }
 
 /* ── Search ── */
-.search-bar {
-  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--r); color: var(--cream); padding: 10px 14px;
-  font-family: 'EB Garamond', serif; font-size: 14px; margin-bottom: 20px;
-  transition: border-color .15s;
-}
+.search-bar { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r); color: var(--cream); padding: 10px 14px; font-family: 'EB Garamond', serif; font-size: 14px; margin-bottom: 20px; transition: border-color .15s; }
 .search-bar:focus { outline: none; border-color: var(--gold); }
 .search-bar::placeholder { color: var(--muted); }
 
@@ -205,25 +138,28 @@ body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', s
 .msg.assistant .msg-bubble { background: var(--bg3); border: 1px solid var(--border); color: var(--cream); }
 .chat-bottom { flex-shrink: 0; }
 .chat-suggestions { padding: 8px 20px 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.chip {
-  padding: 5px 12px; border-radius: 20px; background: var(--bg3);
-  border: 1px solid var(--border2); color: var(--muted); font-size: 12px;
-  cursor: pointer; transition: all .15s; font-family: 'EB Garamond', serif;
-}
+.chip { padding: 5px 12px; border-radius: 20px; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted); font-size: 12px; cursor: pointer; transition: all .15s; font-family: 'EB Garamond', serif; }
 .chip:hover { border-color: var(--gold); color: var(--gold2); }
 .chat-input-row { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; }
-.chat-input {
-  flex: 1; background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: var(--r); color: var(--cream); padding: 10px 14px;
-  font-family: 'EB Garamond', serif; font-size: 14px; resize: none;
-  min-height: 44px; max-height: 150px; transition: border-color .15s;
-}
+.chat-input { flex: 1; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r); color: var(--cream); padding: 10px 14px; font-family: 'EB Garamond', serif; font-size: 14px; resize: none; min-height: 44px; max-height: 150px; transition: border-color .15s; }
 .chat-input:focus { outline: none; border-color: var(--gold); }
-.offline-banner {
-  margin: 0 20px 10px; padding: 8px 12px; border-radius: var(--r);
-  background: rgba(58,46,30,.6); border: 1px solid var(--border2);
-  font-size: 12px; color: var(--muted); text-align: center;
-}
+.offline-banner { margin: 8px 20px; padding: 8px 12px; border-radius: var(--r); background: rgba(58,46,30,.6); border: 1px solid var(--border2); font-size: 12px; color: var(--muted); text-align: center; }
+
+/* ── AI Provider Toggle ── */
+.provider-bar { padding: 10px 20px 0; display: flex; align-items: center; gap: 10px; }
+.provider-label { font-size: 11px; color: var(--muted); font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: .08em; }
+.toggle-group { display: flex; border: 1px solid var(--border2); border-radius: var(--r); overflow: hidden; }
+.toggle-opt { padding: 4px 12px; font-size: 12px; cursor: pointer; font-family: 'EB Garamond', serif; color: var(--muted); background: var(--bg3); transition: all .15s; border: none; }
+.toggle-opt.active { background: var(--gold); color: var(--bg); font-weight: 600; }
+.toggle-opt:hover:not(.active) { color: var(--gold2); }
+
+/* ── API Key Setup ── */
+.api-setup { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r); padding: 16px 20px; margin: 8px 20px 0; }
+.api-setup h4 { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold2); margin-bottom: 6px; }
+.api-setup p { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+.api-row { display: flex; gap: 8px; }
+.api-row .form-input { flex: 1; font-family: monospace; font-size: 12px; }
+.api-saved-row { padding: 6px 20px 0; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
 
 /* ── Consistency ── */
 .issue { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px; }
@@ -234,63 +170,66 @@ body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', s
 .issue-desc { font-size: 13px; color: var(--cream); opacity: .85; line-height: 1.6; }
 .issue-meta { font-size: 11px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: .07em; }
 
-/* ── Empty & Loading ── */
+/* ── Manuscript Importer ── */
+.import-zone { border: 2px dashed var(--border2); border-radius: var(--r); padding: 40px 20px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; margin-bottom: 20px; }
+.import-zone:hover, .import-zone.drag-over { border-color: var(--gold); background: rgba(201,151,58,.05); }
+.import-zone h3 { font-family: 'Cinzel', serif; font-size: 15px; color: var(--cream); margin-bottom: 6px; }
+.import-zone p { font-size: 13px; color: var(--muted); }
+.import-zone .import-icon { font-size: 40px; margin-bottom: 12px; }
+
+.suggestion-list { display: flex; flex-direction: column; gap: 10px; }
+.suggestion-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; position: relative; }
+.suggestion-item::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; border-radius: var(--r) 0 0 var(--r); }
+.suggestion-item.char::before    { background: var(--red); }
+.suggestion-item.faction::before { background: var(--indigo); }
+.suggestion-item.location::before{ background: var(--teal); }
+.suggestion-item.magic::before   { background: var(--gold); }
+.suggestion-item.history::before { background: var(--green); }
+.suggestion-item h4 { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold2); margin-bottom: 4px; }
+.suggestion-item p { font-size: 13px; color: var(--cream); opacity: .85; margin-bottom: 10px; line-height: 1.6; }
+.suggestion-item-actions { display: flex; gap: 8px; }
+.suggestion-accepted { opacity: .4; }
+.suggestion-accepted::after { content: '✓ Added'; position: absolute; top: 14px; right: 14px; font-size: 12px; color: var(--green); font-family: 'Cinzel', serif; }
+
+/* ── Empty / Loading ── */
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
 .empty-icon { font-size: 48px; margin-bottom: 12px; }
 .empty-state h3 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--cream); margin-bottom: 6px; }
 .empty-state p { font-size: 13px; line-height: 1.7; }
-
 .dots { display: inline-flex; gap: 4px; align-items: center; }
 .dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 1.4s infinite; }
 .dots span:nth-child(2) { animation-delay: .2s; }
 .dots span:nth-child(3) { animation-delay: .4s; }
 @keyframes pulse { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
 
-/* ── API Key Setup ── */
-.api-setup {
-  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r);
-  padding: 20px; margin-bottom: 20px;
-}
-.api-setup h4 { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold2); margin-bottom: 8px; }
-.api-setup p { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.6; }
-.api-row { display: flex; gap: 8px; }
-.api-row .form-input { flex: 1; font-family: monospace; font-size: 12px; }
+.confirm-row { display: flex; align-items: center; gap: 8px; }
+.confirm-row span { font-size: 13px; color: var(--muted); }
 
-/* ── Scrollbar ── */
+.install-banner { background: rgba(201,151,58,.08); border: 1px solid rgba(201,151,58,.3); border-radius: var(--r); padding: 10px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.install-banner strong { color: var(--gold2); }
+.install-banner button { margin-left: auto; }
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-/* ── Confirm delete ── */
-.confirm-row { display: flex; align-items: center; gap: 8px; }
-.confirm-row span { font-size: 13px; color: var(--muted); }
-
-/* Install banner */
-.install-banner {
-  background: rgba(201,151,58,.08); border: 1px solid rgba(201,151,58,.3);
-  border-radius: var(--r); padding: 10px 14px; margin-bottom: 20px;
-  display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted);
-}
-.install-banner strong { color: var(--gold2); }
-.install-banner button { margin-left: auto; }
 </style>
 </head>
 <body>
 <div id="app"></div>
+<input type="file" id="file-picker" accept=".txt,.md" style="display:none" />
 
 <script>
-// ══════════════════════════════════════════════════════
-//  WorldForge — Self-contained Story Bible App
-//  All data saved to localStorage. AI features need internet.
-// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+//  WorldForge v2 — Story Bible + Manuscript Importer + AI Toggle
+// ══════════════════════════════════════════════════════════════
 
 const ENTITY_TYPES = [
-  { id:'char',     label:'Characters',      icon:'⚔️',  color:'#9b3a2a' },
-  { id:'faction',  label:'Factions',        icon:'🏰',  color:'#3a3a7a' },
-  { id:'location', label:'Locations',       icon:'🗺️',  color:'#2a6b6b' },
-  { id:'magic',    label:'Magic Systems',   icon:'✨',  color:'#c9973a' },
-  { id:'history',  label:'History & Lore',  icon:'📜',  color:'#2a6b3a' },
+  { id:'char',     label:'Characters',     icon:'⚔️',  color:'#9b3a2a' },
+  { id:'faction',  label:'Factions',       icon:'🏰',  color:'#3a3a7a' },
+  { id:'location', label:'Locations',      icon:'🗺️',  color:'#2a6b6b' },
+  { id:'magic',    label:'Magic Systems',  icon:'✨',  color:'#c9973a' },
+  { id:'history',  label:'History & Lore', icon:'📜',  color:'#2a6b3a' },
 ];
 
 const TYPE_FIELDS = {
@@ -311,41 +250,47 @@ const SUGGESTIONS = [
   'How do my factions relate to each other?',
 ];
 
-// ── Storage ──────────────────────────────────────────
-const LS_DATA    = 'worldforge_entities';
-const LS_CHAT    = 'worldforge_chat';
-const LS_APIKEY  = 'worldforge_apikey';
-
-function loadEntities() { try { return JSON.parse(localStorage.getItem(LS_DATA)||'[]'); } catch { return []; } }
-function saveEntities(e) { localStorage.setItem(LS_DATA, JSON.stringify(e)); }
-function loadChat() { try { return JSON.parse(localStorage.getItem(LS_CHAT)||'[]'); } catch { return []; } }
-function saveChat(c) { localStorage.setItem(LS_CHAT, JSON.stringify(c.slice(-60))); } // keep last 60 msgs
-function loadApiKey() { return localStorage.getItem(LS_APIKEY)||''; }
-function saveApiKey(k) { localStorage.setItem(LS_APIKEY, k); }
-
-function uid() { return Math.random().toString(36).slice(2,10); }
-function typeMeta(id) { return ENTITY_TYPES.find(t=>t.id===id)||ENTITY_TYPES[0]; }
-
-function isOnline() { return navigator.onLine; }
-
-// ── App State ────────────────────────────────────────
-const state = {
-  nav: 'dashboard',
-  entities: loadEntities(),
-  chat: loadChat(),
-  apiKey: loadApiKey(),
-  detail: null,
-  modal: null,         // {mode:'add'|'edit', type, entity?}
-  search: '',
-  chatLoading: false,
-  consistencyReport: null,
-  consistencyLoading: false,
-  confirmDelete: false,
-  apiKeyDraft: '',
-  showInstallBanner: !window.matchMedia('(display-mode: standalone)').matches,
+// ── Storage ──────────────────────────────────────────────────
+const LS = {
+  entities:    'worldforge_entities',
+  chat:        'worldforge_chat',
+  claudeKey:   'worldforge_apikey',
+  openaiKey:   'worldforge_openai_key',
+  provider:    'worldforge_provider',
 };
 
-// ── Render engine ────────────────────────────────────
+function load(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
+function save(key, val)      { localStorage.setItem(key, JSON.stringify(val)); }
+
+function uid() { return Math.random().toString(36).slice(2,10); }
+function typeMeta(id) { return ENTITY_TYPES.find(t=>t.id===id) || ENTITY_TYPES[0]; }
+function isOnline() { return navigator.onLine; }
+
+// ── State ────────────────────────────────────────────────────
+const state = {
+  nav:                 'dashboard',
+  entities:            load(LS.entities, []),
+  chat:                load(LS.chat, []),
+  provider:            load(LS.provider, 'claude'),   // 'claude' | 'openai'
+  claudeKey:           localStorage.getItem(LS.claudeKey) || '',
+  openaiKey:           localStorage.getItem(LS.openaiKey) || '',
+  claudeKeyDraft:      '',
+  openaiKeyDraft:      '',
+  detail:              null,
+  modal:               null,
+  search:              '',
+  chatLoading:         false,
+  consistencyReport:   null,
+  consistencyLoading:  false,
+  confirmDelete:       false,
+  showInstallBanner:   !window.matchMedia('(display-mode: standalone)').matches,
+  // Manuscript
+  manuscriptSuggestions: null,
+  manuscriptLoading:   false,
+  acceptedSuggestions: new Set(),
+};
+
+// ── Render ───────────────────────────────────────────────────
 function render() {
   document.getElementById('app').innerHTML = buildApp();
   bindEvents();
@@ -362,17 +307,18 @@ function buildApp() {
       <div class="nav-section">Overview</div>
       ${navItem('dashboard','🏠','Dashboard')}
       ${navItem('chat','💬','Lore Oracle')}
+      ${navItem('manuscript','📄','Import Manuscript')}
       ${navItem('consistency','🔍','Consistency')}
       <div class="nav-section">Story Bible</div>
       ${ENTITY_TYPES.map(t=>navItem(t.id, t.icon, t.label, state.entities.filter(e=>e.type===t.id).length)).join('')}
     </nav>
     <div class="sidebar-footer">
-      ${state.entities.length} entr${state.entities.length===1?'y':'ies'} · WorldForge
+      ${state.entities.length} entr${state.entities.length===1?'y':'ies'} · ${state.provider==='claude'?'Claude':'GPT-4o'}
     </div>
   </aside>
   <main class="main">
     ${buildTopbar()}
-    <div class="content${state.nav==='chat'?' no-pad':''}">
+    <div class="content${(state.nav==='chat'||state.nav==='manuscript')?' no-pad':''}">
       ${buildContent()}
     </div>
   </main>
@@ -382,46 +328,43 @@ function buildApp() {
 }
 
 function navItem(id, icon, label, count) {
-  const active = state.nav===id ? ' active' : '';
-  const countBadge = count !== undefined ? `<span class="nav-count">${count}</span>` : '';
-  return `<div class="nav-item${active}" data-nav="${id}">${icon} ${label}${countBadge}</div>`;
+  const active = state.nav===id ? ' active':'';
+  const badge = count !== undefined ? `<span class="nav-count">${count}</span>` : '';
+  return `<div class="nav-item${active}" data-nav="${id}">${icon} ${label}${badge}</div>`;
 }
 
 function buildTopbar() {
   const t = ENTITY_TYPES.find(t=>t.id===state.nav);
-  let title = '';
-  if (state.nav==='dashboard') title = 'Dashboard';
-  else if (state.nav==='chat') title = 'Lore Oracle';
-  else if (state.nav==='consistency') title = 'Consistency Check';
-  else if (t) title = t.label;
+  const titles = { dashboard:'Dashboard', chat:'Lore Oracle', consistency:'Consistency Check', manuscript:'Import Manuscript' };
+  const title = titles[state.nav] || t?.label || '';
 
   let actions = '';
-  if (t) actions = `<button class="btn btn-gold btn-sm" id="btn-add">+ Add Entry</button>`;
+  if (t)                         actions = `<button class="btn btn-gold btn-sm" id="btn-add">+ Add Entry</button>`;
   if (state.nav==='consistency') actions = `<button class="btn btn-gold btn-sm" id="btn-check" ${state.consistencyLoading?'disabled':''}>
-    ${state.consistencyLoading ? 'Analysing…' : 'Run Check'}
-  </button>`;
+    ${state.consistencyLoading ? 'Analysing…' : 'Run Check'}</button>`;
 
   return `<div class="topbar"><h2>${title}</h2><div>${actions}</div></div>`;
 }
 
 function buildContent() {
-  if (state.nav==='dashboard') return buildDashboard();
-  if (state.nav==='chat')      return buildChat();
+  if (state.nav==='dashboard')   return buildDashboard();
+  if (state.nav==='chat')        return buildChat();
   if (state.nav==='consistency') return buildConsistency();
+  if (state.nav==='manuscript')  return buildManuscript();
   const t = ENTITY_TYPES.find(t=>t.id===state.nav);
   if (t) return buildEntityList(t);
   return '';
 }
 
-// ── Dashboard ────────────────────────────────────────
+// ── Dashboard ────────────────────────────────────────────────
 function buildDashboard() {
   const installBanner = state.showInstallBanner ? `
     <div class="install-banner">
-      <span>💡 <strong>Install as app:</strong> In Chrome/Edge → Menu → "Install page as app" for a desktop shortcut</span>
+      <span>💡 <strong>Install as app:</strong> Edge/Chrome → Menu → Apps → "Install this site as an app"</span>
       <button class="btn btn-sm" id="btn-dismiss-install">✕</button>
     </div>` : '';
 
-  const stats = ENTITY_TYPES.map(t => `
+  const stats = ENTITY_TYPES.map(t=>`
     <div class="stat-card" data-nav="${t.id}">
       <div class="stat-icon">${t.icon}</div>
       <div class="stat-num">${state.entities.filter(e=>e.type===t.id).length}</div>
@@ -431,40 +374,39 @@ function buildDashboard() {
   const recent = [...state.entities].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,6);
   const recentHtml = recent.length > 0
     ? `<div class="section-title">Recently Updated</div><div class="card-grid">${recent.map(entityCard).join('')}</div>`
-    : `<div class="empty-state"><div class="empty-icon">📖</div><h3>Your world awaits</h3><p>Use the sidebar to start adding characters,<br>factions, locations, and lore.</p></div>`;
+    : `<div class="empty-state"><div class="empty-icon">📖</div><h3>Your world awaits</h3><p>Use the sidebar to start adding entries,<br>or import your manuscript to get started fast.</p></div>`;
 
   return `${installBanner}<div class="stats-row">${stats}</div>${recentHtml}`;
 }
 
-// ── Entity List ──────────────────────────────────────
+// ── Entity List ──────────────────────────────────────────────
 function buildEntityList(t) {
-  const filtered = state.entities.filter(e=>e.type===t.id && (
+  const filtered = state.entities.filter(e => e.type===t.id && (
     !state.search ||
     e.name.toLowerCase().includes(state.search.toLowerCase()) ||
     (e.description||'').toLowerCase().includes(state.search.toLowerCase())
   ));
-  const cards = filtered.map(entityCard).join('');
-  const addCard = `<div class="add-card" id="btn-add">＋ Add ${t.label.replace(/s$/,'')}</div>`;
-  const empty = filtered.length===0 && state.search
-    ? `<p style="color:var(--muted);font-size:13px;margin-top:10px">No results for "${state.search}"</p>` : '';
   return `
     <input class="search-bar" id="search-input" placeholder="Search ${t.label.toLowerCase()}…" value="${escHtml(state.search)}" />
-    <div class="card-grid">${cards}${addCard}</div>${empty}`;
+    <div class="card-grid">
+      ${filtered.map(entityCard).join('')}
+      <div class="add-card" id="btn-add">＋ Add ${t.label.replace(/s$/,'')}</div>
+    </div>
+    ${filtered.length===0 && state.search ? `<p style="color:var(--muted);font-size:13px;margin-top:10px">No results for "${escHtml(state.search)}"</p>` : ''}`;
 }
 
 function entityCard(e) {
   const t = typeMeta(e.type);
   const tags = (e.tags||[]).slice(0,4).map(tag=>`<span class="tag">${escHtml(tag)}</span>`).join('');
-  const tagsHtml = tags ? `<div class="card-tags">${tags}</div>` : '';
-  const desc = e.description ? `<p>${escHtml(e.description)}</p>` : '';
   return `<div class="card ${e.type}" data-entity="${e.id}">
     <h3>${escHtml(e.name)}</h3>
     <div class="card-sub">${t.label}</div>
-    ${desc}${tagsHtml}
+    ${e.description ? `<p>${escHtml(e.description)}</p>` : ''}
+    ${tags ? `<div class="card-tags">${tags}</div>` : ''}
   </div>`;
 }
 
-// ── Detail Panel ─────────────────────────────────────
+// ── Detail Panel ─────────────────────────────────────────────
 function buildDetailPanel() {
   if (!state.detail) return `<div class="detail-panel"></div>`;
   const e = state.detail;
@@ -475,8 +417,6 @@ function buildDetailPanel() {
       <div class="detail-value">${escHtml(e.fields[f])}</div>
     </div>`).join('');
   const tags = (e.tags||[]).map(tag=>`<span class="tag">${escHtml(tag)}</span>`).join('');
-  const tagsRow = tags ? `<div class="card-tags" style="margin-top:10px">${tags}</div>` : '';
-  const notes = e.notes ? `<hr class="divider"><div class="detail-section"><div class="detail-label">Notes</div><div class="detail-value">${escHtml(e.notes)}</div></div>` : '';
   const deleteRow = state.confirmDelete
     ? `<div class="confirm-row"><span>Are you sure?</span><button class="btn btn-sm btn-danger" id="btn-confirm-delete">Yes, delete</button><button class="btn btn-sm" id="btn-cancel-delete">Cancel</button></div>`
     : `<button class="btn btn-sm btn-danger" id="btn-delete">Delete Entry</button>`;
@@ -490,23 +430,21 @@ function buildDetailPanel() {
     </div>
     <div class="detail-body">
       <span class="badge ${BADGE[e.type]}">${t.label}</span>
-      ${tagsRow}
+      ${tags ? `<div class="card-tags" style="margin-top:10px">${tags}</div>` : ''}
       ${e.description ? `<div class="detail-section" style="margin-top:16px"><div class="detail-label">Description</div><div class="detail-value">${escHtml(e.description)}</div></div>` : ''}
       ${fields ? `<hr class="divider">${fields}` : ''}
-      ${notes}
-      <hr class="divider">
-      ${deleteRow}
+      ${e.notes ? `<hr class="divider"><div class="detail-section"><div class="detail-label">Notes</div><div class="detail-value">${escHtml(e.notes)}</div></div>` : ''}
+      <hr class="divider">${deleteRow}
     </div>
   </div>`;
 }
 
-// ── Modal ────────────────────────────────────────────
+// ── Modal ─────────────────────────────────────────────────────
 function buildModal() {
   const { mode, type, entity } = state.modal;
   const t = typeMeta(type);
-  const fields = TYPE_FIELDS[type]||[];
   const v = f => entity?.fields?.[f] ? escHtml(entity.fields[f]) : '';
-  const fieldRows = fields.map(f=>`
+  const fieldRows = (TYPE_FIELDS[type]||[]).map(f=>`
     <div class="form-group">
       <label class="form-label">${f}</label>
       <input class="form-input" data-field="${escHtml(f)}" value="${v(f)}" placeholder="${f}…" />
@@ -528,7 +466,7 @@ function buildModal() {
           <label class="form-label">Description</label>
           <textarea class="form-textarea" id="field-desc" placeholder="Brief overview…">${entity?escHtml(entity.description||''):''}</textarea>
         </div>
-        ${fields.length ? `<hr class="divider">${fieldRows}` : ''}
+        ${fieldRows ? `<hr class="divider">${fieldRows}` : ''}
         <hr class="divider">
         <div class="form-group">
           <label class="form-label">Tags (comma-separated)</label>
@@ -547,8 +485,15 @@ function buildModal() {
   </div>`;
 }
 
-// ── Chat ─────────────────────────────────────────────
+// ── Chat ─────────────────────────────────────────────────────
 function buildChat() {
+  const currentKey = state.provider==='claude' ? state.claudeKey : state.openaiKey;
+  const keyDraft   = state.provider==='claude' ? state.claudeKeyDraft : state.openaiKeyDraft;
+  const keyHint    = state.provider==='claude'
+    ? 'Get a key at <strong>console.anthropic.com</strong>'
+    : 'Get a key at <strong>platform.openai.com</strong>';
+  const keyPlaceholder = state.provider==='claude' ? 'sk-ant-…' : 'sk-…';
+
   const msgs = state.chat.map(m=>`
     <div class="msg ${m.role}">
       <div class="msg-name">${m.role==='user'?'You':'Lore Oracle'}</div>
@@ -573,29 +518,37 @@ function buildChat() {
       ${SUGGESTIONS.map(s=>`<div class="chip" data-suggest="${escHtml(s)}">${escHtml(s)}</div>`).join('')}
     </div>` : '';
 
-  const offlineBanner = !isOnline() ? `<div class="offline-banner">⚡ You're offline — AI features need an internet connection. Your bible is still fully available.</div>` : '';
+  const offlineBanner = !isOnline()
+    ? `<div class="offline-banner">⚡ You're offline — AI features need an internet connection. Your bible is fully available.</div>` : '';
 
-  const apiKeySection = !state.apiKey ? `
-    <div class="api-setup" style="margin:0 20px 0">
-      <h4>🔑 API Key Required</h4>
-      <p>To use the Lore Oracle, enter your Anthropic API key. It's stored locally on your device only and never sent anywhere except Anthropic's servers.</p>
+  const providerToggle = `
+    <div class="provider-bar">
+      <span class="provider-label">AI Model:</span>
+      <div class="toggle-group">
+        <button class="toggle-opt ${state.provider==='claude'?'active':''}" data-provider="claude">Claude</button>
+        <button class="toggle-opt ${state.provider==='openai'?'active':''}" data-provider="openai">GPT-4o</button>
+      </div>
+      ${currentKey ? `<span style="font-size:11px;color:var(--muted)">🔑 Key saved</span><button class="btn btn-sm" id="btn-clear-key" style="font-size:11px;padding:2px 8px">Change</button>` : ''}
+    </div>`;
+
+  const apiSection = !currentKey ? `
+    <div class="api-setup">
+      <h4>🔑 ${state.provider==='claude'?'Anthropic':'OpenAI'} API Key Required</h4>
+      <p>Stored locally on your device only. Never sent anywhere except the AI provider's servers.</p>
       <div class="api-row">
-        <input class="form-input" id="api-key-input" type="password" placeholder="sk-ant-…" value="${escHtml(state.apiKeyDraft)}" />
+        <input class="form-input" id="api-key-input" type="password" placeholder="${keyPlaceholder}" value="${escHtml(keyDraft)}" />
         <button class="btn btn-gold btn-sm" id="btn-save-api-key">Save</button>
       </div>
-      <p style="margin-top:8px;font-size:11px">Get a key at <strong>console.anthropic.com</strong></p>
-    </div>` : `
-    <div style="padding:0 20px 4px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:11px;color:var(--muted)">🔑 API key saved</span>
-      <button class="btn btn-sm" id="btn-clear-api-key" style="font-size:11px;padding:2px 8px">Change</button>
-    </div>`;
+      <p style="margin-top:8px;font-size:11px">${keyHint}</p>
+    </div>` : '';
 
   return `<div class="chat-wrap">
     <div class="chat-messages" id="chat-messages">${empty}${msgs}${loadingMsg}</div>
     <div class="chat-bottom">
       ${chips}
       ${offlineBanner}
-      ${apiKeySection}
+      ${providerToggle}
+      ${apiSection}
       <div class="chat-input-row">
         <textarea class="chat-input" id="chat-input" placeholder="Ask the Oracle anything about your world…" rows="1"></textarea>
         <button class="btn btn-gold" id="btn-send" ${state.chatLoading||!isOnline()?'disabled':''}>Send</button>
@@ -604,7 +557,77 @@ function buildChat() {
   </div>`;
 }
 
-// ── Consistency ──────────────────────────────────────
+// ── Manuscript Importer ──────────────────────────────────────
+function buildManuscript() {
+  if (state.manuscriptLoading) return `
+    <div style="padding:24px">
+      <div class="empty-state">
+        <div class="dots" style="margin-bottom:16px;justify-content:center"><span></span><span></span><span></span></div>
+        <h3>Reading your manuscript…</h3>
+        <p>The Oracle is scanning for characters, factions, locations, and lore.<br>This may take a moment for longer texts.</p>
+      </div>
+    </div>`;
+
+  if (state.manuscriptSuggestions && state.manuscriptSuggestions.length > 0) {
+    const items = state.manuscriptSuggestions.map((s, i) => {
+      const accepted = state.acceptedSuggestions.has(i);
+      const t = typeMeta(s.type);
+      return `<div class="suggestion-item ${s.type} ${accepted?'suggestion-accepted':''}">
+        <h4>${escHtml(s.name)} <span style="font-size:11px;color:var(--muted);font-family:'EB Garamond',serif;font-weight:normal">· ${t.label.replace(/s$/,'')}</span></h4>
+        <p>${escHtml(s.description)}</p>
+        <div class="suggestion-item-actions">
+          ${!accepted
+            ? `<button class="btn btn-gold btn-sm" data-accept="${i}">+ Add to Bible</button>
+               <button class="btn btn-sm" data-dismiss="${i}">Dismiss</button>`
+            : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    const remaining = state.manuscriptSuggestions.filter((_,i)=>!state.acceptedSuggestions.has(i)).length;
+
+    return `<div style="padding:24px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <div style="flex:1">
+          <div class="section-title">Suggested Entries from Manuscript</div>
+          <p style="font-size:13px;color:var(--muted)">${remaining} suggestion${remaining!==1?'s':''} remaining · Review and add what fits your bible</p>
+        </div>
+        <button class="btn btn-sm" id="btn-new-import">↑ Import Another</button>
+      </div>
+      <div class="suggestion-list">${items}</div>
+    </div>`;
+  }
+
+  if (state.manuscriptSuggestions && state.manuscriptSuggestions.length === 0) {
+    return `<div style="padding:24px">
+      <div class="empty-state">
+        <div class="empty-icon">🤔</div>
+        <h3>Nothing found</h3>
+        <p>The Oracle couldn't identify clear entries from this text.<br>Try a longer excerpt or a different section of your manuscript.</p>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-gold" id="btn-new-import">Try Another File</button>
+      </div>
+    </div>`;
+  }
+
+  const hasKey = state.provider==='claude' ? !!state.claudeKey : !!state.openaiKey;
+
+  return `<div style="padding:24px;height:100%;overflow-y:auto">
+    <div class="import-zone" id="import-zone">
+      <div class="import-icon">📄</div>
+      <h3>Drop your manuscript here</h3>
+      <p>Or click to browse · Accepts .txt or .md files</p>
+      <p style="margin-top:8px;font-size:12px">The Oracle will scan for characters, factions, locations, magic systems, and historical events — then suggest entries for your bible.</p>
+    </div>
+    ${!hasKey ? `<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;font-size:13px;color:var(--muted)">
+      ⚠️ You need an API key saved in the <strong style="color:var(--cream)">Lore Oracle</strong> tab before importing a manuscript.
+    </div>` : ''}
+    ${!isOnline() ? `<div class="offline-banner" style="margin:0">⚡ Manuscript analysis requires an internet connection.</div>` : ''}
+  </div>`;
+}
+
+// ── Consistency ──────────────────────────────────────────────
 function buildConsistency() {
   if (state.consistencyLoading) return `
     <div class="empty-state">
@@ -620,13 +643,12 @@ function buildConsistency() {
       <p>${state.entities.length < 2
         ? 'Add at least a couple of entries before running a check.'
         : `Click "Run Check" to analyse your ${state.entities.length} entries for contradictions and lore conflicts.`}</p>
-      ${!isOnline() ? '<p style="margin-top:10px;color:var(--red)">⚡ Requires an internet connection.</p>' : ''}
+      ${!isOnline() ? '<p style="margin-top:10px;color:#e07060">⚡ Requires an internet connection.</p>' : ''}
     </div>`;
 
   if (state.consistencyReport.length===0) return `
     <div class="empty-state">
-      <div class="empty-icon">✅</div>
-      <h3>No issues found</h3>
+      <div class="empty-icon">✅</div><h3>No issues found</h3>
       <p>Your world looks consistent. Keep building!</p>
     </div>`;
 
@@ -641,152 +663,150 @@ function buildConsistency() {
   return `<p style="color:var(--muted);font-size:13px;margin-bottom:16px">${state.consistencyReport.length} potential issue${state.consistencyReport.length!==1?'s':''} found</p>${items}`;
 }
 
-// ── Events ────────────────────────────────────────────
+// ── Event Binding ────────────────────────────────────────────
 function bindEvents() {
   // Nav
   document.querySelectorAll('[data-nav]').forEach(el => {
-    el.addEventListener('click', () => {
-      state.nav = el.dataset.nav;
-      state.search = '';
-      state.confirmDelete = false;
-      render();
-    });
+    el.addEventListener('click', () => { state.nav=el.dataset.nav; state.search=''; state.confirmDelete=false; render(); });
   });
 
-  // Entity cards
+  // Entity cards & stat cards
   document.querySelectorAll('[data-entity]').forEach(el => {
     el.addEventListener('click', () => {
       const e = state.entities.find(x=>x.id===el.dataset.entity);
-      if (e) { state.detail = e; state.confirmDelete = false; render(); }
+      if (e) { state.detail=e; state.confirmDelete=false; render(); }
     });
+  });
+  document.querySelectorAll('.stat-card[data-nav]').forEach(el => {
+    el.addEventListener('click', () => { state.nav=el.dataset.nav; render(); });
   });
 
   // Add button
   const btnAdd = document.getElementById('btn-add');
   if (btnAdd) btnAdd.addEventListener('click', () => {
-    const type = ENTITY_TYPES.find(t=>t.id===state.nav)?.id || 'char';
-    state.modal = { mode:'add', type };
+    state.modal = { mode:'add', type: ENTITY_TYPES.find(t=>t.id===state.nav)?.id || 'char' };
     render();
   });
 
   // Search
   const si = document.getElementById('search-input');
-  if (si) { si.addEventListener('input', e => { state.search = e.target.value; render(); }); si.focus(); }
+  if (si) { si.addEventListener('input', e => { state.search=e.target.value; render(); }); si.focus(); }
 
   // Detail panel
-  const btnCloseDetail = document.getElementById('btn-close-detail');
-  if (btnCloseDetail) btnCloseDetail.addEventListener('click', () => { state.detail=null; render(); });
-
-  const btnEdit = document.getElementById('btn-edit');
-  if (btnEdit) btnEdit.addEventListener('click', () => {
-    state.modal = { mode:'edit', type:state.detail.type, entity:state.detail };
-    render();
+  document.getElementById('btn-close-detail')?.addEventListener('click', () => { state.detail=null; render(); });
+  document.getElementById('btn-edit')?.addEventListener('click', () => {
+    state.modal = { mode:'edit', type:state.detail.type, entity:state.detail }; render();
   });
-
-  const btnDelete = document.getElementById('btn-delete');
-  if (btnDelete) btnDelete.addEventListener('click', () => { state.confirmDelete=true; render(); });
-
-  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
-  if (btnConfirmDelete) btnConfirmDelete.addEventListener('click', () => {
+  document.getElementById('btn-delete')?.addEventListener('click', () => { state.confirmDelete=true; render(); });
+  document.getElementById('btn-confirm-delete')?.addEventListener('click', () => {
     state.entities = state.entities.filter(e=>e.id!==state.detail.id);
-    saveEntities(state.entities);
+    save(LS.entities, state.entities);
     state.detail=null; state.confirmDelete=false; render();
   });
-
-  const btnCancelDelete = document.getElementById('btn-cancel-delete');
-  if (btnCancelDelete) btnCancelDelete.addEventListener('click', () => { state.confirmDelete=false; render(); });
+  document.getElementById('btn-cancel-delete')?.addEventListener('click', () => { state.confirmDelete=false; render(); });
 
   // Modal
-  const overlay = document.getElementById('modal-overlay');
-  if (overlay) overlay.addEventListener('click', e => { if (e.target===overlay) { state.modal=null; render(); } });
-
-  const btnModalClose = document.getElementById('btn-modal-close');
-  if (btnModalClose) btnModalClose.addEventListener('click', () => { state.modal=null; render(); });
-
-  const btnModalCancel = document.getElementById('btn-modal-cancel');
-  if (btnModalCancel) btnModalCancel.addEventListener('click', () => { state.modal=null; render(); });
-
-  const btnModalSave = document.getElementById('btn-modal-save');
-  if (btnModalSave) btnModalSave.addEventListener('click', () => {
+  document.getElementById('modal-overlay')?.addEventListener('click', e => { if(e.target.id==='modal-overlay'){state.modal=null;render();} });
+  document.getElementById('btn-modal-close')?.addEventListener('click', () => { state.modal=null; render(); });
+  document.getElementById('btn-modal-cancel')?.addEventListener('click', () => { state.modal=null; render(); });
+  document.getElementById('btn-modal-save')?.addEventListener('click', () => {
     const name = document.getElementById('field-name')?.value.trim();
     if (!name) { document.getElementById('field-name')?.focus(); return; }
     const fields = {};
-    document.querySelectorAll('[data-field]').forEach(el => { if (el.value.trim()) fields[el.dataset.field] = el.value.trim(); });
-    const tags = document.getElementById('field-tags')?.value.split(',').map(t=>t.trim()).filter(Boolean)||[];
+    document.querySelectorAll('[data-field]').forEach(el => { if(el.value.trim()) fields[el.dataset.field]=el.value.trim(); });
     const entity = {
       id: state.modal.mode==='edit' ? state.modal.entity.id : uid(),
-      type: state.modal.type,
-      name,
+      type: state.modal.type, name,
       description: document.getElementById('field-desc')?.value.trim()||'',
       fields,
-      tags,
+      tags: document.getElementById('field-tags')?.value.split(',').map(t=>t.trim()).filter(Boolean)||[],
       notes: document.getElementById('field-notes')?.value.trim()||'',
       updatedAt: Date.now(),
       createdAt: state.modal.mode==='edit' ? (state.modal.entity.createdAt||Date.now()) : Date.now(),
     };
     state.entities = [...state.entities.filter(e=>e.id!==entity.id), entity];
-    saveEntities(state.entities);
-    state.detail = entity;
-    state.modal = null;
+    save(LS.entities, state.entities);
+    state.detail=entity; state.modal=null; render();
+  });
+
+  // Provider toggle
+  document.querySelectorAll('[data-provider]').forEach(el => {
+    el.addEventListener('click', () => { state.provider=el.dataset.provider; save(LS.provider, state.provider); render(); });
+  });
+
+  // API keys
+  document.getElementById('btn-save-api-key')?.addEventListener('click', () => {
+    const val = document.getElementById('api-key-input')?.value.trim();
+    if (!val) return;
+    if (state.provider==='claude') { state.claudeKey=val; localStorage.setItem(LS.claudeKey, val); }
+    else                           { state.openaiKey=val; localStorage.setItem(LS.openaiKey, val); }
+    render();
+  });
+  document.getElementById('api-key-input')?.addEventListener('input', e => {
+    if (state.provider==='claude') state.claudeKeyDraft=e.target.value;
+    else state.openaiKeyDraft=e.target.value;
+  });
+  document.getElementById('api-key-input')?.addEventListener('keydown', e => {
+    if (e.key==='Enter') document.getElementById('btn-save-api-key')?.click();
+  });
+  document.getElementById('btn-clear-key')?.addEventListener('click', () => {
+    if (state.provider==='claude') { state.claudeKey=''; localStorage.removeItem(LS.claudeKey); state.claudeKeyDraft=''; }
+    else                           { state.openaiKey=''; localStorage.removeItem(LS.openaiKey); state.openaiKeyDraft=''; }
     render();
   });
 
   // Chat
   const chatInput = document.getElementById('chat-input');
   if (chatInput) {
-    chatInput.addEventListener('keydown', e => {
-      if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
-    });
-    chatInput.addEventListener('input', () => {
-      chatInput.style.height='auto';
-      chatInput.style.height = Math.min(chatInput.scrollHeight, 150)+'px';
-    });
+    chatInput.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} });
+    chatInput.addEventListener('input', () => { chatInput.style.height='auto'; chatInput.style.height=Math.min(chatInput.scrollHeight,150)+'px'; });
   }
-
-  const btnSend = document.getElementById('btn-send');
-  if (btnSend) btnSend.addEventListener('click', sendChat);
-
+  document.getElementById('btn-send')?.addEventListener('click', sendChat);
   document.querySelectorAll('[data-suggest]').forEach(el => {
-    el.addEventListener('click', () => {
-      const chatInput = document.getElementById('chat-input');
-      if (chatInput) chatInput.value = el.dataset.suggest;
-      sendChat(el.dataset.suggest);
-    });
+    el.addEventListener('click', () => sendChat(el.dataset.suggest));
   });
-
-  // API key
-  const btnSaveKey = document.getElementById('btn-save-api-key');
-  if (btnSaveKey) btnSaveKey.addEventListener('click', () => {
-    const val = document.getElementById('api-key-input')?.value.trim();
-    if (val) { state.apiKey=val; saveApiKey(val); render(); }
-  });
-  const apiKeyInput = document.getElementById('api-key-input');
-  if (apiKeyInput) {
-    apiKeyInput.addEventListener('input', e => { state.apiKeyDraft = e.target.value; });
-    apiKeyInput.addEventListener('keydown', e => { if (e.key==='Enter') btnSaveKey?.click(); });
-  }
-  const btnClearKey = document.getElementById('btn-clear-api-key');
-  if (btnClearKey) btnClearKey.addEventListener('click', () => { state.apiKey=''; saveApiKey(''); state.apiKeyDraft=''; render(); });
 
   // Consistency
-  const btnCheck = document.getElementById('btn-check');
-  if (btnCheck) btnCheck.addEventListener('click', runConsistencyCheck);
+  document.getElementById('btn-check')?.addEventListener('click', runConsistencyCheck);
+
+  // Manuscript
+  const importZone = document.getElementById('import-zone');
+  if (importZone) {
+    importZone.addEventListener('click', () => document.getElementById('file-picker').click());
+    importZone.addEventListener('dragover', e => { e.preventDefault(); importZone.classList.add('drag-over'); });
+    importZone.addEventListener('dragleave', () => importZone.classList.remove('drag-over'));
+    importZone.addEventListener('drop', e => { e.preventDefault(); importZone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
+  }
+  document.getElementById('btn-new-import')?.addEventListener('click', () => {
+    state.manuscriptSuggestions=null; state.acceptedSuggestions=new Set(); render();
+  });
+  document.getElementById('file-picker').onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); e.target.value=''; };
+
+  // Manuscript suggestions — accept / dismiss
+  document.querySelectorAll('[data-accept]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = parseInt(el.dataset.accept);
+      const s = state.manuscriptSuggestions[i];
+      const entity = { id:uid(), type:s.type, name:s.name, description:s.description, fields:{}, tags:s.tags||[], notes:'', updatedAt:Date.now(), createdAt:Date.now() };
+      state.entities = [...state.entities, entity];
+      save(LS.entities, state.entities);
+      state.acceptedSuggestions.add(i);
+      render();
+    });
+  });
+  document.querySelectorAll('[data-dismiss]').forEach(el => {
+    el.addEventListener('click', () => { state.acceptedSuggestions.add(parseInt(el.dataset.dismiss)); render(); });
+  });
 
   // Install banner
-  const btnDismiss = document.getElementById('btn-dismiss-install');
-  if (btnDismiss) btnDismiss.addEventListener('click', () => { state.showInstallBanner=false; render(); });
+  document.getElementById('btn-dismiss-install')?.addEventListener('click', () => { state.showInstallBanner=false; render(); });
 
   // Scroll chat to bottom
   const chatMsgs = document.getElementById('chat-messages');
   if (chatMsgs) chatMsgs.scrollTop = chatMsgs.scrollHeight;
-
-  // Dashboard stat cards
-  document.querySelectorAll('.stat-card[data-nav]').forEach(el => {
-    el.addEventListener('click', () => { state.nav=el.dataset.nav; render(); });
-  });
 }
 
-// ── AI: World context ────────────────────────────────
+// ── AI Helpers ───────────────────────────────────────────────
 function worldContext() {
   return state.entities.map(e => {
     const t = typeMeta(e.type);
@@ -795,105 +815,168 @@ function worldContext() {
   }).join('\n\n');
 }
 
-// ── AI: Chat ─────────────────────────────────────────
+function currentKey() {
+  return state.provider==='claude' ? state.claudeKey : state.openaiKey;
+}
+
+async function callAI({ system, userContent, maxTokens=1000 }) {
+  const key = currentKey();
+  if (!key) throw new Error('No API key set');
+
+  if (state.provider==='claude') {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens: maxTokens,
+        system,
+        messages:[{ role:'user', content: userContent }],
+      }),
+    });
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error.message);
+    return json.content?.map(b=>b.text||'').join('')||'';
+  } else {
+    const messages = [];
+    if (system) messages.push({ role:'system', content: system });
+    messages.push({ role:'user', content: userContent });
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${key}` },
+      body: JSON.stringify({ model:'gpt-4o', max_tokens: maxTokens, messages }),
+    });
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error.message);
+    return json.choices?.[0]?.message?.content||'';
+  }
+}
+
+async function callAIChat({ system, messages, maxTokens=1000 }) {
+  const key = currentKey();
+  if (!key) throw new Error('No API key set');
+
+  if (state.provider==='claude') {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:maxTokens, system, messages }),
+    });
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error.message);
+    return json.content?.map(b=>b.text||'').join('')||'';
+  } else {
+    const allMsgs = system ? [{ role:'system', content:system }, ...messages] : messages;
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${key}` },
+      body: JSON.stringify({ model:'gpt-4o', max_tokens:maxTokens, messages: allMsgs }),
+    });
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error.message);
+    return json.choices?.[0]?.message?.content||'';
+  }
+}
+
+// ── Chat ─────────────────────────────────────────────────────
 async function sendChat(text) {
   const chatInput = document.getElementById('chat-input');
   const msg = (text || chatInput?.value || '').trim();
   if (!msg || state.chatLoading || !isOnline()) return;
-
   if (chatInput) chatInput.value = '';
 
-  if (!state.apiKey) {
-    state.chat.push({ role:'assistant', content:'Please enter your Anthropic API key above to use the Lore Oracle.' });
-    saveChat(state.chat);
-    render(); return;
+  if (!currentKey()) {
+    state.chat.push({ role:'assistant', content:'Please enter your API key above to use the Lore Oracle.' });
+    save(LS.chat, state.chat); render(); return;
   }
 
-  state.chat.push({ role:'user', content: msg });
+  state.chat.push({ role:'user', content:msg });
   state.chatLoading = true;
   render();
 
-  const systemPrompt = `You are WorldForge, an expert creative collaborator and worldbuilding assistant for a fantasy series. You have deep knowledge of the author's world based on the story bible below. Help with: answering lore questions, generating new ideas consistent with existing lore, checking consistency, drafting scene snippets, and suggesting plot directions. Be specific, creative, and reference existing world details when relevant. Keep responses focused and useful. Speak with gravitas befitting a fantasy world.
+  const system = `You are WorldForge, an expert creative collaborator and worldbuilding assistant for a fantasy series. You have deep knowledge of the author's world based on the story bible below. Help with: answering lore questions, generating new ideas consistent with existing lore, checking consistency, drafting scene snippets, and suggesting plot directions. Be specific, creative, and reference existing world details when relevant. Keep responses focused and useful. Speak with gravitas befitting a fantasy world.
 
 === STORY BIBLE ===
 ${worldContext() || '(No entries yet — help the author start building their world!)'}
 === END BIBLE ===`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': state.apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true',
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system: systemPrompt,
-        messages: state.chat.map(m=>({role:m.role, content:m.content})),
-      }),
-    });
-    const json = await resp.json();
-    if (json.error) throw new Error(json.error.message);
-    const reply = json.content?.map(b=>b.text||'').join('')||'No response received.';
+    const reply = await callAIChat({ system, messages: state.chat.map(m=>({role:m.role,content:m.content})) });
     state.chat.push({ role:'assistant', content:reply });
   } catch(err) {
-    state.chat.push({ role:'assistant', content:`⚠️ Error: ${err.message}. Check your API key and internet connection.` });
+    state.chat.push({ role:'assistant', content:`⚠️ Error: ${err.message}` });
   }
-  state.chatLoading = false;
-  saveChat(state.chat);
+  state.chatLoading=false;
+  save(LS.chat, state.chat.slice(-60));
   render();
 }
 
-// ── AI: Consistency ──────────────────────────────────
+// ── Consistency Check ────────────────────────────────────────
 async function runConsistencyCheck() {
   if (!isOnline()) { alert('Consistency check requires an internet connection.'); return; }
-  if (!state.apiKey) { state.nav='chat'; render(); return; }
+  if (!currentKey()) { state.nav='chat'; render(); return; }
   if (state.entities.length < 2) return;
-  state.consistencyLoading = true;
-  state.consistencyReport = null;
-  render();
+  state.consistencyLoading=true; state.consistencyReport=null; render();
 
-  const ctx = worldContext();
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': state.apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true',
-      },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
-        system:`You are a meticulous fantasy editor and continuity specialist. Analyse the story bible and identify potential inconsistencies, contradictions, plot holes, or logical tensions between entries. Return ONLY a valid JSON array of objects with keys: title (string), description (string), severity ("high"|"medium"|"low"), entities (array of names). No markdown, no fences, just raw JSON.`,
-        messages:[{role:'user', content:ctx}],
-      }),
+    const raw = await callAI({
+      system: `You are a meticulous fantasy editor and continuity specialist. Analyse the story bible and identify potential inconsistencies, contradictions, plot holes, or logical tensions. Return ONLY a valid JSON array of objects with keys: title (string), description (string), severity ("high"|"medium"|"low"), entities (array of names). No markdown, no fences, just raw JSON.`,
+      userContent: worldContext(),
+      maxTokens: 1500,
     });
-    const json = await resp.json();
-    if (json.error) throw new Error(json.error.message);
-    const raw = json.content?.map(b=>b.text||'').join('')||'[]';
     state.consistencyReport = JSON.parse(raw.replace(/```json|```/g,'').trim());
   } catch(err) {
-    state.consistencyReport = [{title:'Analysis Error', description: err.message, severity:'low', entities:[]}];
+    state.consistencyReport = [{title:'Error', description:err.message, severity:'low', entities:[]}];
   }
-  state.consistencyLoading = false;
-  render();
+  state.consistencyLoading=false; render();
 }
 
-// ── Utility ──────────────────────────────────────────
+// ── Manuscript Analysis ──────────────────────────────────────
+async function handleFile(file) {
+  if (!file) return;
+  if (!isOnline()) { alert('Manuscript analysis requires an internet connection.'); return; }
+  const key = currentKey();
+  if (!key) { state.nav='chat'; render(); return; }
+
+  const text = await file.text();
+  // Truncate to ~12k chars to stay within token limits
+  const excerpt = text.slice(0, 12000);
+
+  state.manuscriptLoading=true; state.manuscriptSuggestions=null; state.acceptedSuggestions=new Set();
+  render();
+
+  try {
+    const raw = await callAI({
+      system: `You are a fantasy story bible builder. Analyse the manuscript excerpt and extract distinct worldbuilding elements. For each element, determine its type from: char (characters), faction (organisations/groups), location (places), magic (magic systems/powers), history (historical events/lore). Return ONLY a valid JSON array of objects with keys: name (string), type ("char"|"faction"|"location"|"magic"|"history"), description (2-3 sentence summary of what's established in the text), tags (array of 2-4 short descriptor strings). Focus on elements with enough detail to be useful. Aim for 5-15 entries. No markdown, no fences, just raw JSON array.`,
+      userContent: `Here is the manuscript excerpt to analyse:\n\n${excerpt}`,
+      maxTokens: 2000,
+    });
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    state.manuscriptSuggestions = Array.isArray(parsed) ? parsed : [];
+  } catch(err) {
+    state.manuscriptSuggestions = [];
+    alert('Analysis failed: ' + err.message);
+  }
+  state.manuscriptLoading=false; render();
+}
+
+// ── Utility ──────────────────────────────────────────────────
 function escHtml(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-// ── Online/offline events ────────────────────────────
-window.addEventListener('online',  () => render());
-window.addEventListener('offline', () => render());
-
-// ── Boot ─────────────────────────────────────────────
+window.addEventListener('online',  render);
+window.addEventListener('offline', render);
 render();
 </script>
 </body>
