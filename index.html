@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WorldForge — Story Bible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0c0a07;
+  --bg2:     #13100b;
+  --bg3:     #1c1710;
+  --border:  #3a2e1e;
+  --border2: #5a4530;
+  --gold:    #c9973a;
+  --gold2:   #e8c068;
+  --cream:   #e8dfc8;
+  --muted:   #8a7a60;
+  --red:     #9b3a2a;
+  --teal:    #2a6b6b;
+  --indigo:  #3a3a7a;
+  --green:   #2a6b3a;
+  --r: 6px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--bg); color: var(--cream); font-family: 'EB Garamond', serif; font-size: 16px; line-height: 1.6; }
+
+/* ── Layout ── */
+#app { display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar {
+  width: 240px; min-width: 240px;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.sidebar-logo { padding: 20px 16px 14px; border-bottom: 1px solid var(--border); }
+.sidebar-logo h1 { font-family: 'Cinzel Decorative', serif; font-size: 15px; color: var(--gold); letter-spacing: .04em; line-height: 1.3; }
+.sidebar-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: .08em; text-transform: uppercase; }
+
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+.nav-section { padding: 12px 16px 4px; font-size: 10px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; font-family: 'Cinzel', serif; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px; cursor: pointer; transition: background .15s, color .15s;
+  font-size: 14px; color: var(--cream); border-left: 2px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { background: var(--bg3); }
+.nav-item.active { background: var(--bg3); border-left-color: var(--gold); color: var(--gold2); }
+.nav-count { margin-left: auto; font-size: 11px; color: var(--muted); }
+
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.topbar {
+  height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0;
+}
+.topbar h2 { font-family: 'Cinzel', serif; font-size: 15px; color: var(--cream); flex: 1; letter-spacing: .04em; }
+
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+.content.no-pad { padding: 0; display: flex; flex-direction: column; }
+
+/* ── Buttons ── */
+.btn {
+  padding: 7px 14px; border-radius: var(--r); border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--cream); cursor: pointer;
+  font-family: 'EB Garamond', serif; font-size: 14px; transition: all .15s;
+}
+.btn:hover { background: var(--border); color: var(--gold2); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-gold { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+.btn-gold:hover:not(:disabled) { background: var(--gold2); }
+.btn-sm { padding: 4px 10px; font-size: 13px; }
+.btn-danger { color: #e07060; border-color: var(--red); }
+.btn-danger:hover { background: rgba(155,58,42,.15); color: #e07060; }
+
+/* ── Cards ── */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 14px; }
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 16px; cursor: pointer; transition: border-color .15s, transform .15s;
+  position: relative; overflow: hidden;
+}
+.card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.card.char::before    { background: var(--red); }
+.card.faction::before { background: var(--indigo); }
+.card.location::before{ background: var(--teal); }
+.card.magic::before   { background: var(--gold); }
+.card.history::before { background: var(--green); }
+.card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.card h3 { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold2); margin-bottom: 4px; }
+.card-sub { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+.card p { font-size: 13px; color: var(--cream); opacity: .85; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+.tag { padding: 2px 8px; border-radius: 20px; font-size: 11px; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); }
+
+.add-card {
+  background: transparent; border: 1px dashed var(--border2); border-radius: var(--r);
+  padding: 16px; cursor: pointer; color: var(--muted);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: border-color .15s, color .15s; min-height: 120px;
+  font-family: 'EB Garamond', serif; font-size: 14px;
+}
+.add-card:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Detail Panel ── */
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 90;
+  pointer-events: none;
+}
+.detail-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 520px;
+  background: var(--bg2); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100;
+  transform: translateX(100%); transition: transform .25s ease;
+  pointer-events: all;
+}
+.detail-panel.open { transform: translateX(0); }
+.detail-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.detail-header h2 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold2); flex: 1; }
+.detail-body { flex: 1; overflow-y: auto; padding: 20px; }
+.detail-section { margin-bottom: 18px; }
+.detail-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 5px; font-family: 'Cinzel', serif; }
+.detail-value { font-size: 14px; color: var(--cream); line-height: 1.7; white-space: pre-wrap; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-family: 'Cinzel', serif; letter-spacing: .05em; text-transform: uppercase; }
+.badge-char    { background: rgba(155,58,42,.2);   border: 1px solid var(--red);    color: #e07060; }
+.badge-faction { background: rgba(58,58,122,.2);   border: 1px solid var(--indigo); color: #8080d0; }
+.badge-location{ background: rgba(42,107,107,.2);  border: 1px solid var(--teal);   color: #60c0c0; }
+.badge-magic   { background: rgba(201,151,58,.15); border: 1px solid var(--gold);   color: var(--gold2); }
+.badge-history { background: rgba(42,107,58,.2);   border: 1px solid var(--green);  color: #60c080; }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.detail-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal {
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r);
+  width: 100%; max-width: 560px; max-height: 88vh; display: flex; flex-direction: column;
+}
+.modal-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-header h3 { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold2); flex: 1; }
+.modal-body { flex: 1; overflow-y: auto; padding: 20px; }
+.modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ── Forms ── */
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; font-family: 'Cinzel', serif; }
+.form-input, .form-textarea {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--r); color: var(--cream); padding: 8px 12px;
+  font-family: 'EB Garamond', serif; font-size: 14px; transition: border-color .15s;
+}
+.form-input:focus, .form-textarea:focus { outline: none; border-color: var(--gold); }
+.form-textarea { min-height: 90px; resize: vertical; }
+
+/* ── Stats / Dashboard ── */
+.stats-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 16px; text-align: center; cursor: pointer; transition: border-color .15s;
+}
+.stat-card:hover { border-color: var(--border2); }
+.stat-num { font-family: 'Cinzel Decorative', serif; font-size: 28px; color: var(--gold); }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+.stat-icon { font-size: 22px; margin-bottom: 4px; }
+
+.section-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--muted); margin-bottom: 12px; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ── Search ── */
+.search-bar {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--r); color: var(--cream); padding: 10px 14px;
+  font-family: 'EB Garamond', serif; font-size: 14px; margin-bottom: 20px;
+  transition: border-color .15s;
+}
+.search-bar:focus { outline: none; border-color: var(--gold); }
+.search-bar::placeholder { color: var(--muted); }
+
+/* ── Chat ── */
+.chat-wrap { display: flex; flex-direction: column; height: 100%; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.msg { max-width: 82%; }
+.msg.user { align-self: flex-end; }
+.msg.assistant { align-self: flex-start; }
+.msg-name { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: 'Cinzel', serif; letter-spacing: .06em; text-transform: uppercase; }
+.msg-bubble { padding: 12px 16px; border-radius: var(--r); font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+.msg.user .msg-bubble { background: var(--border); color: var(--cream); }
+.msg.assistant .msg-bubble { background: var(--bg3); border: 1px solid var(--border); color: var(--cream); }
+.chat-bottom { flex-shrink: 0; }
+.chat-suggestions { padding: 8px 20px 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 5px 12px; border-radius: 20px; background: var(--bg3);
+  border: 1px solid var(--border2); color: var(--muted); font-size: 12px;
+  cursor: pointer; transition: all .15s; font-family: 'EB Garamond', serif;
+}
+.chip:hover { border-color: var(--gold); color: var(--gold2); }
+.chat-input-row { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; }
+.chat-input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--r); color: var(--cream); padding: 10px 14px;
+  font-family: 'EB Garamond', serif; font-size: 14px; resize: none;
+  min-height: 44px; max-height: 150px; transition: border-color .15s;
+}
+.chat-input:focus { outline: none; border-color: var(--gold); }
+.offline-banner {
+  margin: 0 20px 10px; padding: 8px 12px; border-radius: var(--r);
+  background: rgba(58,46,30,.6); border: 1px solid var(--border2);
+  font-size: 12px; color: var(--muted); text-align: center;
+}
+
+/* ── Consistency ── */
+.issue { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px; }
+.issue.high   { border-left: 3px solid #9b3a2a; }
+.issue.medium { border-left: 3px solid #8a6020; }
+.issue.low    { border-left: 3px solid #2a6b3a; }
+.issue-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold2); margin-bottom: 4px; }
+.issue-desc { font-size: 13px; color: var(--cream); opacity: .85; line-height: 1.6; }
+.issue-meta { font-size: 11px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: .07em; }
+
+/* ── Empty & Loading ── */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state h3 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--cream); margin-bottom: 6px; }
+.empty-state p { font-size: 13px; line-height: 1.7; }
+
+.dots { display: inline-flex; gap: 4px; align-items: center; }
+.dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 1.4s infinite; }
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+
+/* ── API Key Setup ── */
+.api-setup {
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--r);
+  padding: 20px; margin-bottom: 20px;
+}
+.api-setup h4 { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold2); margin-bottom: 8px; }
+.api-setup p { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.6; }
+.api-row { display: flex; gap: 8px; }
+.api-row .form-input { flex: 1; font-family: monospace; font-size: 12px; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Confirm delete ── */
+.confirm-row { display: flex; align-items: center; gap: 8px; }
+.confirm-row span { font-size: 13px; color: var(--muted); }
+
+/* Install banner */
+.install-banner {
+  background: rgba(201,151,58,.08); border: 1px solid rgba(201,151,58,.3);
+  border-radius: var(--r); padding: 10px 14px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted);
+}
+.install-banner strong { color: var(--gold2); }
+.install-banner button { margin-left: auto; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  WorldForge — Self-contained Story Bible App
+//  All data saved to localStorage. AI features need internet.
+// ══════════════════════════════════════════════════════
+
+const ENTITY_TYPES = [
+  { id:'char',     label:'Characters',      icon:'⚔️',  color:'#9b3a2a' },
+  { id:'faction',  label:'Factions',        icon:'🏰',  color:'#3a3a7a' },
+  { id:'location', label:'Locations',       icon:'🗺️',  color:'#2a6b6b' },
+  { id:'magic',    label:'Magic Systems',   icon:'✨',  color:'#c9973a' },
+  { id:'history',  label:'History & Lore',  icon:'📜',  color:'#2a6b3a' },
+];
+
+const TYPE_FIELDS = {
+  char:     ['Role / Title','Allegiance','Age','Traits','Goals','Secrets'],
+  faction:  ['Type','Leader','Headquarters','Ideology','Allies','Enemies'],
+  location: ['Region','Climate','Population','Notable Features','Dangers'],
+  magic:    ['Source','Rules & Limits','Cost','Practitioners','Artifacts'],
+  history:  ['Era / Date','Key Figures','Causes','Consequences','Related Events'],
+};
+
+const BADGE = { char:'badge-char', faction:'badge-faction', location:'badge-location', magic:'badge-magic', history:'badge-history' };
+
+const SUGGESTIONS = [
+  'What are the key conflicts in my world?',
+  'Suggest a character that fits my lore',
+  'Draft an opening scene in this world',
+  'What plot holes should I watch out for?',
+  'How do my factions relate to each other?',
+];
+
+// ── Storage ──────────────────────────────────────────
+const LS_DATA    = 'worldforge_entities';
+const LS_CHAT    = 'worldforge_chat';
+const LS_APIKEY  = 'worldforge_apikey';
+
+function loadEntities() { try { return JSON.parse(localStorage.getItem(LS_DATA)||'[]'); } catch { return []; } }
+function saveEntities(e) { localStorage.setItem(LS_DATA, JSON.stringify(e)); }
+function loadChat() { try { return JSON.parse(localStorage.getItem(LS_CHAT)||'[]'); } catch { return []; } }
+function saveChat(c) { localStorage.setItem(LS_CHAT, JSON.stringify(c.slice(-60))); } // keep last 60 msgs
+function loadApiKey() { return localStorage.getItem(LS_APIKEY)||''; }
+function saveApiKey(k) { localStorage.setItem(LS_APIKEY, k); }
+
+function uid() { return Math.random().toString(36).slice(2,10); }
+function typeMeta(id) { return ENTITY_TYPES.find(t=>t.id===id)||ENTITY_TYPES[0]; }
+
+function isOnline() { return navigator.onLine; }
+
+// ── App State ────────────────────────────────────────
+const state = {
+  nav: 'dashboard',
+  entities: loadEntities(),
+  chat: loadChat(),
+  apiKey: loadApiKey(),
+  detail: null,
+  modal: null,         // {mode:'add'|'edit', type, entity?}
+  search: '',
+  chatLoading: false,
+  consistencyReport: null,
+  consistencyLoading: false,
+  confirmDelete: false,
+  apiKeyDraft: '',
+  showInstallBanner: !window.matchMedia('(display-mode: standalone)').matches,
+};
+
+// ── Render engine ────────────────────────────────────
+function render() {
+  document.getElementById('app').innerHTML = buildApp();
+  bindEvents();
+}
+
+function buildApp() {
+  return `
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>WorldForge</h1>
+      <p>Story Bible</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      ${navItem('dashboard','🏠','Dashboard')}
+      ${navItem('chat','💬','Lore Oracle')}
+      ${navItem('consistency','🔍','Consistency')}
+      <div class="nav-section">Story Bible</div>
+      ${ENTITY_TYPES.map(t=>navItem(t.id, t.icon, t.label, state.entities.filter(e=>e.type===t.id).length)).join('')}
+    </nav>
+    <div class="sidebar-footer">
+      ${state.entities.length} entr${state.entities.length===1?'y':'ies'} · WorldForge
+    </div>
+  </aside>
+  <main class="main">
+    ${buildTopbar()}
+    <div class="content${state.nav==='chat'?' no-pad':''}">
+      ${buildContent()}
+    </div>
+  </main>
+  ${buildDetailPanel()}
+  ${state.modal ? buildModal() : ''}
+  `;
+}
+
+function navItem(id, icon, label, count) {
+  const active = state.nav===id ? ' active' : '';
+  const countBadge = count !== undefined ? `<span class="nav-count">${count}</span>` : '';
+  return `<div class="nav-item${active}" data-nav="${id}">${icon} ${label}${countBadge}</div>`;
+}
+
+function buildTopbar() {
+  const t = ENTITY_TYPES.find(t=>t.id===state.nav);
+  let title = '';
+  if (state.nav==='dashboard') title = 'Dashboard';
+  else if (state.nav==='chat') title = 'Lore Oracle';
+  else if (state.nav==='consistency') title = 'Consistency Check';
+  else if (t) title = t.label;
+
+  let actions = '';
+  if (t) actions = `<button class="btn btn-gold btn-sm" id="btn-add">+ Add Entry</button>`;
+  if (state.nav==='consistency') actions = `<button class="btn btn-gold btn-sm" id="btn-check" ${state.consistencyLoading?'disabled':''}>
+    ${state.consistencyLoading ? 'Analysing…' : 'Run Check'}
+  </button>`;
+
+  return `<div class="topbar"><h2>${title}</h2><div>${actions}</div></div>`;
+}
+
+function buildContent() {
+  if (state.nav==='dashboard') return buildDashboard();
+  if (state.nav==='chat')      return buildChat();
+  if (state.nav==='consistency') return buildConsistency();
+  const t = ENTITY_TYPES.find(t=>t.id===state.nav);
+  if (t) return buildEntityList(t);
+  return '';
+}
+
+// ── Dashboard ────────────────────────────────────────
+function buildDashboard() {
+  const installBanner = state.showInstallBanner ? `
+    <div class="install-banner">
+      <span>💡 <strong>Install as app:</strong> In Chrome/Edge → Menu → "Install page as app" for a desktop shortcut</span>
+      <button class="btn btn-sm" id="btn-dismiss-install">✕</button>
+    </div>` : '';
+
+  const stats = ENTITY_TYPES.map(t => `
+    <div class="stat-card" data-nav="${t.id}">
+      <div class="stat-icon">${t.icon}</div>
+      <div class="stat-num">${state.entities.filter(e=>e.type===t.id).length}</div>
+      <div class="stat-label">${t.label}</div>
+    </div>`).join('');
+
+  const recent = [...state.entities].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,6);
+  const recentHtml = recent.length > 0
+    ? `<div class="section-title">Recently Updated</div><div class="card-grid">${recent.map(entityCard).join('')}</div>`
+    : `<div class="empty-state"><div class="empty-icon">📖</div><h3>Your world awaits</h3><p>Use the sidebar to start adding characters,<br>factions, locations, and lore.</p></div>`;
+
+  return `${installBanner}<div class="stats-row">${stats}</div>${recentHtml}`;
+}
+
+// ── Entity List ──────────────────────────────────────
+function buildEntityList(t) {
+  const filtered = state.entities.filter(e=>e.type===t.id && (
+    !state.search ||
+    e.name.toLowerCase().includes(state.search.toLowerCase()) ||
+    (e.description||'').toLowerCase().includes(state.search.toLowerCase())
+  ));
+  const cards = filtered.map(entityCard).join('');
+  const addCard = `<div class="add-card" id="btn-add">＋ Add ${t.label.replace(/s$/,'')}</div>`;
+  const empty = filtered.length===0 && state.search
+    ? `<p style="color:var(--muted);font-size:13px;margin-top:10px">No results for "${state.search}"</p>` : '';
+  return `
+    <input class="search-bar" id="search-input" placeholder="Search ${t.label.toLowerCase()}…" value="${escHtml(state.search)}" />
+    <div class="card-grid">${cards}${addCard}</div>${empty}`;
+}
+
+function entityCard(e) {
+  const t = typeMeta(e.type);
+  const tags = (e.tags||[]).slice(0,4).map(tag=>`<span class="tag">${escHtml(tag)}</span>`).join('');
+  const tagsHtml = tags ? `<div class="card-tags">${tags}</div>` : '';
+  const desc = e.description ? `<p>${escHtml(e.description)}</p>` : '';
+  return `<div class="card ${e.type}" data-entity="${e.id}">
+    <h3>${escHtml(e.name)}</h3>
+    <div class="card-sub">${t.label}</div>
+    ${desc}${tagsHtml}
+  </div>`;
+}
+
+// ── Detail Panel ─────────────────────────────────────
+function buildDetailPanel() {
+  if (!state.detail) return `<div class="detail-panel"></div>`;
+  const e = state.detail;
+  const t = typeMeta(e.type);
+  const fields = (TYPE_FIELDS[e.type]||[]).filter(f=>e.fields?.[f]).map(f=>`
+    <div class="detail-section">
+      <div class="detail-label">${f}</div>
+      <div class="detail-value">${escHtml(e.fields[f])}</div>
+    </div>`).join('');
+  const tags = (e.tags||[]).map(tag=>`<span class="tag">${escHtml(tag)}</span>`).join('');
+  const tagsRow = tags ? `<div class="card-tags" style="margin-top:10px">${tags}</div>` : '';
+  const notes = e.notes ? `<hr class="divider"><div class="detail-section"><div class="detail-label">Notes</div><div class="detail-value">${escHtml(e.notes)}</div></div>` : '';
+  const deleteRow = state.confirmDelete
+    ? `<div class="confirm-row"><span>Are you sure?</span><button class="btn btn-sm btn-danger" id="btn-confirm-delete">Yes, delete</button><button class="btn btn-sm" id="btn-cancel-delete">Cancel</button></div>`
+    : `<button class="btn btn-sm btn-danger" id="btn-delete">Delete Entry</button>`;
+
+  return `<div class="detail-panel open">
+    <div class="detail-header">
+      <span style="font-size:20px">${t.icon}</span>
+      <h2>${escHtml(e.name)}</h2>
+      <button class="btn btn-sm" id="btn-edit">Edit</button>
+      <button class="btn btn-sm" id="btn-close-detail" style="margin-left:4px">✕</button>
+    </div>
+    <div class="detail-body">
+      <span class="badge ${BADGE[e.type]}">${t.label}</span>
+      ${tagsRow}
+      ${e.description ? `<div class="detail-section" style="margin-top:16px"><div class="detail-label">Description</div><div class="detail-value">${escHtml(e.description)}</div></div>` : ''}
+      ${fields ? `<hr class="divider">${fields}` : ''}
+      ${notes}
+      <hr class="divider">
+      ${deleteRow}
+    </div>
+  </div>`;
+}
+
+// ── Modal ────────────────────────────────────────────
+function buildModal() {
+  const { mode, type, entity } = state.modal;
+  const t = typeMeta(type);
+  const fields = TYPE_FIELDS[type]||[];
+  const v = f => entity?.fields?.[f] ? escHtml(entity.fields[f]) : '';
+  const fieldRows = fields.map(f=>`
+    <div class="form-group">
+      <label class="form-label">${f}</label>
+      <input class="form-input" data-field="${escHtml(f)}" value="${v(f)}" placeholder="${f}…" />
+    </div>`).join('');
+
+  return `<div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span>${t.icon}</span>
+        <h3>${mode==='edit'?'Edit':'New'} ${t.label.replace(/s$/,'')}</h3>
+        <button class="btn btn-sm" id="btn-modal-close" style="margin-left:auto">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Name *</label>
+          <input class="form-input" id="field-name" value="${entity?escHtml(entity.name):''}" placeholder="${t.label.replace(/s$/,'')} name…" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="field-desc" placeholder="Brief overview…">${entity?escHtml(entity.description||''):''}</textarea>
+        </div>
+        ${fields.length ? `<hr class="divider">${fieldRows}` : ''}
+        <hr class="divider">
+        <div class="form-group">
+          <label class="form-label">Tags (comma-separated)</label>
+          <input class="form-input" id="field-tags" value="${entity?(entity.tags||[]).join(', '):''}" placeholder="protagonist, mage, exiled…" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Private Notes</label>
+          <textarea class="form-textarea" id="field-notes" style="min-height:70px" placeholder="Author notes, plot hooks, future ideas…">${entity?escHtml(entity.notes||''):''}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="btn-modal-cancel">Cancel</button>
+        <button class="btn btn-gold" id="btn-modal-save">${mode==='edit'?'Save Changes':'Add Entry'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Chat ─────────────────────────────────────────────
+function buildChat() {
+  const msgs = state.chat.map(m=>`
+    <div class="msg ${m.role}">
+      <div class="msg-name">${m.role==='user'?'You':'Lore Oracle'}</div>
+      <div class="msg-bubble">${escHtml(m.content)}</div>
+    </div>`).join('');
+
+  const loadingMsg = state.chatLoading ? `
+    <div class="msg assistant">
+      <div class="msg-name">Lore Oracle</div>
+      <div class="msg-bubble"><div class="dots"><span></span><span></span><span></span></div></div>
+    </div>` : '';
+
+  const empty = state.chat.length===0 ? `
+    <div class="empty-state" style="padding-top:30px">
+      <div class="empty-icon">🔮</div>
+      <h3>The Lore Oracle awaits</h3>
+      <p>Ask anything about your world. The Oracle reads your entire<br>story bible before every response.</p>
+    </div>` : '';
+
+  const chips = state.chat.length===0 ? `
+    <div class="chat-suggestions">
+      ${SUGGESTIONS.map(s=>`<div class="chip" data-suggest="${escHtml(s)}">${escHtml(s)}</div>`).join('')}
+    </div>` : '';
+
+  const offlineBanner = !isOnline() ? `<div class="offline-banner">⚡ You're offline — AI features need an internet connection. Your bible is still fully available.</div>` : '';
+
+  const apiKeySection = !state.apiKey ? `
+    <div class="api-setup" style="margin:0 20px 0">
+      <h4>🔑 API Key Required</h4>
+      <p>To use the Lore Oracle, enter your Anthropic API key. It's stored locally on your device only and never sent anywhere except Anthropic's servers.</p>
+      <div class="api-row">
+        <input class="form-input" id="api-key-input" type="password" placeholder="sk-ant-…" value="${escHtml(state.apiKeyDraft)}" />
+        <button class="btn btn-gold btn-sm" id="btn-save-api-key">Save</button>
+      </div>
+      <p style="margin-top:8px;font-size:11px">Get a key at <strong>console.anthropic.com</strong></p>
+    </div>` : `
+    <div style="padding:0 20px 4px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--muted)">🔑 API key saved</span>
+      <button class="btn btn-sm" id="btn-clear-api-key" style="font-size:11px;padding:2px 8px">Change</button>
+    </div>`;
+
+  return `<div class="chat-wrap">
+    <div class="chat-messages" id="chat-messages">${empty}${msgs}${loadingMsg}</div>
+    <div class="chat-bottom">
+      ${chips}
+      ${offlineBanner}
+      ${apiKeySection}
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chat-input" placeholder="Ask the Oracle anything about your world…" rows="1"></textarea>
+        <button class="btn btn-gold" id="btn-send" ${state.chatLoading||!isOnline()?'disabled':''}>Send</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Consistency ──────────────────────────────────────
+function buildConsistency() {
+  if (state.consistencyLoading) return `
+    <div class="empty-state">
+      <div class="dots" style="margin-bottom:16px;justify-content:center"><span></span><span></span><span></span></div>
+      <h3>Analysing your world…</h3>
+      <p>Cross-referencing all entries for contradictions and tensions.</p>
+    </div>`;
+
+  if (!state.consistencyReport) return `
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>Consistency Checker</h3>
+      <p>${state.entities.length < 2
+        ? 'Add at least a couple of entries before running a check.'
+        : `Click "Run Check" to analyse your ${state.entities.length} entries for contradictions and lore conflicts.`}</p>
+      ${!isOnline() ? '<p style="margin-top:10px;color:var(--red)">⚡ Requires an internet connection.</p>' : ''}
+    </div>`;
+
+  if (state.consistencyReport.length===0) return `
+    <div class="empty-state">
+      <div class="empty-icon">✅</div>
+      <h3>No issues found</h3>
+      <p>Your world looks consistent. Keep building!</p>
+    </div>`;
+
+  const items = state.consistencyReport.map(issue=>`
+    <div class="issue ${issue.severity||'low'}">
+      <div class="issue-title">${escHtml(issue.title||'Issue')}</div>
+      <div class="issue-desc">${escHtml(issue.description||'')}</div>
+      ${issue.entities?.length ? `<div class="issue-meta">Involves: ${escHtml(issue.entities.join(', '))}</div>` : ''}
+      <div class="issue-meta" style="color:${issue.severity==='high'?'#e07060':issue.severity==='medium'?'#c09040':'#60c080'}">${(issue.severity||'low').toUpperCase()} SEVERITY</div>
+    </div>`).join('');
+
+  return `<p style="color:var(--muted);font-size:13px;margin-bottom:16px">${state.consistencyReport.length} potential issue${state.consistencyReport.length!==1?'s':''} found</p>${items}`;
+}
+
+// ── Events ────────────────────────────────────────────
+function bindEvents() {
+  // Nav
+  document.querySelectorAll('[data-nav]').forEach(el => {
+    el.addEventListener('click', () => {
+      state.nav = el.dataset.nav;
+      state.search = '';
+      state.confirmDelete = false;
+      render();
+    });
+  });
+
+  // Entity cards
+  document.querySelectorAll('[data-entity]').forEach(el => {
+    el.addEventListener('click', () => {
+      const e = state.entities.find(x=>x.id===el.dataset.entity);
+      if (e) { state.detail = e; state.confirmDelete = false; render(); }
+    });
+  });
+
+  // Add button
+  const btnAdd = document.getElementById('btn-add');
+  if (btnAdd) btnAdd.addEventListener('click', () => {
+    const type = ENTITY_TYPES.find(t=>t.id===state.nav)?.id || 'char';
+    state.modal = { mode:'add', type };
+    render();
+  });
+
+  // Search
+  const si = document.getElementById('search-input');
+  if (si) { si.addEventListener('input', e => { state.search = e.target.value; render(); }); si.focus(); }
+
+  // Detail panel
+  const btnCloseDetail = document.getElementById('btn-close-detail');
+  if (btnCloseDetail) btnCloseDetail.addEventListener('click', () => { state.detail=null; render(); });
+
+  const btnEdit = document.getElementById('btn-edit');
+  if (btnEdit) btnEdit.addEventListener('click', () => {
+    state.modal = { mode:'edit', type:state.detail.type, entity:state.detail };
+    render();
+  });
+
+  const btnDelete = document.getElementById('btn-delete');
+  if (btnDelete) btnDelete.addEventListener('click', () => { state.confirmDelete=true; render(); });
+
+  const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+  if (btnConfirmDelete) btnConfirmDelete.addEventListener('click', () => {
+    state.entities = state.entities.filter(e=>e.id!==state.detail.id);
+    saveEntities(state.entities);
+    state.detail=null; state.confirmDelete=false; render();
+  });
+
+  const btnCancelDelete = document.getElementById('btn-cancel-delete');
+  if (btnCancelDelete) btnCancelDelete.addEventListener('click', () => { state.confirmDelete=false; render(); });
+
+  // Modal
+  const overlay = document.getElementById('modal-overlay');
+  if (overlay) overlay.addEventListener('click', e => { if (e.target===overlay) { state.modal=null; render(); } });
+
+  const btnModalClose = document.getElementById('btn-modal-close');
+  if (btnModalClose) btnModalClose.addEventListener('click', () => { state.modal=null; render(); });
+
+  const btnModalCancel = document.getElementById('btn-modal-cancel');
+  if (btnModalCancel) btnModalCancel.addEventListener('click', () => { state.modal=null; render(); });
+
+  const btnModalSave = document.getElementById('btn-modal-save');
+  if (btnModalSave) btnModalSave.addEventListener('click', () => {
+    const name = document.getElementById('field-name')?.value.trim();
+    if (!name) { document.getElementById('field-name')?.focus(); return; }
+    const fields = {};
+    document.querySelectorAll('[data-field]').forEach(el => { if (el.value.trim()) fields[el.dataset.field] = el.value.trim(); });
+    const tags = document.getElementById('field-tags')?.value.split(',').map(t=>t.trim()).filter(Boolean)||[];
+    const entity = {
+      id: state.modal.mode==='edit' ? state.modal.entity.id : uid(),
+      type: state.modal.type,
+      name,
+      description: document.getElementById('field-desc')?.value.trim()||'',
+      fields,
+      tags,
+      notes: document.getElementById('field-notes')?.value.trim()||'',
+      updatedAt: Date.now(),
+      createdAt: state.modal.mode==='edit' ? (state.modal.entity.createdAt||Date.now()) : Date.now(),
+    };
+    state.entities = [...state.entities.filter(e=>e.id!==entity.id), entity];
+    saveEntities(state.entities);
+    state.detail = entity;
+    state.modal = null;
+    render();
+  });
+
+  // Chat
+  const chatInput = document.getElementById('chat-input');
+  if (chatInput) {
+    chatInput.addEventListener('keydown', e => {
+      if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+    });
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height='auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 150)+'px';
+    });
+  }
+
+  const btnSend = document.getElementById('btn-send');
+  if (btnSend) btnSend.addEventListener('click', sendChat);
+
+  document.querySelectorAll('[data-suggest]').forEach(el => {
+    el.addEventListener('click', () => {
+      const chatInput = document.getElementById('chat-input');
+      if (chatInput) chatInput.value = el.dataset.suggest;
+      sendChat(el.dataset.suggest);
+    });
+  });
+
+  // API key
+  const btnSaveKey = document.getElementById('btn-save-api-key');
+  if (btnSaveKey) btnSaveKey.addEventListener('click', () => {
+    const val = document.getElementById('api-key-input')?.value.trim();
+    if (val) { state.apiKey=val; saveApiKey(val); render(); }
+  });
+  const apiKeyInput = document.getElementById('api-key-input');
+  if (apiKeyInput) {
+    apiKeyInput.addEventListener('input', e => { state.apiKeyDraft = e.target.value; });
+    apiKeyInput.addEventListener('keydown', e => { if (e.key==='Enter') btnSaveKey?.click(); });
+  }
+  const btnClearKey = document.getElementById('btn-clear-api-key');
+  if (btnClearKey) btnClearKey.addEventListener('click', () => { state.apiKey=''; saveApiKey(''); state.apiKeyDraft=''; render(); });
+
+  // Consistency
+  const btnCheck = document.getElementById('btn-check');
+  if (btnCheck) btnCheck.addEventListener('click', runConsistencyCheck);
+
+  // Install banner
+  const btnDismiss = document.getElementById('btn-dismiss-install');
+  if (btnDismiss) btnDismiss.addEventListener('click', () => { state.showInstallBanner=false; render(); });
+
+  // Scroll chat to bottom
+  const chatMsgs = document.getElementById('chat-messages');
+  if (chatMsgs) chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+  // Dashboard stat cards
+  document.querySelectorAll('.stat-card[data-nav]').forEach(el => {
+    el.addEventListener('click', () => { state.nav=el.dataset.nav; render(); });
+  });
+}
+
+// ── AI: World context ────────────────────────────────
+function worldContext() {
+  return state.entities.map(e => {
+    const t = typeMeta(e.type);
+    const fieldStr = Object.entries(e.fields||{}).map(([k,v])=>`  ${k}: ${v}`).join('\n');
+    return `[${t.label.toUpperCase()}] ${e.name}\n${e.description||''}\n${fieldStr}`;
+  }).join('\n\n');
+}
+
+// ── AI: Chat ─────────────────────────────────────────
+async function sendChat(text) {
+  const chatInput = document.getElementById('chat-input');
+  const msg = (text || chatInput?.value || '').trim();
+  if (!msg || state.chatLoading || !isOnline()) return;
+
+  if (chatInput) chatInput.value = '';
+
+  if (!state.apiKey) {
+    state.chat.push({ role:'assistant', content:'Please enter your Anthropic API key above to use the Lore Oracle.' });
+    saveChat(state.chat);
+    render(); return;
+  }
+
+  state.chat.push({ role:'user', content: msg });
+  state.chatLoading = true;
+  render();
+
+  const systemPrompt = `You are WorldForge, an expert creative collaborator and worldbuilding assistant for a fantasy series. You have deep knowledge of the author's world based on the story bible below. Help with: answering lore questions, generating new ideas consistent with existing lore, checking consistency, drafting scene snippets, and suggesting plot directions. Be specific, creative, and reference existing world details when relevant. Keep responses focused and useful. Speak with gravitas befitting a fantasy world.
+
+=== STORY BIBLE ===
+${worldContext() || '(No entries yet — help the author start building their world!)'}
+=== END BIBLE ===`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': state.apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: systemPrompt,
+        messages: state.chat.map(m=>({role:m.role, content:m.content})),
+      }),
+    });
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error.message);
+    const reply = json.content?.map(b=>b.text||'').join('')||'No response received.';
+    state.chat.push({ role:'assistant', content:reply });
+  } catch(err) {
+    state.chat.push({ role:'assistant', content:`⚠️ Error: ${err.message}. Check your API key and internet connection.` });
+  }
+  state.chatLoading = false;
+  saveChat(state.chat);
+  render();
+}
+
+// ── AI: Consistency ──────────────────────────────────
+async function runConsistencyCheck() {
+  if (!isOnline()) { alert('Consistency check requires an internet connection.'); return; }
+  if (!state.apiKey) { state.nav='chat'; render(); return; }
+  if (state.entities.length < 2) return;
+  state.consistencyLoading = true;
+  state.consistencyReport = null;
+  render();
+
+  const ctx = worldContext();
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': state.apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1500,
+        system:`You are a meticulous fantasy editor and continuity specialist. Analyse the story bible and identify potential inconsistencies, contradictions, plot holes, or logical tensions between entries. Return ONLY a valid JSON array of objects with keys: title (string), description (string), severity ("high"|"medium"|"low"), entities (array of names). No markdown, no fences, just raw JSON.`,
+        messages:[{role:'user', content:ctx}],
+      }),
+    });
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error.message);
+    const raw = json.content?.map(b=>b.text||'').join('')||'[]';
+    state.consistencyReport = JSON.parse(raw.replace(/```json|```/g,'').trim());
+  } catch(err) {
+    state.consistencyReport = [{title:'Analysis Error', description: err.message, severity:'low', entities:[]}];
+  }
+  state.consistencyLoading = false;
+  render();
+}
+
+// ── Utility ──────────────────────────────────────────
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+// ── Online/offline events ────────────────────────────
+window.addEventListener('online',  () => render());
+window.addEventListener('offline', () => render());
+
+// ── Boot ─────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
