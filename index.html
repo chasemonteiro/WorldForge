@@ -559,14 +559,28 @@ function buildChat() {
 
 // ── Manuscript Importer ──────────────────────────────────────
 function buildManuscript() {
-  if (state.manuscriptLoading) return `
+  if (state.manuscriptLoading) {
+    const { chunksDone=0, chunksTotal=1 } = state.manuscriptProgress || {};
+    const pct = chunksTotal > 1 ? Math.round((chunksDone/chunksTotal)*100) : null;
+    return `
     <div style="padding:24px">
       <div class="empty-state">
         <div class="dots" style="margin-bottom:16px;justify-content:center"><span></span><span></span><span></span></div>
         <h3>Reading your manuscript…</h3>
-        <p>The Oracle is scanning for characters, factions, locations, and lore.<br>This may take a moment for longer texts.</p>
+        <p>The Oracle is scanning every page for characters, factions,<br>locations, magic systems, and historical events.</p>
+        ${chunksTotal > 1 ? `
+          <div style="margin-top:20px;max-width:320px;margin-left:auto;margin-right:auto">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">
+              <span>Section ${chunksDone} of ${chunksTotal}</span><span>${pct}%</span>
+            </div>
+            <div style="background:var(--bg3);border-radius:20px;height:6px;overflow:hidden;border:1px solid var(--border2)">
+              <div style="background:var(--gold);height:100%;width:${pct}%;transition:width .4s;border-radius:20px"></div>
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin-top:8px">Processing large manuscripts in sections — please keep this tab open.</p>
+          </div>` : ''}
       </div>
     </div>`;
+  }
 
   if (state.manuscriptSuggestions && state.manuscriptSuggestions.length > 0) {
     const items = state.manuscriptSuggestions.map((s, i) => {
@@ -584,14 +598,17 @@ function buildManuscript() {
       </div>`;
     }).join('');
 
+    const total = state.manuscriptSuggestions.length;
     const remaining = state.manuscriptSuggestions.filter((_,i)=>!state.acceptedSuggestions.has(i)).length;
+    const allDone = remaining === 0;
 
     return `<div style="padding:24px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
         <div style="flex:1">
           <div class="section-title">Suggested Entries from Manuscript</div>
-          <p style="font-size:13px;color:var(--muted)">${remaining} suggestion${remaining!==1?'s':''} remaining · Review and add what fits your bible</p>
+          <p style="font-size:13px;color:var(--muted)">${total} suggestion${total!==1?'s':''} found · ${remaining} remaining</p>
         </div>
+        ${!allDone ? `<button class="btn btn-gold btn-sm" id="btn-accept-all">✓ Accept All</button>` : ''}
         <button class="btn btn-sm" id="btn-new-import">↑ Import Another</button>
       </div>
       <div class="suggestion-list">${items}</div>
@@ -778,9 +795,22 @@ function bindEvents() {
     importZone.addEventListener('drop', e => { e.preventDefault(); importZone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
   }
   document.getElementById('btn-new-import')?.addEventListener('click', () => {
-    state.manuscriptSuggestions=null; state.acceptedSuggestions=new Set(); render();
+    state.manuscriptSuggestions=null; state.acceptedSuggestions=new Set(); state.manuscriptProgress=null; render();
   });
   document.getElementById('file-picker').onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); e.target.value=''; };
+
+  // Batch accept all remaining
+  document.getElementById('btn-accept-all')?.addEventListener('click', () => {
+    const toAdd = state.manuscriptSuggestions.filter((_,i) => !state.acceptedSuggestions.has(i));
+    const newEntities = toAdd.map(s => ({
+      id:uid(), type:s.type, name:s.name, description:s.description,
+      fields:{}, tags:s.tags||[], notes:'', updatedAt:Date.now(), createdAt:Date.now(),
+    }));
+    state.entities = [...state.entities, ...newEntities];
+    save(LS.entities, state.entities);
+    state.manuscriptSuggestions.forEach((_,i) => state.acceptedSuggestions.add(i));
+    render();
+  });
 
   // Manuscript suggestions — accept / dismiss
   document.querySelectorAll('[data-accept]').forEach(el => {
@@ -941,7 +971,45 @@ async function runConsistencyCheck() {
   state.consistencyLoading=false; render();
 }
 
-// ── Manuscript Analysis ──────────────────────────────────────
+// ── Manuscript Analysis (chunked for full manuscripts) ───────
+const CHUNK_SIZE = 14000; // ~3500 tokens per chunk, safe for both Claude & GPT-4o
+
+function chunkText(text, size) {
+  const chunks = [];
+  // Try to split on paragraph boundaries to avoid cutting mid-sentence
+  const paragraphs = text.split(/\n\s*\n/);
+  let current = '';
+  for (const para of paragraphs) {
+    if ((current + para).length > size && current.length > 0) {
+      chunks.push(current.trim());
+      current = para;
+    } else {
+      current += (current ? '\n\n' : '') + para;
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+  // If any single chunk is still too large, hard-split it
+  const result = [];
+  for (const c of chunks) {
+    if (c.length > size) {
+      for (let i=0; i<c.length; i+=size) result.push(c.slice(i, i+size));
+    } else {
+      result.push(c);
+    }
+  }
+  return result;
+}
+
+function deduplicateSuggestions(suggestions) {
+  const seen = new Set();
+  return suggestions.filter(s => {
+    const key = s.name.toLowerCase().trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 async function handleFile(file) {
   if (!file) return;
   if (!isOnline()) { alert('Manuscript analysis requires an internet connection.'); return; }
@@ -949,25 +1017,43 @@ async function handleFile(file) {
   if (!key) { state.nav='chat'; render(); return; }
 
   const text = await file.text();
-  // Truncate to ~12k chars to stay within token limits
-  const excerpt = text.slice(0, 12000);
+  const chunks = chunkText(text, CHUNK_SIZE);
 
-  state.manuscriptLoading=true; state.manuscriptSuggestions=null; state.acceptedSuggestions=new Set();
+  state.manuscriptLoading = true;
+  state.manuscriptSuggestions = null;
+  state.acceptedSuggestions = new Set();
+  state.manuscriptProgress = { chunksDone: 0, chunksTotal: chunks.length };
   render();
 
-  try {
-    const raw = await callAI({
-      system: `You are a fantasy story bible builder. Analyse the manuscript excerpt and extract distinct worldbuilding elements. For each element, determine its type from: char (characters), faction (organisations/groups), location (places), magic (magic systems/powers), history (historical events/lore). Return ONLY a valid JSON array of objects with keys: name (string), type ("char"|"faction"|"location"|"magic"|"history"), description (2-3 sentence summary of what's established in the text), tags (array of 2-4 short descriptor strings). Focus on elements with enough detail to be useful. Aim for 5-15 entries. No markdown, no fences, just raw JSON array.`,
-      userContent: `Here is the manuscript excerpt to analyse:\n\n${excerpt}`,
-      maxTokens: 2000,
-    });
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    state.manuscriptSuggestions = Array.isArray(parsed) ? parsed : [];
-  } catch(err) {
-    state.manuscriptSuggestions = [];
-    alert('Analysis failed: ' + err.message);
+  const system = `You are a fantasy story bible builder. Analyse this section of a manuscript and extract distinct worldbuilding elements. For each element determine its type: char (named characters), faction (organisations/groups/factions), location (named places), magic (magic systems/powers/artifacts), history (historical events/lore). Return ONLY a valid JSON array of objects with keys: name (string), type ("char"|"faction"|"location"|"magic"|"history"), description (2-3 sentence summary based only on what this text establishes), tags (array of 2-4 short descriptors). Only include elements with enough detail to be worth a bible entry. No markdown, no fences, raw JSON array only.`;
+
+  const allSuggestions = [];
+  let errorCount = 0;
+
+  for (let i=0; i<chunks.length; i++) {
+    try {
+      const raw = await callAI({
+        system,
+        userContent: `Manuscript section ${i+1} of ${chunks.length}:\n\n${chunks[i]}`,
+        maxTokens: 2000,
+      });
+      const parsed = JSON.parse(raw.replace(/\`\`\`json|\`\`\`/g,'').trim());
+      if (Array.isArray(parsed)) allSuggestions.push(...parsed);
+    } catch(err) {
+      errorCount++;
+      console.warn(`Chunk ${i+1} failed:`, err.message);
+    }
+    state.manuscriptProgress = { chunksDone: i+1, chunksTotal: chunks.length };
+    render();
   }
-  state.manuscriptLoading=false; render();
+
+  state.manuscriptSuggestions = deduplicateSuggestions(allSuggestions);
+  state.manuscriptLoading = false;
+
+  if (errorCount > 0 && allSuggestions.length === 0) {
+    alert('Analysis failed on all sections. Check your API key and connection.');
+  }
+  render();
 }
 
 // ── Utility ──────────────────────────────────────────────────
