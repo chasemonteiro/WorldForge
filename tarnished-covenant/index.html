@@ -8,22 +8,1145 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Tarnished Covenant">
   <title>The Tarnished Covenant</title>
-  <link rel="stylesheet" href="./styles.css">
+  <style>:root{
+  color-scheme:dark;
+  --bg:#080806;--bg2:#0d0c09;--paper:#14120e;--paper2:#1a1711;--ink:#eee6d4;--ash:#9f9683;
+  --line:#393326;--line-soft:#262219;--gold:#c6a15a;--gold-bright:#e0c17b;--red:#c9665a;--violet:#9780ad;
+  --region-glow:rgba(149,120,65,.14);--region-glow2:rgba(67,56,34,.09);
+  font-family:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);background:
+  radial-gradient(ellipse at 50% -10%,var(--region-glow),transparent 42%),
+  radial-gradient(ellipse at 100% 55%,var(--region-glow2),transparent 40%),
+  linear-gradient(180deg,#0b0a08 0%,var(--bg) 48%,#050504 100%);background-attachment:fixed;transition:background .35s ease}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:repeating-linear-gradient(8deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px);mix-blend-mode:screen}
+body[data-region="caelid"]{--region-glow:rgba(115,26,20,.25);--region-glow2:rgba(100,53,20,.10)}
+body[data-region="liurnia"]{--region-glow:rgba(55,78,105,.23);--region-glow2:rgba(78,104,114,.09)}
+body[data-region="leyndell"]{--region-glow:rgba(181,131,47,.20);--region-glow2:rgba(116,80,28,.12)}
+body[data-region="gelmir"],body[data-region="jagged"]{--region-glow:rgba(122,48,22,.23);--region-glow2:rgba(83,25,14,.12)}
+body[data-region="snow"]{--region-glow:rgba(138,156,163,.16);--region-glow2:rgba(84,98,111,.10)}
+body[data-region="haligtree"],body[data-region="enir"]{--region-glow:rgba(207,191,128,.16);--region-glow2:rgba(111,123,78,.10)}
+body[data-region="farum"]{--region-glow:rgba(121,104,82,.18);--region-glow2:rgba(84,65,46,.12)}
+body[data-region="gravesite"],body[data-region="shadow"]{--region-glow:rgba(76,70,53,.23);--region-glow2:rgba(97,64,45,.09)}
+body[data-region="coast"]{--region-glow:rgba(46,94,104,.20);--region-glow2:rgba(49,69,103,.10)}
+body[data-region="abyss"]{--region-glow:rgba(100,73,38,.17);--region-glow2:rgba(62,53,38,.10)}
+body[data-region="rauh"]{--region-glow:rgba(71,102,64,.17);--region-glow2:rgba(91,79,46,.10)}
+button,select,input{font:inherit}button{cursor:pointer}.app-shell{width:100%;max-width:860px;margin:auto;padding:22px 15px 48px;position:relative}
+.center{text-align:center}.left{text-align:left}.site-header{text-align:center;padding:4px 0 8px}.site-header.compact{padding-bottom:2px}.sigil{font-size:23px;color:var(--gold);text-shadow:0 0 22px rgba(208,167,84,.38);margin-bottom:5px}.eyebrow,.micro,.label,.tag,.section-kicker,.who,.weapon-type,.fate-title,.scope{font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.14em}.eyebrow,.tag,.section-kicker{color:var(--gold)}
+h1{font-weight:400;font-size:clamp(34px,10vw,50px);line-height:.98;margin:7px 0}.site-header.compact h1{font-size:clamp(24px,7vw,35px);margin:5px 0}.header-dumb{font-size:11px;color:var(--ash);font-style:italic;margin-top:6px}.sub{color:var(--ash);font-size:14px;line-height:1.5;margin:3px auto 0;max-width:680px}.mode-pill{display:inline-block;margin-top:11px;padding:4px 8px;border-bottom:1px solid var(--line);font:750 9px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ash)}
+.menu-section{max-width:620px;margin:22px auto 0;padding:0 2px}.stack{display:grid;gap:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.menu-title{font-size:26px;text-align:center;margin-bottom:2px}.label{display:block;color:var(--ash);margin-bottom:7px}select,input{width:100%;min-height:50px;border:0;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent,var(--paper) 12%,var(--paper) 88%,transparent);color:var(--ink);border-radius:0;padding:0 11px;font-size:16px;outline:none}select:focus,input:focus{border-bottom-color:var(--gold)}
+.btn{width:100%;min-height:49px;border:1px solid var(--line);background:rgba(18,16,12,.55);color:var(--ink);padding:11px 13px;font:850 10px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}.btn.gold{background:linear-gradient(180deg,#d3b36e,#b28d48);border-color:#d7ba78;color:#17120a;text-shadow:0 1px rgba(255,255,255,.2)}.btn.ghost{background:transparent}.btn.curse{border-color:rgba(201,102,90,.62);color:#e08b7f;background:rgba(86,25,20,.10)}.btn.text-btn{border:0;background:transparent;color:var(--ash);clip-path:none;text-transform:lowercase;letter-spacing:0}.btn.small{min-height:42px;font-size:9px}.btn:disabled{opacity:.45;cursor:not-allowed}.victory{min-height:59px;font-size:11px;letter-spacing:.08em}
+.status{margin-top:14px;color:var(--ash);font:11px/1.45 system-ui,sans-serif;text-align:center}.status.warn{color:var(--red)}.join-banner{max-width:620px;margin:15px auto -4px;text-align:center;color:var(--gold);font:800 10px/1.4 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.join-banner strong{font-size:13px}
+.ornament{display:flex;align-items:center;gap:9px;margin:18px 0;color:var(--gold);opacity:.78}.ornament:before,.ornament:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--line),transparent)}.ornament span{font-size:12px}.ornament.redline{color:var(--red)}.ornament.violetline{color:var(--violet)}.boss-ornament{margin-bottom:7px}
+.region-header{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;padding:17px 0 12px;border-bottom:1px solid var(--line)}.micro{color:var(--ash)}.region{font-size:25px;line-height:1.05;margin-top:4px}.count{font:750 10px/1.3 system-ui,sans-serif;color:var(--ash);margin-top:7px;text-transform:uppercase;letter-spacing:.06em}.room-meta{text-align:right}.share-chip{border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--gold);padding:7px 0;font:850 11px/1 system-ui,sans-serif;letter-spacing:.09em}.share-chip span{color:var(--ash);font-size:8px;margin-right:7px}.fate-block{text-align:center;padding:13px 8px 2px}.progress-marks{display:flex;justify-content:center;gap:5px;margin-bottom:7px}.mark{font-size:12px;color:#464035}.mark.done{color:var(--gold);text-shadow:0 0 12px rgba(198,161,90,.35)}.mark.required:not(.done){color:#746747}.fate-title{color:var(--gold)}.fate-copy{font-size:10px;color:var(--ash);font-style:italic;margin-top:5px}.omen{text-align:center;color:var(--ash);font-size:11px;font-style:italic;padding-top:10px;min-height:27px}
+.target{text-align:center;padding:11px 12px 6px;position:relative}.target.exit:before{content:"";position:absolute;inset:-10px 8%;background:radial-gradient(ellipse,rgba(198,161,90,.16),transparent 70%);filter:blur(4px);z-index:-1}.boss{font-size:clamp(30px,9vw,46px);line-height:1.02;margin:9px auto 7px;max-width:720px;text-wrap:balance}.flavor{font-size:12px;line-height:1.4;color:var(--ash);font-style:italic}.target.exit .tag{color:var(--gold-bright)}
+.weapon-section{padding:0 2px}.section-kicker{text-align:center;margin-bottom:10px}.loadouts{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}.player{padding:16px 14px 15px;min-width:0}.player+ .player{border-left:1px solid var(--line)}.who{color:var(--ash)}.weapon{font-size:clamp(20px,5.5vw,29px);line-height:1.08;margin:7px 0 3px}.weapon-aside{font-size:10px;color:var(--ash);font-style:italic;margin-bottom:9px}.weapon-type{color:var(--gold);font-size:8px;margin-bottom:10px}.weapon-stats{margin:0}.weapon-stats>div{display:grid;grid-template-columns:58px 1fr;gap:6px;padding:3px 0}.weapon-stats dt{font:750 8px/1.3 system-ui,sans-serif;text-transform:uppercase;color:#776f60;letter-spacing:.08em}.weapon-stats dd{margin:0;font-size:11px;line-height:1.3;color:#c9c0af;overflow-wrap:anywhere}
+.redtext{color:var(--red)}.violettext{color:var(--violet)}.curse-section{margin:20px 0 3px;padding:15px 15px;background:linear-gradient(90deg,transparent,rgba(91,28,23,.14) 13%,rgba(91,28,23,.14) 87%,transparent);border-top:1px solid rgba(201,102,90,.23);border-bottom:1px solid rgba(201,102,90,.23)}.curse-head{text-align:center;color:var(--red);font-size:13px;margin:6px 0 4px}.curse-glyphs{letter-spacing:3px;margin-right:7px}.penance-item{padding:12px 0;border-top:1px solid rgba(201,102,90,.18)}.scope{color:var(--red);font-size:8px}.penance-name{font-size:19px;margin:6px 0 5px}.penance-text{font-size:13px;line-height:1.42;color:#c8beac}.subtext{font-size:10px;color:var(--ash);font-style:italic;line-height:1.4;margin-top:7px}
+.chaos-section{text-align:center;padding:1px 13px 4px}.chaos-caption{font-size:11px;color:var(--ash);margin-top:5px}.trigger{font-size:clamp(18px,5vw,24px);line-height:1.2;margin:8px auto 13px;max-width:680px}.seal-button{border:0;background:transparent;color:var(--red);display:grid;gap:6px;place-items:center;margin:0 auto;padding:5px 15px;font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.seal{display:grid;place-items:center;width:55px;height:55px;border:1px solid var(--red);border-radius:50%;font-size:24px;font-family:Georgia,serif;box-shadow:0 0 0 4px rgba(201,102,90,.05),0 0 24px rgba(201,102,90,.12);transform:rotate(-7deg)}.chaos-reveal{max-width:660px;margin:12px auto 0;padding:14px 0;border-top:1px solid rgba(201,102,90,.35);border-bottom:1px solid rgba(201,102,90,.18);background:radial-gradient(ellipse,rgba(105,29,23,.18),transparent 70%)}.chaos-bad{font:850 9px/1 system-ui,sans-serif;color:var(--red);text-transform:uppercase;letter-spacing:.15em}.mutation{font-size:19px;line-height:1.3;color:#e18a7e;margin:8px auto;max-width:620px}.chaos-foot{font-size:10px;color:var(--ash);font-style:italic}
+.weird-section{text-align:center;padding:1px 16px 4px;max-width:690px;margin:auto}.weird-name{font-size:clamp(21px,6vw,29px);margin:8px 0}.rtext{font-size:15px;line-height:1.45;color:#d2c9b8}.item-footer{font-size:10px;color:var(--ash);font-style:italic;margin-top:8px}.game-actions{max-width:720px;margin:auto}.utility{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.appeals{margin-top:25px;padding-top:16px;border-top:1px solid var(--line)}.appeal-copy{text-align:center;color:var(--ash);font-size:11px;margin:-2px 0 11px}.appeal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.confirm{margin:14px auto 0;max-width:700px;padding:16px 14px;background:linear-gradient(90deg,transparent,rgba(87,27,22,.14),transparent);border-top:1px solid rgba(201,102,90,.3);border-bottom:1px solid rgba(201,102,90,.3)}.confirm h3{text-align:center;font-size:22px;color:var(--red);font-weight:400;margin:7px 0}.confirm .rtext{font-size:13px;text-align:center}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.restart-grid{margin-top:13px}
+.history{margin-top:25px;padding-top:15px;border-top:1px solid var(--line)}.history-row{display:flex;justify-content:space-between;gap:10px;padding:8px 3px;border-bottom:1px solid var(--line-soft);font-size:12px;color:var(--ash)}.history-row strong{font-weight:400;color:var(--ink)}.empty-history{text-align:center;color:var(--ash);font-size:12px;font-style:italic;padding:8px}.run-options{margin-top:18px}.last-action{opacity:.75}.escape-screen{text-align:center;padding:27px 10px 14px}.escape-title{font-size:clamp(33px,9vw,47px);margin:10px 0 7px}.escape-copy{color:var(--ash);font-style:italic;font-size:13px}.toast{position:sticky;bottom:14px;margin:15px auto 0;max-width:560px;background:#15130f;border:1px solid var(--line);padding:11px;text-align:center;font:11px/1.4 system-ui,sans-serif;color:var(--ash);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+@media(max-width:570px){.app-shell{padding-left:13px;padding-right:13px}.region-header{align-items:flex-start}.region{font-size:21px}.room-meta{max-width:48%}.share-chip{font-size:10px}.weapon-stats>div{grid-template-columns:48px 1fr}.player{padding-left:9px;padding-right:9px}.appeal-grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.confirm-actions{grid-template-columns:1fr}.boss{font-size:34px}}
+@media(max-width:370px){.weapon{font-size:18px}.weapon-stats dd{font-size:10px}.weapon-stats dt{font-size:7px}.player{padding-left:7px;padding-right:7px}.region-header{display:block}.room-meta{text-align:left;max-width:none;margin-top:9px}}
+</style>
 </head>
 <body>
   <main id="app" class="app-shell" aria-live="polite"></main>
-  <script>
+  <script>// Public browser configuration for The Tarnished Covenant.
+// Publishable keys are meant to live in browser code. Never put a service-role key here.
 window.TARNISHED_CONFIG = {
   SUPABASE_URL: 'https://qwnwksyiofolldliaqhf.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_8UGLJMFfhZMo4ndceYbO4g_l3zAdAI5',
-  APP_URL: 'https://tarnished-covenant-vhz88nnqr8-4762.vercel.app/'
+  APP_URL: 'https://qwnwksyiofolldliaqhf.supabase.co/functions/v1/tarnished-covenant'
 };
 </script>
-  <script src="./game-data.js"></script>
-  <script src="./game-engine.js"></script>
-  <script src="./storage.js"></script>
-  <script src="./backend.js"></script>
-  <script src="./app-core.js"></script>
-  <script src="./app-ui.js"></script>
+<script>const omens = [
+  'dog ahead.',
+  'fort, night.',
+  'the app has noticed.',
+  'the two fingers have left the group chat.',
+  'verified by nobody.',
+  'works on my machine.',
+  'big sword department open.',
+  'the greater will is unavailable.',
+  'source: it happened.',
+  'miyazaki has opened the spreadsheet.',
+  'someone is about to make this worse.',
+  'grace remains unhelpful.'
+];
+
+
+const encounterFlavors = [
+  'current target.',
+  'regional target.',
+  'unfortunately he has health.',
+  'not sure what his deal is.',
+  'go beat his ass, probably.',
+  'boss-shaped inconvenience.',
+  'we have to kill this thing apparently.',
+  'source: the app said so.',
+  'confidence currently unsupported.',
+  'this seems manageable. suspicious.',
+  'famous last words.'
+];
+
+
+
+const W = (name, type, upgrade, native, infusable = true, requires = '') => ({
+  name, type, upgrade, native, infusable, requires
+});
+
+const regions = {
+  'Limgrave + Stormveil': {
+    exit: 'Godrick the Grafted',
+    bosses: ['Tree Sentinel','Flying Dragon Agheel','Tibia Mariner','Deathbird','Night’s Cavalry','Stonedigger Troll','Erdtree Burial Watchdog','Black Knife Assassin','Margit, the Fell Omen'],
+    weapons: [
+      W('Twinblade','Twinblade','Smithing Stones','Spinning Slash'),
+      W('Great Épée','Heavy Thrusting Sword','Smithing Stones','Impaling Thrust'),
+      W('Lordsworn’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Flail','Flail','Smithing Stones','Spinning Chain'),
+      W('Uchigatana','Katana','Smithing Stones','Unsheathe'),
+      W('Brick Hammer','Great Hammer','Smithing Stones','Barbaric Roar'),
+      W('Hookclaws','Claw','Smithing Stones','Quickstep'),
+      W('Highland Axe','Axe','Smithing Stones','War Cry')
+    ]
+  },
+  'Weeping Peninsula': {
+    exit: 'Leonine Misbegotten',
+    bosses: ['Erdtree Avatar','Deathbird','Night’s Cavalry','Cemetery Shade','Runebear','Miranda the Blighted Bloom','Scaly Misbegotten'],
+    weapons: [
+      W('Claymore','Greatsword','Smithing Stones','Lion’s Claw'),
+      W('Zweihander','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Morning Star','Hammer','Smithing Stones','Kick'),
+      W('Winged Scythe','Reaper','Somber Smithing Stones','Angel’s Wings',false)
+    ]
+  },
+  'Liurnia of the Lakes': {
+    exit: 'Rennala, Queen of the Full Moon',
+    bosses: ['Red Wolf of Radagon','Glintstone Dragon Smarag','Royal Knight Loretta','Omenkiller','Tibia Mariner','Death Rite Bird','Crystalian','Magma Wyrm Makar'],
+    weapons: [
+      W('Urumi','Whip','Smithing Stones','Kick'),
+      W('Sword of Night and Flame','Straight Sword','Somber Smithing Stones','Night-and-Flame Stance',false),
+      W('Icerind Hatchet','Axe','Somber Smithing Stones','Hoarfrost Stomp',false),
+      W('Carian Knight’s Sword','Straight Sword','Somber Smithing Stones','Carian Grandeur',false),
+      W('Crystal Sword','Straight Sword','Somber Smithing Stones','Spinning Slash',false),
+      W('Lazuli Glintstone Sword','Straight Sword','Somber Smithing Stones','Glintstone Pebble',false)
+    ]
+  },
+  'Caelid': {
+    exit: 'Starscourge Radahn',
+    bosses: ['Commander O’Neil','Decaying Ekzykes','Putrid Avatar','Death Rite Bird','Night’s Cavalry','Fallingstar Beast','Godskin Apostle','Magma Wyrm'],
+    weapons: [
+      W('Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Cross-Naginata','Spear','Smithing Stones','Impaling Thrust'),
+      W('Meteoric Ore Blade','Katana','Somber Smithing Stones','Gravitas',false),
+      W('Venomous Fang','Claw','Smithing Stones','Quickstep'),
+      W('Wakizashi','Dagger','Smithing Stones','Quickstep')
+    ]
+  },
+  'Altus Plateau + Leyndell': {
+    exit: 'Morgott, the Omen King',
+    bosses: ['Ancient Dragon Lansseax','Wormface','Godskin Apostle','Elemer of the Briar','Draconic Tree Sentinel','Godfrey, Golden Shade','Mohg, the Omen'],
+    weapons: [
+      W('Great Stars','Great Hammer','Smithing Stones','Endure'),
+      W('Star Fist','Fist','Smithing Stones','Endure'),
+      W('Bolt of Gransax','Spear','Somber Smithing Stones','Ancient Lightning Spear',false),
+      W('Coded Sword','Straight Sword','Somber Smithing Stones','Unblockable Blade',false),
+      W('Guardian’s Swordspear','Halberd','Smithing Stones','Spinning Slash'),
+      W('Celebrant’s Sickle','Dagger','Smithing Stones','Quickstep'),
+      W('Envoy’s Long Horn','Great Hammer','Somber Smithing Stones','Bubble Shower',false)
+    ]
+  },
+  'Mt. Gelmir': {
+    exit: 'Rykard, Lord of Blasphemy',
+    bosses: ['Full-Grown Fallingstar Beast','Godskin Noble','Demi-Human Queen Maggie','Abductor Virgins'],
+    weapons: [
+      W('Scavenger’s Curved Sword','Curved Sword','Smithing Stones','Spinning Slash'),
+      W('Pulley Bow','Bow','Smithing Stones','Mighty Shot'),
+      W('Pulley Crossbow','Crossbow','Smithing Stones','Kick'),
+      W('Magma Blade','Curved Sword','Somber Smithing Stones','Magma Shower',false),
+      W('Ghiza’s Wheel','Colossal Weapon','Somber Smithing Stones','Spinning Wheel',false),
+      W('Bloodhound Claws','Claw','Smithing Stones','Bloodhound Step')
+    ]
+  },
+  'Mountaintops of the Giants': {
+    exit: 'Fire Giant',
+    bosses: ['Borealis the Freezing Fog','Commander Niall','Death Rite Bird','Erdtree Avatar','Ancient Hero of Zamor'],
+    weapons: [
+      W('Eclipse Shotel','Curved Sword','Somber Smithing Stones','Death Flare',false),
+      W('Rivers of Blood','Katana','Somber Smithing Stones','Corpse Piler',false),
+      W('Watchdog’s Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Thorned Whip','Whip','Smithing Stones','Kick'),
+      W('Monk’s Flameblade','Curved Greatsword','Smithing Stones','Spinning Slash')
+    ]
+  },
+  'Miquella’s Haligtree': {
+    exit: 'Malenia, Blade of Miquella',
+    bosses: ['Loretta, Knight of the Haligtree','Putrid Avatar','Ulcerated Tree Spirit'],
+    weapons: [
+      W('Cleanrot Knight’s Sword','Thrusting Sword','Smithing Stones','Impaling Thrust'),
+      W('Cleanrot Spear','Spear','Somber Smithing Stones','Sacred Phalanx',false),
+      W('Halo Scythe','Reaper','Somber Smithing Stones','Miquella’s Ring of Light',false),
+      W('Miquellan Knight’s Sword','Straight Sword','Somber Smithing Stones','Sacred Blade',false),
+      W('Rotten Crystal Sword','Straight Sword','Somber Smithing Stones','Spinning Slash',false),
+      W('Envoy’s Greathorn','Colossal Weapon','Somber Smithing Stones','Great Oracular Bubble',false)
+    ]
+  },
+  'Crumbling Farum Azula': {
+    exit: 'Maliketh, the Black Blade',
+    bosses: ['Godskin Duo','Dragonlord Placidusax','Draconic Tree Sentinel'],
+    weapons: [
+      W('Beastman’s Curved Sword','Curved Sword','Smithing Stones','Spinning Slash'),
+      W('Beastman’s Cleaver','Curved Greatsword','Smithing Stones','Spinning Slash'),
+      W('Banished Knight’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Banished Knight’s Halberd','Halberd','Smithing Stones','Charge Forth')
+    ]
+  },
+  'Gravesite Plain · DLC': {
+    exit: 'Rellana, Twin Moon Knight',
+    bosses: ['Divine Beast Dancing Lion','Blackgaol Knight','Ghostflame Dragon','Death Knight','Demi-Human Swordmaster Onze','Furnace Golem'],
+    weapons: [
+      W('Backhand Blade','Backhand Blade','Smithing Stones','Blind Spot'),
+      W('Great Katana','Great Katana','Smithing Stones','Overhead Stance'),
+      W('Smithscript Dagger','Throwing Blade','Smithing Stones','Piercing Throw'),
+      W('Anvil Hammer','Colossal Weapon','Somber Smithing Stones','Smithing Art Spears',false),
+      W('Milady','Light Greatsword','Smithing Stones','Impaling Thrust'),
+      W('Bloodfiend’s Arm','Colossal Weapon','Smithing Stones','Endure'),
+      W('Curseblade’s Cirque','Backhand Blade','Somber Smithing Stones','Deadly Dance',false)
+    ]
+  },
+  'Scadu Altus + Shadow Keep · DLC': {
+    exit: 'Messmer the Impaler',
+    bosses: ['Golden Hippopotamus','Commander Gaius','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem','Metyr, Mother of Fingers'],
+    weapons: [
+      W('Smithscript Cirque','Backhand Blade','Smithing Stones','Blind Spot'),
+      W('Ancient Meteoric Ore Greatsword','Colossal Sword','Somber Smithing Stones','White Light Charge',false),
+      W('Dryleaf Arts','Hand-to-Hand Art','Smithing Stones','Palm Blast'),
+      W('Carian Thrusting Shield','Thrusting Shield','Smithing Stones','Shield Strike'),
+      W('Fire Knight’s Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Messmer Soldier’s Spear','Great Spear','Smithing Stones','Charge Forth'),
+      W('Serpent Flail','Flail','Somber Smithing Stones','Flare, O Serpent',false)
+    ]
+  },
+  'Cerulean Coast · DLC': {
+    exit: 'Putrescent Knight',
+    bosses: ['Ghostflame Dragon','Demi-Human Queen Marigga','Dancer of Ranah'],
+    weapons: [
+      W('Spirit Sword','Curved Sword','Somber Smithing Stones','Rancor Slash',false),
+      W('Chilling Perfume Bottle','Perfume Bottle','Somber Smithing Stones','Kick',false)
+    ]
+  },
+  'Dragon’s Pit + Jagged Peak · DLC': {
+    exit: 'Bayle the Dread',
+    bosses: ['Ancient Dragon-Man','Jagged Peak Drake','Ancient Dragon Senessax'],
+    weapons: [W('Dragon-Hunter’s Great Katana','Great Katana','Somber Smithing Stones','Dragonwound Slash',false,'Ancient Dragon-Man')]
+  },
+  'Abyssal Woods · DLC': {
+    exit: 'Midra, Lord of Frenzied Flame',
+    bosses: ['Jori, Elder Inquisitor'],
+    weapons: [
+      W('Nanaya’s Torch','Torch','Somber Smithing Stones','Feeble Lord’s Frenzied Flame',false),
+      W('Barbed Staff-Spear','Great Spear','Somber Smithing Stones','Jori’s Inquisition',false,'Jori, Elder Inquisitor')
+    ]
+  },
+  'Ancient Ruins of Rauh · DLC': {
+    exit: 'Romina, Saint of the Bud',
+    bosses: ['Divine Beast Dancing Lion','Death Knight','Red Bear'],
+    weapons: [
+      W('Smithscript Axe','Axe','Smithing Stones','Wild Strikes'),
+      W('Smithscript Greathammer','Great Hammer','Smithing Stones','Endure')
+    ]
+  },
+  'Enir-Ilim · DLC': {
+    exit: 'Promised Consort Radahn',
+    bosses: ['Needle Knight Leda and allies'],
+    weapons: [
+      W('Euporia','Twinblade','Somber Smithing Stones','Euporia Vortex',false),
+      W('Horned Warrior’s Greatsword','Curved Greatsword','Somber Smithing Stones','Horn Calling: Storm',false)
+    ]
+  }
+};
+
+const chaosTriggers = [
+  'WHEN CHASE OR MORGAN DIES',
+  'WHEN SOMEBODY DRINKS THE FIRST CRIMSON FLASK',
+  'WHEN THE BOSS HITS PHASE TWO',
+  'WHEN THE FIRST STANCE BREAK MAKES EVERYONE TOO CONFIDENT',
+  'WHEN A STATUS EFFECT PROCS AND SOMEONE SAYS “NICE”',
+  'AFTER THE FIRST WIPE. NATURALLY.',
+  'WHEN SOMEONE GETS HIT BY THE SAME MOVE TWICE',
+  'WHEN SOMEBODY PANIC ROLLS DIRECTLY INTO TROUBLE'
+];
+
+const weirdness = [
+  ['Grace Mimic Moment','Use a Grace Mimic and follow it until the route becomes obviously stupid. The little beam is management now.'],
+  ['Become Furniture','Both use Mimic’s Veil near enemies. Be furniture. A patrol has to walk past. Do not explain this to anyone.'],
+  ['Seven Rocks of Great Importance','Leave seven Rainbow Stones on the route. They mean nothing. This is sacred.'],
+  ['Bonfire But Legally Distinct','Put down a Warming Stone somewhere scenic. Both stand around it and emote like NPCs whose quest was cut.'],
+  ['Miquella HR Department','Charm an ordinary enemy. It is now your unpaid intern. It must hit something before it gets fired.'],
+  ['Prattling Pate Has The Floor','Use a Prattling Pate before the fight. Whatever it says is now official strategy.'],
+  ['Miyazaki Prop Hunt','Both use Mimic’s Veil. First player discovered becomes aggro tank. The chair has spoken.'],
+  ['Rainbow Stone OSHA Violation','Make a visible Rainbow Stone trail toward the boss. Minimum five. It should look deeply unnecessary.'],
+  ['Bad Place to Sit','Find an unnecessarily dangerous place and both use a sitting gesture for five full seconds. If someone gets hit, that is content.'],
+  ['Emergency Bush Meeting','Before the fight, both crouch behind the nearest waist-high object for ten seconds. No explanation.']
+];
+
+const affinities = ['Heavy','Keen','Quality','Fire','Flame Art','Lightning','Sacred','Magic','Cold','Poison','Blood','Occult'];
+const roles = [
+  'close-range pressure','L2 button owner','jump attack specialist','stance-break goblin','counter-hit guy',
+  'designated aggro holder','dodge specialist','heavy attack specialist','still learning poise','support / utility'
+];
+
+const penaltyDefs = [
+  ['No Talismans',(s,p)=>`${s} gets ZERO talismans until ${p} is dead. The appeal has consequences.`],
+  ['One Sip',(s,p)=>`${s} may use ONE Crimson Flask per attempt until ${p} dies. One. That is the entire budget.`],
+  ['Heavy Load',(s,p)=>`${s} must stay Heavy Load for every serious attempt against ${p} until victory. Good luck moving.`],
+  ['Shirtless Consequences',(s,p)=>`${s} must remove chest armor AND one additional armor piece until ${p} dies.`],
+  ['No Weapon Skills',(s,p)=>`${s} may not use any weapon skill or Ash of War against ${p} until victory.`],
+  ['No Healing Until It Sucks',(s,p)=>`${s} may not use a Crimson Flask until ${p} is at roughly half health. Every attempt. Yes, this is harsh.`],
+  ['Forty Enemies',(s,p)=>`${s} must kill 40 ordinary enemies in this region without resting before the new weapon is legal against ${p}. Rest or die and the count resets.`],
+  ['Extra Boss',(s,p)=>`${s} must help kill one additional named field or dungeon boss in this region before the replacement weapon is legal against ${p}.`],
+  ['No Rolling For Thirty Seconds',(s,p)=>`${s} may not dodge roll for the first 30 seconds of every serious attempt against ${p}. Run, jump, block, improvise.`],
+  ['Walk Of Shame',(s,p)=>`${s} must go from the current staging Grace to a different Grace in this region and then reach ${p} without fast travel.`],
+  ['Dungeon Chore',(s,p)=>`${s} must clear one uncleared cave, catacomb, tunnel, gaol, or minor dungeon before using the replacement weapon on ${p}.`],
+  ['Twenty Bonks First',(s,p)=>`${s} must kill 20 ordinary enemies with the replacement weapon without resting before it is legal against ${p}.`],
+  ['First Attempt: Absolutely No Juice',(s,p)=>`${s} gets ZERO Crimson Flasks on the first serious attempt against ${p}. After the disaster, normal healing returns.`],
+  ['No Chest Armor',(s,p)=>`${s} must fight ${p} with no chest armor and no talismans until victory. Fashion Souls is unavailable.`],
+  ['Don’t Get Hit',(s,p)=>`${s} must kill 10 ordinary enemies with the replacement weapon without taking damage before it becomes legal against ${p}. One hit and the counter resets.`],
+  ['Light Load Or Die Trying',(s,p)=>`${s} must reach Light Load and may use at most TWO Crimson Flasks for every serious attempt against ${p} until victory.`],
+  ['Leg Armor Tax',(s,p)=>`${s} must remove leg armor and one talisman until ${p} is dead. This is unfortunately mandatory.`],
+  ['Two-Handed Only',(s,p)=>`${s} must two-hand the replacement weapon and may not swap to another weapon, shield, seal, or staff until ${p} dies.`],
+  ['Flask Audit',(s,p)=>`${s} must permanently leave three Crimson Flask uses unused on every attempt against ${p}. If you normally have 12, you have 9 now.`]
+];
+const PLAYERS = ['Chase', 'Morgan'];
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+const MIN_REGIONAL_BOSSES = 3;
+
+function capstoneChance(cleared) {
+  if (cleared < MIN_REGIONAL_BOSSES) return 0;
+  return Math.min(0.10 + (cleared - MIN_REGIONAL_BOSSES) * 0.09, 0.82);
+}
+
+function chooseTarget(regionName, cleared) {
+  const region = regions[regionName];
+  return Math.random() < capstoneChance(cleared)
+    ? { name: region.exit, exit: true }
+    : { name: pick(region.bosses), exit: false };
+}
+
+function eligibleWeapons(regionName, target) {
+  const region = regions[regionName];
+  const pool = region.weapons.filter(w => !w.requires || w.requires !== target.name);
+  return pool.length ? pool : region.weapons;
+}
+
+function makeBuild(regionName, target, avoidName = '') {
+  let pool = eligibleWeapons(regionName, target).filter(w => w.name !== avoidName);
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  const weapon = pick(pool);
+  return {
+    ...weapon,
+    affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
+    role: pick(roles)
+  };
+}
+
+function newEncounter(state) {
+  const target = chooseTarget(state.region, state.cleared);
+  const chase = makeBuild(state.region, target);
+  const morgan = makeBuild(state.region, target, chase.name);
+  const weird = pick(weirdness);
+  return {
+    id: crypto.randomUUID(),
+    target,
+    chase,
+    morgan,
+    chaosTrigger: pick(chaosTriggers),
+    chaosTriggered: false,
+    chaosConsequence: '',
+    weirdness: { name: weird[0], text: weird[1] },
+    flavor: pick(encounterFlavors),
+    penances: [],
+    createdAt: new Date().toISOString()
+  };
+}
+
+function initialRunState({ region, severity, createdBy = 'Chase' }) {
+  const base = {
+    version: 1,
+    phase: 'active',
+    region,
+    severity,
+    createdBy,
+    cleared: 0,
+    history: [],
+    current: null,
+    regionComplete: false,
+    lastAction: `${createdBy} started the Covenant. run started.`,
+    updatedAt: new Date().toISOString()
+  };
+  base.current = newEncounter(base);
+  return base;
+}
+
+function completeEncounter(state, actor) {
+  const next = structuredClone(state);
+  const target = next.current.target;
+  next.history.unshift({
+    name: target.name,
+    exit: target.exit,
+    completedBy: actor,
+    completedAt: new Date().toISOString()
+  });
+  next.cleared += 1;
+  next.lastAction = `${actor} says ${target.name} is defeated.`;
+  next.updatedAt = new Date().toISOString();
+
+  if (target.exit) {
+    next.regionComplete = true;
+    next.current = null;
+    return next;
+  }
+
+  next.current = newEncounter(next);
+  return next;
+}
+
+function rerollChaos(state, actor) {
+  const next = structuredClone(state);
+  next.current.chaosTrigger = pick(chaosTriggers);
+  next.current.chaosTriggered = false;
+  next.current.chaosConsequence = '';
+  next.lastAction = `${actor} rerolled Chaos.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function rerollWeirdness(state, actor) {
+  const next = structuredClone(state);
+  const weird = pick(weirdness);
+  next.current.weirdness = { name: weird[0], text: weird[1] };
+  next.lastAction = `${actor} rerolled the Odd Rite.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function triggerChaos(state, actor) {
+  const next = structuredClone(state);
+  if (next.current.chaosTriggered) return next;
+  const consequences = [
+    'TALISMAN TAX: Chase and Morgan each lose one talisman slot until victory. ',
+    'JUICE BUDGET: both players lose two voluntary Crimson Flask uses next attempt. ',
+    'L2 BUTTON BROKE: no weapon skills for the rest of this attempt. ',
+    'NO HEALS YET: nobody heals until both players have damaged the boss.',
+    'BRICK MODE: randomly choose Chase or Morgan. That person must Heavy Load next serious attempt.',
+    'THROWN ITEM CHECK: both players must land one thrown consumable before victory. Use any thrown consumable.',
+    'AGGRO SWAP: whoever has aggro must stop attacking until the boss changes targets. ',
+    'PHASE TWO BUDGET CUT: after phase two begins, only one player may heal until somebody dies or the attempt ends.',
+    'CROUCH OF SHAME: both players must crouch for three full seconds before either can attack again.',
+    'NO LOCK-ON: both players turn off target lock for 20 seconds. ',
+    'FIVE-SECOND PENALTY: the first person to get hit after this must stop attacking for five seconds. '
+  ];
+  next.current.chaosTriggered = true;
+  next.current.chaosConsequence = pick(consequences);
+  next.lastAction = `${actor} triggered Chaos.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function targetScope() {
+  const n = Math.random();
+  if (n < 0.34) return { label: 'CHASE', text: 'Chase' };
+  if (n < 0.68) return { label: 'MORGAN', text: 'Morgan' };
+  return { label: 'BOTH', text: 'Chase and Morgan' };
+}
+
+function makePenance(targetName) {
+  const def = pick(penaltyDefs);
+  const scope = targetScope();
+  return {
+    id: crypto.randomUUID(),
+    name: def[0],
+    scope: scope.label,
+    text: def[1](scope.text, targetName)
+  };
+}
+
+function changeWeapons(state, actor, which) {
+  const next = structuredClone(state);
+  const current = next.current;
+  if (which === 'chase') {
+    current.chase = makeBuild(next.region, current.target, current.morgan.name);
+  } else if (which === 'morgan') {
+    current.morgan = makeBuild(next.region, current.target, current.chase.name);
+  } else {
+    current.chase = makeBuild(next.region, current.target);
+    current.morgan = makeBuild(next.region, current.target, current.chase.name);
+  }
+  current.penances.push(makePenance(current.target.name));
+  const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? 'Chase' : 'Morgan'}’s weapon`;
+  next.lastAction = `${actor} changed ${label}; a penalty was added.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function startNextRegion(state, actor, region, severity = state.severity) {
+  const next = initialRunState({ region, severity, createdBy: state.createdBy || actor });
+  next.history = [...(state.history || [])];
+  next.lastAction = `${actor} entered ${region}.`;
+  return next;
+}
+const SESSION_KEY = 'tarnished-covenant-session-v1';
+const LOCAL_RUN_KEY = 'tarnished-covenant-local-run-v1';
+
+function loadSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function saveSession(session) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+function loadLocalRun() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_RUN_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function saveLocalRun(run) {
+  localStorage.setItem(LOCAL_RUN_KEY, JSON.stringify(run));
+}
+
+function clearLocalRun() {
+  localStorage.removeItem(LOCAL_RUN_KEY);
+}
+function randomCode() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for (let i = 0; i < 6; i++) out += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return out;
+}
+
+async function createBackend(config = {}) {
+  const online = Boolean(config.SUPABASE_URL && config.SUPABASE_ANON_KEY);
+  if (!online) return createLocalBackend();
+
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
+    let { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      const result = await supabase.auth.signInAnonymously();
+      if (result.error) throw result.error;
+      session = result.data.session;
+    }
+    return createSupabaseBackend(supabase);
+  } catch (error) {
+    console.warn('Supabase unavailable; falling back to local mode.', error);
+    return createLocalBackend('Cloud sync unavailable; using local save.');
+  }
+}
+
+function createLocalBackend(warning = '') {
+  let listener = null;
+  return {
+    mode: 'local',
+    warning,
+    async createRun(displayName, state) {
+      const run = { id: crypto.randomUUID(), joinCode: randomCode(), state, revision: 0, displayName };
+      saveLocalRun(run);
+      return run;
+    },
+    async joinRun() { throw new Error('Shared rooms are not connected yet. Add Supabase settings to config.js.'); },
+    async getRun() { return loadLocalRun(); },
+    async restartRun(runId, state) {
+      const current = loadLocalRun();
+      const revision = (current?.revision ?? 0) + 1;
+      const run = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(run);
+      if (listener) queueMicrotask(() => listener(run));
+      return run;
+    },
+    async updateRun(runId, expectedRevision, state) {
+      const current = loadLocalRun();
+      const revision = (current?.revision ?? expectedRevision) + 1;
+      const run = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(run);
+      if (listener) queueMicrotask(() => listener(run));
+      return { success: true, ...run };
+    },
+    subscribe(_runId, fn) { listener = fn; return () => { listener = null; }; }
+  };
+}
+
+function createSupabaseBackend(supabase) {
+  let channel = null;
+  return {
+    mode: 'shared',
+    warning: '',
+    async createRun(displayName, state) {
+      const { data, error } = await supabase.rpc('create_covenant_run', {
+        p_display_name: displayName,
+        p_initial_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return normalizeRun(row);
+    },
+    async joinRun(joinCode, displayName) {
+      const { data, error } = await supabase.rpc('join_covenant_run', {
+        p_join_code: joinCode.trim().toUpperCase(),
+        p_display_name: displayName
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return normalizeRun(row);
+    },
+    async getRun(runId) {
+      const { data, error } = await supabase.from('runs')
+        .select('id, join_code, state, revision')
+        .eq('id', runId)
+        .single();
+      if (error) throw error;
+      return normalizeRun(data);
+    },
+    async updateRun(runId, expectedRevision, state) {
+      const { data, error } = await supabase.rpc('update_covenant_state', {
+        p_run_id: runId,
+        p_expected_revision: expectedRevision,
+        p_new_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return {
+        success: Boolean(row.success),
+        id: runId,
+        state: row.state,
+        revision: Number(row.revision)
+      };
+    },
+    async restartRun(runId, state) {
+      const { data, error } = await supabase.rpc('restart_covenant_run', {
+        p_run_id: runId,
+        p_new_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return { id: runId, state: row.state, revision: Number(row.revision) };
+    },
+    subscribe(runId, fn) {
+      if (channel) supabase.removeChannel(channel);
+      channel = supabase.channel(`covenant-${runId}`)
+        .on('postgres_changes', {
+          event: 'UPDATE', schema: 'public', table: 'runs', filter: `id=eq.${runId}`
+        }, payload => fn(normalizeRun(payload.new)))
+        .subscribe();
+      return () => {
+        if (channel) supabase.removeChannel(channel);
+        channel = null;
+      };
+    }
+  };
+}
+
+function normalizeRun(row) {
+  return {
+    id: row.id || row.run_id,
+    joinCode: row.join_code,
+    state: row.state,
+    revision: Number(row.revision || 0)
+  };
+}
+const app = document.querySelector('#app');
+const config = window.TARNISHED_CONFIG || {};
+let backend = null;
+let session = loadSession();
+let run = null;
+let unsubscribe = null;
+let pending = false;
+let toastTimer = null;
+const incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
+}
+
+function h(value = '') {
+  return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+function playerName() { return session?.displayName || 'Chase'; }
+
+function setToast(message) {
+  let el = document.querySelector('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.className = 'toast';
+    app.appendChild(el);
+  }
+  el.textContent = message;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 2800);
+}
+
+function header(compact = false) {
+  return `<header class="site-header ${compact ? 'compact' : ''}">
+    <div class="sigil">✦</div>
+    <div class="eyebrow">shared challenge run</div>
+    <h1>The Tarnished Covenant</h1>
+    ${compact ? '' : '<div class="header-dumb">regional co-op challenge generator</div>'}
+  </header>`;
+}
+
+function setRegionTheme(region = '') {
+  const map = [
+    ['Caelid','caelid'],['Liurnia','liurnia'],['Leyndell','leyndell'],['Altus','leyndell'],
+    ['Gelmir','gelmir'],['Mountaintops','snow'],['Haligtree','haligtree'],['Farum','farum'],
+    ['Gravesite','gravesite'],['Scadu','shadow'],['Cerulean','coast'],['Jagged','jagged'],
+    ['Abyssal','abyss'],['Rauh','rauh'],['Enir','enir'],['Weeping','weeping'],['Limgrave','limgrave']
+  ];
+  const match = map.find(([needle]) => region.includes(needle));
+  document.body.dataset.region = match?.[1] || 'default';
+}
+
+async function boot() {
+  if (session?.runId) {
+    try {
+      run = await backend.getRun(session.runId);
+      if (run?.state) {
+        subscribe();
+        renderRun();
+        return;
+      }
+    } catch (error) {
+      console.warn(error);
+      if (backend.mode === 'shared') setToast('Cloud sync failed.');
+    }
+  }
+  renderHome();
+}
+
+function renderHome() {
+  setRegionTheme('');
+  const saved = Boolean(session?.runId);
+  app.innerHTML = `${header()}
+    <p class="sub center">Two players. One shared run.</p>
+    <div class="center"><span class="mode-pill">${backend.mode === 'shared' ? 'shared sync ready' : 'local save mode'}</span></div>
+    ${incomingCode ? `<div class="join-banner">shared Covenant invite · code <strong>${h(incomingCode)}</strong></div>` : ''}
+    ${backend.warning ? `<div class="status warn">${h(backend.warning)}</div>` : ''}
+    <section class="menu-section stack">
+      <div>
+        <label class="label" for="identity">player</label>
+        <select id="identity"><option>Chase</option><option>Morgan</option></select>
+      </div>
+      <button class="btn gold" id="newRun" type="button">Begin New Covenant</button>
+      ${saved ? `<button class="btn ghost" id="resumeRun" type="button">Resume Existing Run</button>` : ''}
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <div class="eyebrow left">join a shared run</div>
+      <div>
+        <label class="label" for="joinCode">covenant code</label>
+        <input id="joinCode" inputmode="text" autocomplete="off" maxlength="6" placeholder="ABC123" value="${h(incomingCode)}" ${backend.mode !== 'shared' ? 'disabled' : ''}>
+      </div>
+      <button class="btn ghost" id="joinRun" type="button" ${backend.mode !== 'shared' ? 'disabled' : ''}>Join Covenant</button>
+      ${backend.mode !== 'shared' ? `<div class="status">shared mode unavailable</div>` : ''}
+    </section>`;
+
+  const identity = document.querySelector('#identity');
+  identity.value = session?.displayName || (incomingCode ? 'Morgan' : 'Chase');
+  document.querySelector('#newRun').addEventListener('click', () => renderNewRun(identity.value));
+  document.querySelector('#resumeRun')?.addEventListener('click', boot);
+  document.querySelector('#joinRun').addEventListener('click', async () => {
+    const code = document.querySelector('#joinCode').value.trim().toUpperCase();
+    if (code.length < 4) return setToast('Enter the Covenant code first.');
+    await joinSharedRun(code, identity.value);
+  });
+}
+
+function renderNewRun(identity) {
+  const options = Object.keys(regions).map(r => `<option value="${h(r)}">${h(r)}</option>`).join('');
+  app.innerHTML = `${header(true)}
+    <section class="menu-section stack new-run">
+      <div class="menu-title">begin new run</div>
+      <div>
+        <label class="label" for="region">region</label>
+        <select id="region">${options}</select>
+      </div>
+      <div>
+        <label class="label" for="severity">difficulty</label>
+        <select id="severity" ><option value="normal">Silly</option><option value="hard" selected>Maidenless</option><option value="cursed">Miyazaki Has Noticed You</option></select>
+      </div>
+      <button class="btn gold" id="createRun" type="button">Begin Covenant</button>
+      <button class="btn text-btn" id="back" type="button">Back</button>
+    </section>`;
+  document.querySelector('#back').addEventListener('click', renderHome);
+  document.querySelector('#createRun').addEventListener('click', async () => {
+    const state = initialRunState({
+      region: document.querySelector('#region').value,
+      severity: document.querySelector('#severity').value,
+      createdBy: identity
+    });
+    try {
+      const created = await backend.createRun(identity, state);
+      run = created;
+      session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
+      saveSession(session);
+      subscribe();
+      renderRun();
+    } catch (error) {
+      console.error(error);
+      setToast(error.message || 'Could not create Covenant.');
+    }
+  });
+}
+
+async function joinSharedRun(code, identity) {
+  try {
+    const joined = await backend.joinRun(code, identity);
+    run = joined;
+    session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
+    saveSession(session);
+    subscribe();
+    history.replaceState({}, '', location.pathname);
+    renderRun();
+  } catch (error) {
+    console.error(error);
+    setToast(error.message || 'Could not join that Covenant.');
+  }
+}
+
+function subscribe() {
+  unsubscribe?.();
+  unsubscribe = backend.subscribe(run.id, incoming => {
+    if (!incoming?.state) return;
+    if (incoming.revision >= run.revision) {
+      run = { ...run, ...incoming };
+      renderRun();
+    }
+  });
+}
+
+async function commit(nextState, { retryBuilder = null, successToast = '' } = {}) {
+  if (pending) {
+    setToast('One action is still saving.');
+    return false;
+  }
+  pending = true;
+  try {
+    let desiredState = nextState;
+    let expectedRevision = run.revision;
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const result = await backend.updateRun(run.id, expectedRevision, desiredState);
+      if (result.success) {
+        run = { ...run, state: result.state, revision: result.revision };
+        renderRun();
+        if (successToast) setToast(successToast);
+        return true;
+      }
+
+      run = { ...run, state: result.state, revision: result.revision };
+      if (!retryBuilder) {
+        renderRun();
+        setToast('The run changed on the other phone. Try again.');
+        return false;
+      }
+
+      expectedRevision = run.revision;
+      desiredState = retryBuilder(run.state);
+    }
+
+    renderRun();
+    setToast('Restart could not complete. Try again.');
+    return false;
+  } catch (error) {
+    console.error(error);
+    setToast('Save failed. Try again.');
+    return false;
+  } finally {
+    pending = false;
+  }
+}
+
+const weaponAsides = ['sorry','well then','this one I guess','weapon','good luck','could be worse','hell yeah?','unfortunate','big if true','don’t overthink it'];
+function stableAside(name, build) {
+  const str = `${name}:${build.name}`;
+  let n = 0;
+  for (const ch of str) n = (n * 31 + ch.charCodeAt(0)) >>> 0;
+  return weaponAsides[n % weaponAsides.length];
+}
+
+function weaponCard(name, build) {
+  return `<article class="player">
+    <div class="who">${h(name)} has to use</div>
+    <div class="weapon">${h(build.name)}</div>
+    <div class="weapon-aside">${h(stableAside(name, build))}</div>
+    <div class="weapon-type">${h(build.type)}</div>
+    <dl class="weapon-stats">
+      <div><dt>skill</dt><dd>${h(build.native)}</dd></div>
+      <div><dt>upgrade</dt><dd>${h(build.upgrade)}</dd></div>
+      <div><dt>infusion</dt><dd>${h(build.affinity)}</dd></div>
+      <div><dt>job</dt><dd>${h(build.role)}</dd></div>
+    </dl>
+  </article>`;
+}
+
+function progressMarks(cleared) {
+  const count = Math.max(7, Math.min(10, cleared + 3));
+  return Array.from({length:count},(_,i)=>`<span class="mark ${i < cleared ? 'done' : ''} ${i < MIN_REGIONAL_BOSSES ? 'required' : ''}">${i < cleared ? '◆' : '◇'}</span>`).join('');
+}
+
+function capstoneBlock(state) {
+  const fate = Math.round(capstoneChance(state.cleared) * 100);
+  const locked = state.cleared < MIN_REGIONAL_BOSSES;
+  const needed = Math.max(0, MIN_REGIONAL_BOSSES - state.cleared);
+  return `<div class="fate-block">
+    <div class="progress-marks">${progressMarks(state.cleared)}</div>
+    <div class="fate-title">${locked ? 'CAPSTONE SEALED' : `CAPSTONE CHANCE · ${fate}%`}</div>
+    <div class="fate-copy">${locked ? `${needed} more regional ${needed === 1 ? 'boss' : 'bosses'} required · capstone remains locked` : 'the regional capstone is now eligible to roll.'}</div>
+  </div>`;
+}
+
+function penanceMarkup(c) {
+  if (!c.penances?.length) return '';
+  return `<section class="curse-section">
+    <div class="section-kicker redtext">armament penalties</div>
+    <div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>
+    ${c.penances.map((p,i)=>`<div class="penance-item">
+      <div class="scope">${h(p.scope)} · penalty ${i+1}</div>
+      <div class="penance-name">${h(p.name)}</div>
+      <div class="penance-text">${h(p.text)}</div>
+    </div>`).join('')}
+    <div class="subtext">Penalties stack until the current target is defeated.</div>
+  </section>`;
+}
+
+
+function renderRun() {
+  const state = run.state;
+  setRegionTheme(state.region);
+  if (state.regionComplete) return renderRegionComplete();
+  const c = state.current;
+
+  app.innerHTML = `${header(true)}
+    <section class="region-header">
+      <div class="region-meta">
+        <div class="micro">current region</div>
+        <div class="region">${h(state.region)}</div>
+        <div class="count">${state.cleared} regional ${state.cleared === 1 ? 'boss' : 'bosses'} dead</div>
+      </div>
+      <div class="room-meta">
+        <button id="share" class="share-chip" type="button"><span>CODE</span>${h(run.joinCode || 'LOCAL')} · SHARE</button>
+      </div>
+    </section>
+    ${capstoneBlock(state)}
+    <div class="omen">${h(pickOmen())}</div>
+    <div class="ornament boss-ornament"><span>✦</span></div>
+
+    <section class="target ${c.target.exit ? 'exit' : ''}">
+      <div class="tag">${c.target.exit ? 'REGIONAL CAPSTONE' : 'CURRENT TARGET'}</div>
+      <div class="boss">${h(c.target.name)}</div>
+      <div class="flavor">${h(c.target.exit ? 'defeat this boss to leave the region' : c.flavor)}</div>
+    </section>
+
+    <div class="ornament"><span>◆</span></div>
+    <section class="weapon-section">
+      <div class="section-kicker">assigned weapons</div>
+      <div class="loadouts">${weaponCard('Chase',c.chase)}${weaponCard('Morgan',c.morgan)}</div>
+    </section>
+
+    ${penanceMarkup(c)}
+
+    <div class="ornament redline"><span>◉</span></div>
+    <section class="chaos-section ${c.chaosTriggered ? 'open' : ''}">
+      <div class="section-kicker redtext">chaos</div>
+      <div class="chaos-caption">when this happens:</div>
+      <div class="trigger">${h(c.chaosTrigger)}</div>
+      ${c.chaosTriggered
+        ? `<div class="chaos-reveal"><div class="chaos-bad">consequence</div><div class="mutation">${h(c.chaosConsequence)}</div><div class="chaos-foot">active for this attempt</div></div>`
+        : `<button id="triggerChaos" class="seal-button" type="button"><span class="seal">◉</span><span>break the seal</span></button>`}
+    </section>
+
+    <div class="ornament violetline"><span>✧</span></div>
+    <section class="weird-section">
+      <div class="section-kicker violettext">odd rite</div>
+      <div class="weird-name">${h(c.weirdness.name)}</div>
+      <div class="rtext">${h(c.weirdness.text)}</div>
+      <div class="item-footer">mandatory</div>
+    </section>
+
+    <div class="ornament"><span>✦</span></div>
+    <section class="game-actions">
+      <button id="complete" class="btn gold victory" type="button">${c.target.exit ? 'FINAL BOSS DEFEATED · LEAVE REGION' : 'VICTORY · ROLL NEXT ENCOUNTER'}</button>
+      <div class="utility">
+        <button id="rerollChaos" class="btn ghost small" type="button">reroll chaos</button>
+        <button id="rerollWeird" class="btn ghost small" type="button">reroll ritual</button>
+      </div>
+    </section>
+
+    <section class="appeals">
+      <div class="section-kicker redtext">armament appeal</div>
+      <div class="appeal-copy">Changing a weapon creates a severe penalty.</div>
+      <div class="appeal-grid">
+        <button class="btn curse small" data-appeal="chase" type="button">Change Chase’s Weapon</button>
+        <button class="btn curse small" data-appeal="morgan" type="button">Change Morgan’s Weapon</button>
+        <button class="btn curse small" data-appeal="both" type="button">Change Both Weapons</button>
+      </div>
+      <div id="appealConfirm"></div>
+    </section>
+
+    <section class="history">
+      <div class="section-kicker">encounter history</div>
+      ${renderHistory(state)}
+    </section>
+
+    <section class="run-options">
+      <button id="restartRun" class="btn text-btn small" type="button">restart covenant</button>
+      <div id="restartConfirm"></div>
+    </section>
+    <div class="status last-action">${h(state.lastAction || '')} · ${backend.mode === 'shared' ? 'saved' : 'saved locally'}</div>`;
+
+  document.querySelector('#triggerChaos')?.addEventListener('click',()=>commit(triggerChaos(state,playerName())));
+  document.querySelector('#rerollChaos').addEventListener('click',()=>commit(rerollChaos(state,playerName())));
+  document.querySelector('#rerollWeird').addEventListener('click',()=>commit(rerollWeirdness(state,playerName())));
+  document.querySelector('#complete').addEventListener('click',()=>commit(completeEncounter(state,playerName())));
+  document.querySelector('#share').addEventListener('click',shareCovenant);
+  document.querySelector('#restartRun').addEventListener('click',showRestart);
+  document.querySelectorAll('[data-appeal]').forEach(btn=>btn.addEventListener('click',()=>showAppeal(btn.dataset.appeal)));
+}
+
+function showRestart() {
+  const state = run.state;
+  const options = Object.keys(regions).map(r => `<option value="${h(r)}" ${r === state.region ? 'selected' : ''}>${h(r)}</option>`).join('');
+  const box = document.querySelector('#restartConfirm');
+  if (!box) return setToast('Restart is unavailable. Try again.');
+  box.innerHTML = `<div class="confirm restart-confirm">
+    <div class="section-kicker redtext">restart covenant</div>
+    <h3>Restart this Covenant?</h3>
+    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'Morgan’s phone resets too. The room code stays the same.' : 'This phone starts fresh.'}</div>
+    <div class="grid2 restart-grid">
+      <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
+      <div><label class="label" for="restartSeverity">difficulty</label><select id="restartSeverity"><option value="normal" ${state.severity==='normal'?'selected':''}>Silly</option><option value="hard" ${state.severity==='hard'?'selected':''}>Maidenless</option><option value="cursed" ${state.severity==='cursed'?'selected':''}>Miyazaki Has Noticed You</option></select></div>
+    </div>
+    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Erase Run & Restart</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
+  </div>`;
+  document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
+  document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
+    const region = document.querySelector('#restartRegion')?.value || state.region;
+    const severity = document.querySelector('#restartSeverity')?.value || state.severity;
+    const button = document.querySelector('#confirmRestart');
+    if (button) { button.disabled = true; button.textContent = 'Restarting…'; }
+
+    const buildFreshState = (latestState) => {
+      const fresh = initialRunState({
+        region,
+        severity,
+        createdBy: latestState?.createdBy || state.createdBy || playerName()
+      });
+      fresh.lastAction = `${playerName()} restarted the Covenant. started a fresh run.`;
+      return fresh;
+    };
+
+    try {
+      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
+      run = { ...run, ...restarted };
+      renderRun();
+      setToast('Run restarted.');
+    } catch (error) {
+      console.error(error);
+      setToast(error.message || 'Restart failed. Try again.');
+      const retry = document.querySelector('#confirmRestart');
+      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
+    }
+  });
+}
+
+function showAppeal(which) {
+  const labels = { chase: 'Chase’s weapon', morgan: 'Morgan’s weapon', both: 'both weapons' };
+  const box = document.querySelector('#appealConfirm');
+  box.innerHTML = `<div class="confirm">
+    <div class="section-kicker redtext">armament appeal</div>
+    <h3>Change ${labels[which]}?</h3>
+    <div class="rtext">You get a new region-legal weapon, then Chase, Morgan, or both receive a severe random penalty. You do not see the penalty first.</div>
+    <div class="confirm-actions"><button id="accept" class="btn curse" type="button">Accept Penalty & Reroll</button><button id="cancel" class="btn ghost" type="button">Keep Current Weapon</button></div>
+  </div>`;
+  document.querySelector('#cancel').addEventListener('click',()=>{box.innerHTML='';});
+  document.querySelector('#accept').addEventListener('click',()=>commit(changeWeapons(run.state,playerName(),which)));
+}
+
+function renderHistory(state) {
+  if (!state.history?.length) return '<div class="empty-history">No encounters completed yet.</div>';
+  return state.history.slice(0,12).map((x)=>`<div class="history-row"><strong>${h(x.name)}</strong><span>${x.exit ? 'CAPSTONE' : 'dead'}</span></div>`).join('');
+}
+
+function renderRegionComplete() {
+  const state = run.state;
+  setRegionTheme(state.region);
+  const options = Object.keys(regions).filter(r=>r!==state.region).map(r=>`<option value="${h(r)}">${h(r)}</option>`).join('');
+  app.innerHTML = `${header(true)}
+    <section class="escape-screen">
+      <div class="tag">REGIONAL BOSS DEFEATED</div>
+      <div class="escape-title">Region Complete</div>
+      <div class="escape-copy">Region cleared. Outstanding armament penalties are forgiven.</div>
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <div><label class="label" for="nextRegion">next region</label><select id="nextRegion">${options}</select></div>
+      <button id="continue" class="btn gold" type="button">Choose Next Region</button>
+      <button id="share" class="btn ghost" type="button">Share Covenant</button>
+      <button id="restartRun" class="btn curse" type="button">Restart Covenant</button>
+      <div id="restartConfirm"></div>
+      <button id="leave" class="btn text-btn" type="button">leave run</button>
+    </section>
+    <section class="history"><div class="section-kicker">encounter history</div>${renderHistory(state)}</section>`;
+  document.querySelector('#continue').addEventListener('click',()=>{
+    const next = startNextRegion(state,playerName(),document.querySelector('#nextRegion').value,state.severity);
+    commit(next);
+  });
+  document.querySelector('#share').addEventListener('click',shareCovenant);
+  document.querySelector('#restartRun').addEventListener('click',showRestart);
+  document.querySelector('#leave').addEventListener('click',()=>{unsubscribe?.();run=null;clearSession();session=null;renderHome();});
+}
+
+async function shareCovenant() {
+  if (backend.mode !== 'shared') return setToast('shared mode unavailable');
+  const code = run.joinCode;
+  const base = config.APP_URL || `${location.origin}${location.pathname}`;
+  const url = new URL(base);
+  url.searchParams.set('join', code);
+  const text = `Join our Tarnished Covenant. Code: ${code}.`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title:'The Tarnished Covenant', text, url:url.toString() });
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(`${text}\n${url}`);
+    setToast('Link and code copied.');
+  } catch {
+    setToast(`code ${code} · ${url}`);
+  }
+}
+
+function pickOmen() { return omens[Math.floor(Math.random() * omens.length)]; }
+
+async function startApp(){ backend = await createBackend(config); boot(); }
+startApp().catch(err=>{console.error(err); document.body.innerHTML=`<pre style="color:#eee;background:#080806;padding:24px;white-space:pre-wrap">App error: ${String(err?.message||err)}</pre>`;});
+</script>
 </body>
 </html>
