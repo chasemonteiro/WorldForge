@@ -57,7 +57,7 @@ h1{font-weight:400;font-size:clamp(34px,10vw,50px);line-height:.98;margin:7px 0}
 window.TARNISHED_CONFIG = {
   SUPABASE_URL: 'https://qwnwksyiofolldliaqhf.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_8UGLJMFfhZMo4ndceYbO4g_l3zAdAI5',
-  APP_URL: 'https://qwnwksyiofolldliaqhf.supabase.co/functions/v1/tarnished-covenant'
+  APP_URL: 'https://chasemonteiro.github.io/WorldForge/tarnished-covenant/'
 };
 </script>
 <script>const omens = [
@@ -1060,13 +1060,20 @@ function showRestart() {
     };
 
     try {
-      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
-      run = { ...run, ...restarted };
+      const freshState = buildFreshState(run.state);
+      unsubscribe?.();
+      clearSession();
+      clearLocalRun();
+      const created = await backend.createRun(playerName(), freshState);
+      run = created;
+      session = { runId: run.id, joinCode: run.joinCode, displayName: playerName() };
+      saveSession(session);
+      subscribe();
       renderRun();
-      setToast('Run restarted.');
+      setToast(backend.mode === 'shared' ? `New Covenant started. New code: ${run.joinCode}` : 'New run started.');
     } catch (error) {
       console.error(error);
-      setToast(error.message || 'Restart failed. Try again.');
+      setToast(error.message || 'Could not start a fresh Covenant.');
       const retry = document.querySelector('#confirmRestart');
       if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
     }
