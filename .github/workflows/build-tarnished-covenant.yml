@@ -6,7 +6,7 @@ on:
     paths:
       - 'tarnished-covenant/chunks/**'
       - 'tarnished-covenant/build-*.py'
-      - 'tarnished-covenant/limgrave-game-items.js'
+      - 'tarnished-covenant/regional-pools.js'
       - '.github/workflows/build-tarnished-covenant.yml'
 
 permissions:
@@ -50,19 +50,8 @@ jobs:
           p.write_text(s.replace(old, new, 1))
           PY
 
-      - name: Include expanded Limgrave weapon pool
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          page = Path('tarnished-covenant/index.html')
-          data = Path('tarnished-covenant/limgrave-game-items.js').read_text().strip()
-          s = page.read_text()
-          marker = '\nconst chaosTriggers = ['
-          if marker not in s:
-              raise SystemExit('chaos trigger marker not found')
-          s = s.replace(marker, '\n' + data + '\n\nconst chaosTriggers = [', 1)
-          page.write_text(s)
-          PY
+      - name: Apply spreadsheet regional pools
+        run: python tarnished-covenant/build-regional-pools.py
 
       - name: Commit assembled page
         run: |
