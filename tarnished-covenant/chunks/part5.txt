@@ -1,0 +1,223 @@
+><option value="normal">Silly</option><option value="hard" selected>Maidenless</option><option value="cursed">Miyazaki Has Noticed You</option></select>
+      </div>
+      <button class="btn gold" id="createRun" type="button">Begin Covenant</button>
+      <button class="btn text-btn" id="back" type="button">Back</button>
+    </section>`;
+  document.querySelector('#back').addEventListener('click', renderHome);
+  document.querySelector('#createRun').addEventListener('click', async () => {
+    const state = initialRunState({
+      region: document.querySelector('#region').value,
+      severity: document.querySelector('#severity').value,
+      createdBy: identity
+    });
+    try {
+      const created = await backend.createRun(identity, state);
+      run = created;
+      session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
+      saveSession(session);
+      subscribe();
+      renderRun();
+    } catch (error) {
+      console.error(error);
+      setToast(error.message || 'Could not create Covenant.');
+    }
+  });
+}
+
+async function joinSharedRun(code, identity) {
+  try {
+    const joined = await backend.joinRun(code, identity);
+    run = joined;
+    session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
+    saveSession(session);
+    subscribe();
+    history.replaceState({}, '', location.pathname);
+    renderRun();
+  } catch (error) {
+    console.error(error);
+    setToast(error.message || 'Could not join that Covenant.');
+  }
+}
+
+function subscribe() {
+  unsubscribe?.();
+  unsubscribe = backend.subscribe(run.id, incoming => {
+    if (!incoming?.state) return;
+    if (incoming.revision >= run.revision) {
+      run = { ...run, ...incoming };
+      renderRun();
+    }
+  });
+}
+
+async function commit(nextState, { retryBuilder = null, successToast = '' } = {}) {
+  if (pending) {
+    setToast('One action is still saving.');
+    return false;
+  }
+  pending = true;
+  try {
+    let desiredState = nextState;
+    let expectedRevision = run.revision;
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const result = await backend.updateRun(run.id, expectedRevision, desiredState);
+      if (result.success) {
+        run = { ...run, state: result.state, revision: result.revision };
+        renderRun();
+        if (successToast) setToast(successToast);
+        return true;
+      }
+
+      run = { ...run, state: result.state, revision: result.revision };
+      if (!retryBuilder) {
+        renderRun();
+        setToast('The run changed on the other phone. Try again.');
+        return false;
+      }
+
+      expectedRevision = run.revision;
+      desiredState = retryBuilder(run.state);
+    }
+
+    renderRun();
+    setToast('Restart could not complete. Try again.');
+    return false;
+  } catch (error) {
+    console.error(error);
+    setToast('Save failed. Try again.');
+    return false;
+  } finally {
+    pending = false;
+  }
+}
+
+const weaponAsides = ['sorry','well then','this one I guess','weapon','good luck','could be worse','hell yeah?','unfortunate','big if true','don’t overthink it'];
+function stableAside(name, build) {
+  const str = `${name}:${build.name}`;
+  let n = 0;
+  for (const ch of str) n = (n * 31 + ch.charCodeAt(0)) >>> 0;
+  return weaponAsides[n % weaponAsides.length];
+}
+
+function weaponCard(name, build) {
+  return `<article class="player">
+    <div class="who">${h(name)} has to use</div>
+    <div class="weapon">${h(build.name)}</div>
+    <div class="weapon-aside">${h(stableAside(name, build))}</div>
+    <div class="weapon-type">${h(build.type)}</div>
+    <dl class="weapon-stats">
+      <div><dt>skill</dt><dd>${h(build.native)}</dd></div>
+      <div><dt>upgrade</dt><dd>${h(build.upgrade)}</dd></div>
+      <div><dt>infusion</dt><dd>${h(build.affinity)}</dd></div>
+      <div><dt>job</dt><dd>${h(build.role)}</dd></div>
+    </dl>
+  </article>`;
+}
+
+function progressMarks(cleared) {
+  const count = Math.max(7, Math.min(10, cleared + 3));
+  return Array.from({length:count},(_,i)=>`<span class="mark ${i < cleared ? 'done' : ''} ${i < MIN_REGIONAL_BOSSES ? 'required' : ''}">${i < cleared ? '◆' : '◇'}</span>`).join('');
+}
+
+function capstoneBlock(state) {
+  const fate = Math.round(capstoneChance(state.cleared) * 100);
+  const locked = state.cleared < MIN_REGIONAL_BOSSES;
+  const needed = Math.max(0, MIN_REGIONAL_BOSSES - state.cleared);
+  return `<div class="fate-block">
+    <div class="progress-marks">${progressMarks(state.cleared)}</div>
+    <div class="fate-title">${locked ? 'CAPSTONE SEALED' : `CAPSTONE CHANCE · ${fate}%`}</div>
+    <div class="fate-copy">${locked ? `${needed} more regional ${needed === 1 ? 'boss' : 'bosses'} required · capstone remains locked` : 'the regional capstone is now eligible to roll.'}</div>
+  </div>`;
+}
+
+function penanceMarkup(c) {
+  if (!c.penances?.length) return '';
+  return `<section class="curse-section">
+    <div class="section-kicker redtext">armament penalties</div>
+    <div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>
+    ${c.penances.map((p,i)=>`<div class="penance-item">
+      <div class="scope">${h(p.scope)} · penalty ${i+1}</div>
+      <div class="penance-name">${h(p.name)}</div>
+      <div class="penance-text">${h(p.text)}</div>
+    </div>`).join('')}
+    <div class="subtext">Penalties stack until the current target is defeated.</div>
+  </section>`;
+}
+
+
+function renderRun() {
+  const state = run.state;
+  setRegionTheme(state.region);
+  if (state.regionComplete) return renderRegionComplete();
+  const c = state.current;
+
+  app.innerHTML = `${header(true)}
+    <section class="region-header">
+      <div class="region-meta">
+        <div class="micro">current region</div>
+        <div class="region">${h(state.region)}</div>
+        <div class="count">${state.cleared} regional ${state.cleared === 1 ? 'boss' : 'bosses'} dead</div>
+      </div>
+      <div class="room-meta">
+        <button id="share" class="share-chip" type="button"><span>CODE</span>${h(run.joinCode || 'LOCAL')} · SHARE</button>
+      </div>
+    </section>
+    ${capstoneBlock(state)}
+    <div class="omen">${h(pickOmen())}</div>
+    <div class="ornament boss-ornament"><span>✦</span></div>
+
+    <section class="target ${c.target.exit ? 'exit' : ''}">
+      <div class="tag">${c.target.exit ? 'REGIONAL CAPSTONE' : 'CURRENT TARGET'}</div>
+      <div class="boss">${h(c.target.name)}</div>
+      <div class="flavor">${h(c.target.exit ? 'defeat this boss to leave the region' : c.flavor)}</div>
+    </section>
+
+    <div class="ornament"><span>◆</span></div>
+    <section class="weapon-section">
+      <div class="section-kicker">assigned weapons</div>
+      <div class="loadouts">${weaponCard('Chase',c.chase)}${weaponCard('Morgan',c.morgan)}</div>
+    </section>
+
+    ${penanceMarkup(c)}
+
+    <div class="ornament redline"><span>◉</span></div>
+    <section class="chaos-section ${c.chaosTriggered ? 'open' : ''}">
+      <div class="section-kicker redtext">chaos</div>
+      <div class="chaos-caption">when this happens:</div>
+      <div class="trigger">${h(c.chaosTrigger)}</div>
+      ${c.chaosTriggered
+        ? `<div class="chaos-reveal"><div class="chaos-bad">consequence</div><div class="mutation">${h(c.chaosConsequence)}</div><div class="chaos-foot">active for this attempt</div></div>`
+        : `<button id="triggerChaos" class="seal-button" type="button"><span class="seal">◉</span><span>break the seal</span></button>`}
+    </section>
+
+    <div class="ornament violetline"><span>✧</span></div>
+    <section class="weird-section">
+      <div class="section-kicker violettext">odd rite</div>
+      <div class="weird-name">${h(c.weirdness.name)}</div>
+      <div class="rtext">${h(c.weirdness.text)}</div>
+      <div class="item-footer">mandatory</div>
+    </section>
+
+    <div class="ornament"><span>✦</span></div>
+    <section class="game-actions">
+      <button id="complete" class="btn gold victory" type="button">${c.target.exit ? 'FINAL BOSS DEFEATED · LEAVE REGION' : 'VICTORY · ROLL NEXT ENCOUNTER'}</button>
+      <div class="utility">
+        <button id="rerollChaos" class="btn ghost small" type="button">reroll chaos</button>
+        <button id="rerollWeird" class="btn ghost small" type="button">reroll ritual</button>
+      </div>
+    </section>
+
+    <section class="appeals">
+      <div class="section-kicker redtext">armament appeal</div>
+      <div class="appeal-copy">Changing a weapon creates a severe penalty.</div>
+      <div class="appeal-grid">
+        <button class="btn curse small" data-appeal="chase" type="button">Change Chase’s Weapon</button>
+        <button class="btn curse small" data-appeal="morgan" type="button">Change Morgan’s Weapon</button>
+        <button class="btn curse small" data-appeal="both" type="button">Change Both Weapons</button>
+      </div>
+      <div id="appealConfirm"></div>
+    </section>
+
+    <section class="history">
+      <div class="section
