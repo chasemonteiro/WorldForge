@@ -53,6 +53,9 @@ jobs:
       - name: Apply spreadsheet regional pools
         run: python tarnished-covenant/build-regional-pools.py
 
+      - name: Apply screen-based UI
+        run: python tarnished-covenant/build-ui.py
+
       - name: Commit assembled page
         run: |
           git config user.name 'github-actions[bot]'
