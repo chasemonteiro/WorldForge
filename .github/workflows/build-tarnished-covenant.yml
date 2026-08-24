@@ -56,6 +56,16 @@ jobs:
       - name: Apply screen-based UI
         run: python tarnished-covenant/build-ui.py
 
+      - name: Normalize Chaos render hook
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tarnished-covenant/index.html')
+          s = p.read_text()
+          s = s.replace('if(state.runComplete) return renderRunComplete();', 'if (state.runComplete) return renderRunComplete();', 1)
+          p.write_text(s)
+          PY
+
       - name: Apply ornate theme and expanded Chaos
         run: python tarnished-covenant/build-chaos-theme.py
 
