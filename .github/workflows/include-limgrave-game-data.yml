@@ -1,0 +1,42 @@
+name: Include Limgrave Game Data
+
+on:
+  push:
+    branches: [tarnished-covenant-assets]
+    paths:
+      - 'tarnished-covenant/index.html'
+      - 'tarnished-covenant/limgrave-game-items.js'
+      - '.github/workflows/include-limgrave-game-data.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Include Limgrave data
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tarnished-covenant/index.html')
+          s = p.read_text()
+          tag = '<script src="./limgrave-game-items.js"></script>'
+          if tag not in s:
+              s = s.replace('</body>', tag + '\n</body>')
+              p.write_text(s)
+          PY
+      - name: Commit page
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'Already included.'
+          else
+            git commit -m 'Include expanded Limgrave game data'
+            git push origin tarnished-covenant-assets
+          fi
