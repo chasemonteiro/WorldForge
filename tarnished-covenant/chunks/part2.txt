@@ -1,0 +1,147 @@
+pinning Slash'),
+      W('Pulley Bow','Bow','Smithing Stones','Mighty Shot'),
+      W('Pulley Crossbow','Crossbow','Smithing Stones','Kick'),
+      W('Magma Blade','Curved Sword','Somber Smithing Stones','Magma Shower',false),
+      W('Ghiza’s Wheel','Colossal Weapon','Somber Smithing Stones','Spinning Wheel',false),
+      W('Bloodhound Claws','Claw','Smithing Stones','Bloodhound Step')
+    ]
+  },
+  'Mountaintops of the Giants': {
+    exit: 'Fire Giant',
+    bosses: ['Borealis the Freezing Fog','Commander Niall','Death Rite Bird','Erdtree Avatar','Ancient Hero of Zamor'],
+    weapons: [
+      W('Eclipse Shotel','Curved Sword','Somber Smithing Stones','Death Flare',false),
+      W('Rivers of Blood','Katana','Somber Smithing Stones','Corpse Piler',false),
+      W('Watchdog’s Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Thorned Whip','Whip','Smithing Stones','Kick'),
+      W('Monk’s Flameblade','Curved Greatsword','Smithing Stones','Spinning Slash')
+    ]
+  },
+  'Miquella’s Haligtree': {
+    exit: 'Malenia, Blade of Miquella',
+    bosses: ['Loretta, Knight of the Haligtree','Putrid Avatar','Ulcerated Tree Spirit'],
+    weapons: [
+      W('Cleanrot Knight’s Sword','Thrusting Sword','Smithing Stones','Impaling Thrust'),
+      W('Cleanrot Spear','Spear','Somber Smithing Stones','Sacred Phalanx',false),
+      W('Halo Scythe','Reaper','Somber Smithing Stones','Miquella’s Ring of Light',false),
+      W('Miquellan Knight’s Sword','Straight Sword','Somber Smithing Stones','Sacred Blade',false),
+      W('Rotten Crystal Sword','Straight Sword','Somber Smithing Stones','Spinning Slash',false),
+      W('Envoy’s Greathorn','Colossal Weapon','Somber Smithing Stones','Great Oracular Bubble',false)
+    ]
+  },
+  'Crumbling Farum Azula': {
+    exit: 'Maliketh, the Black Blade',
+    bosses: ['Godskin Duo','Dragonlord Placidusax','Draconic Tree Sentinel'],
+    weapons: [
+      W('Beastman’s Curved Sword','Curved Sword','Smithing Stones','Spinning Slash'),
+      W('Beastman’s Cleaver','Curved Greatsword','Smithing Stones','Spinning Slash'),
+      W('Banished Knight’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Banished Knight’s Halberd','Halberd','Smithing Stones','Charge Forth')
+    ]
+  },
+  'Gravesite Plain · DLC': {
+    exit: 'Rellana, Twin Moon Knight',
+    bosses: ['Divine Beast Dancing Lion','Blackgaol Knight','Ghostflame Dragon','Death Knight','Demi-Human Swordmaster Onze','Furnace Golem'],
+    weapons: [
+      W('Backhand Blade','Backhand Blade','Smithing Stones','Blind Spot'),
+      W('Great Katana','Great Katana','Smithing Stones','Overhead Stance'),
+      W('Smithscript Dagger','Throwing Blade','Smithing Stones','Piercing Throw'),
+      W('Anvil Hammer','Colossal Weapon','Somber Smithing Stones','Smithing Art Spears',false),
+      W('Milady','Light Greatsword','Smithing Stones','Impaling Thrust'),
+      W('Bloodfiend’s Arm','Colossal Weapon','Smithing Stones','Endure'),
+      W('Curseblade’s Cirque','Backhand Blade','Somber Smithing Stones','Deadly Dance',false)
+    ]
+  },
+  'Scadu Altus + Shadow Keep · DLC': {
+    exit: 'Messmer the Impaler',
+    bosses: ['Golden Hippopotamus','Commander Gaius','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem','Metyr, Mother of Fingers'],
+    weapons: [
+      W('Smithscript Cirque','Backhand Blade','Smithing Stones','Blind Spot'),
+      W('Ancient Meteoric Ore Greatsword','Colossal Sword','Somber Smithing Stones','White Light Charge',false),
+      W('Dryleaf Arts','Hand-to-Hand Art','Smithing Stones','Palm Blast'),
+      W('Carian Thrusting Shield','Thrusting Shield','Smithing Stones','Shield Strike'),
+      W('Fire Knight’s Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Messmer Soldier’s Spear','Great Spear','Smithing Stones','Charge Forth'),
+      W('Serpent Flail','Flail','Somber Smithing Stones','Flare, O Serpent',false)
+    ]
+  },
+  'Cerulean Coast · DLC': {
+    exit: 'Putrescent Knight',
+    bosses: ['Ghostflame Dragon','Demi-Human Queen Marigga','Dancer of Ranah'],
+    weapons: [
+      W('Spirit Sword','Curved Sword','Somber Smithing Stones','Rancor Slash',false),
+      W('Chilling Perfume Bottle','Perfume Bottle','Somber Smithing Stones','Kick',false)
+    ]
+  },
+  'Dragon’s Pit + Jagged Peak · DLC': {
+    exit: 'Bayle the Dread',
+    bosses: ['Ancient Dragon-Man','Jagged Peak Drake','Ancient Dragon Senessax'],
+    weapons: [W('Dragon-Hunter’s Great Katana','Great Katana','Somber Smithing Stones','Dragonwound Slash',false,'Ancient Dragon-Man')]
+  },
+  'Abyssal Woods · DLC': {
+    exit: 'Midra, Lord of Frenzied Flame',
+    bosses: ['Jori, Elder Inquisitor'],
+    weapons: [
+      W('Nanaya’s Torch','Torch','Somber Smithing Stones','Feeble Lord’s Frenzied Flame',false),
+      W('Barbed Staff-Spear','Great Spear','Somber Smithing Stones','Jori’s Inquisition',false,'Jori, Elder Inquisitor')
+    ]
+  },
+  'Ancient Ruins of Rauh · DLC': {
+    exit: 'Romina, Saint of the Bud',
+    bosses: ['Divine Beast Dancing Lion','Death Knight','Red Bear'],
+    weapons: [
+      W('Smithscript Axe','Axe','Smithing Stones','Wild Strikes'),
+      W('Smithscript Greathammer','Great Hammer','Smithing Stones','Endure')
+    ]
+  },
+  'Enir-Ilim · DLC': {
+    exit: 'Promised Consort Radahn',
+    bosses: ['Needle Knight Leda and allies'],
+    weapons: [
+      W('Euporia','Twinblade','Somber Smithing Stones','Euporia Vortex',false),
+      W('Horned Warrior’s Greatsword','Curved Greatsword','Somber Smithing Stones','Horn Calling: Storm',false)
+    ]
+  }
+};
+
+const chaosTriggers = [
+  'WHEN CHASE OR MORGAN DIES',
+  'WHEN SOMEBODY DRINKS THE FIRST CRIMSON FLASK',
+  'WHEN THE BOSS HITS PHASE TWO',
+  'WHEN THE FIRST STANCE BREAK MAKES EVERYONE TOO CONFIDENT',
+  'WHEN A STATUS EFFECT PROCS AND SOMEONE SAYS “NICE”',
+  'AFTER THE FIRST WIPE. NATURALLY.',
+  'WHEN SOMEONE GETS HIT BY THE SAME MOVE TWICE',
+  'WHEN SOMEBODY PANIC ROLLS DIRECTLY INTO TROUBLE'
+];
+
+const weirdness = [
+  ['Grace Mimic Moment','Use a Grace Mimic and follow it until the route becomes obviously stupid. The little beam is management now.'],
+  ['Become Furniture','Both use Mimic’s Veil near enemies. Be furniture. A patrol has to walk past. Do not explain this to anyone.'],
+  ['Seven Rocks of Great Importance','Leave seven Rainbow Stones on the route. They mean nothing. This is sacred.'],
+  ['Bonfire But Legally Distinct','Put down a Warming Stone somewhere scenic. Both stand around it and emote like NPCs whose quest was cut.'],
+  ['Miquella HR Department','Charm an ordinary enemy. It is now your unpaid intern. It must hit something before it gets fired.'],
+  ['Prattling Pate Has The Floor','Use a Prattling Pate before the fight. Whatever it says is now official strategy.'],
+  ['Miyazaki Prop Hunt','Both use Mimic’s Veil. First player discovered becomes aggro tank. The chair has spoken.'],
+  ['Rainbow Stone OSHA Violation','Make a visible Rainbow Stone trail toward the boss. Minimum five. It should look deeply unnecessary.'],
+  ['Bad Place to Sit','Find an unnecessarily dangerous place and both use a sitting gesture for five full seconds. If someone gets hit, that is content.'],
+  ['Emergency Bush Meeting','Before the fight, both crouch behind the nearest waist-high object for ten seconds. No explanation.']
+];
+
+const affinities = ['Heavy','Keen','Quality','Fire','Flame Art','Lightning','Sacred','Magic','Cold','Poison','Blood','Occult'];
+const roles = [
+  'close-range pressure','L2 button owner','jump attack specialist','stance-break goblin','counter-hit guy',
+  'designated aggro holder','dodge specialist','heavy attack specialist','still learning poise','support / utility'
+];
+
+const penaltyDefs = [
+  ['No Talismans',(s,p)=>`${s} gets ZERO talismans until ${p} is dead. The appeal has consequences.`],
+  ['One Sip',(s,p)=>`${s} may use ONE Crimson Flask per attempt until ${p} dies. One. That is the entire budget.`],
+  ['Heavy Load',(s,p)=>`${s} must stay Heavy Load for every serious attempt against ${p} until victory. Good luck moving.`],
+  ['Shirtless Consequences',(s,p)=>`${s} must remove chest armor AND one additional armor piece until ${p} dies.`],
+  ['No Weapon Skills',(s,p)=>`${s} may not use any weapon skill or Ash of War against ${p} until victory.`],
+  ['No Healing Until It Sucks',(s,p)=>`${s} may not use a Crimson Flask until ${p} is at roughly half health. Every attempt. Yes, this is harsh.`],
+  ['Forty Enemies',(s,p)=>`${s} must kill 40 ordinary enemies in this region without resting before the new weapon is legal against ${p}. Rest or die and the count resets.`],
+  ['Extra Boss',(s,p)=>`${s} must help kill one additional named field or dungeon boss in this region before the replacement weapon is legal against ${p}.`],
+  ['No Rolling For Thirty Seconds',(s,p)=>`${s} may not dodge roll for the first 30 seconds of every serious attempt against ${p}. Run, jump, block, improvise.`],
+  ['Walk Of Shame',(s,p)=>`${s} must go from the current staging Grace to a d
