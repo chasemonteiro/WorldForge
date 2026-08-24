@@ -217,7 +217,7 @@ const regions = {
   },
   'Scadu Altus + Shadow Keep · DLC': {
     exit: 'Messmer the Impaler',
-    bosses: ['Golden Hippopotamus','Commander Gaius','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem','Metyr, Mother of Fingers'],
+    bosses: ['Golden Hippopotamus','Commander Gaius','Scadutree Avatar','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem','Metyr, Mother of Fingers'],
     weapons: [
       W('Smithscript Cirque','Backhand Blade','Smithing Stones','Blind Spot'),
       W('Ancient Meteoric Ore Greatsword','Colossal Sword','Somber Smithing Stones','White Light Charge',false),
@@ -265,6 +265,51 @@ const regions = {
       W('Horned Warrior’s Greatsword','Curved Greatsword','Somber Smithing Stones','Horn Calling: Storm',false)
     ]
   }
+
+
+regions['Siofra River + Nokron'] = {
+  exit: 'Regal Ancestor Spirit',
+  bosses: ['Mimic Tear','Dragonkin Soldier','Valiant Gargoyles'],
+  weapons: [
+    W('Horn Bow','Bow','Smithing Stones','Mighty Shot'),
+    W('Nox Flowing Sword','Curved Sword','Somber Smithing Stones','Flowing Form',false),
+    W('Nox Flowing Hammer','Hammer','Somber Smithing Stones','Flowing Form',false)
+  ]
+};
+regions['Lake of Rot + Grand Cloister'] = {
+  exit: 'Astel, Naturalborn of the Void',
+  bosses: ['Dragonkin Soldier of Nokstella','Alabaster Lord','Putrid Tree Spirit'],
+  weapons: [
+    W('Scorpion’s Stinger','Dagger','Somber Smithing Stones','Repeating Thrust',false),
+    W('Dragonscale Blade','Katana','Somber Smithing Stones','Ice Lightning Sword',false),
+    W('Alabaster Lord’s Sword','Greatsword','Somber Smithing Stones','Alabaster Lords’ Pull',false)
+  ]
+};
+regions['Deeproot Depths'] = {
+  exit: 'Lichdragon Fortissax',
+  bosses: ['Fia’s Champions','Crucible Knight Siluria','Erdtree Avatar'],
+  weapons: [
+    W('Siluria’s Tree','Great Spear','Somber Smithing Stones','Siluria’s Woe',false),
+    W('Prince of Death’s Staff','Glintstone Staff','Somber Smithing Stones','No Skill',false)
+  ]
+};
+regions['Mohgwyn Palace'] = {
+  exit: 'Mohg, Lord of Blood',
+  bosses: ['Nameless White Mask','Sanguine Noble','Putrid Corpse Swarm'],
+  weapons: [
+    W('Varre’s Bouquet','Hammer','Somber Smithing Stones','Blood Tax',false),
+    W('Mohgwyn’s Sacred Spear','Great Spear','Somber Smithing Stones','Bloodboon Ritual',false,'Mohg, Lord of Blood')
+  ]
+};
+regions['Leyndell, Ashen Capital'] = {
+  exit: 'Godfrey, First Elden Lord / Hoarah Loux',
+  bosses: ['Sir Gideon Ofnir, the All-Knowing','Ulcerated Tree Spirit','Erdtree Avatar'],
+  weapons: regions['Altus Plateau + Leyndell'].weapons
+};
+regions['The Erdtree'] = {
+  exit: 'Radagon of the Golden Order / Elden Beast',
+  bosses: [],
+  weapons: regions['Altus Plateau + Leyndell'].weapons
 };
 
 const chaosTriggers = [
@@ -279,16 +324,56 @@ const chaosTriggers = [
 ];
 
 const weirdness = [
-  ['Grace Mimic Moment','Use a Grace Mimic and follow it until the route becomes obviously stupid. The little beam is management now.'],
-  ['Become Furniture','Both use Mimic’s Veil near enemies. Be furniture. A patrol has to walk past. Do not explain this to anyone.'],
-  ['Seven Rocks of Great Importance','Leave seven Rainbow Stones on the route. They mean nothing. This is sacred.'],
-  ['Bonfire But Legally Distinct','Put down a Warming Stone somewhere scenic. Both stand around it and emote like NPCs whose quest was cut.'],
-  ['Miquella HR Department','Charm an ordinary enemy. It is now your unpaid intern. It must hit something before it gets fired.'],
-  ['Prattling Pate Has The Floor','Use a Prattling Pate before the fight. Whatever it says is now official strategy.'],
-  ['Miyazaki Prop Hunt','Both use Mimic’s Veil. First player discovered becomes aggro tank. The chair has spoken.'],
-  ['Rainbow Stone OSHA Violation','Make a visible Rainbow Stone trail toward the boss. Minimum five. It should look deeply unnecessary.'],
-  ['Bad Place to Sit','Find an unnecessarily dangerous place and both use a sitting gesture for five full seconds. If someone gets hit, that is content.'],
-  ['Emergency Bush Meeting','Before the fight, both crouch behind the nearest waist-high object for ten seconds. No explanation.']
+  ['Knife Check','Hit the boss with a Kukri before victory. The hit has to connect.'],
+  ['Tiny Knife Check','Hit the boss with a Throwing Dagger before victory.'],
+  ['Bone Department','Hit the boss with a Bone Dart before victory.'],
+  ['Crystal Mathematics','Hit the boss with a Crystal Dart before victory.'],
+  ['Fire Pot Compliance','Land a Fire Pot on the boss before it dies.'],
+  ['Holy Water Audit','Land a Holy Water Pot on the boss before victory.'],
+  ['Oil First, Questions Later','Hit the boss with an Oil Pot at least once before victory.'],
+  ['Poison Paperwork','Hit the boss with a Poisonbone Dart before victory. Poison does not have to proc.'],
+  ['Volcano Pot Incident','Land a Volcano Pot on the boss before victory.'],
+  ['Lightning In A Jar','Land a Lightning Pot on the boss before victory.'],
+  ['Arena Survey Marker','Place one Rainbow Stone somewhere inside or immediately beside the boss arena before victory.'],
+  ['Glowstone OSHA','Drop a Glowstone in the arena before the boss dies.'],
+  ['Union-Mandated Break','Place a Warming Stone during the fight. At least one player must stand in its effect briefly.'],
+  ['Stealth Technology','Use Mimic’s Veil before approaching the boss arena. Remain disguised for at least five seconds.'],
+  ['Lantern Protocol','Both players must turn on a Lantern before the first attack and leave it on for the fight.'],
+  ['Professional Cartography','Use the Telescope to inspect the boss or arena before pulling aggro.'],
+  ['Personal Hygiene','Use Soap immediately before entering the boss fight.'],
+  ['Hello, Management','Use Prattling Pate “Hello” before either player attacks.'],
+  ['Thank You For Your Service','Use Prattling Pate “Thank You” after the boss reaches roughly half health.'],
+  ['Formal Apology','Use Prattling Pate “Apologies” after the first player takes damage.'],
+  ['Wonderful Assessment','Use Prattling Pate “Wonderful” after the first stance break or major punish.'],
+  ['You’re Beautiful','Use Prattling Pate “You’re Beautiful” while facing the boss before the first attack.'],
+  ['Performance Enhancement','One player must use Uplifting Aromatic during the fight.'],
+  ['Perfume Violence','One player must use Spark Aromatic during the fight.'],
+  ['Become A Fridge','One player must use Ironjar Aromatic and survive at least ten seconds in combat afterward.'],
+  ['Crab Before Combat','One player must eat Boiled Crab immediately before the fight.'],
+  ['Turtle Neck Technology','One player must use a Pickled Turtle Neck immediately before the fight.'],
+  ['Exalted Flesh Situation','One player must use Exalted Flesh immediately before the fight.'],
+  ['Starlight Budget','One player must use a Starlight Shard during the fight.'],
+  ['Free Hug Debuff','One player must use Baldachin’s Blessing before the first attack.'],
+  ['Pumpkin Assignment','One randomly chosen player must wear Pumpkin Helm for the entire fight.'],
+  ['Cat Head Clause','One randomly chosen player must wear Imp Head (Cat) for the entire fight.'],
+  ['Octopus Formalwear','One randomly chosen player must wear Octopus Head for the entire fight.'],
+  ['Albinauric Representation','One randomly chosen player must wear Albinauric Mask for the entire fight.'],
+  ['Mushroom Management','One randomly chosen player must wear Mushroom Crown for the entire fight.'],
+  ['Bubble Executive','One randomly chosen player must wear Envoy Crown for the entire fight.'],
+  ['Jar Employee Of The Month','One randomly chosen player must wear Jar for the entire fight.'],
+  ['Business Casual','One randomly chosen player must wear Commoner’s Headband for the entire fight.'],
+  ['Silver Tear Internship','One randomly chosen player must wear Silver Tear Mask for the entire fight.'],
+  ['Bad Hat Day','One randomly chosen player must wear Black Dumpling for the entire fight.'],
+  ['Polite Opening','Both players must perform Polite Bow before either damages the boss.'],
+  ['Standard Opening','Both players must perform Bow before either damages the boss.'],
+  ['Point Downward Review','After the first stance break, one player must perform Point Downward before attacking again.'],
+  ['Academic Violence','One player must perform Erudition immediately before entering or engaging the boss.'],
+  ['Chairman Of The Arena','Before the pull, both players must crouch side by side and stare at the boss for five seconds.'],
+  ['Mandatory Lap','Before the first attack, both players must run one unnecessary circle around each other.'],
+  ['Aggro Ceremony','The player who gets first aggro must stop and slowly walk for three seconds before attacking.'],
+  ['Doorway Committee','Both players must stand in the boss doorway or fog-gate area for five seconds before entering.'],
+  ['Post-Stance Meeting','After the first stance break, both players must stop attacking for three seconds and regroup.'],
+  ['Victory Was Foretold','Before the pull, one player must point directly at the boss while the other crouches. Hold this tableau for three seconds.']
 ];
 
 const affinities = ['Heavy','Keen','Quality','Fire','Flame Art','Lightning','Sacred','Magic','Cold','Poison','Blood','Occult'];
@@ -326,6 +411,157 @@ function pick(arr) {
 
 const MIN_REGIONAL_BOSSES = 3;
 
+const BASE_REMEMBRANCES = [
+  'Godrick the Grafted',
+  'Rennala, Queen of the Full Moon',
+  'Starscourge Radahn',
+  'Regal Ancestor Spirit',
+  'Astel, Naturalborn of the Void',
+  'Rykard, Lord of Blasphemy',
+  'Morgott, the Omen King',
+  'Lichdragon Fortissax',
+  'Fire Giant',
+  'Mohg, Lord of Blood',
+  'Malenia, Blade of Miquella',
+  'Maliketh, the Black Blade',
+  'Dragonlord Placidusax',
+  'Godfrey, First Elden Lord / Hoarah Loux'
+];
+
+const DLC_REMEMBRANCES = [
+  'Divine Beast Dancing Lion',
+  'Rellana, Twin Moon Knight',
+  'Putrescent Knight',
+  'Commander Gaius',
+  'Scadutree Avatar',
+  'Metyr, Mother of Fingers',
+  'Midra, Lord of Frenzied Flame',
+  'Messmer the Impaler',
+  'Romina, Saint of the Bud',
+  'Promised Consort Radahn'
+];
+
+const REMEMBRANCE_REGION = {
+  'Godrick the Grafted': 'Limgrave + Stormveil',
+  'Rennala, Queen of the Full Moon': 'Liurnia of the Lakes',
+  'Starscourge Radahn': 'Caelid',
+  'Regal Ancestor Spirit': 'Siofra River + Nokron',
+  'Astel, Naturalborn of the Void': 'Lake of Rot + Grand Cloister',
+  'Rykard, Lord of Blasphemy': 'Mt. Gelmir',
+  'Morgott, the Omen King': 'Altus Plateau + Leyndell',
+  'Lichdragon Fortissax': 'Deeproot Depths',
+  'Fire Giant': 'Mountaintops of the Giants',
+  'Mohg, Lord of Blood': 'Mohgwyn Palace',
+  'Malenia, Blade of Miquella': 'Miquella’s Haligtree',
+  'Maliketh, the Black Blade': 'Crumbling Farum Azula',
+  'Dragonlord Placidusax': 'Crumbling Farum Azula',
+  'Godfrey, First Elden Lord / Hoarah Loux': 'Leyndell, Ashen Capital',
+  'Divine Beast Dancing Lion': 'Gravesite Plain · DLC',
+  'Rellana, Twin Moon Knight': 'Gravesite Plain · DLC',
+  'Putrescent Knight': 'Cerulean Coast · DLC',
+  'Commander Gaius': 'Scadu Altus + Shadow Keep · DLC',
+  'Scadutree Avatar': 'Scadu Altus + Shadow Keep · DLC',
+  'Metyr, Mother of Fingers': 'Scadu Altus + Shadow Keep · DLC',
+  'Midra, Lord of Frenzied Flame': 'Abyssal Woods · DLC',
+  'Messmer the Impaler': 'Scadu Altus + Shadow Keep · DLC',
+  'Romina, Saint of the Bud': 'Ancient Ruins of Rauh · DLC',
+  'Promised Consort Radahn': 'Enir-Ilim · DLC'
+};
+
+function collectedRemembrances(state) {
+  return new Set((state.history || []).map(x => x.name));
+}
+
+function requiredRemembrances(state) {
+  return state.includeDlc ? [...BASE_REMEMBRANCES, ...DLC_REMEMBRANCES] : [...BASE_REMEMBRANCES];
+}
+
+function missingRemembrances(state) {
+  const collected = collectedRemembrances(state);
+  return requiredRemembrances(state).filter(name => !collected.has(name));
+}
+
+function finalSealOpen(state) {
+  return missingRemembrances(state).length === 0;
+}
+
+function hasRemembrance(state, name) {
+  return collectedRemembrances(state).has(name);
+}
+
+function regionHasMissingRemembrance(state, regionName) {
+  return missingRemembrances(state).some(name => REMEMBRANCE_REGION[name] === regionName);
+}
+
+function regionUnlocked(state, regionName) {
+  const cleared = new Set(state.clearedRegions || []);
+  const has = name => hasRemembrance(state, name);
+  switch (regionName) {
+    case 'Weeping Peninsula':
+    case 'Liurnia of the Lakes':
+    case 'Caelid':
+      return cleared.has('Limgrave + Stormveil');
+    case 'Siofra River + Nokron':
+      return has('Starscourge Radahn');
+    case 'Lake of Rot + Grand Cloister':
+      return has('Regal Ancestor Spirit') && has('Rennala, Queen of the Full Moon');
+    case 'Altus Plateau + Leyndell':
+      return has('Rennala, Queen of the Full Moon');
+    case 'Mt. Gelmir':
+      return cleared.has('Altus Plateau + Leyndell');
+    case 'Deeproot Depths':
+      return has('Regal Ancestor Spirit');
+    case 'Mountaintops of the Giants':
+      return has('Morgott, the Omen King');
+    case 'Mohgwyn Palace':
+      return has('Starscourge Radahn') && cleared.has('Mountaintops of the Giants');
+    case 'Miquella’s Haligtree':
+      return cleared.has('Mountaintops of the Giants');
+    case 'Crumbling Farum Azula':
+      return has('Fire Giant');
+    case 'Leyndell, Ashen Capital':
+      return has('Maliketh, the Black Blade');
+    case 'The Erdtree':
+      return has('Godfrey, First Elden Lord / Hoarah Loux') && finalSealOpen(state);
+    case 'Gravesite Plain · DLC':
+      return Boolean(state.includeDlc) && has('Starscourge Radahn') && has('Mohg, Lord of Blood');
+    case 'Cerulean Coast · DLC':
+    case 'Dragon’s Pit + Jagged Peak · DLC':
+    case 'Scadu Altus + Shadow Keep · DLC':
+      return Boolean(state.includeDlc) && cleared.has('Gravesite Plain · DLC');
+    case 'Abyssal Woods · DLC':
+      return Boolean(state.includeDlc) && cleared.has('Scadu Altus + Shadow Keep · DLC');
+    case 'Ancient Ruins of Rauh · DLC':
+      return Boolean(state.includeDlc) && has('Messmer the Impaler');
+    case 'Enir-Ilim · DLC':
+      return Boolean(state.includeDlc) && has('Messmer the Impaler') && has('Romina, Saint of the Bud');
+    default:
+      return regionName === 'Limgrave + Stormveil';
+  }
+}
+
+function availableNextRegions(state) {
+  const cleared = new Set(state.clearedRegions || []);
+  return Object.keys(regions).filter(regionName => {
+    if (regionName === state.region) return false;
+    if (!state.includeDlc && regionName.includes('· DLC')) return false;
+    if (!regionUnlocked(state, regionName)) return false;
+    if (!cleared.has(regionName)) return true;
+    return regionHasMissingRemembrance(state, regionName);
+  });
+}
+
+function remembranceLedgerMarkup(state) {
+  const required = requiredRemembrances(state);
+  const collected = collectedRemembrances(state);
+  const done = required.filter(name => collected.has(name)).length;
+  const missing = required.filter(name => !collected.has(name));
+  return `<section class="fate-block">
+    <div class="fate-title">REMEMBRANCES · ${done}/${required.length}</div>
+    <div class="fate-copy">${missing.length ? `${missing.length} required before the final seal can break.` : 'all required Remembrances claimed · the final seal is open.'}</div>
+  </section>`;
+}
+
 function capstoneChance(cleared) {
   if (cleared < MIN_REGIONAL_BOSSES) return 0;
   return Math.min(0.10 + (cleared - MIN_REGIONAL_BOSSES) * 0.09, 0.82);
@@ -333,6 +569,7 @@ function capstoneChance(cleared) {
 
 function chooseTarget(regionName, cleared) {
   const region = regions[regionName];
+  if (regionName === 'The Erdtree') return { name: region.exit, exit: true };
   return Math.random() < capstoneChance(cleared)
     ? { name: region.exit, exit: true }
     : { name: pick(region.bosses), exit: false };
@@ -344,10 +581,7 @@ function eligibleWeapons(regionName, target) {
   return pool.length ? pool : region.weapons;
 }
 
-function makeBuild(regionName, target, avoidName = '') {
-  let pool = eligibleWeapons(regionName, target).filter(w => w.name !== avoidName);
-  if (!pool.length) pool = eligibleWeapons(regionName, target);
-  const weapon = pick(pool);
+function buildFromWeapon(weapon) {
   return {
     ...weapon,
     affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
@@ -355,10 +589,64 @@ function makeBuild(regionName, target, avoidName = '') {
   };
 }
 
+function makeBuild(regionName, target, avoidNames = []) {
+  const avoided = new Set(Array.isArray(avoidNames) ? avoidNames : [avoidNames]);
+  let pool = eligibleWeapons(regionName, target).filter(w => !avoided.has(w.name));
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  return buildFromWeapon(pick(pool));
+}
+
+function recentWeaponNames(state, key, limit = 3) {
+  return (state.history || [])
+    .map(entry => entry?.[key])
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function pairKey(a, b) {
+  return [a, b].sort().join(' || ');
+}
+
+function chooseWeaponPair(state, target) {
+  const pool = eligibleWeapons(state.region, target);
+  if (pool.length < 2) {
+    const first = buildFromWeapon(pool[0]);
+    return { chase: first, morgan: buildFromWeapon(pool[0]) };
+  }
+
+  const chaseRecent = new Set(recentWeaponNames(state, 'chaseWeapon'));
+  const morganRecent = new Set(recentWeaponNames(state, 'morganWeapon'));
+  const recentPairs = new Set((state.history || [])
+    .map(entry => entry?.weaponPair)
+    .filter(Boolean)
+    .slice(0, Math.min(8, pool.length * 2)));
+
+  const candidates = [];
+  for (const chaseWeapon of pool) {
+    for (const morganWeapon of pool) {
+      if (chaseWeapon.name === morganWeapon.name) continue;
+      const key = pairKey(chaseWeapon.name, morganWeapon.name);
+      let score = Math.random();
+      if (!chaseRecent.has(chaseWeapon.name)) score += 5;
+      if (!morganRecent.has(morganWeapon.name)) score += 5;
+      if (!recentPairs.has(key)) score += 8;
+      candidates.push({ chaseWeapon, morganWeapon, score });
+    }
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  const best = candidates[0];
+  return {
+    chase: buildFromWeapon(best.chaseWeapon),
+    morgan: buildFromWeapon(best.morganWeapon)
+  };
+}
+
 function newEncounter(state) {
   const target = chooseTarget(state.region, state.cleared);
-  const chase = makeBuild(state.region, target);
-  const morgan = makeBuild(state.region, target, chase.name);
+  const pair = chooseWeaponPair(state, target);
+  const chase = pair.chase;
+  const morgan = pair.morgan;
   const weird = pick(weirdness);
   return {
     id: crypto.randomUUID(),
@@ -375,18 +663,21 @@ function newEncounter(state) {
   };
 }
 
-function initialRunState({ region, severity, createdBy = 'Chase' }) {
+function initialRunState({ region, severity, includeDlc = false, createdBy = 'Chase' }) {
   const base = {
-    version: 1,
+    version: 2,
     phase: 'active',
     region,
     severity,
+    includeDlc,
     createdBy,
     cleared: 0,
+    clearedRegions: [],
     history: [],
     current: null,
     regionComplete: false,
-    lastAction: `${createdBy} started the Covenant. run started.`,
+    runComplete: false,
+    lastAction: `${createdBy} started the Covenant.`,
     updatedAt: new Date().toISOString()
   };
   base.current = newEncounter(base);
@@ -399,6 +690,9 @@ function completeEncounter(state, actor) {
   next.history.unshift({
     name: target.name,
     exit: target.exit,
+    chaseWeapon: next.current.chase.name,
+    morganWeapon: next.current.morgan.name,
+    weaponPair: pairKey(next.current.chase.name, next.current.morgan.name),
     completedBy: actor,
     completedAt: new Date().toISOString()
   });
@@ -407,8 +701,10 @@ function completeEncounter(state, actor) {
   next.updatedAt = new Date().toISOString();
 
   if (target.exit) {
+    next.clearedRegions = Array.from(new Set([...(next.clearedRegions || []), next.region]));
     next.regionComplete = true;
     next.current = null;
+    if (target.name === 'Radagon of the Golden Order / Elden Beast') next.runComplete = true;
     return next;
   }
 
@@ -480,12 +776,12 @@ function changeWeapons(state, actor, which) {
   const next = structuredClone(state);
   const current = next.current;
   if (which === 'chase') {
-    current.chase = makeBuild(next.region, current.target, current.morgan.name);
+    current.chase = makeBuild(next.region, current.target, [current.morgan.name, current.chase.name]);
   } else if (which === 'morgan') {
-    current.morgan = makeBuild(next.region, current.target, current.chase.name);
+    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name]);
   } else {
     current.chase = makeBuild(next.region, current.target);
-    current.morgan = makeBuild(next.region, current.target, current.chase.name);
+    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name]);
   }
   current.penances.push(makePenance(current.target.name));
   const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? 'Chase' : 'Morgan'}’s weapon`;
@@ -495,8 +791,14 @@ function changeWeapons(state, actor, which) {
 }
 
 function startNextRegion(state, actor, region, severity = state.severity) {
-  const next = initialRunState({ region, severity, createdBy: state.createdBy || actor });
+  const next = initialRunState({
+    region,
+    severity,
+    includeDlc: Boolean(state.includeDlc),
+    createdBy: state.createdBy || actor
+  });
   next.history = [...(state.history || [])];
+  next.clearedRegions = [...(state.clearedRegions || [])];
   next.lastAction = `${actor} entered ${region}.`;
   return next;
 }
@@ -776,17 +1078,20 @@ function renderHome() {
 }
 
 function renderNewRun(identity) {
-  const options = Object.keys(regions).map(r => `<option value="${h(r)}">${h(r)}</option>`).join('');
   app.innerHTML = `${header(true)}
     <section class="menu-section stack new-run">
       <div class="menu-title">begin new run</div>
       <div>
-        <label class="label" for="region">region</label>
-        <select id="region">${options}</select>
+        <label class="label">starting region</label>
+        <div class="status">Limgrave + Stormveil</div>
+      </div>
+      <div>
+        <label class="label" for="ruleset">remembrance ruleset</label>
+        <select id="ruleset"><option value="base" selected>Base Game · All Remembrances</option><option value="dlc">Base + Shadow of the Erdtree · All Remembrances</option></select>
       </div>
       <div>
         <label class="label" for="severity">difficulty</label>
-        <select id="severity" ><option value="normal">Silly</option><option value="hard" selected>Maidenless</option><option value="cursed">Miyazaki Has Noticed You</option></select>
+        <select id="severity"><option value="normal">Silly</option><option value="hard" selected>Maidenless</option><option value="cursed">Miyazaki Has Noticed You</option></select>
       </div>
       <button class="btn gold" id="createRun" type="button">Begin Covenant</button>
       <button class="btn text-btn" id="back" type="button">Back</button>
@@ -794,8 +1099,9 @@ function renderNewRun(identity) {
   document.querySelector('#back').addEventListener('click', renderHome);
   document.querySelector('#createRun').addEventListener('click', async () => {
     const state = initialRunState({
-      region: document.querySelector('#region').value,
+      region: 'Limgrave + Stormveil',
       severity: document.querySelector('#severity').value,
+      includeDlc: document.querySelector('#ruleset').value === 'dlc',
       createdBy: identity
     });
     try {
@@ -909,6 +1215,7 @@ function progressMarks(cleared) {
 }
 
 function capstoneBlock(state) {
+  if (state.region === 'The Erdtree') return `<div class="fate-block"><div class="fate-title">FINAL AUDIENCE</div><div class="fate-copy">all required Remembrances have been claimed.</div></div>`;
   const fate = Math.round(capstoneChance(state.cleared) * 100);
   const locked = state.cleared < MIN_REGIONAL_BOSSES;
   const needed = Math.max(0, MIN_REGIONAL_BOSSES - state.cleared);
@@ -937,6 +1244,7 @@ function penanceMarkup(c) {
 function renderRun() {
   const state = run.state;
   setRegionTheme(state.region);
+  if (state.runComplete) return renderRunComplete();
   if (state.regionComplete) return renderRegionComplete();
   const c = state.current;
 
@@ -952,6 +1260,7 @@ function renderRun() {
       </div>
     </section>
     ${capstoneBlock(state)}
+    ${remembranceLedgerMarkup(state)}
     <div class="omen">${h(pickOmen())}</div>
     <div class="ornament boss-ornament"><span>✦</span></div>
 
@@ -1097,30 +1406,56 @@ function renderHistory(state) {
 function renderRegionComplete() {
   const state = run.state;
   setRegionTheme(state.region);
-  const options = Object.keys(regions).filter(r=>r!==state.region).map(r=>`<option value="${h(r)}">${h(r)}</option>`).join('');
+  const choices = availableNextRegions(state);
+  const options = choices.map(r => `<option value="${h(r)}">${h(r)}${(state.clearedRegions || []).includes(r) ? ' · RETURN' : ''}</option>`).join('');
+  const missing = missingRemembrances(state);
+  const seal = finalSealOpen(state);
   app.innerHTML = `${header(true)}
     <section class="escape-screen">
       <div class="tag">REGIONAL BOSS DEFEATED</div>
       <div class="escape-title">Region Complete</div>
-      <div class="escape-copy">Region cleared. Outstanding armament penalties are forgiven.</div>
+      <div class="escape-copy">${state.region} cleared. Outstanding armament penalties are forgiven.</div>
     </section>
+    ${remembranceLedgerMarkup(state)}
     <div class="ornament"><span>✦</span></div>
     <section class="menu-section stack">
-      <div><label class="label" for="nextRegion">next region</label><select id="nextRegion">${options}</select></div>
-      <button id="continue" class="btn gold" type="button">Choose Next Region</button>
+      <div class="eyebrow left">paths now open</div>
+      ${choices.length ? `<div><label class="label" for="nextRegion">next region</label><select id="nextRegion">${options}</select></div><button id="continue" class="btn gold" type="button">Travel to Selected Region</button>` : `<div class="status">No new route is currently open.</div>`}
+      ${!seal ? `<div class="status warn">Final seal closed · missing: ${h(missing.slice(0,5).join(', '))}${missing.length > 5 ? ` +${missing.length-5} more` : ''}</div>` : `<div class="status">Final seal open.</div>`}
       <button id="share" class="btn ghost" type="button">Share Covenant</button>
       <button id="restartRun" class="btn curse" type="button">Restart Covenant</button>
       <div id="restartConfirm"></div>
       <button id="leave" class="btn text-btn" type="button">leave run</button>
     </section>
     <section class="history"><div class="section-kicker">encounter history</div>${renderHistory(state)}</section>`;
-  document.querySelector('#continue').addEventListener('click',()=>{
+  document.querySelector('#continue')?.addEventListener('click',()=>{
     const next = startNextRegion(state,playerName(),document.querySelector('#nextRegion').value,state.severity);
     commit(next);
   });
   document.querySelector('#share').addEventListener('click',shareCovenant);
   document.querySelector('#restartRun').addEventListener('click',showRestart);
   document.querySelector('#leave').addEventListener('click',()=>{unsubscribe?.();run=null;clearSession();session=null;renderHome();});
+}
+
+function renderRunComplete() {
+  const state = run.state;
+  setRegionTheme('Leyndell');
+  const total = requiredRemembrances(state).length + 1;
+  app.innerHTML = `${header(true)}
+    <section class="escape-screen">
+      <div class="tag">COVENANT COMPLETE</div>
+      <div class="escape-title">All Remembrances Claimed</div>
+      <div class="escape-copy">Radagon and the Elden Beast are defeated. ${total}/${total} required remembrance encounters complete.</div>
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <button id="share" class="btn ghost" type="button">Share Covenant</button>
+      <button id="restartRun" class="btn curse" type="button">Restart Covenant</button>
+      <div id="restartConfirm"></div>
+    </section>
+    <section class="history"><div class="section-kicker">encounter history</div>${renderHistory(state)}</section>`;
+  document.querySelector('#share').addEventListener('click',shareCovenant);
+  document.querySelector('#restartRun').addEventListener('click',showRestart);
 }
 
 async function shareCovenant() {
@@ -1151,6 +1486,5 @@ function pickOmen() { return omens[Math.floor(Math.random() * omens.length)]; }
 async function startApp(){ backend = await createBackend(config); boot(); }
 startApp().catch(err=>{console.error(err); document.body.innerHTML=`<pre style="color:#eee;background:#080806;padding:24px;white-space:pre-wrap">App error: ${String(err?.message||err)}</pre>`;});
 </script>
-<script src="./limgrave-game-items.js"></script>
 </body>
 </html>
