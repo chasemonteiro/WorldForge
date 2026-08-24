@@ -69,6 +69,9 @@ jobs:
       - name: Apply ornate theme and expanded Chaos
         run: python tarnished-covenant/build-chaos-theme.py
 
+      - name: Apply sourced promotional imagery
+        run: python tarnished-covenant/build-images.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
