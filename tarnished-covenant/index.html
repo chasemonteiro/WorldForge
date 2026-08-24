@@ -1151,5 +1151,6 @@ function pickOmen() { return omens[Math.floor(Math.random() * omens.length)]; }
 async function startApp(){ backend = await createBackend(config); boot(); }
 startApp().catch(err=>{console.error(err); document.body.innerHTML=`<pre style="color:#eee;background:#080806;padding:24px;white-space:pre-wrap">App error: ${String(err?.message||err)}</pre>`;});
 </script>
+<script src="./limgrave-game-items.js"></script>
 </body>
 </html>
