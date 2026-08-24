@@ -1060,10 +1060,13 @@ function showRestart() {
     };
 
     try {
-      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
-      run = { ...run, ...restarted };
-      renderRun();
-      setToast('Run restarted.');
+      await backend.restartRun(run.id, buildFreshState(run.state));
+      unsubscribe?.();
+      run = null;
+      clearSession();
+      session = null;
+      renderHome();
+      setToast('Run cleared.');
     } catch (error) {
       console.error(error);
       setToast(error.message || 'Restart failed. Try again.');
