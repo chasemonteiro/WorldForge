@@ -157,6 +157,12 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;bac
   .tc-boss-art.tc-photo{aspect-ratio:16/5.7;background-position:center 42%;}
 }
 
+
+.tc-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tc-name-grid input{width:100%;border:1px solid #4b402d;background:rgba(12,10,7,.82);color:var(--ink);padding:11px 10px;font:16px Georgia,serif;outline:none}
+.tc-name-grid input:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,163,84,.18)}
+@media(max-width:430px){.tc-name-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -919,13 +925,14 @@ function newEncounter(state) {
   };
 }
 
-function initialRunState({ region, severity, includeDlc = false, createdBy = 'Chase' }) {
+function initialRunState({ region, severity, includeDlc = false, playerNames = ['Chase','Morgan'], createdBy = 'Chase' }) {
   const base = {
     version: 2,
     phase: 'active',
     region,
     severity,
     includeDlc,
+    playerNames: Array.isArray(playerNames) && playerNames.length >= 2 ? playerNames.slice(0,2) : ['Chase','Morgan'],
     createdBy,
     cleared: 0,
     clearedRegions: [],
@@ -1098,6 +1105,7 @@ function startNextRegion(state, actor, region, severity = state.severity) {
     region,
     severity,
     includeDlc: Boolean(state.includeDlc),
+    playerNames: state.playerNames || ['Chase','Morgan'],
     createdBy: state.createdBy || actor
   });
   next.history = [...(state.history || [])];
@@ -1387,6 +1395,16 @@ function renderNewRun(identity) {
   app.innerHTML = `${header(true)}
     <section class="menu-section stack new-run">
       <div class="menu-title">begin new run</div>
+      <div class="tc-name-grid">
+        <div>
+          <label class="label" for="characterOne">first Tarnished</label>
+          <input id="characterOne" type="text" maxlength="24" autocomplete="off" placeholder="Character name" value="Chase">
+        </div>
+        <div>
+          <label class="label" for="characterTwo">second Tarnished</label>
+          <input id="characterTwo" type="text" maxlength="24" autocomplete="off" placeholder="Character name" value="Morgan">
+        </div>
+      </div>
       <div>
         <label class="label">starting region</label>
         <div class="status">Limgrave + Stormveil</div>
@@ -1404,10 +1422,13 @@ function renderNewRun(identity) {
     </section>`;
   document.querySelector('#back').addEventListener('click', renderHome);
   document.querySelector('#createRun').addEventListener('click', async () => {
+    const one = document.querySelector('#characterOne').value.trim() || 'Tarnished One';
+    const two = document.querySelector('#characterTwo').value.trim() || 'Tarnished Two';
     const state = initialRunState({
       region: 'Limgrave + Stormveil',
       severity: document.querySelector('#severity').value,
       includeDlc: document.querySelector('#ruleset').value === 'dlc',
+      playerNames: [one, two],
       createdBy: identity
     });
     try {
@@ -1622,8 +1643,28 @@ function chaosEventName(text){
 function renderChaosEvent(){
   const c=run.state.current;
   const eventName=chaosEventName(c.chaosConsequence||'');
-  app.innerHTML=`<section class="tc-chaos-event"><div class="tc-chaos-title">Chaos Unleashed · The Seal Has Broken</div><div class="tc-chaos-seal"></div><div class="tc-kicker red">event of chaos</div><div class="tc-chaos-event-name">${h(eventName)}</div><div class="tc-kicker red">consequence</div><div class="tc-chaos-consequence">${h(c.chaosConsequence)}</div><div class="tc-chaos-quip">“${h(pick(chaosQuips))}”</div><button id="ackChaos" class="btn">Acknowledge This Bullshit</button></section>`;
+  app.innerHTML=`<section class="tc-chaos-event"><div class="tc-chaos-title">Chaos Unleashed · The Seal Has Broken</div><div class="tc-chaos-seal"></div><div class="tc-kicker red">event of chaos</div><div class="tc-chaos-event-name">${h(eventName)}</div><div class="tc-kicker red">consequence</div><div class="tc-chaos-consequence">${h(personalizePlayers(c.chaosConsequence,run.state))}</div><div class="tc-chaos-quip">“${h(pick(chaosQuips))}”</div><button id="ackChaos" class="btn">Acknowledge This Bullshit</button></section>`;
   document.querySelector('#ackChaos').addEventListener('click',()=>{acknowledgedChaos.add(c.id);uiScreen='encounter';renderRun();});
+}
+
+function covenantNames(state = run?.state) {
+  const names = state?.playerNames;
+  return Array.isArray(names) && names.length >= 2
+    ? [String(names[0] || 'Tarnished One'), String(names[1] || 'Tarnished Two')]
+    : ['Chase','Morgan'];
+}
+function playerLabel(slot, state = run?.state) {
+  const names = covenantNames(state);
+  return slot === 'morgan' ? names[1] : names[0];
+}
+function personalizePlayers(text, state = run?.state) {
+  if (!text) return text || '';
+  const [one,two] = covenantNames(state);
+  return String(text)
+    .replace(/\bChase\b/g, one)
+    .replace(/\bMorgan\b/g, two)
+    .replace(/\bCHASE\b/g, one.toUpperCase())
+    .replace(/\bMORGAN\b/g, two.toUpperCase());
 }
 
 function navMarkup(active) {
@@ -1684,9 +1725,9 @@ function renderEncounter() {
   const state=run.state,c=state.current;
   app.innerHTML=`<section class="tc-screen">${screenTop('Encounter Briefing')}
     <div class="tc-brief-head"><div class="tc-kicker gold">${c.target.exit?'regional capstone':'current target'}</div><div class="tc-brief-boss">${h(c.target.name)}</div><div class="tc-brief-region">${h(state.region)}</div></div><div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url('${actualRegionImage(state.region)}')"></div>
-    <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout('Chase',c.chase)}${compactLoadout('Morgan',c.morgan)}</div>
+    <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout(playerLabel('chase',state),c.chase)}${compactLoadout(playerLabel('morgan',state),c.morgan)}</div>
     ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
-    <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(c.chaosTrigger)}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(c.chaosConsequence)}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
+    <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(personalizePlayers(c.chaosTrigger,state))}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(personalizePlayers(c.chaosConsequence,run.state))}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
     <div class="tc-feature rite"><div class="tc-feature-row"><div class="tc-feature-glyph">✧</div><div><div class="tc-kicker violet">odd rite</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div></div></div>
     <button id="complete" class="btn gold victory">${c.target.exit?'CAPSTONE DEFEATED · CONTINUE':'VICTORY · ROLL NEXT ENCOUNTER'}</button>
     <div class="tc-actions-3"><button id="rerollChaos" class="btn ghost">Reroll Chaos</button><button id="rerollWeird" class="btn ghost">Reroll Rite</button><button id="appealOpen" class="btn curse">Weapon Appeal</button></div>
@@ -1706,7 +1747,7 @@ function renderEncounter() {
 
 function showAppealMenu(){
   const c=run.state.current;
-  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing an assigned weapon creates a severe random penalty.</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">CHASE</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">MORGAN</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">Chase</button><button class="btn curse" data-overlay-appeal="morgan">Morgan</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing an assigned weapon creates a severe random penalty.</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',run.state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',run.state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',run.state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',run.state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
   document.querySelector('#closeAppeal').addEventListener('click',()=>document.querySelector('#tcAppealOverlay')?.remove());
   document.querySelectorAll('[data-overlay-appeal]').forEach(btn=>btn.addEventListener('click',async()=>{const which=btn.dataset.overlayAppeal;document.querySelector('#tcAppealOverlay')?.remove();await commit(changeWeapons(run.state,playerName(),which));}));
 }
@@ -1737,7 +1778,7 @@ function renderSettings() {
 
 function renderDecreeReveal(){
  const state=run.state,c=state.current;
- app.innerHTML=`<section class="tc-screen tc-reveal">${screenTop('New Decree')}<div class="decree">new decree</div><div class="new-boss">${h(c.target.name)}</div><div class="tc-reveal-weapons"><div class="tc-reveal-box"><div class="tc-kicker">Chase</div><strong>${h(c.chase.name)}</strong></div><div class="tc-reveal-box"><div class="tc-kicker">Morgan</div><strong>${h(c.morgan.name)}</strong></div></div><div class="tc-feature chaos" style="text-align:left"><div class="tc-kicker red">chaos</div><div class="tc-feature-text">${h(c.chaosTrigger)}</div></div><div class="tc-feature rite" style="text-align:left"><div class="tc-kicker violet">odd rite</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div><button id="acceptDecree" class="btn gold">Accept the Decree</button></section>${navMarkup('encounter')}`;
+ app.innerHTML=`<section class="tc-screen tc-reveal">${screenTop('New Decree')}<div class="decree">new decree</div><div class="new-boss">${h(c.target.name)}</div><div class="tc-reveal-weapons"><div class="tc-reveal-box"><div class="tc-kicker">${h(playerLabel('chase',state))}</div><strong>${h(c.chase.name)}</strong></div><div class="tc-reveal-box"><div class="tc-kicker">${h(playerLabel('morgan',state))}</div><strong>${h(c.morgan.name)}</strong></div></div><div class="tc-feature chaos" style="text-align:left"><div class="tc-kicker red">chaos</div><div class="tc-feature-text">${h(personalizePlayers(c.chaosTrigger,state))}</div></div><div class="tc-feature rite" style="text-align:left"><div class="tc-kicker violet">odd rite</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div><button id="acceptDecree" class="btn gold">Accept the Decree</button></section>${navMarkup('encounter')}`;
  bindNav();document.querySelector('#acceptDecree').addEventListener('click',()=>{pendingRevealId=null;uiScreen='encounter';renderRun();});
 }
 
