@@ -1,0 +1,238 @@
+ifferent Grace in this region and then reach ${p} without fast travel.`],
+  ['Dungeon Chore',(s,p)=>`${s} must clear one uncleared cave, catacomb, tunnel, gaol, or minor dungeon before using the replacement weapon on ${p}.`],
+  ['Twenty Bonks First',(s,p)=>`${s} must kill 20 ordinary enemies with the replacement weapon without resting before it is legal against ${p}.`],
+  ['First Attempt: Absolutely No Juice',(s,p)=>`${s} gets ZERO Crimson Flasks on the first serious attempt against ${p}. After the disaster, normal healing returns.`],
+  ['No Chest Armor',(s,p)=>`${s} must fight ${p} with no chest armor and no talismans until victory. Fashion Souls is unavailable.`],
+  ['Don’t Get Hit',(s,p)=>`${s} must kill 10 ordinary enemies with the replacement weapon without taking damage before it becomes legal against ${p}. One hit and the counter resets.`],
+  ['Light Load Or Die Trying',(s,p)=>`${s} must reach Light Load and may use at most TWO Crimson Flasks for every serious attempt against ${p} until victory.`],
+  ['Leg Armor Tax',(s,p)=>`${s} must remove leg armor and one talisman until ${p} is dead. This is unfortunately mandatory.`],
+  ['Two-Handed Only',(s,p)=>`${s} must two-hand the replacement weapon and may not swap to another weapon, shield, seal, or staff until ${p} dies.`],
+  ['Flask Audit',(s,p)=>`${s} must permanently leave three Crimson Flask uses unused on every attempt against ${p}. If you normally have 12, you have 9 now.`]
+];
+const PLAYERS = ['Chase', 'Morgan'];
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+const MIN_REGIONAL_BOSSES = 3;
+
+function capstoneChance(cleared) {
+  if (cleared < MIN_REGIONAL_BOSSES) return 0;
+  return Math.min(0.10 + (cleared - MIN_REGIONAL_BOSSES) * 0.09, 0.82);
+}
+
+function chooseTarget(regionName, cleared) {
+  const region = regions[regionName];
+  return Math.random() < capstoneChance(cleared)
+    ? { name: region.exit, exit: true }
+    : { name: pick(region.bosses), exit: false };
+}
+
+function eligibleWeapons(regionName, target) {
+  const region = regions[regionName];
+  const pool = region.weapons.filter(w => !w.requires || w.requires !== target.name);
+  return pool.length ? pool : region.weapons;
+}
+
+function makeBuild(regionName, target, avoidName = '') {
+  let pool = eligibleWeapons(regionName, target).filter(w => w.name !== avoidName);
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  const weapon = pick(pool);
+  return {
+    ...weapon,
+    affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
+    role: pick(roles)
+  };
+}
+
+function newEncounter(state) {
+  const target = chooseTarget(state.region, state.cleared);
+  const chase = makeBuild(state.region, target);
+  const morgan = makeBuild(state.region, target, chase.name);
+  const weird = pick(weirdness);
+  return {
+    id: crypto.randomUUID(),
+    target,
+    chase,
+    morgan,
+    chaosTrigger: pick(chaosTriggers),
+    chaosTriggered: false,
+    chaosConsequence: '',
+    weirdness: { name: weird[0], text: weird[1] },
+    flavor: pick(encounterFlavors),
+    penances: [],
+    createdAt: new Date().toISOString()
+  };
+}
+
+function initialRunState({ region, severity, createdBy = 'Chase' }) {
+  const base = {
+    version: 1,
+    phase: 'active',
+    region,
+    severity,
+    createdBy,
+    cleared: 0,
+    history: [],
+    current: null,
+    regionComplete: false,
+    lastAction: `${createdBy} started the Covenant. run started.`,
+    updatedAt: new Date().toISOString()
+  };
+  base.current = newEncounter(base);
+  return base;
+}
+
+function completeEncounter(state, actor) {
+  const next = structuredClone(state);
+  const target = next.current.target;
+  next.history.unshift({
+    name: target.name,
+    exit: target.exit,
+    completedBy: actor,
+    completedAt: new Date().toISOString()
+  });
+  next.cleared += 1;
+  next.lastAction = `${actor} says ${target.name} is defeated.`;
+  next.updatedAt = new Date().toISOString();
+
+  if (target.exit) {
+    next.regionComplete = true;
+    next.current = null;
+    return next;
+  }
+
+  next.current = newEncounter(next);
+  return next;
+}
+
+function rerollChaos(state, actor) {
+  const next = structuredClone(state);
+  next.current.chaosTrigger = pick(chaosTriggers);
+  next.current.chaosTriggered = false;
+  next.current.chaosConsequence = '';
+  next.lastAction = `${actor} rerolled Chaos.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function rerollWeirdness(state, actor) {
+  const next = structuredClone(state);
+  const weird = pick(weirdness);
+  next.current.weirdness = { name: weird[0], text: weird[1] };
+  next.lastAction = `${actor} rerolled the Odd Rite.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function triggerChaos(state, actor) {
+  const next = structuredClone(state);
+  if (next.current.chaosTriggered) return next;
+  const consequences = [
+    'TALISMAN TAX: Chase and Morgan each lose one talisman slot until victory. ',
+    'JUICE BUDGET: both players lose two voluntary Crimson Flask uses next attempt. ',
+    'L2 BUTTON BROKE: no weapon skills for the rest of this attempt. ',
+    'NO HEALS YET: nobody heals until both players have damaged the boss.',
+    'BRICK MODE: randomly choose Chase or Morgan. That person must Heavy Load next serious attempt.',
+    'THROWN ITEM CHECK: both players must land one thrown consumable before victory. Use any thrown consumable.',
+    'AGGRO SWAP: whoever has aggro must stop attacking until the boss changes targets. ',
+    'PHASE TWO BUDGET CUT: after phase two begins, only one player may heal until somebody dies or the attempt ends.',
+    'CROUCH OF SHAME: both players must crouch for three full seconds before either can attack again.',
+    'NO LOCK-ON: both players turn off target lock for 20 seconds. ',
+    'FIVE-SECOND PENALTY: the first person to get hit after this must stop attacking for five seconds. '
+  ];
+  next.current.chaosTriggered = true;
+  next.current.chaosConsequence = pick(consequences);
+  next.lastAction = `${actor} triggered Chaos.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function targetScope() {
+  const n = Math.random();
+  if (n < 0.34) return { label: 'CHASE', text: 'Chase' };
+  if (n < 0.68) return { label: 'MORGAN', text: 'Morgan' };
+  return { label: 'BOTH', text: 'Chase and Morgan' };
+}
+
+function makePenance(targetName) {
+  const def = pick(penaltyDefs);
+  const scope = targetScope();
+  return {
+    id: crypto.randomUUID(),
+    name: def[0],
+    scope: scope.label,
+    text: def[1](scope.text, targetName)
+  };
+}
+
+function changeWeapons(state, actor, which) {
+  const next = structuredClone(state);
+  const current = next.current;
+  if (which === 'chase') {
+    current.chase = makeBuild(next.region, current.target, current.morgan.name);
+  } else if (which === 'morgan') {
+    current.morgan = makeBuild(next.region, current.target, current.chase.name);
+  } else {
+    current.chase = makeBuild(next.region, current.target);
+    current.morgan = makeBuild(next.region, current.target, current.chase.name);
+  }
+  current.penances.push(makePenance(current.target.name));
+  const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? 'Chase' : 'Morgan'}’s weapon`;
+  next.lastAction = `${actor} changed ${label}; a penalty was added.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function startNextRegion(state, actor, region, severity = state.severity) {
+  const next = initialRunState({ region, severity, createdBy: state.createdBy || actor });
+  next.history = [...(state.history || [])];
+  next.lastAction = `${actor} entered ${region}.`;
+  return next;
+}
+const SESSION_KEY = 'tarnished-covenant-session-v1';
+const LOCAL_RUN_KEY = 'tarnished-covenant-local-run-v1';
+
+function loadSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function saveSession(session) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+function loadLocalRun() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_RUN_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function saveLocalRun(run) {
+  localStorage.setItem(LOCAL_RUN_KEY, JSON.stringify(run));
+}
+
+function clearLocalRun() {
+  localStorage.removeItem(LOCAL_RUN_KEY);
+}
+function randomCode() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for (let i = 0; i < 6; i++) out += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return out;
+}
+
+async function createBackend(config = {}) {
+  const online = Boolean(config.SUPABASE_URL && config.SUPABASE_ANON_KEY);
+  if (!online) return createLocalBackend();
+
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
+    let { data: { session } } = await supabase.auth.getSession(
