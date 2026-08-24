@@ -312,11 +312,58 @@ regions['The Erdtree'] = {
   weapons: regions['Altus Plateau + Leyndell'].weapons
 };
 
-// Elden Ring virtual game-item data for the Limgrave region.
-regions['Limgrave + Stormveil'].weapons = [
-  W('Arbalest','Crossbow','Smithing Stones','Kick'), W('Banished Knight’s Halberd','Halberd','Smithing Stones','Charge Forth'), W('Bloodhound’s Fang','Curved Greatsword','Somber Smithing Stones','Bloodhound’s Finesse',false), W('Brick Hammer','Great Hammer','Smithing Stones','Barbaric Roar'), W('Broadsword','Straight Sword','Smithing Stones','Square Off'), W('Caestus','Fist','Smithing Stones','Endure'), W('Dragon Communion Seal','Sacred Seal','Somber Smithing Stones','No Skill',false), W('Erdtree Greatbow','Greatbow','Somber Smithing Stones','Through and Through',false), W('Erdsteel Dagger','Dagger','Smithing Stones','Quickstep'), W('Flail','Flail','Smithing Stones','Spinning Chain'), W('Godslayer’s Seal','Sacred Seal','Smithing Stones','No Skill',false), W('Golden Halberd','Halberd','Somber Smithing Stones','Golden Vow',false), W('Greataxe','Greataxe','Smithing Stones','Barbaric Roar'), W('Great Épée','Heavy Thrusting Sword','Smithing Stones','Impaling Thrust'), W('Halberd','Halberd','Smithing Stones','Charge Forth'), W('Hand Axe','Axe','Smithing Stones','Quickstep'), W('Highland Axe','Axe','Smithing Stones','War Cry'), W('Hookclaws','Claw','Smithing Stones','Quickstep'), W('Large Club','Great Hammer','Smithing Stones','Barbaric Roar'), W('Lance','Great Spear','Smithing Stones','Charge Forth'), W('Lordsworn’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'), W('Misericorde','Dagger','Smithing Stones','Quickstep'), W('Parrying Dagger','Dagger','Smithing Stones','Parry'), W('Pike','Spear','Smithing Stones','Charge Forth'), W('Reduvia','Dagger','Somber Smithing Stones','Reduvia Blood Blade',false), W('Shamshir','Curved Sword','Smithing Stones','Spinning Slash'), W('Shortbow','Light Bow','Smithing Stones','Barrage'), W('Short Sword','Straight Sword','Smithing Stones','Kick'), W('Torch','Torch','Smithing Stones','Torch Attack',false), W('Twinblade','Twinblade','Smithing Stones','Spinning Slash'), W('Uchigatana','Katana','Smithing Stones','Unsheathe'),
-  W('Club','Hammer','Smithing Stones','Barbaric Roar'), W('Crescent Moon Axe','Greataxe','Smithing Stones','War Cry'), W('Dagger','Dagger','Smithing Stones','Quickstep'), W('Dismounter','Curved Greatsword','Smithing Stones','Spinning Slash'), W('Falchion','Curved Sword','Smithing Stones','Spinning Slash'), W('Forked Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'), W('Forked Hatchet','Axe','Smithing Stones','Quickstep'), W('Golem Greatbow','Greatbow','Smithing Stones','Through and Through'), W('Golem’s Halberd','Colossal Weapon','Smithing Stones','Charge Forth'), W('Glintstone Staff','Glintstone Staff','Smithing Stones','No Skill',false), W('Grave Scythe','Reaper','Smithing Stones','Spinning Slash'), W('Grossmesser','Curved Sword','Smithing Stones','Spinning Slash'), W('Heavy Crossbow','Crossbow','Smithing Stones','Kick'), W('Knight’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'), W('Lordsworn’s Straight Sword','Straight Sword','Smithing Stones','Square Off'), W('Noble’s Estoc','Thrusting Sword','Smithing Stones','Impaling Thrust'), W('Noble’s Slender Sword','Straight Sword','Smithing Stones','Square Off'), W('Omen Cleaver','Curved Greatsword','Smithing Stones','Spinning Slash'), W('Partisan','Spear','Smithing Stones','Impaling Thrust'), W('Pickaxe','Great Hammer','Smithing Stones','Endure'), W('Scimitar','Curved Sword','Smithing Stones','Spinning Slash'), W('Short Spear','Spear','Smithing Stones','Impaling Thrust'), W('Soldier’s Crossbow','Crossbow','Smithing Stones','Kick'), W('Spiked Club','Hammer','Smithing Stones','Barbaric Roar'), W('Spear','Spear','Smithing Stones','Impaling Thrust'), W('Torchpole','Spear','Smithing Stones','Charge Forth'), W('Warhawk’s Talon','Straight Sword','Smithing Stones','Spinning Slash'), W('Warpick','Hammer','Smithing Stones','Kick'), W('Weathered Straight Sword','Straight Sword','Smithing Stones','Square Off')
-];
+const SHEET_WEAPON_POOLS={"Limgrave + Stormveil":["Arbalest","Banished Knight's Halberd","Bloodhound's Fang","Brick Hammer","Broadsword","Caestus","Dragon Communion Seal","Erdtree Greatbow","Erdsteel Dagger","Flail","Godslayer's Seal","Golden Halberd","Greataxe","Great Épée","Halberd","Hand Axe","Highland Axe","Hookclaws","Large Club","Lance","Lordsworn's Greatsword","Misericorde","Parrying Dagger","Pike","Reduvia","Shamshir","Shortbow","Short Sword","Torch","Twinblade","Uchigatana","Club","Crescent Moon Axe","Dagger","Dismounter","Falchion","Forked Greatsword","Forked Hatchet","Golem Greatbow","Golem's Halberd","Glintstone Staff","Grave Scythe","Grossmesser","Heavy Crossbow","Knight's Greatsword","Lordsworn's Straight Sword","Noble's Estoc","Noble's Slender Sword","Omen Cleaver","Partisan","Pickaxe","Scimitar","Short Spear","Soldier's Crossbow","Spiked Club","Spear","Torchpole","Warhawk's Talon","Warpick","Weathered Straight Sword"],"Weeping Peninsula":["Banished Knight's Halberd (+8)","Claymore","Demi-Human Queen's Staff","Grafted Blade Greatsword","Hand Ballista","Iron Cleaver","Lordsworn's Straight Sword","Morning Star","Nightrider Flail","Rusted Anchor","Spiked Spear","Steel-Wire Torch","Whip","Winged Scythe","Zweihander"],"Liurnia of the Lakes":["Academy Glintstone Staff","Astrologer's Staff","Azur's Glintstone Staff","Banished Knight's Halberd","Carian Glintblade Staff","Carian Glintstone Staff","Carian Knight's Sword","Composite Bow","Crystal Knife","Crystal Staff","Crystal Sword","Dark Moon Greatsword","Estoc","Frozen Needle","Full Moon Crossbow","Glintstone Kris","Great Mace","Hoslow's Petal Whip","Icerind Hatchet","Iron Ball","Ivory Sickle","Lucerne","Magma Wyrm's Scalesword","Nightrider Glaive","Ornamental Straight Sword","Ripple Blade","Rosus' Axe","Royal Greatsword","Scythe","Serpent-God's Curved Sword","Sword of Night and Flame","Treespear","Troll Knight's Sword","Stormhawk Axe","Urumi","Vyke's War Spear","Watchdog's Staff","Chainlink Flail","Curved Club","Curved Great Club","Digger's Staff","Executioner's Greataxe","Forked Greatsword","Forked Hatchet","Glaive","Glintstone Staff","Grave Scythe","Great Knife","Heavy Crossbow","Knight's Greatsword","Lazuli Glintstone Sword","Monk's Flamemace","Noble's Estoc","Noble's Slender Sword","Partisan","Ripple Crescent Halberd","Spiked Spear","Stone Club","Warped Axe","Weathered Straight Sword"],"Caelid":["Cross-Naginata","Flamberge","Gargoyle's Blackblade","Gargoyle's Black Halberd","Godslayer's Greatsword","Katar","Lusat's Glintstone Staff","Meteoric Ore Blade","Meteorite Staff","Moonveil","Nox Flowing Sword","Regalia of Eochaid","Ruins Greatsword","Sword of St. Trina","Partisan","Serpent Bow","Staff of Loss","Venomous Fang","Wakizashi"],"Siofra River + Nokron":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Lake of Rot + Grand Cloister":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Deeproot Depths":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Altus Plateau + Leyndell":["Black Knife","Bloody Helice","Celebrant's Cleaver","Celebrant's Rib Rake","Celebrant's Sickle","Celebrant's Skull","Eleonora's Poleblade","Falchion","Godskin Peeler","Great Club","Marais Executioner's Sword","Nagakiba","Onyx Lord's Greatsword","Twinned Knight Swords","Giant Crusher"],"Mt. Gelmir":["Bloodhound Claws","Butchering Knife","Coil Shield","Jar Cannon","Mantis Blade","Noble Presence","Pulley Crossbow","Ringed Finger","Scavenger's Curved Sword","Serpentbone Blade","Serpent-Hunter","Great Omenkiller Cleaver","Spiked Club","Troll's Hammer","Family Heads","Ghiza's Wheel","Godskin Stitcher","Great Club","Hoslow's Petal Whip","Inquisitor's Girandole","Blasphemous Blade"],"Mountaintops of the Giants":["Cranial Vessel Candlestand","Eclipse Shotel","Giant's Seal","Rivers of Blood","Veteran's Prosthesis","Zamor Curved Sword"],"Mohgwyn Palace":["Varre's Bouqet"],"Miquella’s Haligtree":["Loretta's War Sickle","MIquellan Knight's Sword","Rotten Crystal Spear","Rotten Crystal Sword","Rotten Staff"],"Crumbling Farum Azula":["Malekith's Black Blade","Dragon King's Cragblade","Devourer's Scepter"],"Gravesite Plain · DLC":["Beast Claw","Black Steel Greathammer","Backhand Blade","Greatsword of Solitude","Bone Bow","Curseblade's Cirque","Bloodfiend's Arm","Great Katana","Pata","Firespark Perfume Bottle","Milady","Moonrithyll's Knight Sword","Spread Crossbow","Smithscript Dagger","Anvil Hammer","Messmer Soldier's Spear","Swift Spear","Death Knight's Twin-Axes","Poisoned Hand","Horned Warrior's Sword","Deadly Poison Perfume Bottle"],"Scadu Altus + Shadow Keep · DLC":["Carian Sorcery Sword","Smithscript Spear","Smithscript Cirque","Ancient Meteoric Ore Greatsword","Repeating Crossbow","Serpent Flail","Black Steel Twinblade","Dryleaf Arts","Messmer Soldier's Axe","Main-gauche","Fire Knight's Greatsword","Fire Knight's Shortsword","Stone-Sheathed Sword","Sword of Light","Sword of Darkness","Ansbach's Longbow","Bonny Butchering Knife","Tooth Whip","Rabbath's Cannon","Claws of Night","Maternal Staff","Sword of Night","Queelign's Greatsword","Fire Knight's Seal","Lightning Perfume Bottle","Dryleaf Seal","Rakshasa's Great Katana","Forked-Tongue Hatchet","Lizard Greatsword","Barbed Staff-Spear"],"Cerulean Coast · DLC":["Spirit Glaive","Dancing Blade of Rannah","Spirit Sword","Star Lined Sword","Chilling Perfume Bottle","Lamenting Visage","Velvet Sword of St. Trina"],"Dragon’s Pit + Jagged Peak · DLC":["Igon's Greatbow","Dragon-Hunter's Great Katana","Flowerstone Gavel"],"Abyssal Woods · DLC":["Madding Hand","Frenzyflame Perfume Bottle","Nanaya's Torch"],"Ancient Ruins of Rauh · DLC":["Bloodfiend's Fork","Bloodfiend's Sacred Spear","Smithscript Axe","Smithscript Greathammer","Golem Fist","Red Bear's Claw","Spiraltree Seal","Death Knight's Longhaft Axe","Devonia's Hammer","Euporia","Horned Warrior's Greatsword","Leda's Sword","Freyja's Greatsword","Falx","Dane's Footwork","Obsidian Lamina","Thiollier's Hidden Needle"],"Enir-Ilim · DLC":["Bloodfiend's Fork","Bloodfiend's Sacred Spear","Smithscript Axe","Smithscript Greathammer","Golem Fist","Red Bear's Claw","Spiraltree Seal","Death Knight's Longhaft Axe","Devonia's Hammer","Euporia","Horned Warrior's Greatsword","Leda's Sword","Freyja's Greatsword","Falx","Dane's Footwork","Obsidian Lamina","Thiollier's Hidden Needle"]};
+const SHEET_BOSS_POOLS={"Limgrave + Stormveil":["Beastman of Farum Azula","Bell Bearing Hunter","Black Knife Assassin","Bloodhound Knight Darriwil","Crucible Knight","Deathbird","Demi-Human Chief","Erdtree Burial Watchdog (Stormfoot Catacombs)","Flying Dragon Agheel","Grafted Scion","Grave Warden Duelist","Guardian Golem","Mad Pumpkin Head","Margit, The Fell Omen","Night's Cavalry","Patches","Soldier of Godrick","Stonedigger Troll","Tibia Mariner","Tree Sentinel","Ulcerated Tree Spirit"],"Weeping Peninsula":["Ancient Hero of Zamor","Cemetery Shade","Deathbird","Erdtree Avatar","Erdtree Burial Watchdog (Impaler's Catacombs)","Miranda the Blighted Bloom","Night's Cavalry","Runebear","Scaly Misbegotten"],"Liurnia of the Lakes":["Adan, Thief of Fire","Alecto, Black Knife Ringleader","Bell Bearing Hunter","Black Knife Assassin","Bloodhound Knight","Bols, Carian Knight","Cemetery Shade","Cleanrot Knight","Crystalian","Crystalian Spear & Crystalian Staff (Duo)","Death Rite Bird","Deathbird","Erdtree Avatar (Liurnia Northeast)","Erdtree Avatar(Liurnia Southwest)","Erdtree Burial Watchdog","Glintstone Dragon Adula","Glintstone Dragon Smarag","Magma Wyrm Makar","Night's Cavalry (Liurnia North)","Night's Cavalry (Liurnia South)","Omenkiller","Onyx Lord","Red Wolf of Radagon","Royal Knight Loretta","Royal Revenant","Spirit-Caller Snail","Tibia Mariner"],"Caelid":["Cemetery Shade","Commander O'Neil","Crucible Knight and Misbegotten Warrior","Death Rite Bird","Decaying Ekzykes","Erdtree Burial Watchdog (Duo)","Fallingstar Beast","Frenzied Duelist","Mad Pumpkin Heads","Magma Wyrm","Night's Cavalry (Caelid)","Nox Swordstress & Nox Monk","Putrid Avatar","Battlemage Hugues","Beastman of Farum Azula (Duo)","Bell Bearing Hunter","Black Blade Kindred","Cleanrot Knight (Duo)","Flying Dragon Greyll","Godskin Apostle","Night's Cavalry (Dragonbarrow)","Putrid Crystalian Trio","Putrid Tree Spirit"],"Altus Plateau + Leyndell":["Ancient Dragon Lansseax","Ancient Hero of Zamor","Black Knife Assassin (Sage's Cave)","Black Knife Assassin (Sainted Hero's Grave)","Crystalian Spear & Crystalian Ringblade","Demi-Human Queen Gilika","Elemer of the Briar","Erdtree Burial Watchdog","Fallingstar Beast","Godefroy the Grafted","Godskin Apostle","Necromancer Garris","Night's Cavalry","Omenkiller & Miranda the Blighted Bloom","Perfumer Tricia and Misbegotten Warrior","Sanguine Noble","Stonedigger Troll","Tibia Mariner","Tree Sentinel (Duo)","Wormface","Bell Bearing Hunter","Crucible Knight & Crucible Knight Ordovis","Deathbird","Draconic Tree Sentinel","Fell Twins","Grave Warden Duelist","Onyx Lord","Esgar, Priest of Blood","Godfrey, First Elden Lord","Mohg, the Omen"],"Mt. Gelmir":["Abductor Virgins (Duo)","Demi-Human Queen Maggie","Demi-Human Queen Margot","Full-Grown Fallingstar Beast","Godskin Noble","Kindred of Rot (Duo)","Magma Wyrm (Fort Laiedd)","Red Wolf of the Champion","Ulcerated Tree Spirit"],"Mountaintops of the Giants":["Ancient Hero of Zamor","Borealis the Freezing Fog","Commander Niall","Death Rite Bird","Erdtree Avatar","Godskin Apostle and Godskin Noble (Spiritcaller Snail)","Ulcerated Tree Spirit","Vyke, Knight of the Roundtable","Black Blade Kindred","Night's Cavalry","Stray Mimic Tear","Astel, Stars of Darkness","Great Wyrm Theodorix","Misbegotten Crusader","Night's Cavalry (Duo)","Putrid Avatar","Putrid Grave Warden Duelist"],"Mohgwyn Palace":[],"Miquella’s Haligtree":["Loretta, Knight of the Haligtree"],"Crumbling Farum Azula":["Dragonlord Placidusax","Godskin Duo"],"Leyndell, Ashen Capital":["Sir Gideon Ofnir, the All-Knowing"],"Gravesite Plain · DLC":["Blackgaol Knight","Chief Bloodfiend","Demi-Human Swordmaster Onze","Divine Beast Dancing Lion","Ghostflame Dragon","Red Bear"],"Scadu Altus + Shadow Keep · DLC":["Black Knight Edredd","Black Knight Garrew","Count Ymir, Mother of Fingers","Curseblade Labirith","Death Knight","Dryleaf Dane","Ghostflame Dragon","Golden Hippopotamus","Metyr, Mother of Fingers","Rakshasa","Jori, Elder Inquisitor","Ralva the Great Red Bear","Fallingstar Beast","Scadutree Avatar","Commander Gaius","Tree Sentinel"],"Cerulean Coast · DLC":["Dancer of Ranah","Demi-Human Queen Marigga","Ghostflame Dragon","Death Rite Bird","Lamenter","Tibia Mariner"],"Dragon’s Pit + Jagged Peak · DLC":["Ancient Dragon-Man","Ancient Dragon Senessax","Jagged Peak Drake"],"Abyssal Woods · DLC":[],"Siofra River + Nokron":["Ancestor Spirit","Dragonkin Soldier","Mimic Tear","Valiant Gargoyle & Valiant Gargoyle (Twinblade)"],"Lake of Rot + Grand Cloister":["Dragonkin Soldier","Dragonkin Soldier of Nokstella"],"Deeproot Depths":["Crucible Knight Siluria","Fia's champions"],"Ancient Ruins of Rauh · DLC":["Death Knight","Rugalea the Great Red Bear","Divine Beast Dancing Lion"],"Enir-Ilim · DLC":["Leda and Allies"]};
+
+// Spreadsheet-backed regional pools.
+const ORIGINAL_WEAPON_CATALOG = new Map();
+for (const region of Object.values(regions)) {
+  for (const weapon of (region.weapons || [])) {
+    const key = weapon.name.replace(/ \(\+\d+\)$/,'').toLowerCase().replace(/[’]/g,"'");
+    if (!ORIGINAL_WEAPON_CATALOG.has(key)) ORIGINAL_WEAPON_CATALOG.set(key, weapon);
+  }
+}
+
+function sheetWeapon(name) {
+  const lookup = name.replace(/ \(\+\d+\)$/,'').toLowerCase().replace(/[’]/g,"'");
+  const known = ORIGINAL_WEAPON_CATALOG.get(lookup);
+  if (known) return { ...known, name };
+  return W(name, 'Regional weapon', 'Smithing path varies', 'Native skill', false);
+}
+
+for (const [regionName, names] of Object.entries(SHEET_WEAPON_POOLS)) {
+  if (regions[regionName]) regions[regionName].weapons = names.map(sheetWeapon);
+}
+for (const [regionName, names] of Object.entries(SHEET_BOSS_POOLS)) {
+  if (regions[regionName]) regions[regionName].bosses = [...names];
+}
+
+const WEAPON_TARGET_BLOCKS = {
+  "bloodhound's fang": 'darriwil',
+  'golden halberd': 'tree sentinel',
+  'grafted blade greatsword': 'leonine misbegotten',
+  'moonveil': 'magma wyrm',
+  'ruins greatsword': 'crucible knight and misbegotten warrior',
+  "godslayer's greatsword": 'godskin apostle',
+  'blasphemous blade': 'rykard',
+  "loretta's war sickle": 'loretta, knight of the haligtree',
+  "malekith's black blade": 'maliketh',
+  "dragon king's cragblade": 'placidusax',
+  "dragon-hunter's great katana": 'ancient dragon-man',
+  "leda's sword": 'leda and allies',
+  'flowerstone gavel': 'bayle',
+  'obsidian lamina': 'promised consort radahn'
+};
+
+function normalizedGameName(name = '') {
+  return name.toLowerCase().replace(/[’]/g,"'");
+}
+
+function weaponBlockedByTarget(weapon, target) {
+  if (weapon.requires && normalizedGameName(target.name).includes(normalizedGameName(weapon.requires))) return true;
+  const block = WEAPON_TARGET_BLOCKS[normalizedGameName(weapon.name).replace(/ \(\+\d+\)$/,'')];
+  return Boolean(block && normalizedGameName(target.name).includes(block));
+}
 
 const chaosTriggers = [
   'WHEN CHASE OR MORGAN DIES',
@@ -568,23 +615,50 @@ function remembranceLedgerMarkup(state) {
   </section>`;
 }
 
-function capstoneChance(cleared) {
-  if (cleared < MIN_REGIONAL_BOSSES) return 0;
-  return Math.min(0.10 + (cleared - MIN_REGIONAL_BOSSES) * 0.09, 0.82);
+function defeatedBossNames(state, regionName = state.region) {
+  return new Set((state.history || [])
+    .filter(entry => entry?.region === regionName)
+    .map(entry => entry.name));
 }
 
-function chooseTarget(regionName, cleared) {
-  const region = regions[regionName];
-  if (regionName === 'The Erdtree') return { name: region.exit, exit: true };
-  return Math.random() < capstoneChance(cleared)
+function availableRegionalBosses(state) {
+  const defeated = defeatedBossNames(state);
+  return (regions[state.region].bosses || []).filter(name => !defeated.has(name));
+}
+
+function capstoneRequirement(state) {
+  if (state.region === 'The Erdtree') return 0;
+  const available = availableRegionalBosses(state);
+  const poolAtEntry = state.cleared + available.length;
+  return Math.min(MIN_REGIONAL_BOSSES, poolAtEntry);
+}
+
+function capstoneChanceForState(state) {
+  const requirement = capstoneRequirement(state);
+  if (state.cleared < requirement) return 0;
+  return Math.min(0.10 + Math.max(0, state.cleared - requirement) * 0.09, 0.82);
+}
+
+function chooseTarget(state) {
+  const region = regions[state.region];
+  if (state.region === 'The Erdtree') return { name: region.exit, exit: true };
+
+  const available = availableRegionalBosses(state);
+  const revisiting = (state.clearedRegions || []).includes(state.region);
+  if (revisiting && available.length) return { name: pick(available), exit: false };
+
+  const requirement = capstoneRequirement(state);
+  if (!available.length) return { name: region.exit, exit: true };
+  if (state.cleared < requirement) return { name: pick(available), exit: false };
+  return Math.random() < capstoneChanceForState(state)
     ? { name: region.exit, exit: true }
-    : { name: pick(region.bosses), exit: false };
+    : { name: pick(available), exit: false };
 }
 
 function eligibleWeapons(regionName, target) {
   const region = regions[regionName];
-  const pool = region.weapons.filter(w => !w.requires || w.requires !== target.name);
-  return pool.length ? pool : region.weapons;
+  const pool = (region.weapons || []).filter(w => !weaponBlockedByTarget(w, target));
+  return pool.length ? pool : (region.weapons || []);
 }
 
 function buildFromWeapon(weapon) {
@@ -593,13 +667,6 @@ function buildFromWeapon(weapon) {
     affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
     role: pick(roles)
   };
-}
-
-function makeBuild(regionName, target, avoidNames = []) {
-  const avoided = new Set(Array.isArray(avoidNames) ? avoidNames : [avoidNames]);
-  let pool = eligibleWeapons(regionName, target).filter(w => !avoided.has(w.name));
-  if (!pool.length) pool = eligibleWeapons(regionName, target);
-  return buildFromWeapon(pick(pool));
 }
 
 function recentWeaponNames(state, key, limit = 3) {
@@ -613,52 +680,110 @@ function pairKey(a, b) {
   return [a, b].sort().join(' || ');
 }
 
-function chooseWeaponPair(state, target) {
-  const pool = eligibleWeapons(state.region, target);
-  if (pool.length < 2) {
-    const first = buildFromWeapon(pool[0]);
-    return { chase: first, morgan: buildFromWeapon(pool[0]) };
+function usedWeaponNames(state) {
+  const used = new Set();
+  for (const entry of (state.history || [])) {
+    if (entry.chaseWeapon) used.add(entry.chaseWeapon);
+    if (entry.morganWeapon) used.add(entry.morganWeapon);
   }
+  return used;
+}
 
+function accumulatedWeaponPool(state, target) {
+  const regionNames = Array.from(new Set([...(state.clearedRegions || []), state.region]));
+  const byName = new Map();
+  for (const regionName of regionNames) {
+    for (const weapon of eligibleWeapons(regionName, target)) {
+      if (!byName.has(weapon.name)) byName.set(weapon.name, weapon);
+    }
+  }
+  return [...byName.values()];
+}
+
+function scoreWeaponPair(state, chaseWeapon, morganWeapon, poolSize) {
   const chaseRecent = new Set(recentWeaponNames(state, 'chaseWeapon'));
   const morganRecent = new Set(recentWeaponNames(state, 'morganWeapon'));
   const recentPairs = new Set((state.history || [])
     .map(entry => entry?.weaponPair)
     .filter(Boolean)
-    .slice(0, Math.min(8, pool.length * 2)));
+    .slice(0, Math.min(10, Math.max(4, poolSize * 2))));
+  let score = Math.random();
+  if (!chaseRecent.has(chaseWeapon.name)) score += 5;
+  if (!morganRecent.has(morganWeapon.name)) score += 5;
+  if (!recentPairs.has(pairKey(chaseWeapon.name, morganWeapon.name))) score += 8;
+  return score;
+}
 
+function bestPairFromPool(state, chasePool, morganPool) {
   const candidates = [];
-  for (const chaseWeapon of pool) {
-    for (const morganWeapon of pool) {
+  const poolSize = Math.max(chasePool.length, morganPool.length);
+  for (const chaseWeapon of chasePool) {
+    for (const morganWeapon of morganPool) {
       if (chaseWeapon.name === morganWeapon.name) continue;
-      const key = pairKey(chaseWeapon.name, morganWeapon.name);
-      let score = Math.random();
-      if (!chaseRecent.has(chaseWeapon.name)) score += 5;
-      if (!morganRecent.has(morganWeapon.name)) score += 5;
-      if (!recentPairs.has(key)) score += 8;
-      candidates.push({ chaseWeapon, morganWeapon, score });
+      candidates.push({
+        chaseWeapon,
+        morganWeapon,
+        score: scoreWeaponPair(state, chaseWeapon, morganWeapon, poolSize)
+      });
     }
   }
+  if (!candidates.length) return null;
+  candidates.sort((a,b) => b.score - a.score);
+  return candidates[0];
+}
 
-  candidates.sort((a, b) => b.score - a.score);
-  const best = candidates[0];
+function chooseWeaponPair(state, target) {
+  const currentPool = eligibleWeapons(state.region, target);
+  const used = usedWeaponNames(state);
+  const unusedCurrent = currentPool.filter(w => !used.has(w.name));
+  let pair = null;
+
+  // Burn through the current region's deck before recycling older areas.
+  if (unusedCurrent.length >= 2) {
+    pair = bestPairFromPool(state, unusedCurrent, unusedCurrent);
+  } else if (unusedCurrent.length === 1) {
+    const fallback = accumulatedWeaponPool(state, target).filter(w => w.name !== unusedCurrent[0].name);
+    if (Math.random() < 0.5) pair = bestPairFromPool(state, unusedCurrent, fallback);
+    else pair = bestPairFromPool(state, fallback, unusedCurrent);
+  }
+
+  if (!pair) {
+    const fallback = accumulatedWeaponPool(state, target);
+    pair = bestPairFromPool(state, fallback, fallback);
+  }
+
+  if (!pair) {
+    const only = currentPool[0] || accumulatedWeaponPool(state, target)[0];
+    return { chase: buildFromWeapon(only), morgan: buildFromWeapon(only) };
+  }
+
   return {
-    chase: buildFromWeapon(best.chaseWeapon),
-    morgan: buildFromWeapon(best.morganWeapon)
+    chase: buildFromWeapon(pair.chaseWeapon),
+    morgan: buildFromWeapon(pair.morganWeapon)
   };
 }
 
+function makeBuild(regionName, target, avoidNames = [], state = null) {
+  const avoided = new Set(Array.isArray(avoidNames) ? avoidNames : [avoidNames]);
+  let pool = eligibleWeapons(regionName, target).filter(w => !avoided.has(w.name));
+  if (state) {
+    const unused = pool.filter(w => !usedWeaponNames(state).has(w.name));
+    if (unused.length) pool = unused;
+    else pool = accumulatedWeaponPool(state, target).filter(w => !avoided.has(w.name));
+  }
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  return buildFromWeapon(pick(pool));
+}
+
 function newEncounter(state) {
-  const target = chooseTarget(state.region, state.cleared);
+  const target = chooseTarget(state);
   const pair = chooseWeaponPair(state, target);
-  const chase = pair.chase;
-  const morgan = pair.morgan;
   const weird = pick(weirdness);
   return {
     id: crypto.randomUUID(),
     target,
-    chase,
-    morgan,
+    chase: pair.chase,
+    morgan: pair.morgan,
     chaosTrigger: pick(chaosTriggers),
     chaosTriggered: false,
     chaosConsequence: '',
@@ -695,6 +820,7 @@ function completeEncounter(state, actor) {
   const target = next.current.target;
   next.history.unshift({
     name: target.name,
+    region: next.region,
     exit: target.exit,
     chaseWeapon: next.current.chase.name,
     morganWeapon: next.current.morgan.name,
@@ -711,6 +837,13 @@ function completeEncounter(state, actor) {
     next.regionComplete = true;
     next.current = null;
     if (target.name === 'Radagon of the Golden Order / Elden Beast') next.runComplete = true;
+    return next;
+  }
+
+  // If this is a return trip, leave automatically once its outstanding Remembrances are done.
+  if ((next.clearedRegions || []).includes(next.region) && !regionHasMissingRemembrance(next, next.region)) {
+    next.regionComplete = true;
+    next.current = null;
     return next;
   }
 
@@ -782,12 +915,12 @@ function changeWeapons(state, actor, which) {
   const next = structuredClone(state);
   const current = next.current;
   if (which === 'chase') {
-    current.chase = makeBuild(next.region, current.target, [current.morgan.name, current.chase.name]);
+    current.chase = makeBuild(next.region, current.target, [current.morgan.name, current.chase.name], next);
   } else if (which === 'morgan') {
-    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name]);
+    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name], next);
   } else {
-    current.chase = makeBuild(next.region, current.target);
-    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name]);
+    current.chase = makeBuild(next.region, current.target, [], next);
+    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name], next);
   }
   current.penances.push(makePenance(current.target.name));
   const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? 'Chase' : 'Morgan'}’s weapon`;
@@ -1215,20 +1348,22 @@ function weaponCard(name, build) {
   </article>`;
 }
 
-function progressMarks(cleared) {
-  const count = Math.max(7, Math.min(10, cleared + 3));
-  return Array.from({length:count},(_,i)=>`<span class="mark ${i < cleared ? 'done' : ''} ${i < MIN_REGIONAL_BOSSES ? 'required' : ''}">${i < cleared ? '◆' : '◇'}</span>`).join('');
+function progressMarks(state) {
+  const required = capstoneRequirement(state);
+  const count = Math.max(4, Math.min(10, Math.max(required + 4, state.cleared + 3)));
+  return Array.from({length:count},(_,i)=>`<span class="mark ${i < state.cleared ? 'done' : ''} ${i < required ? 'required' : ''}">${i < state.cleared ? '◆' : '◇'}</span>`).join('');
 }
 
 function capstoneBlock(state) {
   if (state.region === 'The Erdtree') return `<div class="fate-block"><div class="fate-title">FINAL AUDIENCE</div><div class="fate-copy">all required Remembrances have been claimed.</div></div>`;
-  const fate = Math.round(capstoneChance(state.cleared) * 100);
-  const locked = state.cleared < MIN_REGIONAL_BOSSES;
-  const needed = Math.max(0, MIN_REGIONAL_BOSSES - state.cleared);
+  const required = capstoneRequirement(state);
+  const fate = Math.round(capstoneChanceForState(state) * 100);
+  const locked = state.cleared < required;
+  const needed = Math.max(0, required - state.cleared);
   return `<div class="fate-block">
-    <div class="progress-marks">${progressMarks(state.cleared)}</div>
-    <div class="fate-title">${locked ? 'CAPSTONE SEALED' : `CAPSTONE CHANCE · ${fate}%`}</div>
-    <div class="fate-copy">${locked ? `${needed} more regional ${needed === 1 ? 'boss' : 'bosses'} required · capstone remains locked` : 'the regional capstone is now eligible to roll.'}</div>
+    <div class="progress-marks">${progressMarks(state)}</div>
+    <div class="fate-title">${locked ? 'CAPSTONE SEALED' : (availableRegionalBosses(state).length ? `CAPSTONE CHANCE · ${fate}%` : 'CAPSTONE NEXT')}</div>
+    <div class="fate-copy">${locked ? `${needed} more regional ${needed === 1 ? 'boss' : 'bosses'} required · capstone remains locked` : (availableRegionalBosses(state).length ? 'the regional capstone is now eligible to roll.' : 'all preliminary bosses in this area are cleared.')}</div>
   </div>`;
 }
 
