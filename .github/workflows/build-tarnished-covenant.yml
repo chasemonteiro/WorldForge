@@ -36,6 +36,19 @@ jobs:
       - name: Patch progression and Remembrances
         run: python tarnished-covenant/build-progression.py
 
+      - name: Repair region table closure
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tarnished-covenant/index.html')
+          s = p.read_text()
+          old = "  }\n\n\nregions['Siofra River + Nokron']"
+          new = "  }\n};\n\nregions['Siofra River + Nokron']"
+          if old not in s:
+              raise SystemExit('region closure repair target not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+
       - name: Commit assembled page
         run: |
           git config user.name 'github-actions[bot]'
