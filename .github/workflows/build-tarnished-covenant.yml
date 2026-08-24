@@ -27,16 +27,167 @@ jobs:
               tarnished-covenant/chunks/part5.txt \
               tarnished-covenant/chunks/part6.txt \
               > tarnished-covenant/index.html
-      - name: Patch share URL
+      - name: Patch app behavior
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('tarnished-covenant/index.html')
           s = p.read_text()
+
           s = s.replace(
               "APP_URL: 'https://qwnwksyiofolldliaqhf.supabase.co/functions/v1/tarnished-covenant'",
               "APP_URL: 'https://chasemonteiro.github.io/WorldForge/tarnished-covenant/'"
           )
+
+          old = """function makeBuild(regionName, target, avoidName = '') {
+  let pool = eligibleWeapons(regionName, target).filter(w => w.name !== avoidName);
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  const weapon = pick(pool);
+  return {
+    ...weapon,
+    affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
+    role: pick(roles)
+  };
+}
+
+function newEncounter(state) {
+  const target = chooseTarget(state.region, state.cleared);
+  const chase = makeBuild(state.region, target);
+  const morgan = makeBuild(state.region, target, chase.name);
+  const weird = pick(weirdness);
+  return {
+    id: crypto.randomUUID(),
+    target,
+    chase,
+    morgan,
+    chaosTrigger: pick(chaosTriggers),
+    chaosTriggered: false,
+    chaosConsequence: '',
+    weirdness: { name: weird[0], text: weird[1] },
+    flavor: pick(encounterFlavors),
+    penances: [],
+    createdAt: new Date().toISOString()
+  };
+}
+"""
+
+          new = """function buildFromWeapon(weapon) {
+  return {
+    ...weapon,
+    affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
+    role: pick(roles)
+  };
+}
+
+function makeBuild(regionName, target, avoidNames = []) {
+  const avoided = new Set(Array.isArray(avoidNames) ? avoidNames : [avoidNames]);
+  let pool = eligibleWeapons(regionName, target).filter(w => !avoided.has(w.name));
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  return buildFromWeapon(pick(pool));
+}
+
+function recentWeaponNames(state, key, limit = 3) {
+  return (state.history || [])
+    .map(entry => entry?.[key])
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function pairKey(a, b) {
+  return [a, b].sort().join(' || ');
+}
+
+function chooseWeaponPair(state, target) {
+  const pool = eligibleWeapons(state.region, target);
+  if (pool.length < 2) {
+    const first = buildFromWeapon(pool[0]);
+    return { chase: first, morgan: buildFromWeapon(pool[0]) };
+  }
+
+  const chaseRecent = new Set(recentWeaponNames(state, 'chaseWeapon'));
+  const morganRecent = new Set(recentWeaponNames(state, 'morganWeapon'));
+  const recentPairs = new Set((state.history || [])
+    .map(entry => entry?.weaponPair)
+    .filter(Boolean)
+    .slice(0, Math.min(8, pool.length * 2)));
+
+  const candidates = [];
+  for (const chaseWeapon of pool) {
+    for (const morganWeapon of pool) {
+      if (chaseWeapon.name === morganWeapon.name) continue;
+      const key = pairKey(chaseWeapon.name, morganWeapon.name);
+      let score = Math.random();
+      if (!chaseRecent.has(chaseWeapon.name)) score += 5;
+      if (!morganRecent.has(morganWeapon.name)) score += 5;
+      if (!recentPairs.has(key)) score += 8;
+      candidates.push({ chaseWeapon, morganWeapon, score });
+    }
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  const best = candidates[0];
+  return {
+    chase: buildFromWeapon(best.chaseWeapon),
+    morgan: buildFromWeapon(best.morganWeapon)
+  };
+}
+
+function newEncounter(state) {
+  const target = chooseTarget(state.region, state.cleared);
+  const pair = chooseWeaponPair(state, target);
+  const chase = pair.chase;
+  const morgan = pair.morgan;
+  const weird = pick(weirdness);
+  return {
+    id: crypto.randomUUID(),
+    target,
+    chase,
+    morgan,
+    chaosTrigger: pick(chaosTriggers),
+    chaosTriggered: false,
+    chaosConsequence: '',
+    weirdness: { name: weird[0], text: weird[1] },
+    flavor: pick(encounterFlavors),
+    penances: [],
+    createdAt: new Date().toISOString()
+  };
+}
+"""
+
+          if old not in s:
+              raise SystemExit('weapon assignment block not found')
+          s = s.replace(old, new)
+
+          old_history = """  next.history.unshift({
+    name: target.name,
+    exit: target.exit,
+    completedBy: actor,
+    completedAt: new Date().toISOString()
+  });
+"""
+          new_history = """  next.history.unshift({
+    name: target.name,
+    exit: target.exit,
+    chaseWeapon: next.current.chase.name,
+    morganWeapon: next.current.morgan.name,
+    weaponPair: pairKey(next.current.chase.name, next.current.morgan.name),
+    completedBy: actor,
+    completedAt: new Date().toISOString()
+  });
+"""
+          if old_history not in s:
+              raise SystemExit('history block not found')
+          s = s.replace(old_history, new_history)
+
+          s = s.replace(
+              "current.chase = makeBuild(next.region, current.target, current.morgan.name);",
+              "current.chase = makeBuild(next.region, current.target, [current.morgan.name, current.chase.name]);"
+          )
+          s = s.replace(
+              "current.morgan = makeBuild(next.region, current.target, current.chase.name);",
+              "current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name]);"
+          )
+
           p.write_text(s)
           PY
       - name: Commit assembled page
