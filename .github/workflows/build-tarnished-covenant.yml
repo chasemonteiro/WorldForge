@@ -27,7 +27,7 @@ jobs:
               tarnished-covenant/chunks/part5.txt \
               tarnished-covenant/chunks/part6.txt \
               > tarnished-covenant/index.html
-      - name: Patch restart and share URL
+      - name: Patch share URL
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -37,11 +37,7 @@ jobs:
               "APP_URL: 'https://qwnwksyiofolldliaqhf.supabase.co/functions/v1/tarnished-covenant'",
               "APP_URL: 'https://chasemonteiro.github.io/WorldForge/tarnished-covenant/'"
           )
-          old = """    try {\n      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));\n      run = { ...run, ...restarted };\n      renderRun();\n      setToast('Run restarted.');\n    } catch (error) {\n      console.error(error);\n      setToast(error.message || 'Restart failed. Try again.');\n      const retry = document.querySelector('#confirmRestart');\n      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }\n    }\n"""
-          new = """    try {\n      const freshState = buildFreshState(run.state);\n      unsubscribe?.();\n      clearSession();\n      clearLocalRun();\n      const created = await backend.createRun(playerName(), freshState);\n      run = created;\n      session = { runId: run.id, joinCode: run.joinCode, displayName: playerName() };\n      saveSession(session);\n      subscribe();\n      renderRun();\n      setToast(backend.mode === 'shared' ? `New Covenant started. New code: ${run.joinCode}` : 'New run started.');\n    } catch (error) {\n      console.error(error);\n      setToast(error.message || 'Could not start a fresh Covenant.');\n      const retry = document.querySelector('#confirmRestart');\n      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }\n    }\n"""
-          if old not in s:
-              raise SystemExit('restart block not found')
-          p.write_text(s.replace(old, new))
+          p.write_text(s)
           PY
       - name: Commit assembled page
         run: |
