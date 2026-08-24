@@ -4,22 +4,64 @@ import re
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
 
+# Remove the old visible Chase/Morgan identity selector. Creator is internal slot 1;
+# the person joining a Covenant code is internal slot 2. Character names are the only
+# player names exposed in the UI.
+pattern = r"function renderHome\(\) \{.*?\n\}\n\nfunction renderNewRun"
+replacement = r'''function renderHome() {
+  setRegionTheme('');
+  const saved = Boolean(session?.runId);
+  app.innerHTML = `${header()}
+    <p class="sub center">Two Tarnished. One increasingly questionable covenant.</p>
+    <div class="center"><span class="mode-pill">${backend.mode === 'shared' ? 'shared sync ready' : 'local save mode'}</span></div>
+    ${incomingCode ? `<div class="join-banner">shared Covenant invite · code <strong>${h(incomingCode)}</strong></div>` : ''}
+    ${backend.warning ? `<div class="status warn">${h(backend.warning)}</div>` : ''}
+    <section class="menu-section stack">
+      <button class="btn gold" id="newRun" type="button">Begin New Covenant</button>
+      ${saved ? `<button class="btn ghost" id="resumeRun" type="button">Resume Existing Run</button>` : ''}
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <div class="eyebrow left">join a shared run</div>
+      <div>
+        <label class="label" for="joinCode">covenant code</label>
+        <input id="joinCode" inputmode="text" autocomplete="off" maxlength="6" placeholder="ABC123" value="${h(incomingCode)}" ${backend.mode !== 'shared' ? 'disabled' : ''}>
+      </div>
+      <button class="btn ghost" id="joinRun" type="button" ${backend.mode !== 'shared' ? 'disabled' : ''}>Join Covenant</button>
+      ${backend.mode !== 'shared' ? `<div class="status">shared mode unavailable</div>` : ''}
+    </section>`;
+
+  document.querySelector('#newRun').addEventListener('click', () => renderNewRun('Chase'));
+  document.querySelector('#resumeRun')?.addEventListener('click', boot);
+  document.querySelector('#joinRun').addEventListener('click', async () => {
+    const code = document.querySelector('#joinCode').value.trim().toUpperCase();
+    if (code.length < 4) return setToast('Enter the Covenant code first.');
+    await joinSharedRun(code, 'Morgan');
+  });
+}
+
+function renderNewRun'''
+s, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
+if n != 1:
+    raise SystemExit('renderHome block not found')
+
 # Replace new-run setup with character-name fields.
 pattern = r"function renderNewRun\(identity\) \{.*?\n\}\n\nasync function joinSharedRun"
 replacement = r'''function renderNewRun(identity) {
   app.innerHTML = `${header(true)}
     <section class="menu-section stack new-run">
-      <div class="menu-title">begin new run</div>
+      <div class="menu-title">name your Tarnished</div>
       <div class="tc-name-grid">
         <div>
-          <label class="label" for="characterOne">first Tarnished</label>
-          <input id="characterOne" type="text" maxlength="24" autocomplete="off" placeholder="Character name" value="Chase">
+          <label class="label" for="characterOne">your character</label>
+          <input id="characterOne" type="text" maxlength="24" autocomplete="off" placeholder="Character name">
         </div>
         <div>
-          <label class="label" for="characterTwo">second Tarnished</label>
-          <input id="characterTwo" type="text" maxlength="24" autocomplete="off" placeholder="Character name" value="Morgan">
+          <label class="label" for="characterTwo">co-op partner</label>
+          <input id="characterTwo" type="text" maxlength="24" autocomplete="off" placeholder="Character name">
         </div>
       </div>
+      <div class="status" style="font-style:italic">These are the names the Covenant will use for weapon assignments, Chaos, appeals, and decrees.</div>
       <div>
         <label class="label">starting region</label>
         <div class="status">Limgrave + Stormveil</div>
@@ -37,8 +79,9 @@ replacement = r'''function renderNewRun(identity) {
     </section>`;
   document.querySelector('#back').addEventListener('click', renderHome);
   document.querySelector('#createRun').addEventListener('click', async () => {
-    const one = document.querySelector('#characterOne').value.trim() || 'Tarnished One';
-    const two = document.querySelector('#characterTwo').value.trim() || 'Tarnished Two';
+    const one = document.querySelector('#characterOne').value.trim();
+    const two = document.querySelector('#characterTwo').value.trim();
+    if (!one || !two) return setToast('Name both Tarnished first.');
     const state = initialRunState({
       region: 'Limgrave + Stormveil',
       severity: document.querySelector('#severity').value,
@@ -52,6 +95,7 @@ replacement = r'''function renderNewRun(identity) {
       session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
       saveSession(session);
       subscribe();
+      uiScreen = 'sanctuary';
       renderRun();
     } catch (error) {
       console.error(error);
@@ -68,7 +112,7 @@ if n != 1:
 # Persist names in run state.
 s, n = re.subn(
     r"function initialRunState\(\{ region, severity, includeDlc = false, createdBy = 'Chase' \}\) \{",
-    "function initialRunState({ region, severity, includeDlc = false, playerNames = ['Chase','Morgan'], createdBy = 'Chase' }) {",
+    "function initialRunState({ region, severity, includeDlc = false, playerNames = ['Tarnished One','Tarnished Two'], createdBy = 'Chase' }) {",
     s,
     count=1
 )
@@ -78,13 +122,13 @@ if n != 1:
 needle = "    includeDlc,\n    createdBy,"
 if needle not in s:
     raise SystemExit('initial state field marker not found')
-s = s.replace(needle, "    includeDlc,\n    playerNames: Array.isArray(playerNames) && playerNames.length >= 2 ? playerNames.slice(0,2) : ['Chase','Morgan'],\n    createdBy,", 1)
+s = s.replace(needle, "    includeDlc,\n    playerNames: Array.isArray(playerNames) && playerNames.length >= 2 ? playerNames.slice(0,2) : ['Tarnished One','Tarnished Two'],\n    createdBy,", 1)
 
 # Preserve character names when moving regions.
 needle = "    includeDlc: Boolean(state.includeDlc),\n    createdBy: state.createdBy || actor"
 if needle not in s:
     raise SystemExit('startNextRegion marker not found')
-s = s.replace(needle, "    includeDlc: Boolean(state.includeDlc),\n    playerNames: state.playerNames || ['Chase','Morgan'],\n    createdBy: state.createdBy || actor", 1)
+s = s.replace(needle, "    includeDlc: Boolean(state.includeDlc),\n    playerNames: state.playerNames || ['Tarnished One','Tarnished Two'],\n    createdBy: state.createdBy || actor", 1)
 
 # Shared display helpers.
 marker = "function navMarkup(active) {"
@@ -94,7 +138,7 @@ helpers = r'''function covenantNames(state = run?.state) {
   const names = state?.playerNames;
   return Array.isArray(names) && names.length >= 2
     ? [String(names[0] || 'Tarnished One'), String(names[1] || 'Tarnished Two')]
-    : ['Chase','Morgan'];
+    : ['Tarnished One','Tarnished Two'];
 }
 function playerLabel(slot, state = run?.state) {
   const names = covenantNames(state);
@@ -127,11 +171,11 @@ s = s.replace('data-overlay-appeal="morgan">Morgan</button>', 'data-overlay-appe
 s = s.replace("${h(c.chaosTrigger)}", "${h(personalizePlayers(c.chaosTrigger,state))}")
 s = s.replace("${h(c.chaosConsequence)}", "${h(personalizePlayers(c.chaosConsequence,run.state))}")
 
-# A little styling for the two name inputs.
 css = r'''
 .tc-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tc-name-grid input{width:100%;border:1px solid #4b402d;background:rgba(12,10,7,.82);color:var(--ink);padding:11px 10px;font:16px Georgia,serif;outline:none}
-.tc-name-grid input:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,163,84,.18)}
+.tc-name-grid input{width:100%;box-sizing:border-box;border:1px solid #4b402d;background:rgba(12,10,7,.82);color:var(--ink);padding:12px 11px;font:16px Georgia,serif;outline:none;clip-path:polygon(7px 0,calc(100% - 7px) 0,100% 7px,100% calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,0 calc(100% - 7px),0 7px)}
+.tc-name-grid input:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,163,84,.18),0 0 18px rgba(201,163,84,.08)}
+.tc-name-grid input::placeholder{color:#71695b;font-style:italic}
 @media(max-width:430px){.tc-name-grid{grid-template-columns:1fr}}
 '''
 if '</style>' not in s:
