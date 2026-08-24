@@ -75,6 +75,9 @@ jobs:
       - name: Polish image crops and encounter entry
         run: python tarnished-covenant/build-layout-polish.py
 
+      - name: Apply custom character names
+        run: python tarnished-covenant/build-character-names.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
