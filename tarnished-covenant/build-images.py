@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
@@ -39,30 +40,41 @@ images = {
 
 map_js = 'const TC_REGION_IMAGES = {\n' + ',\n'.join(f"  {k!r}: {v!r}" for k,v in images.items()) + '\n};\nfunction actualRegionImage(name){ return TC_REGION_IMAGES[name] || TC_REGION_IMAGES[\'Limgrave + Stormveil\']; }\n'
 
-marker = 'function thematicRegionArt(name, mode=\'travel\') {'
-if marker not in s:
-    raise SystemExit('thematicRegionArt marker missing')
-s = s.replace(marker, map_js + '\n' + marker, 1)
+# Insert before the themed artwork helper regardless of its argument names/defaults.
+match = re.search(r'function\s+thematicRegionArt\s*\(', s)
+if not match:
+    raise SystemExit('thematicRegionArt function missing')
+s = s[:match.start()] + map_js + '\n' + s[match.start():]
 
-old = '<div class="tc-grace-art">${thematicRegionArt(state.region,\'grace\')}</div>'
-new = '<div class="tc-grace-art tc-photo" style="background-image:linear-gradient(180deg,rgba(3,3,2,.08),rgba(4,3,2,.42)),url(\'${actualRegionImage(state.region)}\')"></div>'
-if old not in s:
+# Replace inline SVG art calls with real image-backed panels using tolerant regex hooks.
+s, n = re.subn(
+    r'<div class="tc-grace-art">\$\{thematicRegionArt\(state\.region\s*,\s*[\'\"]grace[\'\"]\)\}</div>',
+    '<div class="tc-grace-art tc-photo" style="background-image:linear-gradient(180deg,rgba(3,3,2,.08),rgba(4,3,2,.42)),url(\'${actualRegionImage(state.region)}\')"></div>',
+    s,
+    count=1
+)
+if n != 1:
     raise SystemExit('Site of Grace art target missing')
-s = s.replace(old, new, 1)
 
-old = '<div class="tc-boss-art">${thematicRegionArt(state.region,\'boss\')}</div>'
-new = '<div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url(\'${actualRegionImage(state.region)}\')"></div>'
-if old not in s:
+s, n = re.subn(
+    r'<div class="tc-boss-art">\$\{thematicRegionArt\(state\.region\s*,\s*[\'\"]boss[\'\"]\)\}</div>',
+    '<div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url(\'${actualRegionImage(state.region)}\')"></div>',
+    s,
+    count=1
+)
+if n != 1:
     raise SystemExit('Encounter art target missing')
-s = s.replace(old, new, 1)
 
-old = '<span class="tc-path-art">${regionArtSvg(r)}</span>'
-new = '<span class="tc-path-art tc-path-photo" style="background-image:linear-gradient(90deg,rgba(5,5,4,.14),rgba(5,5,4,.34)),url(\'${actualRegionImage(r)}\')"></span>'
-if old not in s:
+s, n = re.subn(
+    r'<span class="tc-path-art">\$\{regionArtSvg\(r\)\}</span>',
+    '<span class="tc-path-art tc-path-photo" style="background-image:linear-gradient(90deg,rgba(5,5,4,.14),rgba(5,5,4,.34)),url(\'${actualRegionImage(r)}\')"></span>',
+    s,
+    count=1
+)
+if n != 1:
     raise SystemExit('Travel art target missing')
-s = s.replace(old, new, 1)
 
-# Add photo treatment and an actual CC0 texture to the Chaos reveal.
+# Add photo treatment and a CC0 texture to the Chaos reveal.
 css = r'''
 /* --- Real image asset pass --- */
 .tc-photo{background-size:cover;background-position:center 45%;background-repeat:no-repeat}
