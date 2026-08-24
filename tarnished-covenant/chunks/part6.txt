@@ -1,0 +1,142 @@
+-kicker">encounter history</div>
+      ${renderHistory(state)}
+    </section>
+
+    <section class="run-options">
+      <button id="restartRun" class="btn text-btn small" type="button">restart covenant</button>
+      <div id="restartConfirm"></div>
+    </section>
+    <div class="status last-action">${h(state.lastAction || '')} · ${backend.mode === 'shared' ? 'saved' : 'saved locally'}</div>`;
+
+  document.querySelector('#triggerChaos')?.addEventListener('click',()=>commit(triggerChaos(state,playerName())));
+  document.querySelector('#rerollChaos').addEventListener('click',()=>commit(rerollChaos(state,playerName())));
+  document.querySelector('#rerollWeird').addEventListener('click',()=>commit(rerollWeirdness(state,playerName())));
+  document.querySelector('#complete').addEventListener('click',()=>commit(completeEncounter(state,playerName())));
+  document.querySelector('#share').addEventListener('click',shareCovenant);
+  document.querySelector('#restartRun').addEventListener('click',showRestart);
+  document.querySelectorAll('[data-appeal]').forEach(btn=>btn.addEventListener('click',()=>showAppeal(btn.dataset.appeal)));
+}
+
+function showRestart() {
+  const state = run.state;
+  const options = Object.keys(regions).map(r => `<option value="${h(r)}" ${r === state.region ? 'selected' : ''}>${h(r)}</option>`).join('');
+  const box = document.querySelector('#restartConfirm');
+  if (!box) return setToast('Restart is unavailable. Try again.');
+  box.innerHTML = `<div class="confirm restart-confirm">
+    <div class="section-kicker redtext">restart covenant</div>
+    <h3>Restart this Covenant?</h3>
+    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'Morgan’s phone resets too. The room code stays the same.' : 'This phone starts fresh.'}</div>
+    <div class="grid2 restart-grid">
+      <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
+      <div><label class="label" for="restartSeverity">difficulty</label><select id="restartSeverity"><option value="normal" ${state.severity==='normal'?'selected':''}>Silly</option><option value="hard" ${state.severity==='hard'?'selected':''}>Maidenless</option><option value="cursed" ${state.severity==='cursed'?'selected':''}>Miyazaki Has Noticed You</option></select></div>
+    </div>
+    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Erase Run & Restart</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
+  </div>`;
+  document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
+  document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
+    const region = document.querySelector('#restartRegion')?.value || state.region;
+    const severity = document.querySelector('#restartSeverity')?.value || state.severity;
+    const button = document.querySelector('#confirmRestart');
+    if (button) { button.disabled = true; button.textContent = 'Restarting…'; }
+
+    const buildFreshState = (latestState) => {
+      const fresh = initialRunState({
+        region,
+        severity,
+        createdBy: latestState?.createdBy || state.createdBy || playerName()
+      });
+      fresh.lastAction = `${playerName()} restarted the Covenant. started a fresh run.`;
+      return fresh;
+    };
+
+    try {
+      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
+      run = { ...run, ...restarted };
+      renderRun();
+      setToast('Run restarted.');
+    } catch (error) {
+      console.error(error);
+      setToast(error.message || 'Restart failed. Try again.');
+      const retry = document.querySelector('#confirmRestart');
+      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
+    }
+  });
+}
+
+function showAppeal(which) {
+  const labels = { chase: 'Chase’s weapon', morgan: 'Morgan’s weapon', both: 'both weapons' };
+  const box = document.querySelector('#appealConfirm');
+  box.innerHTML = `<div class="confirm">
+    <div class="section-kicker redtext">armament appeal</div>
+    <h3>Change ${labels[which]}?</h3>
+    <div class="rtext">You get a new region-legal weapon, then Chase, Morgan, or both receive a severe random penalty. You do not see the penalty first.</div>
+    <div class="confirm-actions"><button id="accept" class="btn curse" type="button">Accept Penalty & Reroll</button><button id="cancel" class="btn ghost" type="button">Keep Current Weapon</button></div>
+  </div>`;
+  document.querySelector('#cancel').addEventListener('click',()=>{box.innerHTML='';});
+  document.querySelector('#accept').addEventListener('click',()=>commit(changeWeapons(run.state,playerName(),which)));
+}
+
+function renderHistory(state) {
+  if (!state.history?.length) return '<div class="empty-history">No encounters completed yet.</div>';
+  return state.history.slice(0,12).map((x)=>`<div class="history-row"><strong>${h(x.name)}</strong><span>${x.exit ? 'CAPSTONE' : 'dead'}</span></div>`).join('');
+}
+
+function renderRegionComplete() {
+  const state = run.state;
+  setRegionTheme(state.region);
+  const options = Object.keys(regions).filter(r=>r!==state.region).map(r=>`<option value="${h(r)}">${h(r)}</option>`).join('');
+  app.innerHTML = `${header(true)}
+    <section class="escape-screen">
+      <div class="tag">REGIONAL BOSS DEFEATED</div>
+      <div class="escape-title">Region Complete</div>
+      <div class="escape-copy">Region cleared. Outstanding armament penalties are forgiven.</div>
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <div><label class="label" for="nextRegion">next region</label><select id="nextRegion">${options}</select></div>
+      <button id="continue" class="btn gold" type="button">Choose Next Region</button>
+      <button id="share" class="btn ghost" type="button">Share Covenant</button>
+      <button id="restartRun" class="btn curse" type="button">Restart Covenant</button>
+      <div id="restartConfirm"></div>
+      <button id="leave" class="btn text-btn" type="button">leave run</button>
+    </section>
+    <section class="history"><div class="section-kicker">encounter history</div>${renderHistory(state)}</section>`;
+  document.querySelector('#continue').addEventListener('click',()=>{
+    const next = startNextRegion(state,playerName(),document.querySelector('#nextRegion').value,state.severity);
+    commit(next);
+  });
+  document.querySelector('#share').addEventListener('click',shareCovenant);
+  document.querySelector('#restartRun').addEventListener('click',showRestart);
+  document.querySelector('#leave').addEventListener('click',()=>{unsubscribe?.();run=null;clearSession();session=null;renderHome();});
+}
+
+async function shareCovenant() {
+  if (backend.mode !== 'shared') return setToast('shared mode unavailable');
+  const code = run.joinCode;
+  const base = config.APP_URL || `${location.origin}${location.pathname}`;
+  const url = new URL(base);
+  url.searchParams.set('join', code);
+  const text = `Join our Tarnished Covenant. Code: ${code}.`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title:'The Tarnished Covenant', text, url:url.toString() });
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(`${text}\n${url}`);
+    setToast('Link and code copied.');
+  } catch {
+    setToast(`code ${code} · ${url}`);
+  }
+}
+
+function pickOmen() { return omens[Math.floor(Math.random() * omens.length)]; }
+
+async function startApp(){ backend = await createBackend(config); boot(); }
+startApp().catch(err=>{console.error(err); document.body.innerHTML=`<pre style="color:#eee;background:#080806;padding:24px;white-space:pre-wrap">App error: ${String(err?.message||err)}</pre>`;});
+</script>
+</body>
+</html>
