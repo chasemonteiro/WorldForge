@@ -1060,20 +1060,13 @@ function showRestart() {
     };
 
     try {
-      const freshState = buildFreshState(run.state);
-      unsubscribe?.();
-      clearSession();
-      clearLocalRun();
-      const created = await backend.createRun(playerName(), freshState);
-      run = created;
-      session = { runId: run.id, joinCode: run.joinCode, displayName: playerName() };
-      saveSession(session);
-      subscribe();
+      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
+      run = { ...run, ...restarted };
       renderRun();
-      setToast(backend.mode === 'shared' ? `New Covenant started. New code: ${run.joinCode}` : 'New run started.');
+      setToast('Run restarted.');
     } catch (error) {
       console.error(error);
-      setToast(error.message || 'Could not start a fresh Covenant.');
+      setToast(error.message || 'Restart failed. Try again.');
       const retry = document.querySelector('#confirmRestart');
       if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
     }
