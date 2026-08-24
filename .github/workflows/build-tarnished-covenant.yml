@@ -1,0 +1,40 @@
+name: Build Tarnished Covenant
+
+on:
+  push:
+    branches: [tarnished-covenant-assets]
+    paths:
+      - 'tarnished-covenant/chunks/**'
+      - '.github/workflows/build-tarnished-covenant.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Assemble page
+        run: |
+          cat tarnished-covenant/chunks/part0.txt \
+              tarnished-covenant/chunks/part1.txt \
+              tarnished-covenant/chunks/part2.txt \
+              tarnished-covenant/chunks/part3.txt \
+              tarnished-covenant/chunks/part4.txt \
+              tarnished-covenant/chunks/part5.txt \
+              tarnished-covenant/chunks/part6.txt \
+              > tarnished-covenant/index.html
+      - name: Commit assembled page
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Assemble Tarnished Covenant app'
+            git push origin tarnished-covenant-assets
+          fi
