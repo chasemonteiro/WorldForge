@@ -1,0 +1,243 @@
+);
+    if (!session) {
+      const result = await supabase.auth.signInAnonymously();
+      if (result.error) throw result.error;
+      session = result.data.session;
+    }
+    return createSupabaseBackend(supabase);
+  } catch (error) {
+    console.warn('Supabase unavailable; falling back to local mode.', error);
+    return createLocalBackend('Cloud sync unavailable; using local save.');
+  }
+}
+
+function createLocalBackend(warning = '') {
+  let listener = null;
+  return {
+    mode: 'local',
+    warning,
+    async createRun(displayName, state) {
+      const run = { id: crypto.randomUUID(), joinCode: randomCode(), state, revision: 0, displayName };
+      saveLocalRun(run);
+      return run;
+    },
+    async joinRun() { throw new Error('Shared rooms are not connected yet. Add Supabase settings to config.js.'); },
+    async getRun() { return loadLocalRun(); },
+    async restartRun(runId, state) {
+      const current = loadLocalRun();
+      const revision = (current?.revision ?? 0) + 1;
+      const run = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(run);
+      if (listener) queueMicrotask(() => listener(run));
+      return run;
+    },
+    async updateRun(runId, expectedRevision, state) {
+      const current = loadLocalRun();
+      const revision = (current?.revision ?? expectedRevision) + 1;
+      const run = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(run);
+      if (listener) queueMicrotask(() => listener(run));
+      return { success: true, ...run };
+    },
+    subscribe(_runId, fn) { listener = fn; return () => { listener = null; }; }
+  };
+}
+
+function createSupabaseBackend(supabase) {
+  let channel = null;
+  return {
+    mode: 'shared',
+    warning: '',
+    async createRun(displayName, state) {
+      const { data, error } = await supabase.rpc('create_covenant_run', {
+        p_display_name: displayName,
+        p_initial_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return normalizeRun(row);
+    },
+    async joinRun(joinCode, displayName) {
+      const { data, error } = await supabase.rpc('join_covenant_run', {
+        p_join_code: joinCode.trim().toUpperCase(),
+        p_display_name: displayName
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return normalizeRun(row);
+    },
+    async getRun(runId) {
+      const { data, error } = await supabase.from('runs')
+        .select('id, join_code, state, revision')
+        .eq('id', runId)
+        .single();
+      if (error) throw error;
+      return normalizeRun(data);
+    },
+    async updateRun(runId, expectedRevision, state) {
+      const { data, error } = await supabase.rpc('update_covenant_state', {
+        p_run_id: runId,
+        p_expected_revision: expectedRevision,
+        p_new_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return {
+        success: Boolean(row.success),
+        id: runId,
+        state: row.state,
+        revision: Number(row.revision)
+      };
+    },
+    async restartRun(runId, state) {
+      const { data, error } = await supabase.rpc('restart_covenant_run', {
+        p_run_id: runId,
+        p_new_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return { id: runId, state: row.state, revision: Number(row.revision) };
+    },
+    subscribe(runId, fn) {
+      if (channel) supabase.removeChannel(channel);
+      channel = supabase.channel(`covenant-${runId}`)
+        .on('postgres_changes', {
+          event: 'UPDATE', schema: 'public', table: 'runs', filter: `id=eq.${runId}`
+        }, payload => fn(normalizeRun(payload.new)))
+        .subscribe();
+      return () => {
+        if (channel) supabase.removeChannel(channel);
+        channel = null;
+      };
+    }
+  };
+}
+
+function normalizeRun(row) {
+  return {
+    id: row.id || row.run_id,
+    joinCode: row.join_code,
+    state: row.state,
+    revision: Number(row.revision || 0)
+  };
+}
+const app = document.querySelector('#app');
+const config = window.TARNISHED_CONFIG || {};
+let backend = null;
+let session = loadSession();
+let run = null;
+let unsubscribe = null;
+let pending = false;
+let toastTimer = null;
+const incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
+}
+
+function h(value = '') {
+  return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+function playerName() { return session?.displayName || 'Chase'; }
+
+function setToast(message) {
+  let el = document.querySelector('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.className = 'toast';
+    app.appendChild(el);
+  }
+  el.textContent = message;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 2800);
+}
+
+function header(compact = false) {
+  return `<header class="site-header ${compact ? 'compact' : ''}">
+    <div class="sigil">✦</div>
+    <div class="eyebrow">shared challenge run</div>
+    <h1>The Tarnished Covenant</h1>
+    ${compact ? '' : '<div class="header-dumb">regional co-op challenge generator</div>'}
+  </header>`;
+}
+
+function setRegionTheme(region = '') {
+  const map = [
+    ['Caelid','caelid'],['Liurnia','liurnia'],['Leyndell','leyndell'],['Altus','leyndell'],
+    ['Gelmir','gelmir'],['Mountaintops','snow'],['Haligtree','haligtree'],['Farum','farum'],
+    ['Gravesite','gravesite'],['Scadu','shadow'],['Cerulean','coast'],['Jagged','jagged'],
+    ['Abyssal','abyss'],['Rauh','rauh'],['Enir','enir'],['Weeping','weeping'],['Limgrave','limgrave']
+  ];
+  const match = map.find(([needle]) => region.includes(needle));
+  document.body.dataset.region = match?.[1] || 'default';
+}
+
+async function boot() {
+  if (session?.runId) {
+    try {
+      run = await backend.getRun(session.runId);
+      if (run?.state) {
+        subscribe();
+        renderRun();
+        return;
+      }
+    } catch (error) {
+      console.warn(error);
+      if (backend.mode === 'shared') setToast('Cloud sync failed.');
+    }
+  }
+  renderHome();
+}
+
+function renderHome() {
+  setRegionTheme('');
+  const saved = Boolean(session?.runId);
+  app.innerHTML = `${header()}
+    <p class="sub center">Two players. One shared run.</p>
+    <div class="center"><span class="mode-pill">${backend.mode === 'shared' ? 'shared sync ready' : 'local save mode'}</span></div>
+    ${incomingCode ? `<div class="join-banner">shared Covenant invite · code <strong>${h(incomingCode)}</strong></div>` : ''}
+    ${backend.warning ? `<div class="status warn">${h(backend.warning)}</div>` : ''}
+    <section class="menu-section stack">
+      <div>
+        <label class="label" for="identity">player</label>
+        <select id="identity"><option>Chase</option><option>Morgan</option></select>
+      </div>
+      <button class="btn gold" id="newRun" type="button">Begin New Covenant</button>
+      ${saved ? `<button class="btn ghost" id="resumeRun" type="button">Resume Existing Run</button>` : ''}
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <div class="eyebrow left">join a shared run</div>
+      <div>
+        <label class="label" for="joinCode">covenant code</label>
+        <input id="joinCode" inputmode="text" autocomplete="off" maxlength="6" placeholder="ABC123" value="${h(incomingCode)}" ${backend.mode !== 'shared' ? 'disabled' : ''}>
+      </div>
+      <button class="btn ghost" id="joinRun" type="button" ${backend.mode !== 'shared' ? 'disabled' : ''}>Join Covenant</button>
+      ${backend.mode !== 'shared' ? `<div class="status">shared mode unavailable</div>` : ''}
+    </section>`;
+
+  const identity = document.querySelector('#identity');
+  identity.value = session?.displayName || (incomingCode ? 'Morgan' : 'Chase');
+  document.querySelector('#newRun').addEventListener('click', () => renderNewRun(identity.value));
+  document.querySelector('#resumeRun')?.addEventListener('click', boot);
+  document.querySelector('#joinRun').addEventListener('click', async () => {
+    const code = document.querySelector('#joinCode').value.trim().toUpperCase();
+    if (code.length < 4) return setToast('Enter the Covenant code first.');
+    await joinSharedRun(code, identity.value);
+  });
+}
+
+function renderNewRun(identity) {
+  const options = Object.keys(regions).map(r => `<option value="${h(r)}">${h(r)}</option>`).join('');
+  app.innerHTML = `${header(true)}
+    <section class="menu-section stack new-run">
+      <div class="menu-title">begin new run</div>
+      <div>
+        <label class="label" for="region">region</label>
+        <select id="region">${options}</select>
+      </div>
+      <div>
+        <label class="label" for="severity">difficulty</label>
+        <select id="severity" 
