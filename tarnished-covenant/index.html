@@ -117,6 +117,16 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;bac
 .tc-chaos-title{font-family:Georgia,serif;color:#e07a68;letter-spacing:.2em;text-transform:uppercase;font-size:10px;position:relative;z-index:1}.tc-chaos-seal{width:190px;height:190px;border-radius:50%;margin:24px auto;position:relative;z-index:1;border:2px solid #8d2d25;background:radial-gradient(circle,#42120f 0 22%,#1b0908 23% 49%,transparent 50%),repeating-conic-gradient(#a43b2d 0 4deg,#35110d 4deg 17deg);box-shadow:0 0 0 7px rgba(114,27,21,.22),0 0 60px rgba(211,72,52,.25),inset 0 0 36px #000}.tc-chaos-seal:before,.tc-chaos-seal:after{content:"";position:absolute;left:50%;top:-22px;width:2px;height:234px;background:linear-gradient(transparent,#ff7b61 25%,#7e251e 52%,#ff7b61 74%,transparent);transform:rotate(22deg);box-shadow:0 0 9px #d84031}.tc-chaos-seal:after{transform:rotate(-48deg);opacity:.65}.tc-chaos-event-name{font-family:Georgia,serif;font-size:clamp(38px,11vw,56px);line-height:.96;color:#f0d7bd;position:relative;z-index:1;margin:8px 0 13px}.tc-chaos-consequence{position:relative;z-index:1;max-width:560px;margin:auto;color:#ddcbb8;font-size:16px;line-height:1.45}.tc-chaos-quip{position:relative;z-index:1;color:#a77e72;font-style:italic;font-size:11px;margin:18px auto;max-width:420px}.tc-chaos-event .btn{position:relative;z-index:1;max-width:480px;margin:3px auto 0;border-color:#7d2d24;color:#efaa9d;background:linear-gradient(#35120e,#160807)}
 @media(max-width:420px){.tc-grace-art,.tc-boss-art{height:128px}.tc-chaos-seal{width:155px;height:155px}.tc-chaos-seal:before,.tc-chaos-seal:after{height:198px;top:-22px}}
 
+
+/* --- Real image asset pass --- */
+.tc-photo{background-size:cover;background-position:center 45%;background-repeat:no-repeat}
+.tc-grace-art.tc-photo{min-height:170px;box-shadow:inset 0 -70px 70px rgba(5,4,3,.80),0 12px 34px rgba(0,0,0,.24)}
+.tc-boss-art.tc-photo{min-height:155px;background-position:center 38%;filter:saturate(.88) contrast(1.03)}
+.tc-path-photo{background-size:cover;background-position:center;background-repeat:no-repeat;transform:scale(1.01);transition:transform .22s ease,filter .22s ease}
+.tc-path:active .tc-path-photo{transform:scale(1.035);filter:brightness(1.12)}
+.tc-chaos-event{background-image:linear-gradient(rgba(8,2,2,.45),rgba(3,2,2,.72)),url('https://commons.wikimedia.org/wiki/Special:Redirect/file/RED_RUST_TEXTURE.jpg');background-size:cover;background-position:center}
+@media(max-width:480px){.tc-grace-art.tc-photo{min-height:145px}.tc-boss-art.tc-photo{min-height:132px}}
+
 </style>
 </head>
 <body>
@@ -1511,6 +1521,32 @@ function penanceMarkup(c) {
 
 
 
+const TC_REGION_IMAGES = {
+  'Limgrave + Stormveil': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_03_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Weeping Peninsula': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_13_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Liurnia of the Lakes': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_08_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Caelid': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_12_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Altus Plateau + Leyndell': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_10_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Mt. Gelmir': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_15_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Mountaintops of the Giants': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_16_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Miquella’s Haligtree': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/elden-ring-newscreen03.png?twic=v1/cover=1600/quality=82',
+  'Crumbling Farum Azula': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/elden-ring-newscreen05.png?twic=v1/cover=1600/quality=82',
+  'Siofra River + Nokron': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_06_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Lake of Rot + Grand Cloister': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_11_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Deeproot Depths': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_09_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Mohgwyn Palace': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/elden-ring-newscreen04.png?twic=v1/cover=1600/quality=82',
+  'Leyndell, Ashen Capital': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/elden-ring-godfrey-vertical-art.jpg?twic=v1/cover=1600/quality=82',
+  'The Erdtree': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/02-screenshots/ELDENRING_01_4K.jpg?twic=v1/cover=1600/quality=82',
+  'Gravesite Plain · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-1.png?twic=v1/cover=1600/quality=82',
+  'Cerulean Coast · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-6.png?twic=v1/cover=1600/quality=82',
+  'Dragon’s Pit + Jagged Peak · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-7.png?twic=v1/cover=1600/quality=82',
+  'Scadu Altus + Shadow Keep · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-4.png?twic=v1/cover=1600/quality=82',
+  'Abyssal Woods · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-8.png?twic=v1/cover=1600/quality=82',
+  'Ancient Ruins of Rauh · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-9.png?twic=v1/cover=1600/quality=82',
+  'Enir-Ilim · DLC': 'https://p325k7wa.twic.pics/high/elden-ring/elden-ring/08-shadow-of-the-erdtree/elden-ring-expansion-SOTE/01-screenshot/ERSOTE-screenshot-10.png?twic=v1/cover=1600/quality=82'
+};
+function actualRegionImage(name){ return TC_REGION_IMAGES[name] || TC_REGION_IMAGES['Limgrave + Stormveil']; }
+
 function thematicRegionArt(name, mode='region') {
   const n=(name||'').toLowerCase();
   let sky='#403a30',far='#25231e',near='#12110e',sun='#c59d51';
@@ -1599,7 +1635,7 @@ function hubProgressPct(state){const req=Math.max(1,capstoneRequirement(state));
 function renderSanctuary() {
   const state=run.state,c=state.current,done=requiredRemembrances(state).filter(x=>hasRemembrance(state,x)).length,required=requiredRemembrances(state).length;
   app.innerHTML=`<section class="tc-screen">${screenTop('Site of Grace')}
-    <div class="tc-rune"></div><h1 class="tc-title">The Tarnished<br>Covenant</h1><div class="tc-subtitle">Site of Grace</div><div class="tc-grace-art">${thematicRegionArt(state.region,'grace')}</div>
+    <div class="tc-rune"></div><h1 class="tc-title">The Tarnished<br>Covenant</h1><div class="tc-subtitle">Site of Grace</div><div class="tc-grace-art tc-photo" style="background-image:linear-gradient(180deg,rgba(3,3,2,.08),rgba(4,3,2,.42)),url('${actualRegionImage(state.region)}')"></div>
     <div class="tc-hub-grid">
       <div class="tc-panel"><div class="tc-kicker">current region</div><div class="tc-value">${h(state.region)}</div><div class="tc-muted" style="margin-top:7px">${state.cleared} regional ${state.cleared===1?'boss':'bosses'} defeated</div></div>
       <div class="tc-panel"><div class="tc-kicker">current target</div><div class="tc-value">${h(c?.target?.name||'Awaiting decree')}</div></div>
@@ -1616,7 +1652,7 @@ function compactLoadout(label,b){return `<div class="tc-loadout"><div class="tc-
 function renderEncounter() {
   const state=run.state,c=state.current;
   app.innerHTML=`<section class="tc-screen">${screenTop('Encounter Briefing')}
-    <div class="tc-brief-head"><div class="tc-kicker gold">${c.target.exit?'regional capstone':'current target'}</div><div class="tc-brief-boss">${h(c.target.name)}</div><div class="tc-brief-region">${h(state.region)}</div></div><div class="tc-boss-art">${thematicRegionArt(state.region,'boss')}</div>
+    <div class="tc-brief-head"><div class="tc-kicker gold">${c.target.exit?'regional capstone':'current target'}</div><div class="tc-brief-boss">${h(c.target.name)}</div><div class="tc-brief-region">${h(state.region)}</div></div><div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url('${actualRegionImage(state.region)}')"></div>
     <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout('Chase',c.chase)}${compactLoadout('Morgan',c.morgan)}</div>
     ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
     <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(c.chaosTrigger)}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(c.chaosConsequence)}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
@@ -1757,7 +1793,7 @@ function renderHistory(state) {
 function renderRegionComplete() {
   const state=run.state;setRegionTheme(state.region);
   const choices=availableNextRegions(state),missing=missingRemembrances(state),seal=finalSealOpen(state);
-  app.innerHTML=`<section class="tc-screen">${screenTop('Region Complete')}<div class="tc-travel-hero"><div class="tc-conquered">region conquered</div><div class="tc-travel-region">${h(state.region)}</div><div class="tc-travel-sigil"></div></div><div class="tc-kicker gold" style="text-align:center;margin-bottom:10px">paths now open</div><div class="tc-paths">${choices.length?choices.map(r=>`<button class="tc-path" data-travel="${h(r)}"><span class="tc-path-art">${regionArtSvg(r)}</span><span class="tc-path-copy"><span class="tc-path-name">${h(r)}</span><span class="tc-path-meta">${(state.clearedRegions||[]).includes(r)?'Return · unfinished remembrance remains':'Travel here next'}</span></span></button>`).join(''):`<div class="tc-panel"><div class="tc-muted">No new path is currently open.</div></div>`}</div><div class="tc-panel" style="margin-top:17px"><div class="tc-kicker gold">remembrance ledger</div><div class="tc-value">${requiredRemembrances(state).length-missing.length} / ${requiredRemembrances(state).length}</div><div class="tc-muted" style="margin-top:6px">${seal?'The final seal is open.':'The final seal remains closed. Claim every required Remembrance.'}</div></div><button id="share" class="btn ghost">Share Covenant</button></section>${navMarkup('sanctuary')}`;
+  app.innerHTML=`<section class="tc-screen">${screenTop('Region Complete')}<div class="tc-travel-hero"><div class="tc-conquered">region conquered</div><div class="tc-travel-region">${h(state.region)}</div><div class="tc-travel-sigil"></div></div><div class="tc-kicker gold" style="text-align:center;margin-bottom:10px">paths now open</div><div class="tc-paths">${choices.length?choices.map(r=>`<button class="tc-path" data-travel="${h(r)}"><span class="tc-path-art tc-path-photo" style="background-image:linear-gradient(90deg,rgba(5,5,4,.14),rgba(5,5,4,.34)),url('${actualRegionImage(r)}')"></span><span class="tc-path-copy"><span class="tc-path-name">${h(r)}</span><span class="tc-path-meta">${(state.clearedRegions||[]).includes(r)?'Return · unfinished remembrance remains':'Travel here next'}</span></span></button>`).join(''):`<div class="tc-panel"><div class="tc-muted">No new path is currently open.</div></div>`}</div><div class="tc-panel" style="margin-top:17px"><div class="tc-kicker gold">remembrance ledger</div><div class="tc-value">${requiredRemembrances(state).length-missing.length} / ${requiredRemembrances(state).length}</div><div class="tc-muted" style="margin-top:6px">${seal?'The final seal is open.':'The final seal remains closed. Claim every required Remembrance.'}</div></div><button id="share" class="btn ghost">Share Covenant</button></section>${navMarkup('sanctuary')}`;
   bindNav();bindShare();document.querySelectorAll('[data-travel]').forEach(btn=>btn.addEventListener('click',()=>{const next=startNextRegion(state,playerName(),btn.dataset.travel,state.severity);uiScreen='sanctuary';pendingRevealId=null;commit(next);}));
 }
 
