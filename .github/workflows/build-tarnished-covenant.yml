@@ -56,6 +56,9 @@ jobs:
       - name: Apply screen-based UI
         run: python tarnished-covenant/build-ui.py
 
+      - name: Apply ornate theme and expanded Chaos
+        run: python tarnished-covenant/build-chaos-theme.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
