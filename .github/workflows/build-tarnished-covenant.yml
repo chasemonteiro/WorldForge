@@ -1,0 +1,79 @@
+name: Build Tarnished Covenant
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+
+      - name: Assemble page
+        run: |
+          cat tarnished-covenant/chunks/part0.txt \
+              tarnished-covenant/chunks/part1.txt \
+              tarnished-covenant/chunks/part2.txt \
+              tarnished-covenant/chunks/part3.txt \
+              tarnished-covenant/chunks/part4.txt \
+              tarnished-covenant/chunks/part5.txt \
+              tarnished-covenant/chunks/part6.txt \
+              > tarnished-covenant/index.html
+
+      - name: Patch app behavior
+        run: python tarnished-covenant/build-behavior.py
+
+      - name: Patch progression and Remembrances
+        run: python tarnished-covenant/build-progression.py
+
+      - name: Repair region table closure
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tarnished-covenant/index.html')
+          s = p.read_text()
+          old = "  }\n\n\nregions['Siofra River + Nokron']"
+          new = "  }\n};\n\nregions['Siofra River + Nokron']"
+          if old not in s:
+              raise SystemExit('region closure repair target not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+
+      - name: Apply spreadsheet regional pools
+        run: python tarnished-covenant/build-regional-pools.py
+
+      - name: Apply screen-based UI
+        run: python tarnished-covenant/build-ui.py
+
+      - name: Apply ornate theme and expanded Chaos
+        run: python tarnished-covenant/build-chaos-theme.py
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('tarnished-covenant/index.html').read_text()
+          scripts = re.findall(r'<script(?:[^>]*)>(.*?)</script>', html, flags=re.S)
+          if not scripts:
+              raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit assembled page
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Assemble Tarnished Covenant app'
+            git push origin HEAD:tarnished-covenant-assets
+          fi
