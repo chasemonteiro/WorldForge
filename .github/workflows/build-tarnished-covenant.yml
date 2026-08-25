@@ -84,6 +84,9 @@ jobs:
       - name: Apply Smithing Favor and Bell Bearing Contracts
         run: python tarnished-covenant/build-smithing-system.py
 
+      - name: Run stability and regression pass
+        run: python tarnished-covenant/build-stability-pass.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
