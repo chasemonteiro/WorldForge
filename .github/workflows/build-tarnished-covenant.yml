@@ -93,6 +93,9 @@ jobs:
       - name: Add compendium encounter challenges
         run: python tarnished-covenant/build-compendium-challenges.py
 
+      - name: Rebuild Chaos reveal and add Old Souls rules
+        run: python tarnished-covenant/build-chaos-redesign.py
+
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
