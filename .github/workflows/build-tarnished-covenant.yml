@@ -85,7 +85,7 @@ jobs:
         run: python tarnished-covenant/build-smithing-system.py
 
       - name: Expand risk pools and rebalance Favor
-        run: python tarnished-covenant/build-risk-rebalance.py
+        run: python tarnished-covenant/build-risk-rebalance-runner.py
 
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
