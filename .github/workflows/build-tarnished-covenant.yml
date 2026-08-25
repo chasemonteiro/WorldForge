@@ -87,6 +87,9 @@ jobs:
       - name: Expand risk pools and rebalance Favor
         run: python tarnished-covenant/build-risk-rebalance-runner.py
 
+      - name: Make Chaos triggers objective
+        run: python tarnished-covenant/build-objective-chaos-triggers.py
+
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
