@@ -1016,7 +1016,7 @@ function newEncounter(state) {
     chaosTrigger: pick(chaosTriggers),
     chaosTriggered: false,
     chaosConsequence: '',
-    weirdness: { name: weird[0], text: weird[1] },
+    weirdness: { name: weird[0], text: weird[1], ...riteMeta(weird) },
     flavor: pick(encounterFlavors),
     penances: [],
     createdAt: new Date().toISOString()
@@ -1094,11 +1094,107 @@ function rerollChaos(state, actor) {
 function rerollWeirdness(state, actor) {
   const next = structuredClone(state);
   const weird = pick(weirdness);
-  next.current.weirdness = { name: weird[0], text: weird[1] };
+  next.current.weirdness = { name: weird[0], text: weird[1], ...riteMeta(weird) };
   next.lastAction = `${actor} rerolled the Odd Rite.`;
   next.updatedAt = new Date().toISOString();
   return next;
 }
+
+
+const TC_EXTRA_RITES = [
+ ['Funeral Custom','Use a Grace Mimic, place a Rainbow Stone beside it, perform Dejection, then walk away without resting.','Grand',2],
+ ['The Three Gifts','Before victory, use a Glowstone, a Warming Stone, and any Prattling Pate in that order.','Grand',2],
+ ['Unlicensed Alchemy','During the encounter, use three differently named temporary-buff consumables as a team. Flask buffs do not count.','Grand',2],
+ ['The Turtle Knows','Bring a Pickled Turtle Neck. Both players bow to the carrier, then the carrier eats it immediately before entering.','Grand',2],
+ ['Pottery Degree','Land three different pot types on the boss before victory.','Grand',2],
+ ['Full Performance Review','Before victory, the team must land a throwing-knife hit, jump attack, charged heavy, weapon skill, and thrown pot.','Grand',2],
+ ['The Procession','Both players walk, not sprint, from the nearest safe approach to the arena entrance, then gesture before entering.','Grand',2],
+ ['False Pilgrimage','Use a Grace Mimic somewhere inconvenient, mark it with two Rainbow Stones, and perform a gesture before continuing.','Grand',2],
+ ['Perfumer’s Union','Use two different Aromatics during the fight. They must be differently named items.','Grand',2],
+ ['Stonehenge, Unfortunately','Place five Rainbow Stones in the arena or immediately outside it before victory.','Grand',2],
+ ['The Four Offices','As a team, land a light attack, charged heavy, jump attack, and weapon skill before anyone uses a second Crimson Flask.','Grand',2],
+ ['Union Dinner','Each player consumes a different food item immediately before the encounter, then neither may heal for the first 15 seconds.','Grand',2],
+ ['Warming Stone Hostage Negotiation','Place a Warming Stone during combat. Both players must touch its effect before either may heal again.','Grand',2],
+ ['Inventory Archaeology','Use three different consumables you have not used yet during this run. Honor system.','Grand',2],
+ ['The Long Introduction','Before attacking, both players gesture, use one consumable each, and circle the arena entrance once.','Grand',2],
+ ['Elemental Filing Cabinet','As a team, deal three different damage types through consumables, grease, weapon skills, or attacks before victory.','Grand',2],
+ ['The Archaeologist','Carry at least five Ruin Fragments into the encounter, place one Rainbow Stone, and use the Telescope before engaging.','Grand',2],
+ ['Ceremonial Bankruptcy','Use one annoying-to-replace consumable you have been hoarding. You decide what counts, but it must hurt emotionally.','Grand',2],
+ ['The Union Has Standards','Use Soap, a food consumable, a crafted offensive item, and a gesture between leaving Grace and defeating the boss.','Grand',2],
+ ['The Liturgical Combo','In order: gesture, thrown-item hit, charged heavy, weapon skill. Any player may perform each step, but do not break the order.','Grand',2],
+ ['Against Better Judgment','No Crimson Flask until both players land a charged heavy. Then use a Warming Stone before anyone takes their second flask.','Grand',2],
+ ['The Full Audit','Before victory, each player uses a non-flask consumable, lands a jump attack, and lands a weapon skill. Also place a Rainbow Stone.','Grand',2],
+ ['Potluck','Each player must land a different type of thrown pot before victory.','True',1],
+ ['Three Point Inspection','Before victory, land one thrown knife, one pot, and one weapon skill as a team.','True',1],
+ ['Stone Witness','Place a Rainbow Stone at the entrance and another inside the arena before victory.','True',1],
+ ['Emergency Illumination','Use a Glowstone after the boss reaches half health.','True',1],
+ ['False Grace','Use a Grace Mimic immediately before the encounter. Respect its complete uselessness.','True',1],
+ ['Sacramental Snack','Each player consumes a different non-flask consumable before the first attack.','True',1],
+ ['Weapon Skill Witness','Both players land their assigned weapon skill at least once before victory.','True',1],
+ ['Heavy Machinery','Both players land one charged heavy before either uses their third Crimson Flask.','True',1],
+ ['Jump Department','Both players land a jump attack before the boss reaches half health.','True',1],
+ ['No Free Crits','On the first stance break, deliberately skip the critical attack and bow or crouch instead.','True',1],
+ ['Formal Introductions','Both players gesture to the boss before either attacks. Different gestures required.','True',1],
+ ['Ceremonial Stonework','Place three Rainbow Stones in a rough triangle before or during the encounter.','True',1],
+ ['The Bell Does Not Toll','Use any Prattling Pate twice during the fight at two different health phases.','True',1],
+ ['Tiny OSHA','Drop one Rainbow Stone and turn on both Lanterns before the pull.','Minor',0],
+ ['Management Photo','Both players stand beside a Rainbow Stone and gesture before engaging.','Minor',0],
+ ['Mandatory Orientation','Both players crouch for five seconds at the arena entrance.','Minor',0],
+ ['Tourist Behavior','Use the Telescope and place a Rainbow Stone before engaging.','Minor',0],
+ ['Clean Workplace','Use Soap and a gesture before the encounter.','Minor',0]
+];
+const TC_RITE_META = new Map(TC_EXTRA_RITES.map(r=>[r[0],{tier:r[2],favor:r[3]}]));
+weirdness.push(...TC_EXTRA_RITES.map(r=>[r[0],r[1]]));
+function riteMeta(weird){ return TC_RITE_META.get(weird?.[0]) || {tier:'True',favor:1}; }
+
+const TC_EXTRA_CHAOS = [
+ 'SUCCESSION CRISIS: every time aggro changes, the new target must stop attacking for five seconds until victory.',
+ 'FALSE CONFIDENCE: once the boss falls below 25% health, nobody may use Crimson Flasks.',
+ 'DEBT COLLECTOR: if either player dies, the survivor cannot heal for the remainder of that attempt.',
+ 'SCARLET ACCOUNTING: after each Crimson Flask, that player must land a hit before healing again.',
+ 'THE COVENANT WANTS A SHOW: before victory, both players must land a charged heavy and a weapon skill.',
+ 'DIVORCE PROCEEDINGS: both players must remain separated for the rest of this attempt.',
+ 'HOSTILE WORK ENVIRONMENT: randomly choose one player. Remove all talismans until victory.',
+ 'LAST CALL: each player receives exactly two more Crimson Flask uses for the rest of the attempt.',
+ 'SILENT PARTNER: randomly choose one player. They may only attack while the other player has aggro for 30 seconds.',
+ 'NO SAFE OPENINGS: after every heal, that player must land a hit before healing again.',
+ 'MELEE ARBITRATION: nobody may deal ranged damage for the next 30 seconds.',
+ 'ASH OF WAR STRIKE: weapon skills are banned until somebody lands a charged heavy.',
+ 'ROLLING BLACKOUT: randomly choose one player. They may not roll for 15 seconds.',
+ 'STAMINA UNION: neither player may attack while their stamina is below half for 30 seconds.',
+ 'FASHION COURT: both players remove one armor piece of their choice until victory.',
+ 'BODYGUARD CLAUSE: the player with more health must stay closer to the boss for 20 seconds.',
+ 'POTION PROHIBITION: nobody may heal for 20 seconds.',
+ 'AGGRESSION QUOTA: each player must land three hits before their next Crimson Flask.',
+ 'COMPULSORY RETREAT: after each player lands one hit, both must fully disengage once before continuing.',
+ 'THE LONG WAY HOME: if you wipe this attempt, the current Chaos restriction remains binding for the next attempt too.',
+ 'NO MORE MISTAKES: the next player who takes damage loses Crimson Flask access for 30 seconds.',
+ 'EXECUTIVE DECISION: randomly choose one player. Only that player may use weapon skills until the attempt ends.',
+ 'BLOOD PRICE: the next Crimson Flask used requires that player to remove one talisman until victory.',
+ 'COMBO INSPECTION: nobody may hit the boss more than twice consecutively until victory.',
+ 'PANIC TAX: after three consecutive panic rolls, that player must stop attacking for five seconds.',
+ 'DEPARTMENT OF HEAVY OBJECTS: both players must land a jumping heavy before either may heal again.',
+ 'UNPAID INTERNSHIP: randomly choose one player. They deal no damage for 20 seconds and may only survive.',
+ 'MEDICAL LEAVE DENIED: the player with lower health is the only player allowed to heal until health totals reverse.',
+ 'SHARED LIABILITY: if either player heals, the other player cannot heal for 15 seconds.',
+ 'FOG OF WAR: no lock-on and no weapon skills for 30 seconds.',
+ 'AUDIT FROM HELL: before victory, each player must land a light attack, heavy attack, jump attack, and weapon skill.',
+ 'THE GREATER WILL HAS CUT FUNDING: each player gets one more Crimson Flask use. Total. Good luck.',
+ 'SURVIVOR BENEFITS CANCELLED: if one player dies, the survivor removes one talisman and cannot use weapon skills.',
+ 'BOARD MEETING: both players stop attacking for ten seconds. If anyone gets hit, restart the ten seconds.',
+ 'THE COVENANT IS DISPLEASED: both players remove one talisman, no weapon skills, and no lock-on for 20 seconds.',
+ 'MALICIOUS COMPLIANCE: both players two-hand their assigned weapon and cannot heal for 15 seconds.',
+ 'ABSOLUTE SHAMBLES: randomly choose one player to remove all talismans; the other loses weapon skills until wipe or victory.',
+ 'MUTUAL ASSURED DESTRUCTION: while both players are below half health, nobody may heal until one player lands a charged heavy.',
+ 'ONE BUTTON DEPARTMENT: for 30 seconds both players may use only light attacks or only heavy attacks. Choose randomly.',
+ 'NO COMFORT ZONE: both players must swap which side of the boss they are fighting from before attacking again.'
+].map(text=>({text,favor:1}));
+const TC_MERCIFUL_CHAOS = new Set([
+ 'ABSOLUTELY NOTHING: Chaos has reviewed the situation and decided you are already suffering enough.',
+ 'FREE DRINK: both players may immediately use one Crimson Flask without it counting against any existing Chaos flask restriction.',
+ 'MORALE BOOST: no new restriction. Both players must say something encouraging and deeply unconvincing before continuing.',
+ 'BOSS UNION BREAK: stop attacking for five seconds. Healing and repositioning are allowed. The boss has requested a meeting.'
+]);
 
 function triggerChaos(state, actor) {
   const next = structuredClone(state);
@@ -1156,7 +1252,9 @@ function triggerChaos(state, actor) {
     'BOSS UNION BREAK: stop attacking for five seconds. Healing and repositioning are allowed. The boss has requested a meeting.'
   ];
   next.current.chaosTriggered = true;
-  next.current.chaosConsequence = pick(consequences);
+  const rolledChaos = pick(consequences.concat(TC_EXTRA_CHAOS.map(x=>x.text)));
+  next.current.chaosConsequence = rolledChaos;
+  next.current.chaosFavor = TC_MERCIFUL_CHAOS.has(rolledChaos) ? 0 : 1;
   next.lastAction = `${actor} triggered Chaos.`;
   next.updatedAt = new Date().toISOString();
   return next;
@@ -1825,6 +1923,11 @@ function smithingFavorMarkup(state){
   const sm=smithingData(state);
   return `<div class="tc-forge-favor"><span class="tc-forge-mark">✦</span><div><div class="tc-kicker ember">smithing favor</div><strong>${sm.favor}</strong></div><div class="tc-muted">earned by honoring rites and enduring Chaos</div></div>`;
 }
+function smithingContractCost(bearing){
+  const tier=Math.max(1,Math.min(4,Number(String(bearing?.id||'').match(/(\d+)$/)?.[1]||1)));
+  return 4 + tier*2;
+}
+
 function smithingHubMarkup(state){
   const sm=smithingData(state), contract=sm.activeContract, bearing=contract?bellById(contract.bearingId):null;
   if(contract && bearing){
@@ -1834,10 +1937,10 @@ function smithingHubMarkup(state){
     </button>`;
   }
   const available=availableBellBearings(state);
-  if(sm.favor>=3 && available.length){
-    return `<button class="tc-forge-notice" data-smith-action="commission" type="button"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">a contract awaits</div><div class="tc-forge-title">The Smith Calls In A Debt</div><div class="tc-muted">Spend 3 Favor to commission a Bell Bearing Contract.</div></div><span class="tc-forge-arrow">›</span></button>`;
+  if(available.length && sm.favor>=Math.min(...available.map(smithingContractCost))){
+    return `<button class="tc-forge-notice" data-smith-action="commission" type="button"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">a contract awaits</div><div class="tc-forge-title">The Smith Calls In A Debt</div><div class="tc-muted">Eligible contracts cost 6–12 Favor depending on Bell Bearing tier.</div></div><span class="tc-forge-arrow">›</span></button>`;
   }
-  return `<button class="tc-forge-notice quiet" data-smith-action="ledger" type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s books</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">${sm.favor<3?'3 Favor commissions a Bell Bearing Contract.':'No accessible contract is waiting yet.'}</div></div><span class="tc-forge-arrow">›</span></button>`;
+  return `<button class="tc-forge-notice quiet" data-smith-action="ledger" type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s books</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">${available.length?`Next eligible contract: ${Math.min(...available.map(smithingContractCost))} Favor.`:'No accessible contract is waiting yet.'}</div></div><span class="tc-forge-arrow">›</span></button>`;
 }
 function smithingLedgerMarkup(state){
   const sm=smithingData(state), contract=sm.activeContract, acquired=new Set(sm.acquired);
@@ -1869,9 +1972,14 @@ function renderSmithingContract(){
   </div></div>`);
 }
 function commissionSmithingContract(state){
-  const sm=smithingData(state),pool=availableBellBearings(state); if(sm.favor<3||!pool.length) return null;
-  const next=smithingCopy(state),b=pool[Math.floor(Math.random()*pool.length)],task=TC_SMITHING_TASKS[Math.floor(Math.random()*TC_SMITHING_TASKS.length)];
-  next.smithing.favor-=3; next.smithing.activeContract={bearingId:b.id,task,status:'task',commissionedAt:new Date().toISOString()}; next.lastAction=`A Bell Bearing Contract has been commissioned for ${b.name}.`; return next;
+  const sm=smithingData(state),pool=availableBellBearings(state);
+  const affordable=pool.filter(b=>sm.favor>=smithingContractCost(b));
+  if(!affordable.length)return null;
+  const next=smithingCopy(state),b=pick(affordable),cost=smithingContractCost(b),task=pick(TC_SMITHING_TASKS);
+  next.smithing.favor-=cost;
+  next.smithing.activeContract={bearingId:b.id,task,status:'task',cost,commissionedAt:new Date().toISOString()};
+  next.lastAction=`A Bell Bearing Contract has been commissioned for ${b.name} for ${cost} Favor.`;
+  return next;
 }
 function fulfillSmithingContract(state){const next=smithingCopy(state);if(!next.smithing.activeContract)return null;next.smithing.activeContract.status='sanctioned';next.lastAction='The union’s demands have been met. Custodian sanctioned.';return next;}
 function claimSmithingBearing(state){
@@ -1956,8 +2064,8 @@ function renderEncounter() {
     <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout(playerLabel('chase',state),c.chase)}${compactLoadout(playerLabel('morgan',state),c.morgan)}</div>
     ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
     <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(personalizePlayers(c.chaosTrigger,state))}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(personalizePlayers(c.chaosConsequence,run.state))}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
-    <div class="tc-feature rite"><div class="tc-feature-row"><div class="tc-feature-glyph">✧</div><div><div class="tc-kicker violet">odd rite</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div></div></div>
-    <div class="tc-forge-claims"><div class="tc-kicker ember">forge favor · honor system</div><button data-smith-action="favor-rite" ${c.smithingRiteFavor?'disabled':''}>${c.smithingRiteFavor?'✓ Rite Favor Claimed':'Odd Rite Honored · +1'}</button><button data-smith-action="favor-chaos" ${(!c.chaosTriggered||c.smithingChaosFavor)?'disabled':''}>${c.smithingChaosFavor?'✓ Chaos Favor Claimed':'Chaos Endured · +1'}</button></div>
+    <div class="tc-feature rite"><div class="tc-feature-row"><div class="tc-feature-glyph">✧</div><div><div class="tc-kicker violet">${h(c.weirdness?.tier||'True')} rite · ${Number(c.weirdness?.favor??1)>0?`+${Number(c.weirdness?.favor??1)} Favor`:'no Favor'}</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div></div></div>
+    <div class="tc-forge-claims"><div class="tc-kicker ember">forge favor · honor system</div><button data-smith-action="favor-rite" ${c.smithingRiteFavor?'disabled':''}>${c.smithingRiteFavor?'✓ Rite Favor Claimed':Number(c.weirdness?.favor??1)>0?`Rite Honored · +${Number(c.weirdness?.favor??1)}`:'Minor Rite · No Favor'}</button><button data-smith-action="favor-chaos" ${(!c.chaosTriggered||c.smithingChaosFavor)?'disabled':''}>${c.smithingChaosFavor?'✓ Chaos Favor Claimed':Number(c.chaosFavor??1)>0?'Chaos Endured · +1':'Merciful Chaos · No Favor'}</button></div>
     <button id="complete" class="btn gold victory">${c.target.exit?'CAPSTONE DEFEATED · CONTINUE':'VICTORY · ROLL NEXT ENCOUNTER'}</button>
     <div class="tc-actions-3"><button id="rerollChaos" class="btn ghost">Reroll Chaos</button><button id="rerollWeird" class="btn ghost">Reroll Rite</button><button id="appealOpen" class="btn curse">Weapon Appeal</button></div>
     <div id="appealConfirm"></div>
