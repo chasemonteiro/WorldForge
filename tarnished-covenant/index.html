@@ -1192,7 +1192,8 @@ function changeWeapons(state, actor, which) {
     current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name], next);
   }
   current.penances.push(makePenance(current.target.name));
-  const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? 'Chase' : 'Morgan'}’s weapon`;
+  const names = Array.isArray(next.playerNames) && next.playerNames.length >= 2 ? next.playerNames : ['Tarnished One','Tarnished Two'];
+  const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? names[0] : names[1]}’s weapon`;
   next.lastAction = `${actor} changed ${label}; a penalty was added.`;
   next.updatedAt = new Date().toISOString();
   return next;
@@ -1652,13 +1653,14 @@ function capstoneBlock(state) {
 
 function penanceMarkup(c) {
   if (!c.penances?.length) return '';
+  const state = run?.state;
   return `<section class="curse-section">
     <div class="section-kicker redtext">armament penalties</div>
     <div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>
     ${c.penances.map((p,i)=>`<div class="penance-item">
-      <div class="scope">${h(p.scope)} · penalty ${i+1}</div>
+      <div class="scope">${h(personalizePlayers(p.scope,state))} · penalty ${i+1}</div>
       <div class="penance-name">${h(p.name)}</div>
-      <div class="penance-text">${h(p.text)}</div>
+      <div class="penance-text">${h(personalizePlayers(p.text,state))}</div>
     </div>`).join('')}
     <div class="subtext">Penalties stack until the current target is defeated.</div>
   </section>`;
@@ -1872,22 +1874,33 @@ function commissionSmithingContract(state){
   next.smithing.favor-=3; next.smithing.activeContract={bearingId:b.id,task,status:'task',commissionedAt:new Date().toISOString()}; next.lastAction=`A Bell Bearing Contract has been commissioned for ${b.name}.`; return next;
 }
 function fulfillSmithingContract(state){const next=smithingCopy(state);if(!next.smithing.activeContract)return null;next.smithing.activeContract.status='sanctioned';next.lastAction='The union’s demands have been met. Custodian sanctioned.';return next;}
-function claimSmithingBearing(state){const next=smithingCopy(state),ct=next.smithing.activeContract;if(!ct||ct.status!=='sanctioned')return null;const b=bellById(ct.bearingId);next.smithing.acquired=Array.from(new Set([...next.smithing.acquired,ct.bearingId]));next.smithing.masterworkCredits+=1;next.smithing.activeContract=null;next.lastAction=`${b?.name||'Bell Bearing'} claimed. Hewg owes the Covenant one Masterwork.`;return next;}
-function claimForgeFavor(state,type){
-  if(!state.current)return null; const next=smithingCopy(state),c=next.current;
-  if(type==='rite'){if(c.smithingRiteFavor)return null;c.smithingRiteFavor=true;next.smithing.favor+=1;next.lastAction='Odd Rite honored. +1 Smithing Favor.';}
-  else {if(!c.chaosTriggered||c.smithingChaosFavor)return null;c.smithingChaosFavor=true;next.smithing.favor+=1;next.lastAction='Chaos endured. +1 Smithing Favor.';}
+function claimSmithingBearing(state){
+  const next=smithingCopy(state),ct=next.smithing.activeContract;
+  if(!ct||ct.status!=='sanctioned')return null;
+  const b=bellById(ct.bearingId);
+  if(!b){
+    setToast('This contract is no longer valid. No reward was spent or granted.');
+    return null;
+  }
+  next.smithing.acquired=Array.from(new Set([...next.smithing.acquired,ct.bearingId]));
+  next.smithing.masterworkCredits+=1;
+  next.smithing.activeContract=null;
+  next.lastAction=`${b.name} claimed. Hewg owes the Covenant one Masterwork.`;
   return next;
 }
-function masterworkCurrent(state,slot){const next=smithingCopy(state);if(next.smithing.masterworkCredits<1||!next.current)return null;const weapon=slot==='morgan'?next.current.morgan?.name:next.current.chase?.name;if(!weapon)return null;if(!next.smithing.masterworks.includes(weapon))next.smithing.masterworks.push(weapon);next.smithing.masterworkCredits-=1;next.lastAction=`Hewg has Masterworked ${weapon}.`;return next;}
-
-function navMarkup(active) {
-  return `<nav class="tc-bottom-nav">
-    <button data-screen="sanctuary" class="${active==='sanctuary'?'active':''}"><span class="nicon">⌂</span><span>Site of Grace</span></button>
-    <button data-screen="encounter" class="${active==='encounter'?'active':''}"><span class="nicon">✦</span><span>Encounter</span></button>
-    <button data-screen="ledger" class="${active==='ledger'?'active':''}"><span class="nicon">▤</span><span>Ledger</span></button>
-    <button data-screen="settings" class="${active==='settings'?'active':''}"><span class="nicon">⚙</span><span>Settings</span></button>
-  </nav>`;
+function masterworkCurrent(state,slot){
+  const next=smithingCopy(state);
+  if(next.smithing.masterworkCredits<1||!next.current)return null;
+  const weapon=slot==='morgan'?next.current.morgan?.name:next.current.chase?.name;
+  if(!weapon)return null;
+  if(next.smithing.masterworks.includes(weapon)){
+    setToast(`${weapon} is already Masterworked.`);
+    return null;
+  }
+  next.smithing.masterworks.push(weapon);
+  next.smithing.masterworkCredits-=1;
+  next.lastAction=`Hewg has Masterworked ${weapon}.`;
+  return next;
 }
 function bindNav() {
   document.querySelectorAll('[data-screen]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -2018,7 +2031,7 @@ function showRestart() {
   box.innerHTML = `<div class="confirm restart-confirm">
     <div class="section-kicker redtext">restart covenant</div>
     <h3>Restart this Covenant?</h3>
-    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'Morgan’s phone resets too. The room code stays the same.' : 'This phone starts fresh.'}</div>
+    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
     <div class="grid2 restart-grid">
       <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
       <div><label class="label" for="restartSeverity">difficulty</label><select id="restartSeverity"><option value="normal" ${state.severity==='normal'?'selected':''}>Silly</option><option value="hard" ${state.severity==='hard'?'selected':''}>Maidenless</option><option value="cursed" ${state.severity==='cursed'?'selected':''}>Miyazaki Has Noticed You</option></select></div>
@@ -2036,9 +2049,11 @@ function showRestart() {
       const fresh = initialRunState({
         region,
         severity,
+        includeDlc: Boolean(latestState?.includeDlc ?? state.includeDlc),
+        playerNames: latestState?.playerNames || state.playerNames || ['Tarnished One','Tarnished Two'],
         createdBy: latestState?.createdBy || state.createdBy || playerName()
       });
-      fresh.lastAction = `${playerName()} restarted the Covenant. started a fresh run.`;
+      fresh.lastAction = `${playerName()} restarted the Covenant.`;
       return fresh;
     };
 
@@ -2060,16 +2075,18 @@ function showRestart() {
 }
 
 function showAppeal(which) {
-  const labels = { chase: 'Chase’s weapon', morgan: 'Morgan’s weapon', both: 'both weapons' };
+  const names = covenantNames(run?.state);
+  const labels = { chase: `${names[0]}’s weapon`, morgan: `${names[1]}’s weapon`, both: 'both weapons' };
   const box = document.querySelector('#appealConfirm');
+  if (!box) return showAppealMenu();
   box.innerHTML = `<div class="confirm">
     <div class="section-kicker redtext">armament appeal</div>
-    <h3>Change ${labels[which]}?</h3>
-    <div class="rtext">You get a new region-legal weapon, then Chase, Morgan, or both receive a severe random penalty. You do not see the penalty first.</div>
+    <h3>Change ${h(labels[which] || 'assigned weapon')}?</h3>
+    <div class="rtext">You get a new region-legal weapon, then ${h(names[0])}, ${h(names[1])}, or both receive a severe random penalty. You do not see the penalty first.</div>
     <div class="confirm-actions"><button id="accept" class="btn curse" type="button">Accept Penalty & Reroll</button><button id="cancel" class="btn ghost" type="button">Keep Current Weapon</button></div>
   </div>`;
-  document.querySelector('#cancel').addEventListener('click',()=>{box.innerHTML='';});
-  document.querySelector('#accept').addEventListener('click',()=>commit(changeWeapons(run.state,playerName(),which)));
+  document.querySelector('#cancel')?.addEventListener('click',()=>{box.innerHTML='';});
+  document.querySelector('#accept')?.addEventListener('click',()=>commit(changeWeapons(run.state,playerName(),which)));
 }
 
 function renderHistory(state) {
