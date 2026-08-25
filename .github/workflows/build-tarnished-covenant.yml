@@ -90,6 +90,9 @@ jobs:
       - name: Make Chaos triggers objective
         run: python tarnished-covenant/build-objective-chaos-triggers.py
 
+      - name: Add compendium encounter challenges
+        run: python tarnished-covenant/build-compendium-challenges.py
+
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
