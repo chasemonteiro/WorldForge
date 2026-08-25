@@ -75,7 +75,7 @@ s=s.replace(needle, rite_js+"\n];\nconst TC_RITE_META",1)
 needle="].map(text=>({text,favor:1}));"
 if needle not in s:
     raise SystemExit('TC_EXTRA_CHAOS closing marker missing')
-chaos_js=''.join("\n "+jsq(x)+"," for x in extra_chaos)
+chaos_js=',' + ''.join("\n "+jsq(x)+"," for x in extra_chaos)
 s=s.replace(needle, chaos_js+"\n].map(text=>({text,favor:1}));",1)
 
 s=s.replace('Honor system: when you have actually completed the demand in Elden Ring, certify it here.', 'Honor system: one assigned weapon per player, no backup weapon. When you have actually completed the demand in Elden Ring, certify it here.')
