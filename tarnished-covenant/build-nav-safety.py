@@ -37,3 +37,10 @@ for needle in ['function navMarkup(active)', 'function bindNav()', 'function ren
         raise SystemExit(f'Navigation invariant missing: {needle}')
 
 p.write_text(s)
+
+# The compact Chaos pass deliberately runs last so earlier visual patches cannot
+# stretch the reveal beyond a phone viewport again.
+compact = Path('tarnished-covenant/build-chaos-compact.py')
+if not compact.exists():
+    raise SystemExit('compact Chaos pass missing')
+exec(compile(compact.read_text(), str(compact), 'exec'))
