@@ -34,5 +34,83 @@ jobs:
       - name: Repair region table closure
         run: |
           python - <<'PY'
-          from pathlib import import Path
+          from pathlib import Path
+          p = Path('tarnished-covenant/index.html')
+          s = p.read_text()
+          old = "  }\n\n\nregions['Siofra River + Nokron']"
+          new = "  }\n};\n\nregions['Siofra River + Nokron']"
+          if old not in s:
+              raise SystemExit('region closure repair target not found')
+          p.write_text(s.replace(old, new, 1))
           PY
+
+      - name: Apply spreadsheet regional pools
+        run: python tarnished-covenant/build-regional-pools.py
+
+      - name: Apply screen-based UI
+        run: python tarnished-covenant/build-ui.py
+
+      - name: Normalize Chaos render hook
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tarnished-covenant/index.html')
+          s = p.read_text()
+          s = s.replace('if(state.runComplete) return renderRunComplete();', 'if (state.runComplete) return renderRunComplete();', 1)
+          p.write_text(s)
+          PY
+
+      - name: Apply ornate theme and expanded Chaos
+        run: python tarnished-covenant/build-chaos-theme.py
+
+      - name: Apply sourced promotional imagery
+        run: python tarnished-covenant/build-images.py
+
+      - name: Polish image crops and encounter entry
+        run: python tarnished-covenant/build-layout-polish.py
+
+      - name: Apply custom character names
+        run: python tarnished-covenant/build-character-names.py
+
+      - name: Polish Chaos reveal motion and readability
+        run: python tarnished-covenant/build-chaos-polish.py
+
+      - name: Apply Smithing Favor and Bell Bearing Contracts
+        run: python tarnished-covenant/build-smithing-system.py
+
+      - name: Expand risk pools and rebalance Favor
+        run: python tarnished-covenant/build-risk-rebalance-runner.py
+
+      - name: Make Chaos triggers objective
+        run: python tarnished-covenant/build-objective-chaos-triggers.py
+
+      - name: Run stability and regression pass
+        run: python tarnished-covenant/build-stability-pass.py
+
+      - name: Apply final navigation safety layer
+        run: python tarnished-covenant/build-nav-safety.py
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('tarnished-covenant/index.html').read_text()
+          scripts = re.findall(r'<script(?:[^>]*)>(.*?)</script>', html, flags=re.S)
+          if not scripts:
+              raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit assembled page
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Assemble Tarnished Covenant app'
+            git push origin HEAD:tarnished-covenant-assets
+          fi
