@@ -81,6 +81,9 @@ jobs:
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
+      - name: Apply final navigation safety layer
+        run: python tarnished-covenant/build-nav-safety.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
