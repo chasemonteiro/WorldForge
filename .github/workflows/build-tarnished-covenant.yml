@@ -81,6 +81,9 @@ jobs:
       - name: Polish Chaos reveal motion and readability
         run: python tarnished-covenant/build-chaos-polish.py
 
+      - name: Apply Smithing Favor and Bell Bearing Contracts
+        run: python tarnished-covenant/build-smithing-system.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
