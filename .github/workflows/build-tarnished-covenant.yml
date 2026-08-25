@@ -78,6 +78,9 @@ jobs:
       - name: Apply Smithing Favor and Bell Bearing Contracts
         run: python tarnished-covenant/build-smithing-system.py
 
+      - name: Expand risk pools and rebalance Favor
+        run: python tarnished-covenant/build-risk-rebalance.py
+
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
