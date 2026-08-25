@@ -78,6 +78,9 @@ jobs:
       - name: Apply Smithing Favor and Bell Bearing Contracts
         run: python tarnished-covenant/build-smithing-system.py
 
+      - name: Run stability and regression pass
+        run: python tarnished-covenant/build-stability-pass.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
@@ -86,7 +89,7 @@ jobs:
           html = Path('tarnished-covenant/index.html').read_text()
           scripts = re.findall(r'<script(?:[^>]*)>(.*?)</script>', html, flags=re.S)
           if not scripts:
-              raise SystemExit('No inline script found')
+            raise SystemExit('No inline script found')
           Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
           PY
           node --check /tmp/tarnished-covenant.js
