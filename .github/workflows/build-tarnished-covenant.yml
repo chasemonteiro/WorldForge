@@ -90,6 +90,9 @@ jobs:
       - name: Rebuild Chaos reveal and add Old Souls rules
         run: python tarnished-covenant/build-chaos-redesign.py
 
+      - name: Escalate Chaos with run progress
+        run: python tarnished-covenant/build-escalating-chaos.py
+
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
