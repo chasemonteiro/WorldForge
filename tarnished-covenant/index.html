@@ -559,6 +559,26 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;bac
 .tc-earned-refreshes{margin:10px 0 8px;padding-top:9px;border-top:1px solid var(--line-soft)}.tc-earned-refresh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}.tc-earned-refresh-grid .btn:only-child{grid-column:1/-1}
 @media(max-width:380px){.tc-boon-grid{gap:4px}.tc-boon-grid>div{padding:8px 3px}.tc-boon-grid span{font-size:6.5px}}
 
+
+/* --- Release hardening / mobile usability --- */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior-y:none}
+button,[role="button"],summary{touch-action:manipulation;-webkit-tap-highlight-color:rgba(224,193,123,.10)}
+button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+button:disabled{pointer-events:none;filter:saturate(.55)}
+.tc-bottom-nav button{min-height:44px}
+.tc-ledger-tabs button{min-height:44px;padding:8px 4px}
+.tc-settings-row{min-height:58px}
+.tc-comp-card summary{min-height:60px}
+.tc-value,.tc-feature-title,.tc-brief-boss,.tc-report-boss,.tc-comp-boss,.tc-path-name,.tc-forge-title{overflow-wrap:anywhere}
+.tc-loadout-name,.tc-comp-weapons strong{overflow-wrap:anywhere}
+.tc-earned-refresh-grid .btn{min-height:44px}
+.tc-report-choices button{min-width:48px;min-height:44px}
+.tc-sheet{max-height:calc(100dvh - 24px);overflow:auto;-webkit-overflow-scrolling:touch}
+.tc-battle-report{min-height:calc(100dvh - 24px)}
+@supports not (height:100dvh){.tc-battle-report{min-height:calc(100vh - 24px)}}
+@media(max-width:360px){.tc-ledger-tabs button{font-size:7px;letter-spacing:.04em}.tc-bottom-nav button{letter-spacing:.03em}.tc-boon-grid{grid-template-columns:1fr}.tc-report-row{grid-template-columns:1fr}.tc-report-choices{width:100%}}
+@media(max-height:640px){.tc-battle-report{justify-content:flex-start;padding-top:10px}.tc-report-victory{font-size:30px}.tc-report-boss{font-size:21px}.tc-report-row{padding:7px 3px}.tc-report-detail{-webkit-line-clamp:1}.tc-report-total{margin:7px 0 6px}.tc-report-note{display:none}}
+
 </style>
 </head>
 <body>
@@ -1377,7 +1397,8 @@ function completeEncounter(state, actor) {
     chaosTriggered: Boolean(encounter?.chaosTriggered),
     chaosConsequence: encounter?.chaosConsequence || '',
     penances: structuredClone(encounter?.penances || []),
-    favorEarned: riteFavor + chaosFavor
+    favorEarned: Math.max(0, Number(encounter?.favorEarned ?? 0)),
+    rewards: structuredClone(encounter?.postBattleRewards || [])
   });
   next.cleared += 1;
   next.lastAction = `${actor} says ${target.name} is defeated.`;
@@ -2505,13 +2526,17 @@ function tcEncounterBoons(state){
   return buttons.length?`<div class="tc-earned-refreshes"><div class="tc-kicker">earned refreshes</div><div class="tc-earned-refresh-grid">${buttons.join('')}</div></div>`:'';
 }
 async function useCovenantBoon(kind){
-  if(!run?.state?.current)return;
+  if(window.__tcBoonBusy || !run?.state?.current)return;
+  window.__tcBoonBusy=true;
+  const clicked=document.querySelector(`[data-use-boon="${kind}"]`);
+  if(clicked)clicked.disabled=true;
   const sm=smithingData(run.state),key=kind==='chaos'?'chaosRefreshes':'riteRefreshes';
-  if(Number(sm[key]||0)<1)return setToast('No refresh token available.');
-  if(kind==='chaos'&&run.state.current.chaosTriggered)return setToast('Chaos has already broken loose. Too late to refresh it.');
+  if(Number(sm[key]||0)<1){window.__tcBoonBusy=false;return setToast('No refresh token available.');}
+  if(kind==='chaos'&&run.state.current.chaosTriggered){window.__tcBoonBusy=false;return setToast('Chaos has already broken loose. Too late to refresh it.');}
   let staged=smithingCopy(run.state);staged.smithing[key]-=1;
   staged=kind==='chaos'?rerollChaos(staged,playerName()):rerollWeirdness(staged,playerName());
-  await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} refreshed. Token spent.`});
+  try{await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} refreshed. Token spent.`});}
+  finally{window.__tcBoonBusy=false;}
 }
 
 function smithingFavorMarkup(state){
@@ -2719,8 +2744,12 @@ function renderPostBattleReport(){
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
 }
 async function finalizePostBattleReport(){
+  if(window.__tcReportBusy)return;
   const state=run.state,c=state.current;
   if(!c || !postBattleReport || postBattleReport.encounterId!==c.id) return;
+  window.__tcReportBusy=true;
+  const submit=document.querySelector('#finishBattleReport');
+  if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
   const nextState=smithingCopy(state);
   const nc=nextState.current;
   let draws=0;
@@ -2740,12 +2769,13 @@ async function finalizePostBattleReport(){
   postBattleReport=null;
   if(!completed.regionComplete&&!completed.runComplete&&completed.current){pendingRevealId=completed.current.id;uiScreen='encounter';}
   const rewardText=rewards.length?`Rewards: ${rewards.map(x=>x.label).join(' · ')}`:'Post-battle report filed.';
-  await commit(completed,{successToast:rewardText});
+  try{await commit(completed,{successToast:rewardText});}
+  finally{window.__tcReportBusy=false;}
 }
 
 function showAppealMenu(){
   const c=run.state.current;
-  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing an assigned weapon creates a severe random penalty.</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',run.state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',run.state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',run.state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',run.state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">${smithingData(run.state).appealWaivers>0?`Appeal Waiver available · this appeal is penalty-free and will consume 1 waiver.`:`Changing an assigned weapon creates a severe random penalty.`}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',run.state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',run.state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',run.state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',run.state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
   document.querySelector('#closeAppeal').addEventListener('click',()=>document.querySelector('#tcAppealOverlay')?.remove());
   document.querySelectorAll('[data-overlay-appeal]').forEach(btn=>btn.addEventListener('click',async()=>{const which=btn.dataset.overlayAppeal;document.querySelector('#tcAppealOverlay')?.remove();await commit(changeWeapons(run.state,playerName(),which));}));
 }
@@ -2777,7 +2807,8 @@ function compendiumEntryMarkup(entry,index,state){
       ${entry.oddRite?`<div class="tc-comp-mod rite"><span>ODD RITE</span><strong>${h(entry.oddRite.name||'Unnamed Rite')}</strong><p>${h(entry.oddRite.text||'')}</p></div>`:''}
       ${entry.chaosTriggered?`<div class="tc-comp-mod chaos"><span>CHAOS · TRIGGERED</span><strong>${h(typeof chaosEventName==='function'?chaosEventName(entry.chaosConsequence||'Chaos'): 'Chaos')}</strong><p>${h(entry.chaosConsequence||'The seal broke. Details lost to history.')}</p></div>`:`<div class="tc-comp-mod quiet"><span>CHAOS</span><strong>Seal remained intact</strong></div>`}
       ${mods.length?`<div class="tc-comp-mod penalties"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
-      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:'No Favor'}</strong></div>
+      ${Array.isArray(entry.rewards)&&entry.rewards.length?`<div class="tc-comp-mod rewards"><span>COVENANT REWARDS</span><p>${entry.rewards.map(h).join(' · ')}</p></div>`:''}
+      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:(Array.isArray(entry.rewards)&&entry.rewards.length?'Boons earned':'No reward')}</strong></div>
     </div>
   </details>`;
 }
