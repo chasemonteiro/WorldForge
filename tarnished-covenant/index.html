@@ -1666,17 +1666,55 @@ function startNextRegion(state, actor, region, severity = state.severity) {
 const SESSION_KEY = 'tarnished-covenant-session-v1';
 const LOCAL_RUN_KEY = 'tarnished-covenant-local-run-v1';
 
-function loadSession() {
-  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }
-  catch { return null; }
+const SESSION_COOKIE = 'tarnished_covenant_session_v1';
+
+function sessionCookiePath() {
+  const path = location.pathname || '/';
+  return path.endsWith('/') ? path : path.slice(0, path.lastIndexOf('/') + 1);
 }
 
-function saveSession(session) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+function loadSession() {
+  try {
+    const local = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (local?.runId) return local;
+  } catch {}
+  try {
+    const prefix = `${SESSION_COOKIE}=`;
+    const raw = document.cookie.split(';').map(x=>x.trim()).find(x=>x.startsWith(prefix));
+    if (!raw) return null;
+    const restored = JSON.parse(decodeURIComponent(raw.slice(prefix.length)));
+    if (restored?.runId) {
+      try { localStorage.setItem(SESSION_KEY, JSON.stringify(restored)); } catch {}
+      return restored;
+    }
+  } catch {}
+  return null;
+}
+
+function persistSessionCookie(value) {
+  try {
+    document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(JSON.stringify(value))}; Max-Age=31536000; Path=${sessionCookiePath()}; SameSite=Lax; Secure`;
+  } catch {}
+}
+
+function rememberSharedRunUrl(value) {
+  if (!value?.joinCode || location.protocol === 'file:') return;
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('join', value.joinCode);
+    history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  } catch {}
+}
+
+function saveSession(value) {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(value)); } catch {}
+  persistSessionCookie(value);
+  rememberSharedRunUrl(value);
 }
 
 function clearSession() {
-  localStorage.removeItem(SESSION_KEY);
+  try { localStorage.removeItem(SESSION_KEY); } catch {}
+  try { document.cookie = `${SESSION_COOKIE}=; Max-Age=0; Path=${sessionCookiePath()}; SameSite=Lax; Secure`; } catch {}
 }
 
 function loadLocalRun() {
@@ -1892,6 +1930,7 @@ async function boot() {
     try {
       run = await backend.getRun(session.runId);
       if (run?.state) {
+        saveSession({ runId: run.id, joinCode: run.joinCode || session.joinCode, displayName: session.displayName });
         subscribe();
         renderRun();
         return;
@@ -2000,7 +2039,7 @@ async function joinSharedRun(code, identity) {
     session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
     saveSession(session);
     subscribe();
-    history.replaceState({}, '', location.pathname);
+    rememberSharedRunUrl(session);
     renderRun();
   } catch (error) {
     console.error(error);
