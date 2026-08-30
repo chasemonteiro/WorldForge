@@ -111,6 +111,9 @@ jobs:
       - name: Add in-app refresh control
         run: python tarnished-covenant/build-refresh-button.py
 
+      - name: Make session persistence durable
+        run: python tarnished-covenant/build-durable-session.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
