@@ -96,6 +96,12 @@ jobs:
       - name: Apply final navigation safety layer
         run: python tarnished-covenant/build-nav-safety.py
 
+      - name: Apply compact one-screen Chaos layout
+        run: python tarnished-covenant/build-chaos-compact.py
+
+      - name: Move Favor bookkeeping to post-battle report
+        run: python tarnished-covenant/build-post-battle.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
