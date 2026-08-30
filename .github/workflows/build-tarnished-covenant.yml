@@ -102,6 +102,9 @@ jobs:
       - name: Move Favor bookkeeping to post-battle report
         run: python tarnished-covenant/build-post-battle-runner.py
 
+      - name: Add in-app refresh control
+        run: python tarnished-covenant/build-refresh-button.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
