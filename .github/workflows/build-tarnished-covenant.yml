@@ -123,6 +123,9 @@ jobs:
       - name: Randomize Covenant rewards and gate rerolls
         run: python tarnished-covenant/build-random-rewards.py
 
+      - name: Run release hardening and usability checks
+        run: python tarnished-covenant/build-release-hardening.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
