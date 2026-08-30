@@ -120,6 +120,9 @@ jobs:
       - name: Redesign Ledger as run compendium
         run: python tarnished-covenant/build-ledger-compendium.py
 
+      - name: Randomize Covenant rewards and gate rerolls
+        run: python tarnished-covenant/build-random-rewards.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
