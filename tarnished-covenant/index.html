@@ -398,6 +398,139 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;bac
   .tc-chaos-event .btn{height:37px;min-height:37px}
 }
 
+
+/* --- CHAOS REVEAL III: one-screen compact layout --- */
+.tc-chaos-event{
+  box-sizing:border-box;
+  height:calc(100svh - 70px);
+  min-height:0;
+  padding:7px 10px 9px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.tc-chaos-event .tc-ember-field{position:fixed;inset:0 0 70px;z-index:-1}
+.tc-chaos-head{
+  flex:0 0 auto;
+  grid-template-columns:1fr auto;
+  padding:3px 3px 7px;
+  min-height:29px;
+}
+.tc-chaos-head>span:first-child{display:none}
+.tc-chaos-head strong{text-align:left;font-size:13px;letter-spacing:.18em}
+.tc-chaos-head .favor{font-size:7px;line-height:1.15;max-width:110px}
+.tc-chaos-crumb{display:none}
+.tc-chaos-card{
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  max-width:610px;
+  margin:4px auto 0;
+  padding:8px 11px 10px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  overflow:hidden;
+}
+.tc-chaos-art-wrap{
+  flex:0 0 auto;
+  width:min(53vw,215px);
+  height:min(47vw,190px);
+  aspect-ratio:auto;
+  margin:-2px auto 2px;
+  border-radius:50%;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(229,93,44,.33) 0 4%,transparent 5%),
+    repeating-conic-gradient(from 0deg,rgba(205,145,66,.42) 0 1deg,transparent 1deg 30deg),
+    radial-gradient(circle,transparent 0 29%,rgba(179,105,45,.55) 30% 31%,transparent 32% 45%,rgba(151,54,33,.5) 46% 47%,transparent 48% 61%,rgba(174,124,62,.27) 62% 63%,transparent 64%),
+    radial-gradient(circle,#1a0d09 0 42%,#080605 66%,transparent 71%);
+  box-shadow:inset 0 0 35px #000,0 0 32px rgba(164,47,26,.16);
+  animation:chaosArtEnter .8s cubic-bezier(.16,.78,.2,1) both;
+}
+.tc-chaos-art-wrap:before,.tc-chaos-art-wrap:after{
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  pointer-events:none
+}
+.tc-chaos-art-wrap:before{
+  width:50%;height:50%;border:2px solid rgba(203,118,56,.65);border-radius:50%;
+  box-shadow:0 0 15px rgba(226,72,37,.36),inset 0 0 18px rgba(210,64,31,.22)
+}
+.tc-chaos-art-wrap:after{
+  width:2px;height:72%;background:linear-gradient(transparent,#e05b32 24%,#f09055 50%,#e05b32 76%,transparent);
+  box-shadow:0 0 9px #d84f2e;opacity:.75
+}
+.tc-chaos-art{width:100%;height:100%;object-fit:cover;border-radius:50%;position:relative;z-index:1}
+.tc-chaos-halo{z-index:2;inset:3%}
+.tc-chaos-title{
+  flex:0 0 auto;
+  font-size:clamp(25px,7vw,36px);
+  line-height:.94;
+  margin:1px 0 5px;
+}
+.tc-chaos-rule{margin:0 auto 7px;width:64%}
+.tc-chaos-label{font-size:7px;margin:3px 0;letter-spacing:.21em}
+.tc-chaos-event-name{
+  flex:0 0 auto;
+  font-size:clamp(20px,5.8vw,29px);
+  line-height:1.02;
+  margin:4px auto 7px;
+}
+.tc-chaos-reading{
+  flex:0 0 auto;
+  margin:0 auto;
+  padding:7px 10px 8px;
+  width:min(100%,520px);
+}
+.tc-chaos-consequence{font-size:clamp(13px,3.75vw,16px);line-height:1.3}
+.tc-chaos-quip{
+  flex:0 0 auto;
+  font-size:11px;
+  line-height:1.25;
+  margin:7px auto 8px;
+  max-height:30px;
+  overflow:hidden;
+}
+.tc-chaos-event .btn{
+  flex:0 0 auto;
+  width:min(470px,94%);
+  min-height:40px;
+  height:40px;
+  margin:0 auto;
+  font-size:10px;
+}
+@media(max-height:760px){
+  .tc-chaos-art-wrap{width:168px;height:148px}
+  .tc-chaos-title{font-size:25px}
+  .tc-chaos-event-name{font-size:20px}
+  .tc-chaos-consequence{font-size:13px}
+  .tc-chaos-quip{display:none}
+}
+@media(max-height:690px){
+  .tc-chaos-art-wrap{width:132px;height:116px}
+  .tc-chaos-title{font-size:22px}
+  .tc-chaos-rule{margin-bottom:4px}
+  .tc-chaos-event-name{font-size:18px;margin-bottom:4px}
+  .tc-chaos-reading{padding:5px 8px 6px}
+  .tc-chaos-event .btn{height:37px;min-height:37px}
+}
+
+
+/* --- Post-battle report: Favor bookkeeping belongs after the fight --- */
+.tc-battle-report{min-height:calc(100svh - 24px);max-width:620px;margin:0 auto;padding:clamp(22px,5vh,48px) 14px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:center;text-align:center}
+.tc-report-kicker{font:800 8px/1 system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.tc-report-victory{font:400 clamp(34px,10vw,50px)/.9 Georgia,serif;letter-spacing:.08em;color:var(--gold-bright);text-shadow:0 0 28px rgba(224,193,123,.14)}
+.tc-report-boss{font:400 clamp(22px,6.7vw,32px)/1.05 Georgia,serif;color:var(--ink);margin:10px auto 13px;text-wrap:balance}
+.tc-report-rule{height:1px;width:70%;margin:0 auto 12px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.tc-report-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;text-align:left;padding:12px 4px;border-bottom:1px solid var(--line-soft)}
+.tc-report-row.muted{opacity:.66}.tc-report-copy{min-width:0}.tc-report-detail{font:11px/1.35 Georgia,serif;color:#c9c0af;margin-top:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tc-report-choices{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);min-width:116px}.tc-report-choices button{min-height:38px;padding:0 10px;border:0;background:transparent;color:var(--ash);font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.tc-report-choices button+button{border-left:1px solid var(--line)}
+.tc-report-choices button.active.yes{background:rgba(198,161,90,.18);color:var(--gold-bright)}.tc-report-choices button.active.no{background:rgba(201,102,90,.12);color:#d58b80}
+.tc-report-stamp{font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--ash)}
+.tc-report-total{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:15px 0 10px;padding:10px 4px;border-top:1px solid rgba(198,161,90,.22);color:var(--ash);font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.09em}.tc-report-total strong{font:400 27px/1 Georgia,serif;color:var(--gold-bright)}
+.tc-battle-report .btn{min-height:50px}.tc-report-note{font:10px/1.35 Georgia,serif;font-style:italic;color:var(--ash);margin-top:8px}
+@media(max-height:700px){.tc-battle-report{padding-top:14px;padding-bottom:14px}.tc-report-row{padding:9px 3px}.tc-report-detail{-webkit-line-clamp:2}.tc-report-boss{margin:7px auto 9px}.tc-report-total{margin:10px 0 8px}}
+
 </style>
 </head>
 <body>
@@ -1708,6 +1841,7 @@ let toastTimer = null;
 let uiScreen = 'sanctuary';
 let pendingRevealId = null;
 const acknowledgedChaos = new Set();
+let postBattleReport = null;
 const incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
 
 if ('serviceWorker' in navigator) {
@@ -2304,7 +2438,6 @@ function renderEncounter() {
     ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
     <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(personalizePlayers(c.chaosTrigger,state))}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(personalizePlayers(c.chaosConsequence,run.state))}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
     <div class="tc-feature rite"><div class="tc-feature-row"><div class="tc-feature-glyph">✧</div><div><div class="tc-kicker violet">${h(c.weirdness?.tier||'True')} rite · ${Number(c.weirdness?.favor??1)>0?`+${Number(c.weirdness?.favor??1)} Favor`:'no Favor'}</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div></div></div>
-    <div class="tc-forge-claims"><div class="tc-kicker ember">forge favor · honor system</div><button data-smith-action="favor-rite" ${c.smithingRiteFavor?'disabled':''}>${c.smithingRiteFavor?'✓ Rite Favor Claimed':Number(c.weirdness?.favor??1)>0?`Rite Honored · +${Number(c.weirdness?.favor??1)}`:'Minor Rite · No Favor'}</button><button data-smith-action="favor-chaos" ${(!c.chaosTriggered||c.smithingChaosFavor)?'disabled':''}>${c.smithingChaosFavor?'✓ Chaos Favor Claimed':Number(c.chaosFavor??1)>0?'Chaos Endured · +1':'Merciful Chaos · No Favor'}</button></div>
     <button id="complete" class="btn gold victory">${c.target.exit?'CAPSTONE DEFEATED · CONTINUE':'VICTORY · ROLL NEXT ENCOUNTER'}</button>
     <div class="tc-actions-3"><button id="rerollChaos" class="btn ghost">Reroll Chaos</button><button id="rerollWeird" class="btn ghost">Reroll Rite</button><button id="appealOpen" class="btn curse">Weapon Appeal</button></div>
     <div id="appealConfirm"></div>
@@ -2314,11 +2447,80 @@ function renderEncounter() {
   document.querySelector('#rerollChaos')?.addEventListener('click',()=>commit(rerollChaos(state,playerName())));
   document.querySelector('#rerollWeird')?.addEventListener('click',()=>commit(rerollWeirdness(state,playerName())));
   document.querySelector('#appealOpen')?.addEventListener('click',showAppealMenu);
-  document.querySelector('#complete')?.addEventListener('click',async()=>{
-    const next=completeEncounter(state,playerName());
-    if(!next.regionComplete&&!next.runComplete&&next.current){pendingRevealId=next.current.id;uiScreen='encounter';}
-    await commit(next);
+  document.querySelector('#complete')?.addEventListener('click',()=>{
+    postBattleReport={encounterId:c.id,rite:null,chaos:null};
+    renderPostBattleReport();
   });
+}
+
+
+function postBattleChoice(kind,value){
+  if(!postBattleReport || postBattleReport.encounterId!==run.state.current?.id) return;
+  postBattleReport[kind]=Boolean(value);
+  renderPostBattleReport();
+}
+function postBattleChoiceMarkup(kind,label,detail,reward,available=true){
+  if(!available){
+    return `<div class="tc-report-row muted"><div><div class="tc-kicker">${label}</div><div class="tc-report-detail">${detail}</div></div><span class="tc-report-stamp">not triggered</span></div>`;
+  }
+  if(reward<=0){
+    return `<div class="tc-report-row muted"><div><div class="tc-kicker">${label}</div><div class="tc-report-detail">${detail}</div></div><span class="tc-report-stamp">0 favor</span></div>`;
+  }
+  const current=postBattleReport?.[kind];
+  return `<div class="tc-report-row"><div class="tc-report-copy"><div class="tc-kicker">${label} · +${reward} Favor</div><div class="tc-report-detail">${detail}</div></div><div class="tc-report-choices">
+    <button type="button" data-report-kind="${kind}" data-report-value="1" class="${current===true?'active yes':''}">Yes</button>
+    <button type="button" data-report-kind="${kind}" data-report-value="0" class="${current===false?'active no':''}">No</button>
+  </div></div>`;
+}
+function renderPostBattleReport(){
+  const state=run.state,c=state.current;
+  if(!c){postBattleReport=null;return renderRun();}
+  if(!postBattleReport || postBattleReport.encounterId!==c.id) postBattleReport={encounterId:c.id,rite:null,chaos:null};
+  const riteReward=Number(c.weirdness?.favor??1);
+  const chaosReward=Number(c.chaosFavor??1);
+  const riteReady=riteReward<=0 || postBattleReport.rite!==null;
+  const chaosAvailable=Boolean(c.chaosTriggered);
+  const chaosReady=!chaosAvailable || chaosReward<=0 || postBattleReport.chaos!==null;
+  const gained=(postBattleReport.rite===true?Math.max(0,riteReward):0)+(postBattleReport.chaos===true?Math.max(0,chaosReward):0);
+  app.innerHTML=`<section class="tc-battle-report">
+    <div class="tc-report-kicker">Encounter Complete</div>
+    <div class="tc-report-victory">VICTORY</div>
+    <div class="tc-report-boss">${h(c.target?.name||'Enemy Felled')}</div>
+    <div class="tc-report-rule"></div>
+    ${postBattleChoiceMarkup('rite','Odd Rite',`${h(c.weirdness?.name||'No Rite')} · ${h(c.weirdness?.text||'')}`,riteReward,true)}
+    ${postBattleChoiceMarkup('chaos','Chaos',chaosAvailable?`${h(chaosEventName(c.chaosConsequence||''))} · ${h(personalizePlayers(c.chaosConsequence||'',state))}`:'The Chaos seal never broke during this encounter.',chaosReward,chaosAvailable)}
+    <div class="tc-report-total"><span>Smithing Favor earned</span><strong>+${gained}</strong></div>
+    <button id="finishBattleReport" class="btn gold" ${riteReady&&chaosReady?'':'disabled'}>${c.target?.exit?'Record Victory · Continue':'Record Victory · Roll Next Encounter'}</button>
+    <div class="tc-report-note">${riteReady&&chaosReady?'The ledger updates when you submit this report.':'Answer the eligible honor-system checks first.'}</div>
+  </section>`;
+  document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
+  document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
+}
+async function finalizePostBattleReport(){
+  const state=run.state,c=state.current;
+  if(!c || !postBattleReport || postBattleReport.encounterId!==c.id) return;
+  const nextState=smithingCopy(state);
+  const nc=nextState.current;
+  let gained=0;
+  const riteReward=Number(nc.weirdness?.favor??1);
+  if(postBattleReport.rite===true && riteReward>0 && !nc.smithingRiteFavor){
+    nc.smithingRiteFavor=true;
+    nextState.smithing.favor+=riteReward;
+    gained+=riteReward;
+  }
+  const chaosReward=Number(nc.chaosFavor??1);
+  if(postBattleReport.chaos===true && nc.chaosTriggered && chaosReward>0 && !nc.smithingChaosFavor){
+    nc.smithingChaosFavor=true;
+    nextState.smithing.favor+=chaosReward;
+    gained+=chaosReward;
+  }
+  const completed=completeEncounter(nextState,playerName());
+  postBattleReport=null;
+  if(!completed.regionComplete&&!completed.runComplete&&completed.current){
+    pendingRevealId=completed.current.id;
+    uiScreen='encounter';
+  }
+  await commit(completed,{successToast:gained?`Post-battle report filed · +${gained} Smithing Favor`:'Post-battle report filed.'});
 }
 
 function showAppealMenu(){
@@ -2359,6 +2561,7 @@ function renderDecreeReveal(){
 
 function renderRun() {
   const state=run.state;
+  if(postBattleReport?.encounterId===state.current?.id) return renderPostBattleReport();
   setRegionTheme(state.region);
   if (uiScreen==='encounter' && state.current?.chaosTriggered && !acknowledgedChaos.has(state.current.id)) return renderChaosEvent();
   if (state.runComplete) return renderRunComplete();
