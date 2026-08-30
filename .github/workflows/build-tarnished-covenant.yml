@@ -96,6 +96,9 @@ jobs:
       - name: Rebuild Chaos reveal and add Old Souls rules
         run: python tarnished-covenant/build-chaos-redesign.py
 
+      - name: Escalate Chaos with run progress
+        run: python tarnished-covenant/build-escalating-chaos.py
+
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
 
@@ -125,7 +128,7 @@ jobs:
           html = Path('tarnished-covenant/index.html').read_text()
           scripts = re.findall(r'<script(?:[^>]*)>(.*?)</script>', html, flags=re.S)
           if not scripts:
-              raise SystemExit('No inline script found')
+            raise SystemExit('No inline script found')
           Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
           PY
           node --check /tmp/tarnished-covenant.js
