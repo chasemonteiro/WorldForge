@@ -65,7 +65,6 @@ new_end = """  staged=kind==='chaos'?rerollChaos(staged,playerName()):rerollWeir
 if old_end not in s:
     raise SystemExit('useCovenantBoon end target missing')
 s=s.replace(old_end,new_end,1)
-# Early-return paths above the try must release the guard.
 s=s.replace("if(Number(sm[key]||0)<1)return setToast('No refresh token available.');",
             "if(Number(sm[key]||0)<1){window.__tcBoonBusy=false;return setToast('No refresh token available.');}",1)
 s=s.replace("if(kind==='chaos'&&run.state.current.chaosTriggered)return setToast('Chaos has already broken loose. Too late to refresh it.');",
@@ -83,7 +82,6 @@ s = s.replace(
 if 'rewards: structuredClone(encounter?.postBattleRewards || [])' not in s:
     raise SystemExit('could not patch Compendium reward snapshot')
 
-# Show the actual randomized rewards in old-fight reminiscence cards.
 needle = """      ${mods.length?`<div class=\"tc-comp-mod penalties\"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
       <div class=\"tc-comp-footer\"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:'No Favor'}</strong></div>"""
 replacement = """      ${mods.length?`<div class=\"tc-comp-mod penalties\"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
@@ -120,8 +118,7 @@ if old not in s:
 s=s.replace(old,new,1)
 
 # -----------------------------------------------------------------------------
-# 4) Appeal Waiver usability. The old confirmation always threatened a severe
-# penalty even when the next appeal was already paid for.
+# 4) Appeal Waiver usability.
 # -----------------------------------------------------------------------------
 old = '<div class="tc-muted">Changing an assigned weapon creates a severe random penalty.</div>'
 new = '<div class="tc-muted">${smithingData(run.state).appealWaivers>0?`Appeal Waiver available · this appeal is penalty-free and will consume 1 waiver.`:`Changing an assigned weapon creates a severe random penalty.`}</div>'
@@ -131,8 +128,7 @@ else:
     raise SystemExit('appeal explanation marker missing')
 
 # -----------------------------------------------------------------------------
-# 5) Mobile usability/accessibility polish: reliable 44px targets, focus states,
-# wrapping, overscroll behavior, short-screen reports, and disabled feedback.
+# 5) Mobile usability/accessibility polish.
 # -----------------------------------------------------------------------------
 css = r'''
 /* --- Release hardening / mobile usability --- */
@@ -159,8 +155,7 @@ if '</style>' not in s:
 s=s.replace('</style>',css+'\n</style>',1)
 
 # -----------------------------------------------------------------------------
-# 6) Static release regression checks. These catch runtime-reference regressions
-# that `node --check` cannot, plus high-value UI invariants from prior fixes.
+# 6) Static release regression checks.
 # -----------------------------------------------------------------------------
 required = [
   'function rerollChaos(state, actor)',
@@ -188,9 +183,10 @@ for forbidden in [
     if forbidden in s:
         raise SystemExit('obsolete/free-control invariant violated: '+forbidden)
 
-# Catch duplicate IDs for the important global controls. Dynamic overlays are not
-# included here because those are intentionally created/destroyed at runtime.
-for control_id in ['refreshApp','restartRun','finishBattleReport']:
+# Refresh is a persistent Settings control and should have one definition. The
+# battle-report submit button is generated in only one report template. Restart
+# legitimately appears in more than one mutually-exclusive rendered screen.
+for control_id in ['refreshApp','finishBattleReport']:
     count=s.count(f'id="{control_id}"')
     if count>1:
         raise SystemExit(f'duplicate control id {control_id}: {count}')
