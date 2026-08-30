@@ -106,7 +106,7 @@ jobs:
         run: python tarnished-covenant/build-chaos-compact.py
 
       - name: Move Favor bookkeeping to post-battle report
-        run: python tarnished-covenant/build-post-battle.py
+        run: python tarnished-covenant/build-post-battle-runner.py
 
       - name: Validate JavaScript syntax
         run: |
