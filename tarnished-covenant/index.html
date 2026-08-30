@@ -2546,11 +2546,13 @@ function renderSettings() {
   <div class="tc-kicker gold" style="margin-top:20px">run options</div>
   <div class="tc-settings-row"><div class="lefty"><div class="name">difficulty</div><div class="desc">${state.severity==='normal'?'Silly':state.severity==='hard'?'Maidenless':'Miyazaki Has Noticed You'}</div></div><span>›</span></div>
   <div class="tc-settings-row"><div class="lefty"><div class="name">ruleset</div><div class="desc">${state.includeDlc?'Base + Shadow of the Erdtree · All Remembrances':'Base Game · All Remembrances'}</div></div><span class="tc-muted">locked</span></div>
+  <div class="tc-kicker gold" style="margin-top:22px">app</div>
+  <button id="refreshApp" class="tc-settings-row" style="width:100%;border-left:0;border-right:0;border-top:0;background:transparent;color:var(--ink);text-align:left"><div class="lefty"><div class="name">refresh app</div><div class="desc">Load the latest published version. Your Covenant stays connected.</div></div><span>↻</span></button>
   <div class="tc-kicker gold" style="margin-top:22px">run management</div>
   <button id="restartRun" class="tc-settings-row danger" style="width:100%;border-left:0;border-right:0;border-top:0;background:transparent;text-align:left"><div class="lefty"><div class="name">restart covenant</div><div class="desc">Erase progress and return to the beginning.</div></div><span>↻</span></button>
   <button id="leave" class="tc-settings-row" style="width:100%;border-left:0;border-right:0;border-top:0;background:transparent;color:var(--ink);text-align:left"><div class="lefty"><div class="name">leave run</div><div class="desc">Return to the opening screen.</div></div><span>›</span></button><div id="restartConfirm"></div>
  </section>${navMarkup('settings')}`;
- bindNav();bindShare();document.querySelector('#restartRun').addEventListener('click',showRestart);document.querySelector('#leave').addEventListener('click',()=>{unsubscribe?.();run=null;clearSession();session=null;renderHome();});
+ bindNav();bindShare();document.querySelector('#refreshApp')?.addEventListener('click',()=>{const u=new URL(window.location.href);u.searchParams.set('_refresh',Date.now().toString());window.location.replace(u.toString());});document.querySelector('#restartRun').addEventListener('click',showRestart);document.querySelector('#leave').addEventListener('click',()=>{unsubscribe?.();run=null;clearSession();session=null;renderHome();});
 }
 
 function renderDecreeReveal(){
