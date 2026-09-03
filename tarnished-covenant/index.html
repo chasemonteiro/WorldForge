@@ -717,6 +717,11 @@ button:disabled{pointer-events:none;filter:saturate(.55)}
 .tc-earned-refresh-grid{grid-template-columns:1fr 1fr}.tc-earned-refresh-grid .text-btn{min-height:38px;color:#a99f8d}
 @media(max-width:430px){.tc-earned-refresh-grid{grid-template-columns:1fr}}
 
+
+/* --- one-time capstone defer --- */
+.tc-capstone-defer{margin:10px 0 15px;padding:14px;border-top:1px solid rgba(201,102,90,.36);border-bottom:1px solid rgba(201,102,90,.28);background:linear-gradient(90deg,transparent,rgba(92,24,20,.15),transparent)}
+.tc-capstone-defer-copy{font-size:14px;line-height:1.45;color:#c8beac;margin:6px 0 11px}.tc-capstone-defer .btn{min-height:52px}
+
 </style>
 </head>
 <body>
@@ -1339,6 +1344,12 @@ function capstoneChanceForState(state) {
 function chooseTarget(state) {
   const region = regions[state.region];
   if (state.region === 'The Erdtree') return { name: region.exit, exit: true };
+  if(state.capstoneDetourPending){
+    const normalPool=availableRegionalBosses(state);
+    const fallback=(region.bosses||[]).filter(name=>name!==region.exit);
+    const name=pick(normalPool.length?normalPool:fallback);
+    if(name)return {name,exit:false};
+  }
 
   const available = availableRegionalBosses(state);
   const revisiting = (state.clearedRegions || []).includes(state.region);
@@ -1910,7 +1921,7 @@ function triggerChaos(state, actor) {
     'BOSS UNION BREAK: stop attacking for five seconds. Healing and repositioning are allowed. The boss has requested a meeting.'
   ];
   next.current.chaosTriggered = true;
-  const rolledChaos = tcPickEscalatingChaos(next);
+  const rolledChaos = tcPickEscalatingChaos(next,next.current?.deferredCapstoneDetour?3:2);
   next.current.chaosConsequence = rolledChaos;
   next.current.chaosFavor = 1;
   if(String(rolledChaos).startsWith('NEXT ENCOUNTER DEBT:')) next.pendingDebt=String(rolledChaos).replace('NEXT ENCOUNTER DEBT:','').trim();
@@ -1970,6 +1981,9 @@ function startNextRegion(state, actor, region, severity = state.severity) {
   next.history = [...(state.history || [])];
   next.clearedRegions = [...(state.clearedRegions || [])];
   next.smithing = structuredClone(state.smithing || {});
+  next.capstoneDeferUsed=false;
+  next.capstoneDeferredName=null;
+  next.capstoneDetourPending=false;
   next.lastAction = `${actor} entered ${region}.`;
   return next;
 }
@@ -2948,10 +2962,45 @@ function renderSanctuary() {
 }
 
 function compactLoadout(label,b){return `<div class="tc-loadout"><div class="tc-kicker">${label}</div><div class="tc-loadout-name">${h(b.name)}</div><div class="tc-mini-stat"><b>skill</b><span>${h(b.native)}</span></div><div class="tc-mini-stat"><b>upgrade</b><span>${h(b.upgrade)}</span></div><div class="tc-mini-stat"><b>infusion</b><span>${h(b.affinity)}</span></div><div class="tc-mini-stat"><b>job</b><span>${h(b.role)}</span></div></div>`}
+
+async function tcDeferCapstone(){
+  if(window.__tcCapstoneDeferBusy||!run?.state?.current?.target?.exit)return;
+  const state=run.state;
+  if(state.region==='The Erdtree')return setToast('There is nowhere left to procrastinate.');
+  if(state.capstoneDeferUsed)return setToast('The Covenant already granted this region one delay.');
+  window.__tcCapstoneDeferBusy=true;
+  const btn=document.querySelector('#deferCapstone');if(btn)btn.disabled=true;
+  try{
+    const next=smithingCopy(state);
+    const deferredName=next.current.target.name;
+    next.capstoneDeferUsed=true;
+    next.capstoneDeferredName=deferredName;
+    next.capstoneDetourPending=true;
+    next.current=newEncounter(next);
+    next.capstoneDetourPending=false;
+    next.current.deferredCapstoneDetour=true;
+    next.current.deferredCapstoneName=deferredName;
+    next.current.covenantDebt='DEFERRED JUDGMENT: you asked for one more fight. Chaos on this detour is guaranteed late-tier.';
+    next.lastAction=`${playerName()} deferred ${deferredName}. One debt encounter has been issued.`;
+    next.updatedAt=new Date().toISOString();
+    pendingRevealId=next.current.id;
+    uiScreen='encounter';
+    await commit(next,{successToast:'Capstone deferred once. The Covenant has provided worse paperwork.'});
+  }finally{window.__tcCapstoneDeferBusy=false;}
+}
+function tcCapstoneDeferMarkup(state,c){
+  if(!c?.target?.exit||state.region==='The Erdtree'||state.capstoneDeferUsed)return '';
+  return `<div class="tc-capstone-defer">
+    <div><div class="tc-kicker red">one-time regional deferral</div><div class="tc-capstone-defer-copy">Not ready to cash this check? Take exactly one normal encounter first. The capstone then returns to RNG. The detour's Chaos is guaranteed late-tier.</div></div>
+    <button id="deferCapstone" type="button" class="btn curse">DEFER ONCE · ACCEPT DEBT ENCOUNTER</button>
+  </div>`;
+}
+
 function renderEncounter() {
   const state=run.state,c=state.current;
   app.innerHTML=`<section class="tc-screen">${screenTop('Encounter Briefing')}
     <div class="tc-brief-head"><div class="tc-kicker gold">${c.target.exit?'regional capstone':'current target'}</div><div class="tc-brief-boss">${h(c.target.name)}</div><div class="tc-brief-region">${h(state.region)}</div></div><div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url('${actualRegionImage(state.region)}')"></div>
+    ${tcCapstoneDeferMarkup(state,c)}
     <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout(playerLabel('chase',state),c.chase)}${compactLoadout(playerLabel('morgan',state),c.morgan)}</div>
     ${c.covenantDebt?`<div class="tc-feature debt"><div class="tc-kicker red">COVENANT DEBT · THIS ENCOUNTER</div><div class="tc-feature-title">${h(c.covenantDebt)}</div></div>`:''}
     ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
@@ -2963,6 +3012,7 @@ function renderEncounter() {
     <div id="appealConfirm"></div>
   </section>${navMarkup('encounter')}`;
   bindNav();
+  document.querySelector('#deferCapstone')?.addEventListener('click',tcDeferCapstone);
   document.querySelector('#triggerChaos')?.addEventListener('click',()=>commit(triggerChaos(state,playerName())));
   document.querySelector('#appealOpen')?.addEventListener('click',showAppealMenu);
   document.querySelector('#complete')?.addEventListener('click',()=>{
