@@ -3,7 +3,7 @@ from pathlib import Path
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
 
-# Persist a bankable Aviary Ticket alongside the other Covenant boons.
+# Persist a bankable bird-farm reward alongside the other Covenant boons.
 old = """    appealWaivers: Number(raw.appealWaivers || 0),
     chaosRefreshes: Number(raw.chaosRefreshes || 0),
     riteRefreshes: Number(raw.riteRefreshes || 0)
@@ -38,7 +38,7 @@ new = """function drawCovenantReward(state){
   if(roll<0.56){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Reroll one unopened Chaos trigger on a future encounter.'};}
   if(roll<0.72){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Reroll one Odd Rite on a future encounter.'};}
   if(roll<0.86){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'Your next Weapon Appeal is penalty-free.'};}
-  if(roll<0.94){sm.aviaryTickets+=1;return {kind:'aviary',label:'Aviary Ticket',detail:'Redeem for exactly 5 Mohgwyn Palace bird-farm kills. Keep every rune. The bird has been notified.'};}
+  if(roll<0.94){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the bird. The bird remains a valued member of the economy.'};}
   const tax=pick(TC_COVENANT_TAXES);
   return {kind:'tax',label:tax.label,detail:tax.detail};
 }"""
@@ -58,19 +58,19 @@ if old not in s:
     raise SystemExit('reward class helper missing')
 s = s.replace(old, new, 1)
 
-# Show the banked ticket in the Smithing/Covenant boon inventory.
+# Show the banked reward in the Smithing/Covenant boon inventory.
 old = """    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
   </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes are the only way to reroll a current Rite or unopened Chaos decree.</div></div>`;"""
 new = """    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
-    <div><strong>${sm.aviaryTickets}</strong><span>Aviary Ticket${sm.aviaryTickets===1?'':'s'}</span></div>
-  </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Aviary Ticket authorizes exactly 5 Mohgwyn bird kills for rune farming.</div></div>`;"""
+    <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+  </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.</div></div>`;"""
 if old not in s:
     raise SystemExit('boon ledger markup target missing')
 s = s.replace(old, new, 1)
 
 # Give the new symbol its own visual identity and let four boon counters reflow cleanly.
 css = r'''
-/* --- Aviary Ticket reward --- */
+/* --- Dynasty Frequent Flier reward --- */
 .tc-reward-result.aviary{border-color:rgba(144,161,119,.42);background:linear-gradient(90deg,transparent,rgba(89,107,68,.14),transparent)}
 .tc-reward-result.aviary .tc-reward-icon,.tc-reward-result.aviary .tc-reward-name{color:#c7d1a5}
 .tc-boon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -80,7 +80,7 @@ if '</style>' not in s:
     raise SystemExit('style marker missing')
 s = s.replace('</style>', css + '\n</style>', 1)
 
-for invariant in ['aviaryTickets', "kind:'aviary'", 'Aviary Ticket', '5 Mohgwyn Palace bird-farm kills']:
+for invariant in ['aviaryTickets', "kind:'aviary'", 'Dynasty Frequent Flier', 'valued member of the economy']:
     if invariant not in s:
         raise SystemExit('aviary invariant missing: ' + invariant)
 
