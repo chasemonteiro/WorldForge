@@ -1958,6 +1958,7 @@ function startNextRegion(state, actor, region, severity = state.severity) {
   });
   next.history = [...(state.history || [])];
   next.clearedRegions = [...(state.clearedRegions || [])];
+  next.smithing = structuredClone(state.smithing || {});
   next.lastAction = `${actor} entered ${region}.`;
   return next;
 }
