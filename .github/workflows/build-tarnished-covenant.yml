@@ -2,12 +2,7 @@ name: Build Tarnished Covenant
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/build-tarnished-covenant.yml'
 
-# Temporary validation trigger; corrected final comprehensive regression pass.
 permissions:
   contents: write
 
