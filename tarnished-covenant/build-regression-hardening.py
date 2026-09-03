@@ -6,6 +6,45 @@ s = p.read_text()
 # Remove obsolete fixed-cost copy left behind after Bell Bearing costs became tiered.
 s = s.replace("successToast:'Contract commissioned. 3 Favor spent.'", "successToast:'Bell Bearing Contract commissioned.'")
 
+# A missing comma in the expanded Rite pool is valid JavaScript but changes the
+# expression's meaning, silently dropping a large block of Rites from rotation.
+rite_gap = "['Clean Workplace','Use Soap and a gesture before the encounter.','Minor',0]\n\n ['Off The Sauce'"
+if rite_gap not in s:
+    raise SystemExit('expanded Rite comma repair target missing')
+s = s.replace(rite_gap, "['Clean Workplace','Use Soap and a gesture before the encounter.','Minor',0],\n ['Off The Sauce'", 1)
+
+# Restarting a Covenant should reset the run, not disconnect the phone that
+# initiated the reset. Preserve the room/session and clear only transient UI.
+restart_old = """    try {
+      await backend.restartRun(run.id, buildFreshState(run.state));
+      unsubscribe?.();
+      run = null;
+      clearSession();
+      session = null;
+      renderHome();
+      setToast('Run cleared.');
+"""
+restart_new = """    try {
+      const oldRun = run;
+      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
+      unsubscribe?.();
+      run = {...oldRun, ...restarted, joinCode: restarted?.joinCode || oldRun?.joinCode};
+      session = {runId:run.id, joinCode:run.joinCode || session?.joinCode, displayName:session?.displayName || playerName()};
+      saveSession(session);
+      pendingRevealId = null;
+      postBattleReport = null;
+      pendingRewardReveal = null;
+      acknowledgedChaos.clear();
+      ledgerView = 'remembrances';
+      uiScreen = 'sanctuary';
+      subscribe();
+      renderRun();
+      setToast('Covenant restarted. Same room, fresh run.');
+"""
+if restart_old not in s:
+    raise SystemExit('restart continuity repair target missing')
+s = s.replace(restart_old, restart_new, 1)
+
 # The post-battle transition is the authoritative moment when Corporate is
 # allowed to notice accumulated Favor. Persist that notice in run state so a
 # refresh cannot bypass it, while avoiding mid-fight interruptions.
@@ -170,7 +209,8 @@ for needle in [
     'Finish the current Covenant notice first.',
     'Corporate records changed. Rechecking the file.',
     'tcShowAppealMenuBeforeHardening',
-    'Array.isArray(saved)'
+    'Array.isArray(saved)',
+    'Same room, fresh run.'
 ]:
     if needle not in s:
         raise SystemExit('regression hardening invariant missing: '+needle)
