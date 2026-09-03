@@ -706,6 +706,11 @@ button:disabled{pointer-events:none;filter:saturate(.55)}
 .tc-boon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:430px){.tc-boon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+/* --- reward Continue handoff hardening --- */
+#tcRewardContinue{position:relative;z-index:3;touch-action:manipulation;min-height:54px}
+#tcRewardContinue:not(:disabled){pointer-events:auto}
+
 </style>
 </head>
 <body>
@@ -2971,8 +2976,37 @@ function renderRewardMachine(){
   }
   btn.addEventListener('click',()=>{
     if(data.spinning)return;
-    if(data.index+1<total){data.index+=1;data.spinning=true;renderRewardMachine();return;}
-    pendingRewardReveal=null;renderRun();
+    if(data.index+1<total){
+      data.index+=1;
+      data.spinning=true;
+      renderRewardMachine();
+      return;
+    }
+    // Rewards were persisted before this reveal began, so the final Continue
+    // only needs to dismiss the local reveal and route to the already-saved state.
+    pendingRewardReveal=null;
+    btn.disabled=true;
+    try{
+      const state=run?.state;
+      if(state?.runComplete){
+        uiScreen='sanctuary';
+        return renderRunComplete();
+      }
+      if(state?.regionComplete){
+        uiScreen='sanctuary';
+        try{return renderRegionComplete();}
+        catch(error){console.error('Reward handoff to Region Complete failed:',error);return renderRegionCompleteSafe();}
+      }
+      if(state?.current){
+        uiScreen='encounter';
+        return renderRun();
+      }
+      uiScreen='sanctuary';
+      return renderRun();
+    }catch(error){
+      console.error('Reward handoff failed; reloading saved run:',error);
+      window.location.reload();
+    }
   });
 }
 
