@@ -5,34 +5,43 @@ s = p.read_text()
 
 css = r'''
 /* --- Information architecture pass: navigate between information, don't make it smaller --- */
-.tc-encounter-shell{
-  height:calc(100svh - 70px);
-  min-height:0;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  padding-bottom:0!important;
+html:has(.tc-encounter-shell),body:has(.tc-encounter-shell),html:has(.tc-sanctuary-shell),body:has(.tc-sanctuary-shell){height:100%;overflow:hidden}
+body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shell{
+  height:100svh;max-height:100svh;overflow:hidden;
+  padding:calc(8px + env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));
 }
-.tc-encounter-shell .tc-topline{flex:0 0 auto;margin-bottom:7px}
+.tc-encounter-shell,.tc-sanctuary-shell{
+  height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0!important
+}
+.tc-encounter-shell .tc-topline,.tc-sanctuary-shell .tc-topline{flex:0 0 auto;margin-bottom:7px}
 .tc-encounter-sticky{
   flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:8px 10px 9px;margin:0 0 7px;
   border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);background:rgba(9,8,6,.82)
 }
 .tc-encounter-sticky strong{font:400 clamp(19px,5.5vw,25px)/1.05 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc-encounter-sticky span{color:#d9877b;font:800 9px/1.25 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tc-encounter-tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px}
-.tc-encounter-tabs button{min-height:37px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ash);font:850 9.5px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em}
-.tc-encounter-tabs button.active{color:var(--gold-bright);border-bottom-color:var(--gold-bright)}
-.tc-encounter-track{flex:1 1 auto;min-height:0;display:flex;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
-.tc-encounter-track::-webkit-scrollbar{display:none}
-.tc-encounter-panel{flex:0 0 100%;min-width:100%;min-height:0;height:100%;overflow-y:auto;overscroll-behavior-y:contain;scroll-snap-align:start;padding:2px 2px 18px}
+.tc-encounter-tabs,.tc-sanctuary-tabs{flex:0 0 auto;display:grid;gap:4px;margin-bottom:6px}
+.tc-encounter-tabs{grid-template-columns:repeat(4,1fr)}.tc-sanctuary-tabs{grid-template-columns:repeat(3,1fr)}
+.tc-encounter-tabs button,.tc-sanctuary-tabs button{min-height:37px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ash);font:850 9.5px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em}
+.tc-encounter-tabs button.active,.tc-sanctuary-tabs button.active{color:var(--gold-bright);border-bottom-color:var(--gold-bright)}
+.tc-encounter-track,.tc-sanctuary-track{flex:1 1 auto;min-height:0;display:flex;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
+.tc-encounter-track::-webkit-scrollbar,.tc-sanctuary-track::-webkit-scrollbar{display:none}
+.tc-encounter-panel,.tc-sanctuary-panel{flex:0 0 100%;min-width:100%;min-height:0;height:100%;overflow-y:auto;overscroll-behavior-y:contain;scroll-snap-align:start;padding:2px 2px 18px}
 .tc-panel-heading{text-align:center;color:var(--gold);font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin:7px 0 9px}
 .tc-encounter-actions{flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,.34fr);gap:7px;padding:7px 0 8px;background:linear-gradient(180deg,rgba(8,8,6,.84),var(--bg) 25%);border-top:1px solid var(--line-soft)}
 .tc-encounter-actions #complete{margin:0;min-height:48px}.tc-encounter-actions .tc-actions-3{display:block;margin:0}.tc-encounter-actions .tc-actions-3 .btn{height:100%;min-height:48px}.tc-encounter-actions #appealConfirm{grid-column:1/-1}
 .tc-encounter-panel .tc-boss-art{min-height:145px;max-height:26svh}.tc-encounter-panel .tc-brief-head{padding-top:4px}.tc-encounter-panel .tc-loadouts{margin-bottom:8px}.tc-encounter-panel .tc-feature{margin-top:4px}.tc-encounter-panel .tc-earned-refreshes{margin-top:10px}
-.tc-encounter-hint{flex:0 0 auto;text-align:center;margin:-2px 0 5px;color:#716858;font:italic 10px/1.2 Georgia,serif}
-@media(max-height:720px){.tc-encounter-sticky{padding-top:6px;padding-bottom:6px}.tc-encounter-tabs button{min-height:32px}.tc-encounter-panel .tc-boss-art{min-height:110px;max-height:20svh}.tc-encounter-actions{padding-top:5px;padding-bottom:5px}}
-@media(min-width:700px){.tc-encounter-shell{height:calc(100svh - 70px)}.tc-encounter-panel{padding-left:24px;padding-right:24px}}
+.tc-encounter-hint,.tc-sanctuary-hint{flex:0 0 auto;text-align:center;margin:-2px 0 5px;color:#716858;font:italic 10px/1.2 Georgia,serif}
+
+/* Sanctuary is a dashboard of screens, not one long dashboard page. */
+.tc-sanctuary-panel[data-panel="grace"]{text-align:center}.tc-sanctuary-panel[data-panel="grace"] .tc-rune{margin-top:5px}.tc-sanctuary-panel[data-panel="grace"] .tc-title{margin-top:14px}.tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{height:min(29svh,210px);min-height:145px;margin:12px 0}
+.tc-sanctuary-panel .tc-hub-grid{margin-top:3px}.tc-sanctuary-panel .tc-panel{margin:8px 0}.tc-sanctuary-panel .tc-forge-notice{margin-top:7px}.tc-sanctuary-panel .tc-code-row{margin:15px 0 5px}.tc-sanctuary-panel .tc-quick{margin-top:10px}
+.tc-sanctuary-panel[data-panel="covenant"]{padding-left:2px;padding-right:2px}
+@media(max-height:720px){
+  .tc-encounter-sticky{padding-top:6px;padding-bottom:6px}.tc-encounter-tabs button,.tc-sanctuary-tabs button{min-height:32px}.tc-encounter-panel .tc-boss-art{min-height:110px;max-height:20svh}.tc-encounter-actions{padding-top:5px;padding-bottom:5px}
+  .tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{height:22svh;min-height:110px}.tc-sanctuary-panel[data-panel="grace"] .tc-title{margin-top:9px}
+}
+@media(min-width:700px){.tc-encounter-panel,.tc-sanctuary-panel{padding-left:24px;padding-right:24px}}
 
 .tc-comp-region{margin:18px 0 24px}.tc-comp-region-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:0 4px 8px;border-bottom:1px solid rgba(198,161,90,.28)}
 .tc-comp-region-head strong{font:400 24px/1.05 Georgia,serif;color:var(--ink)}.tc-comp-region-head span{font:850 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
@@ -61,23 +70,43 @@ js = r'''
 /* --- Late information-architecture layer. Existing renderers still create and bind the controls. --- */
 let tcEncounterPanelIndex=0;
 let tcEncounterPanelId=null;
-function tcMakeEncounterPanel(label,nodes){const panel=document.createElement('section');panel.className='tc-encounter-panel';panel.dataset.panel=label.toLowerCase();const heading=document.createElement('div');heading.className='tc-panel-heading';heading.textContent=label;panel.appendChild(heading);nodes.filter(Boolean).forEach(node=>panel.appendChild(node));return panel;}
+let tcSanctuaryPanelIndex=0;
+function tcMakePanel(className,label,key,nodes){const panel=document.createElement('section');panel.className=className;panel.dataset.panel=key;const heading=document.createElement('div');heading.className='tc-panel-heading';heading.textContent=label;panel.appendChild(heading);nodes.filter(Boolean).forEach(node=>panel.appendChild(node));return panel;}
+function tcWirePanelTrack(track,tabs,count,getIndex,setIndex){
+  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));};
+  tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
+  let scrollTimer=null;track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));setIndex(i);tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));},70);},{passive:true});
+  requestAnimationFrame(()=>{track.scrollLeft=getIndex()*track.clientWidth;});
+}
 function tcEnhanceEncounterPanels(){
   const screen=app.querySelector('.tc-screen');const complete=screen?.querySelector('#complete');if(!screen||!complete||screen.classList.contains('tc-encounter-shell'))return;
   const c=run.state?.current;if(!c)return;if(tcEncounterPanelId!==c.id){tcEncounterPanelId=c.id;tcEncounterPanelIndex=0;}screen.classList.add('tc-encounter-shell');
   const top=screen.querySelector('.tc-topline'),brief=screen.querySelector('.tc-brief-head'),art=screen.querySelector('.tc-boss-art'),defer=screen.querySelector('.tc-capstone-defer,.tc-capstone-deferral,.tc-capstone-defer-card'),debt=screen.querySelector('.tc-feature.debt');
   const loadouts=screen.querySelector('.tc-loadouts'),weaponsHeading=loadouts?.previousElementSibling?.classList?.contains('tc-kicker')?loadouts.previousElementSibling:null,penalties=screen.querySelector('.tc-penalty-summary'),chaos=screen.querySelector('.tc-feature.chaos'),rite=screen.querySelector('.tc-feature.rite'),earned=screen.querySelector('.tc-earned-refreshes'),actions3=screen.querySelector('.tc-actions-3'),appealConfirm=screen.querySelector('#appealConfirm');
   const sticky=document.createElement('div');sticky.className='tc-encounter-sticky';sticky.innerHTML=`<strong>${h(c.target?.name||'Current Encounter')}</strong><span>CHAOS · ${h(personalizePlayers(c.chaosTrigger||'No active trigger',run.state))}</span>`;top?.after(sticky);
-  const tabs=document.createElement('div');tabs.className='tc-encounter-tabs';['Boss','Weapons','Chaos','Rite'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;b.dataset.tcPanel=String(i);if(i===tcEncounterPanelIndex)b.classList.add('active');tabs.appendChild(b);});sticky.after(tabs);
+  const tabs=document.createElement('div');tabs.className='tc-encounter-tabs';['Boss','Weapons','Chaos','Rite'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcEncounterPanelIndex)b.classList.add('active');tabs.appendChild(b);});sticky.after(tabs);
   const track=document.createElement('div');track.className='tc-encounter-track';const overviewNodes=[brief,art,defer,debt],weaponNodes=[weaponsHeading,loadouts,penalties],chaosNodes=[chaos],riteNodes=[rite,earned];
   const claimed=new Set([top,sticky,tabs,brief,art,defer,debt,weaponsHeading,loadouts,penalties,chaos,rite,earned,complete,actions3,appealConfirm].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)riteNodes.push(node);});
-  track.append(tcMakeEncounterPanel('Target',overviewNodes),tcMakeEncounterPanel('Assigned Weapons',weaponNodes),tcMakeEncounterPanel('Chaos Decree',chaosNodes),tcMakeEncounterPanel('Rite & Amendments',riteNodes));tabs.after(track);
+  track.append(tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes),tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes),tcMakePanel('tc-encounter-panel','Chaos Decree','chaos',chaosNodes),tcMakePanel('tc-encounter-panel','Rite & Amendments','rite',riteNodes));tabs.after(track);
   const hint=document.createElement('div');hint.className='tc-encounter-hint';hint.textContent='Swipe between briefing panels';track.after(hint);
   const bar=document.createElement('div');bar.className='tc-encounter-actions';bar.appendChild(complete);if(actions3)bar.appendChild(actions3);if(appealConfirm)bar.appendChild(appealConfirm);hint.after(bar);
-  const go=i=>{tcEncounterPanelIndex=Math.max(0,Math.min(3,i));track.scrollTo({left:tcEncounterPanelIndex*track.clientWidth,behavior:'smooth'});tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===tcEncounterPanelIndex));};tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
-  let scrollTimer=null;track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));tcEncounterPanelIndex=Math.max(0,Math.min(3,i));tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===tcEncounterPanelIndex));},70);},{passive:true});requestAnimationFrame(()=>{track.scrollLeft=tcEncounterPanelIndex*track.clientWidth;});
+  tcWirePanelTrack(track,tabs,4,()=>tcEncounterPanelIndex,i=>{tcEncounterPanelIndex=i;});
 }
 const tcRenderEncounterBeforeIA=renderEncounter;renderEncounter=function(){tcRenderEncounterBeforeIA();tcEnhanceEncounterPanels();};
+
+function tcEnhanceSanctuaryPanels(){
+  const screen=app.querySelector('.tc-screen');if(!screen||screen.querySelector('#complete')||screen.classList.contains('tc-sanctuary-shell'))return;
+  const top=screen.querySelector('.tc-topline'),rune=screen.querySelector('.tc-rune'),title=screen.querySelector('.tc-title'),subtitle=screen.querySelector('.tc-subtitle'),art=screen.querySelector('.tc-grace-art'),hub=screen.querySelector('.tc-hub-grid'),forge=screen.querySelector('.tc-forge-notice,.tc-forge-favor'),code=screen.querySelector('.tc-code-row'),quick=screen.querySelector('.tc-quick');
+  if(!top||!title||!hub)return;screen.classList.add('tc-sanctuary-shell');
+  const tabs=document.createElement('div');tabs.className='tc-sanctuary-tabs';['Grace','Progress','Covenant'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcSanctuaryPanelIndex)b.classList.add('active');tabs.appendChild(b);});top.after(tabs);
+  const track=document.createElement('div');track.className='tc-sanctuary-track';
+  const graceNodes=[rune,title,subtitle,art],progressNodes=[hub],covenantNodes=[forge,code,quick];
+  const claimed=new Set([top,tabs,rune,title,subtitle,art,hub,forge,code,quick].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)covenantNodes.push(node);});
+  track.append(tcMakePanel('tc-sanctuary-panel','At the Grace','grace',graceNodes),tcMakePanel('tc-sanctuary-panel','Run Progress','progress',progressNodes),tcMakePanel('tc-sanctuary-panel','Covenant Office','covenant',covenantNodes));tabs.after(track);
+  const hint=document.createElement('div');hint.className='tc-sanctuary-hint';hint.textContent='Swipe between Site of Grace panels';track.after(hint);
+  tcWirePanelTrack(track,tabs,3,()=>tcSanctuaryPanelIndex,i=>{tcSanctuaryPanelIndex=i;});
+}
+const tcRenderSanctuaryBeforeIA=renderSanctuary;renderSanctuary=function(){tcRenderSanctuaryBeforeIA();tcEnhanceSanctuaryPanels();};
 
 function tcMandatoryContractEligible(state){if(!state?.current||!pendingRevealId||state.current.id!==pendingRevealId)return false;const sm=smithingData(state);return !sm.activeContract&&sm.favor>=3&&availableBellBearings(state).length>0;}
 function renderCorporateContractNotice(){
@@ -100,7 +129,7 @@ if idx < 0:
     raise SystemExit('script end marker missing')
 s = s[:idx] + js + '\n' + s[idx:]
 
-for needle in ['Information architecture pass','tcEnhanceEncounterPanels','renderCorporateContractNotice','tcMandatoryContractEligible','tcEnhanceCompendium','tc-comp-sheet-overlay']:
+for needle in ['Information architecture pass','tcEnhanceEncounterPanels','tcEnhanceSanctuaryPanels','tc-sanctuary-shell','renderCorporateContractNotice','tcMandatoryContractEligible','tcEnhanceCompendium','tc-comp-sheet-overlay']:
     if needle not in s:
         raise SystemExit('information architecture invariant missing: '+needle)
 
