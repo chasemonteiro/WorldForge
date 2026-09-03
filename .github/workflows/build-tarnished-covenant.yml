@@ -141,6 +141,9 @@ jobs:
       - name: Harden final reward Continue transition
         run: python tarnished-covenant/build-reward-continue-fix.py
 
+      - name: Preserve Smithing wallet across regions
+        run: python tarnished-covenant/build-region-state-persistence.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
