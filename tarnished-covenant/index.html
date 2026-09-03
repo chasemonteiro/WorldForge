@@ -700,7 +700,7 @@ button:disabled{pointer-events:none;filter:saturate(.55)}
 @media(max-width:380px){.tc-slot-reel{height:82px;font-size:41px;line-height:82px}.tc-slot-reel span{height:82px;min-height:82px}.tc-slot-reel .winner{font-size:43px}.tc-reward-detail{font-size:14px}}@media(prefers-reduced-motion:reduce){.tc-slot-reel,.tc-slot-reel span,.tc-reward-result{animation:none!important}}
 
 
-/* --- Aviary Ticket reward --- */
+/* --- Dynasty Frequent Flier reward --- */
 .tc-reward-result.aviary{border-color:rgba(144,161,119,.42);background:linear-gradient(90deg,transparent,rgba(89,107,68,.14),transparent)}
 .tc-reward-result.aviary .tc-reward-icon,.tc-reward-result.aviary .tc-reward-name{color:#c7d1a5}
 .tc-boon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -2653,7 +2653,7 @@ function drawCovenantReward(state){
   if(roll<0.56){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Reroll one unopened Chaos trigger on a future encounter.'};}
   if(roll<0.72){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Reroll one Odd Rite on a future encounter.'};}
   if(roll<0.86){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'Your next Weapon Appeal is penalty-free.'};}
-  if(roll<0.94){sm.aviaryTickets+=1;return {kind:'aviary',label:'Aviary Ticket',detail:'Redeem for exactly 5 Mohgwyn Palace bird-farm kills. Keep every rune. The bird has been notified.'};}
+  if(roll<0.94){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the bird. The bird remains a valued member of the economy.'};}
   const tax=pick(TC_COVENANT_TAXES);
   return {kind:'tax',label:tax.label,detail:tax.detail};
 }
@@ -2669,8 +2669,8 @@ function covenantBoonMarkup(state){
     <div><strong>${sm.appealWaivers}</strong><span>Appeal Waiver${sm.appealWaivers===1?'':'s'}</span></div>
     <div><strong>${sm.chaosRefreshes}</strong><span>Chaos Refresh${sm.chaosRefreshes===1?'':'es'}</span></div>
     <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
-    <div><strong>${sm.aviaryTickets}</strong><span>Aviary Ticket${sm.aviaryTickets===1?'':'s'}</span></div>
-  </div><div class="tc-muted">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Aviary Ticket authorizes exactly 5 Mohgwyn bird kills for rune farming.</div></div>`;
+    <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+  </div><div class="tc-muted">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.</div></div>`;
 }
 function tcEncounterBoons(state){
   const sm=smithingData(state),c=state.current;if(!c)return '';
