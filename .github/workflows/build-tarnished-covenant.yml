@@ -147,6 +147,9 @@ jobs:
       - name: Apply challenge-first ruleset
         run: python tarnished-covenant/build-challenge-ruleset.py
 
+      - name: Add one-time capstone defer
+        run: python tarnished-covenant/build-capstone-defer.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
