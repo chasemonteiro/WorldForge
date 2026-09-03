@@ -700,62 +700,41 @@ button:disabled{pointer-events:none;filter:saturate(.55)}
 @media(max-width:380px){.tc-slot-reel{height:82px;font-size:41px;line-height:82px}.tc-slot-reel span{height:82px;min-height:82px}.tc-slot-reel .winner{font-size:43px}.tc-reward-detail{font-size:14px}}@media(prefers-reduced-motion:reduce){.tc-slot-reel,.tc-slot-reel span,.tc-reward-result{animation:none!important}}
 
 
-/* --- Information architecture pass: navigate between information, don't make it smaller --- */
-html:has(.tc-encounter-shell),body:has(.tc-encounter-shell),html:has(.tc-sanctuary-shell),body:has(.tc-sanctuary-shell){height:100%;overflow:hidden}
-body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shell{
-  height:100svh;max-height:100svh;overflow:hidden;
-  padding:calc(8px + env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));
-}
-.tc-encounter-shell,.tc-sanctuary-shell{
-  height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0!important
-}
-.tc-encounter-shell .tc-topline,.tc-sanctuary-shell .tc-topline{flex:0 0 auto;margin-bottom:7px}
-.tc-encounter-sticky{
-  flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:8px 10px 9px;margin:0 0 7px;
-  border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);background:rgba(9,8,6,.82)
-}
-.tc-encounter-sticky strong{font:400 clamp(19px,5.5vw,25px)/1.05 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tc-encounter-sticky span{color:#d9877b;font:800 9px/1.25 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tc-encounter-tabs,.tc-sanctuary-tabs{flex:0 0 auto;display:grid;gap:4px;margin-bottom:6px}
-.tc-encounter-tabs{grid-template-columns:repeat(4,1fr)}.tc-sanctuary-tabs{grid-template-columns:repeat(3,1fr)}
-.tc-encounter-tabs button,.tc-sanctuary-tabs button{min-height:37px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ash);font:850 9.5px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em}
-.tc-encounter-tabs button.active,.tc-sanctuary-tabs button.active{color:var(--gold-bright);border-bottom-color:var(--gold-bright)}
-.tc-encounter-track,.tc-sanctuary-track{flex:1 1 auto;min-height:0;display:flex;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
-.tc-encounter-track::-webkit-scrollbar,.tc-sanctuary-track::-webkit-scrollbar{display:none}
-.tc-encounter-panel,.tc-sanctuary-panel{flex:0 0 100%;min-width:100%;min-height:0;height:100%;overflow-y:auto;overscroll-behavior-y:contain;scroll-snap-align:start;padding:2px 2px 18px}
-.tc-panel-heading{text-align:center;color:var(--gold);font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin:7px 0 9px}
-.tc-encounter-actions{flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,.34fr);gap:7px;padding:7px 0 8px;background:linear-gradient(180deg,rgba(8,8,6,.84),var(--bg) 25%);border-top:1px solid var(--line-soft)}
-.tc-encounter-actions #complete{margin:0;min-height:48px}.tc-encounter-actions .tc-actions-3{display:block;margin:0}.tc-encounter-actions .tc-actions-3 .btn{height:100%;min-height:48px}.tc-encounter-actions #appealConfirm{grid-column:1/-1}
-.tc-encounter-panel .tc-boss-art{min-height:145px;max-height:26svh}.tc-encounter-panel .tc-brief-head{padding-top:4px}.tc-encounter-panel .tc-loadouts{margin-bottom:8px}.tc-encounter-panel .tc-feature{margin-top:4px}.tc-encounter-panel .tc-earned-refreshes{margin-top:10px}
-.tc-encounter-hint,.tc-sanctuary-hint{flex:0 0 auto;text-align:center;margin:-2px 0 5px;color:#716858;font:italic 10px/1.2 Georgia,serif}
+/* --- Dynasty Frequent Flier reward --- */
+.tc-reward-result.aviary{border-color:rgba(144,161,119,.42);background:linear-gradient(90deg,transparent,rgba(89,107,68,.14),transparent)}
+.tc-reward-result.aviary .tc-reward-icon,.tc-reward-result.aviary .tc-reward-name{color:#c7d1a5}
+.tc-boon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:430px){.tc-boon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-/* Sanctuary is a dashboard of screens, not one long dashboard page. */
-.tc-sanctuary-panel[data-panel="grace"]{text-align:center}.tc-sanctuary-panel[data-panel="grace"] .tc-rune{margin-top:5px}.tc-sanctuary-panel[data-panel="grace"] .tc-title{margin-top:14px}.tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{height:min(29svh,210px);min-height:145px;margin:12px 0}
-.tc-sanctuary-panel .tc-hub-grid{margin-top:3px}.tc-sanctuary-panel .tc-panel{margin:8px 0}.tc-sanctuary-panel .tc-forge-notice{margin-top:7px}.tc-sanctuary-panel .tc-code-row{margin:15px 0 5px}.tc-sanctuary-panel .tc-quick{margin-top:10px}
-.tc-sanctuary-panel[data-panel="covenant"]{padding-left:2px;padding-right:2px}
-@media(max-height:720px){
-  .tc-encounter-sticky{padding-top:6px;padding-bottom:6px}.tc-encounter-tabs button,.tc-sanctuary-tabs button{min-height:32px}.tc-encounter-panel .tc-boss-art{min-height:110px;max-height:20svh}.tc-encounter-actions{padding-top:5px;padding-bottom:5px}
-  .tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{height:22svh;min-height:110px}.tc-sanctuary-panel[data-panel="grace"] .tc-title{margin-top:9px}
-}
-@media(min-width:700px){.tc-encounter-panel,.tc-sanctuary-panel{padding-left:24px;padding-right:24px}}
 
-.tc-comp-region{margin:18px 0 24px}.tc-comp-region-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:0 4px 8px;border-bottom:1px solid rgba(198,161,90,.28)}
-.tc-comp-region-head strong{font:400 24px/1.05 Georgia,serif;color:var(--ink)}.tc-comp-region-head span{font:850 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
-.tc-comp-region-cards{display:grid;gap:9px;margin-top:9px}.tc-comp-card{position:relative;isolation:isolate;cursor:pointer}.tc-comp-card>summary{position:relative;z-index:2;min-height:104px;padding:17px 14px!important}
-.tc-comp-card>summary:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-comp-art);background-size:cover;background-position:center;opacity:.27;filter:saturate(.72) contrast(1.05)}
-.tc-comp-card>summary:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,7,5,.97) 0%,rgba(8,7,5,.85) 58%,rgba(8,7,5,.46) 100%)}
-.tc-comp-card>.tc-comp-body,.tc-comp-card>.tc-comp-legacy{display:none!important}.tc-comp-card .tc-comp-boss{font-size:clamp(24px,7vw,31px)!important}.tc-comp-card .tc-comp-mark{align-self:start;margin-top:2px}
-.tc-comp-sheet-overlay{position:fixed;z-index:110;inset:0;background:#080806;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:tcCompIn .22s ease-out}@keyframes tcCompIn{from{opacity:.2;transform:translateX(12px)}to{opacity:1;transform:none}}
-.tc-comp-sheet{width:min(720px,100%);height:100%;margin:auto;display:flex;flex-direction:column;padding:12px 14px 18px}.tc-comp-sheet-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 0 10px;border-bottom:1px solid var(--line-soft)}
-.tc-comp-sheet-close{border:0;background:transparent;color:var(--gold-bright);padding:8px 2px;font:850 10px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.tc-comp-sheet-index{font:850 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:var(--ash)}
-.tc-comp-sheet-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 2px 30px;overscroll-behavior:contain}.tc-comp-sheet-region{color:var(--gold);font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.13em}
-.tc-comp-sheet h2{font:400 clamp(34px,10vw,48px)/.96 Georgia,serif;margin:8px 0 5px;text-wrap:balance}.tc-comp-sheet-flavor{font:italic 12px/1.4 Georgia,serif;color:var(--ash);margin:0 0 18px}.tc-comp-sheet .tc-comp-body,.tc-comp-sheet .tc-comp-legacy{display:block!important;border:1px solid var(--line-soft);padding:13px;background:rgba(12,11,8,.62)}
+/* --- reward Continue handoff hardening --- */
+#tcRewardContinue{position:relative;z-index:3;touch-action:manipulation;min-height:54px}
+#tcRewardContinue:not(:disabled){pointer-events:auto}
 
-.tc-corporate-screen{min-height:calc(100svh - env(safe-area-inset-top));max-width:620px;margin:auto;padding:24px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:center;text-align:center}
-.tc-corporate-letter{position:relative;border:1px solid #685d45;background:linear-gradient(165deg,#181610,#0d0c09);padding:27px 20px 21px;box-shadow:0 22px 70px rgba(0,0,0,.44)}
-.tc-corporate-stamp{width:70px;height:70px;margin:0 auto 15px;border:2px solid #9b5b4f;border-radius:50%;display:grid;place-items:center;color:#c87567;transform:rotate(-8deg);font:850 10px/1.05 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}
-.tc-corporate-overline{font:900 10px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.18em;color:var(--red)}.tc-corporate-screen h1{font-size:clamp(34px,10vw,49px);margin:11px auto 13px;line-height:.96}
-.tc-corporate-copy{font-size:16px;line-height:1.5;color:#d5ccba;max-width:480px;margin:0 auto 18px}.tc-corporate-meta{margin:14px 0;padding:12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--ash);font-size:12px;line-height:1.4}.tc-corporate-screen .btn{margin-top:14px}.tc-corporate-foot{font:italic 11px/1.4 Georgia,serif;color:#7f7666;margin-top:10px}.tc-forge-notice.tc-corporate-pending{cursor:default}
+
+/* --- challenge-first ruleset --- */
+.tc-feature.debt{margin:10px 0;border-color:rgba(201,102,90,.5);background:rgba(90,24,20,.13)}
+.tc-earned-refresh-grid{grid-template-columns:1fr 1fr}.tc-earned-refresh-grid .text-btn{min-height:38px;color:#a99f8d}
+@media(max-width:430px){.tc-earned-refresh-grid{grid-template-columns:1fr}}
+
+
+/* --- one-time capstone defer --- */
+.tc-capstone-defer{margin:10px 0 15px;padding:14px;border-top:1px solid rgba(201,102,90,.36);border-bottom:1px solid rgba(201,102,90,.28);background:linear-gradient(90deg,transparent,rgba(92,24,20,.15),transparent)}
+.tc-capstone-defer-copy{font-size:14px;line-height:1.45;color:#c8beac;margin:6px 0 11px}.tc-capstone-defer .btn{min-height:52px}
+
+
+/* --- mandatory corporate smithing notice --- */
+.tc-corporate-screen{min-height:calc(100dvh - 42px);max-width:620px;margin:auto;display:flex;flex-direction:column;justify-content:center;padding:24px 10px 90px;position:relative}.tc-corp-paperclip{position:absolute;right:14px;top:18px;font-size:34px;color:#655b49;transform:rotate(24deg)}.tc-corp-subject{font:400 clamp(34px,10vw,52px)/.98 Georgia,serif;margin:10px 0 14px}.tc-corp-rule{height:1px;background:linear-gradient(90deg,var(--red),transparent);margin-bottom:15px}.tc-corporate-screen>p{font-size:16px;line-height:1.5;color:#c9c0af}.tc-corp-forward{margin:14px 0;border:1px solid var(--line);padding:12px;background:rgba(16,14,10,.64)}.tc-corp-forward span,.tc-corp-contract span{display:block;font:800 8px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.12em;color:var(--ash)}.tc-corp-forward strong{display:block;margin-top:5px;font-size:18px;font-weight:400}.tc-corp-contract{padding:16px 0;border-top:1px solid rgba(198,161,90,.24);border-bottom:1px solid rgba(198,161,90,.24)}.tc-corp-contract>strong{display:block;font-size:25px;font-weight:400;margin:6px 0}.tc-corp-fine{font-style:italic;color:var(--ash)!important;font-size:13px!important}.tc-corporate-screen .btn{margin-top:14px;min-height:58px}
+
+/* --- swipe-first encounter --- */
+.tc-encounter-shell{height:100dvh;max-height:100dvh;overflow:hidden;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}.tc-encounter-sticky{padding:10px 14px 8px;background:rgba(8,8,6,.96);border-bottom:1px solid var(--line);z-index:5}.tc-encounter-boss{font-size:clamp(25px,7vw,34px);line-height:1.02;margin-top:3px}.tc-encounter-chaosline{margin-top:7px;padding-top:7px;border-top:1px solid var(--line-soft);font:800 10px/1.3 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:#c9b8a4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tc-encounter-chaosline span{color:var(--red);margin-right:7px}.tc-panel-tabs{display:grid;grid-template-columns:repeat(4,1fr);background:#0b0a08;border-bottom:1px solid var(--line)}.tc-panel-tabs button{border:0;background:transparent;color:var(--ash);min-height:38px;font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.tc-panel-tabs button.active{color:var(--gold-bright);border-bottom:2px solid var(--gold)}.tc-encounter-deck{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.tc-encounter-deck::-webkit-scrollbar{display:none}.tc-enc-panel{flex:0 0 100%;width:100%;height:100%;scroll-snap-align:start;overflow-y:auto;overscroll-behavior:contain;padding:0 14px 16px}.tc-panel-art{height:clamp(120px,24vh,210px);margin:0 -14px 13px}.tc-panel-content{max-width:720px;margin:auto;padding-top:14px}.tc-panel-hero{font:400 clamp(30px,9vw,46px)/1 Georgia,serif;margin:7px 0 16px}.tc-panel-hero.small{font-size:clamp(25px,7vw,34px)}.tc-loadouts-panel{grid-template-columns:1fr 1fr;border:1px solid var(--line-soft)}.tc-chaos-trigger-large{font-size:clamp(24px,7vw,36px);line-height:1.12;margin:18px 0;color:#e4d9c5}.tc-chaos-active{padding:16px;border:1px solid rgba(201,102,90,.42);background:rgba(95,28,22,.12)}.tc-seal-panel{width:100%;min-height:110px;border:1px solid rgba(201,102,90,.5);background:radial-gradient(circle,rgba(105,29,23,.18),transparent 70%);color:var(--red);font:800 11px/1.2 system-ui,sans-serif;letter-spacing:.12em}.tc-seal-panel span{display:block;font:38px/1 Georgia,serif;margin-bottom:8px}.tc-rite-copy{font-size:18px;line-height:1.52;color:#d5cbbb}.tc-panel-boons{margin-top:17px}.tc-capstone-mini{padding:12px 0;border-top:1px solid rgba(201,102,90,.3);border-bottom:1px solid rgba(201,102,90,.25)}.tc-capstone-mini p{font-size:14px;line-height:1.42;color:#c8beac}.tc-encounter-dots{display:flex;justify-content:center;gap:6px;padding:6px 0;background:#080806}.tc-encounter-dots span{width:5px;height:5px;border-radius:50%;background:#4b4437}.tc-encounter-dots span.active{background:var(--gold-bright);box-shadow:0 0 8px rgba(224,193,123,.4)}.tc-action-dock{display:grid;grid-template-columns:.42fr 1fr;gap:7px;padding:7px 12px;background:rgba(8,8,6,.98);border-top:1px solid var(--line)}.tc-action-dock .btn{min-height:48px}.tc-encounter-shell .tc-bottom-nav{position:relative;bottom:auto;left:auto;right:auto}
+
+/* --- staged battle report --- */
+.tc-report-flow{min-height:100dvh;max-width:660px;margin:auto;padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 26px);display:flex;flex-direction:column;justify-content:center;text-align:center}.tc-report-progress{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:17px}.tc-report-progress span{width:25px;height:25px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font:800 9px/1 system-ui,sans-serif;color:var(--ash)}.tc-report-progress span.done{color:#17120a;background:var(--gold);border-color:var(--gold)}.tc-report-progress i{width:36px;height:1px;background:var(--line)}.tc-report-stage{margin-top:18px;text-align:left;padding:17px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(15,13,10,.5)}.tc-report-question{font-size:28px;line-height:1.04;margin:7px 0}.tc-report-stage-copy{font-size:15px;line-height:1.45;color:#c8beac}.tc-report-bigchoices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:17px}.tc-report-bigchoices button{min-height:58px;border:1px solid var(--line);background:#12100c;color:var(--ink);font:800 10px/1 system-ui,sans-serif;letter-spacing:.08em}.tc-report-bigchoices button:first-child{border-color:rgba(198,161,90,.55);color:var(--gold-bright)}.tc-report-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);margin:15px 0}.tc-report-summary-grid>div{padding:12px 5px;border-right:1px solid var(--line)}.tc-report-summary-grid>div:last-child{border-right:0}.tc-report-summary-grid span{display:block;font:800 7px/1.2 system-ui,sans-serif;color:var(--ash);letter-spacing:.08em}.tc-report-summary-grid strong{display:block;margin-top:5px;font-size:14px;font-weight:400;color:var(--gold-bright)}
+
+/* --- chronicle compendium --- */
+.tc-chronicle-frontispiece{text-align:center;padding:24px 12px 28px;margin:4px 0 18px;border-top:1px solid rgba(198,161,90,.22);border-bottom:1px solid rgba(198,161,90,.22);background:radial-gradient(ellipse,rgba(198,161,90,.07),transparent 66%)}.tc-chronicle-sigil{font-size:34px;color:var(--gold);margin-bottom:8px}.tc-chronicle-title{font:400 clamp(31px,9vw,44px)/1 Georgia,serif;margin:7px auto;max-width:520px}.tc-chronicle-rule{width:90px;height:1px;background:var(--gold);margin:15px auto;opacity:.55}.tc-chronicle-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 18px;color:var(--ash);font-size:12px;font-style:italic}.tc-chronicle-stats strong{color:var(--gold-bright);font-size:18px;font-weight:400;margin-right:3px}.tc-chronicle-book{display:grid;gap:18px}.tc-chronicle-chapter{border-left:1px solid rgba(198,161,90,.26);padding-left:11px}.tc-chronicle-chapter>header{padding:0 2px 9px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:9px}.tc-chronicle-chapter>header span{font:800 7px/1 system-ui,sans-serif;letter-spacing:.12em;color:var(--gold)}.tc-chronicle-chapter>header strong{font-size:22px;font-weight:400}.tc-chronicle-chapter>header em{font-size:10px;color:var(--ash)}.tc-chronicle-entry{width:100%;display:grid;grid-template-columns:34px 1fr 20px;align-items:center;gap:8px;text-align:left;border:0;border-bottom:1px solid var(--line-soft);background:transparent;color:var(--ink);padding:12px 3px}.tc-chronicle-entry.capstone{background:linear-gradient(90deg,rgba(198,161,90,.07),transparent)}.tc-chronicle-entry-num{font:800 8px/1 system-ui,sans-serif;color:#6e6452}.tc-chronicle-entry strong{display:block;font-size:18px;font-weight:400;line-height:1.1}.tc-chronicle-entry em{display:block;margin-top:4px;font-size:10px;color:var(--ash);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tc-chronicle-entry>b{color:var(--gold);font-size:14px}.tc-chronicle-overlay{position:fixed;inset:0;z-index:100;background:#080806;overflow:auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}.tc-chronicle-page{max-width:690px;min-height:100dvh;margin:auto;padding:28px 18px 48px;position:relative;background:linear-gradient(90deg,transparent,rgba(198,161,90,.025),transparent)}.tc-chronicle-close{position:fixed;right:17px;top:calc(env(safe-area-inset-top) + 12px);z-index:4;width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:#0c0b08;color:var(--ink);font-size:25px}.tc-chronicle-page-number{font:800 9px/1 system-ui,sans-serif;letter-spacing:.15em;color:var(--ash);margin-top:15px}.tc-chronicle-page h2{font:400 clamp(38px,11vw,56px)/.96 Georgia,serif;margin:8px 45px 8px 0}.tc-chronicle-flavor{font-size:14px;font-style:italic;color:var(--ash)}.tc-chronicle-divider{text-align:center;color:var(--gold);margin:22px 0}.tc-chronicle-page section{margin:15px 0}.tc-chronicle-weapons{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:8px}.tc-chronicle-weapons>div{padding:13px 10px}.tc-chronicle-weapons>div+div{border-left:1px solid var(--line)}.tc-chronicle-weapons span{display:block;font:800 8px/1 system-ui,sans-serif;color:var(--ash)}.tc-chronicle-weapons strong{display:block;font-size:20px;font-weight:400;margin:5px 0}.tc-chronicle-weapons em{font-size:11px;color:#938a79}.tc-chronicle-record{padding:13px 0;border-top:1px solid var(--line-soft)}.tc-record-head{display:flex;justify-content:space-between;gap:10px}.tc-record-head span,.tc-record-head b{font:800 8px/1.2 system-ui,sans-serif;letter-spacing:.09em}.tc-record-head span{color:var(--ash)}.tc-record-head b{color:var(--gold)}.tc-chronicle-record>strong{display:block;font-size:20px;font-weight:400;margin:7px 0}.tc-chronicle-record p{font-size:14px;line-height:1.5;color:#c7bdab}.tc-chronicle-record.rite .tc-record-head span{color:var(--violet)}.tc-chronicle-record.chaos .tc-record-head span{color:var(--red)}.tc-chronicle-record.reward .tc-record-head span{color:var(--gold)}.tc-chronicle-page footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;color:var(--ash);font-style:italic}
+@media(max-width:430px){.tc-loadouts-panel,.tc-chronicle-weapons{grid-template-columns:1fr}.tc-loadouts-panel .tc-loadout+.tc-loadout,.tc-chronicle-weapons>div+div{border-left:0;border-top:1px solid var(--line)}.tc-report-summary-grid{grid-template-columns:1fr}.tc-report-summary-grid>div{border-right:0;border-bottom:1px solid var(--line)}.tc-report-summary-grid>div:last-child{border-bottom:0}.tc-chronicle-chapter>header{grid-template-columns:1fr auto}.tc-chronicle-chapter>header span{grid-column:1/-1}.tc-action-dock{grid-template-columns:.48fr 1fr}}
 
 </style>
 </head>
@@ -1379,6 +1358,12 @@ function capstoneChanceForState(state) {
 function chooseTarget(state) {
   const region = regions[state.region];
   if (state.region === 'The Erdtree') return { name: region.exit, exit: true };
+  if(state.capstoneDetourPending){
+    const normalPool=availableRegionalBosses(state);
+    const fallback=(region.bosses||[]).filter(name=>name!==region.exit);
+    const name=pick(normalPool.length?normalPool:fallback);
+    if(name)return {name,exit:false};
+  }
 
   const available = availableRegionalBosses(state);
   const revisiting = (state.clearedRegions || []).includes(state.region);
@@ -1515,13 +1500,13 @@ function makeBuild(regionName, target, avoidNames = [], state = null) {
 function newEncounter(state) {
   const target = chooseTarget(state);
   const pair = chooseWeaponPair(state, target);
-  const weird = pick(weirdness);
+  const weird = tcPickRite(state);
   return {
     id: crypto.randomUUID(),
     target,
     chase: pair.chase,
     morgan: pair.morgan,
-    chaosTrigger: pick(chaosTriggers),
+    chaosTrigger: tcPickChaosTrigger(state),
     chaosTriggered: false,
     chaosConsequence: '',
     weirdness: { name: weird[0], text: weird[1], ...riteMeta(weird) },
@@ -1576,7 +1561,9 @@ function completeEncounter(state, actor) {
     chaosConsequence: encounter?.chaosConsequence || '',
     penances: structuredClone(encounter?.penances || []),
     favorEarned: Math.max(0, Number(encounter?.favorEarned ?? 0)),
-    rewards: structuredClone(encounter?.postBattleRewards || [])
+    rewards: structuredClone(encounter?.postBattleRewards || []),
+    riteOutcome: encounter?.riteForfeited?'Forfeited':(encounter?.smithingRiteFavor?'Honored':'Failed'),
+    chaosOutcome: encounter?.chaosForfeited?'Forfeited':(encounter?.chaosTriggered?(encounter?.smithingChaosFavor?'Honored':'Failed'):'Not triggered')
   });
   next.cleared += 1;
   next.lastAction = `${actor} says ${target.name} is defeated.`;
@@ -1597,7 +1584,9 @@ function completeEncounter(state, actor) {
     return next;
   }
 
+  const tcDebt=next.pendingDebt||null;
   next.current = newEncounter(next);
+  if(tcDebt){next.current.covenantDebt=tcDebt;next.pendingDebt=null;}
   return next;
 }
 
@@ -1946,9 +1935,10 @@ function triggerChaos(state, actor) {
     'BOSS UNION BREAK: stop attacking for five seconds. Healing and repositioning are allowed. The boss has requested a meeting.'
   ];
   next.current.chaosTriggered = true;
-  const rolledChaos = tcPickEscalatingChaos(next);
+  const rolledChaos = tcPickEscalatingChaos(next,next.current?.deferredCapstoneDetour?3:2);
   next.current.chaosConsequence = rolledChaos;
   next.current.chaosFavor = 1;
+  if(String(rolledChaos).startsWith('NEXT ENCOUNTER DEBT:')) next.pendingDebt=String(rolledChaos).replace('NEXT ENCOUNTER DEBT:','').trim();
   next.lastAction = `${actor} triggered Chaos.`;
   next.updatedAt = new Date().toISOString();
   return next;
@@ -2004,6 +1994,10 @@ function startNextRegion(state, actor, region, severity = state.severity) {
   });
   next.history = [...(state.history || [])];
   next.clearedRegions = [...(state.clearedRegions || [])];
+  next.smithing = structuredClone(state.smithing || {});
+  next.capstoneDeferUsed=false;
+  next.capstoneDeferredName=null;
+  next.capstoneDetourPending=false;
   next.lastAction = `${actor} entered ${region}.`;
   return next;
 }
@@ -2343,10 +2337,6 @@ function renderNewRun(identity) {
         <label class="label" for="ruleset">remembrance ruleset</label>
         <select id="ruleset"><option value="base" selected>Base Game · All Remembrances</option><option value="dlc">Base + Shadow of the Erdtree · All Remembrances</option></select>
       </div>
-      <div>
-        <label class="label" for="severity">difficulty</label>
-        <select id="severity"><option value="normal">Silly</option><option value="hard" selected>Maidenless</option><option value="cursed">Miyazaki Has Noticed You</option></select>
-      </div>
       <button class="btn gold" id="createRun" type="button">Begin Covenant</button>
       <button class="btn text-btn" id="back" type="button">Back</button>
     </section>`;
@@ -2357,7 +2347,7 @@ function renderNewRun(identity) {
     if (!one || !two) return setToast('Name both Tarnished first.');
     const state = initialRunState({
       region: 'Limgrave + Stormveil',
-      severity: document.querySelector('#severity').value,
+      severity: 'cursed',
       includeDlc: document.querySelector('#ruleset').value === 'dlc',
       playerNames: [one, two],
       createdBy: identity
@@ -2671,7 +2661,8 @@ function smithingData(state) {
     masterworkCredits: Number(raw.masterworkCredits || 0),
     appealWaivers: Number(raw.appealWaivers || 0),
     chaosRefreshes: Number(raw.chaosRefreshes || 0),
-    riteRefreshes: Number(raw.riteRefreshes || 0)
+    riteRefreshes: Number(raw.riteRefreshes || 0),
+    aviaryTickets: Number(raw.aviaryTickets || 0)
   };
 }
 function smithingCopy(state) {
@@ -2698,19 +2689,20 @@ const TC_COVENANT_TAXES=[
 function drawCovenantReward(state){
   const sm=state.smithing || (state.smithing=smithingData(state));
   const roll=Math.random();
-  if(roll<0.38){sm.favor+=1;return {kind:'favor',label:'+1 Smithing Favor',detail:'One mark of Smithing Favor is added to the Covenant treasury.'};}
-  if(roll<0.43){sm.favor+=2;return {kind:'favor2',label:'+2 Smithing Favor',detail:'A rare double grant. The accountants are furious.'};}
-  if(roll<0.61){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Reroll one unopened Chaos trigger on a future encounter.'};}
-  if(roll<0.79){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Reroll one Odd Rite on a future encounter.'};}
-  if(roll<0.94){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'Your next Weapon Appeal is penalty-free.'};}
+  if(roll<0.20){sm.favor+=1;return {kind:'favor',label:'+1 Smithing Favor',detail:'One mark of Smithing Favor. Try not to spend it all in one tunnel.'};}
+  if(roll<0.23){sm.favor+=2;return {kind:'favor2',label:'+2 Smithing Favor',detail:'Two marks. Administrative error suspected.'};}
+  if(roll<0.47){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Amend one Chaos decree. Repeated amendments get expensive.'};}
+  if(roll<0.71){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Amend one Odd Rite. The Covenant keeps a fee schedule.'};}
+  if(roll<0.79){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'Your next Weapon Appeal is penalty-free.'};}
+  if(roll<0.90){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the bird. The bird remains a valued member of the economy.'};}
   const tax=pick(TC_COVENANT_TAXES);
   return {kind:'tax',label:tax.label,detail:tax.detail};
 }
 function tcRewardIcon(kind){
-  const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',tax:'☠'};
+  const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',aviary:'𓅪',tax:'☠'};
   return icons[kind]||'◇';
 }
-function tcRewardClass(kind){return kind==='tax'?'tax':kind==='chaos'?'chaos':kind==='rite'?'rite':kind==='appeal'?'appeal':'favor';}
+function tcRewardClass(kind){return kind==='tax'?'tax':kind==='chaos'?'chaos':kind==='rite'?'rite':kind==='appeal'?'appeal':kind==='aviary'?'aviary':'favor';}
 
 function covenantBoonMarkup(state){
   const sm=smithingData(state);
@@ -2718,7 +2710,8 @@ function covenantBoonMarkup(state){
     <div><strong>${sm.appealWaivers}</strong><span>Appeal Waiver${sm.appealWaivers===1?'':'s'}</span></div>
     <div><strong>${sm.chaosRefreshes}</strong><span>Chaos Refresh${sm.chaosRefreshes===1?'':'es'}</span></div>
     <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
-  </div><div class="tc-muted">Waivers make the next weapon appeal penalty-free. Refreshes are the only way to reroll a current Rite or unopened Chaos decree.</div></div>`;
+    <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+  </div><div class="tc-muted">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.</div></div>`;
 }
 function tcEncounterBoons(state){
   const sm=smithingData(state),c=state.current;if(!c)return '';
@@ -2739,6 +2732,109 @@ async function useCovenantBoon(kind){
   staged=kind==='chaos'?rerollChaos(staged,playerName()):rerollWeirdness(staged,playerName());
   try{await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} refreshed. Token spent.`});}
   finally{window.__tcBoonBusy=false;}
+}
+
+
+function tcTierRank(t){return t==='Grand'?3:t==='True'?2:1;}
+function tcChaosTier(text){
+  if((TC_CHAOS_LATE||[]).includes(text)||String(text).startsWith('NEXT ENCOUNTER DEBT:')||String(text).startsWith('DOUBLE DECREE'))return 3;
+  if((TC_CHAOS_MID||[]).includes(text))return 2;
+  return 1;
+}
+function tcFamily(text){
+  const t=String(text||'').toLowerCase();
+  if(/heal|flask|crimson|cerulean|physick/.test(t))return 'healing';
+  if(/roll|dodge|sprint|jump|movement|stand still|walk/.test(t))return 'movement';
+  if(/talisman|armor|helmet|heavy load|equip/.test(t))return 'equipment';
+  if(/skill|ash of war|sorcer|incant|magic|fp/.test(t))return 'skills';
+  if(/attack|heavy|light|critical|parry|block|hit/.test(t))return 'offense';
+  if(/add|minion|both players|each player|opposite side|aggro/.test(t))return 'coordination';
+  return 'misc';
+}
+function tcRecentHistory(state,n=12){return (state?.history||[]).slice(0,n);}
+function tcPickChaosTrigger(state){
+  const recent=tcRecentHistory(state,10).map(x=>x.chaosTrigger).filter(Boolean);
+  let pool=chaosTriggers.filter(x=>!recent.includes(x));
+  return pick(pool.length?pool:chaosTriggers);
+}
+function tcPickRite(state,minTier=2){
+  const recent=tcRecentHistory(state,12);
+  const names=new Set(recent.map(x=>x.oddRite?.name).filter(Boolean));
+  const fams=new Set(recent.slice(0,4).map(x=>tcFamily(x.oddRite?.text||x.oddRite?.name)).filter(Boolean));
+  let pool=weirdness.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')>=minTier && !names.has(w[0]) && !fams.has(tcFamily(w[1])));
+  if(!pool.length)pool=weirdness.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')>=minTier && !names.has(w[0]));
+  if(!pool.length)pool=weirdness.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')>=minTier);
+  const grand=pool.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')===3);
+  if(grand.length&&Math.random()<0.45)return pick(grand);
+  return pick(pool);
+}
+const TC_CHAOS_DEBTS=[
+ 'NEXT ENCOUNTER DEBT: the first Crimson Flask use by each player is forbidden.',
+ 'NEXT ENCOUNTER DEBT: no Physick until the boss reaches 50% health.',
+ 'NEXT ENCOUNTER DEBT: one randomly chosen player begins at Heavy Load until the first stance break.',
+ 'NEXT ENCOUNTER DEBT: weapon skills are forbidden for the first 30 seconds.',
+ 'NEXT ENCOUNTER DEBT: the first failed dodge means no healing for 20 seconds.'
+];
+function tcPickEscalatingChaos(state,minTier=2){
+  const recent=tcRecentHistory(state,12);
+  const exact=new Set(recent.map(x=>x.chaosConsequence).filter(Boolean));
+  const recentFamilies=new Set(recent.slice(0,4).map(x=>tcFamily(x.chaosConsequence)).filter(Boolean));
+  const capstone=Boolean(state?.current?.target?.exit);
+  const progress=Math.min(1,(state?.history?.length||0)/24);
+  let tier=(Math.random() < (0.34 + progress*.20 + (capstone?.20:0)))?3:2;
+  tier=Math.max(tier,minTier);
+  let base=tier===3?[...TC_CHAOS_LATE,...TC_CHAOS_DEBTS]:[...TC_CHAOS_MID];
+  let pool=base.filter(x=>!exact.has(x)&&!recentFamilies.has(tcFamily(x)));
+  if(!pool.length)pool=base.filter(x=>!exact.has(x));
+  if(!pool.length)pool=base;
+  let first=pick(pool);
+  const doubleChance=capstone?0.25:0.11+progress*.08;
+  if(Math.random()<doubleChance && !String(first).startsWith('NEXT ENCOUNTER DEBT:')){
+    let secondPool=[...TC_CHAOS_MID,...TC_CHAOS_LATE].filter(x=>x!==first&&tcChaosTier(x)>=Math.min(3,tier)&&tcFamily(x)!==tcFamily(first)&&!exact.has(x));
+    if(secondPool.length){const second=pick(secondPool);first=`DOUBLE DECREE — ${first} SECOND DECREE — ${second}`;}
+  }
+  return first;
+}
+function rerollChaos(state,actor){
+  const next=smithingCopy(state),c=next.current;if(!c)return next;
+  if(!c.chaosTriggered){c.chaosTrigger=tcPickChaosTrigger(next);next.lastAction=`${actor} amended the Chaos trigger.`;return next;}
+  const oldTier=tcChaosTier(c.chaosConsequence||'');
+  c.chaosConsequence=tcPickEscalatingChaos(next,oldTier);
+  c.chaosForfeited=false;c.smithingChaosFavor=false;
+  next.lastAction=`${actor} amended an active Chaos decree. It did not get nicer.`;return next;
+}
+function rerollWeirdness(state,actor){
+  const next=smithingCopy(state),c=next.current;if(!c)return next;
+  const min=tcTierRank(c.weirdness?.tier||'True');const w=tcPickRite(next,min);const meta=riteMeta(w);
+  c.weirdness={name:w[0],text:w[1],...meta};c.riteForfeited=false;c.smithingRiteFavor=false;
+  next.lastAction=`${actor} amended the Rite. The replacement is no easier.`;return next;
+}
+function tcRefreshCost(c,kind){return Number(c?.[kind+'RefreshUses']||0)+1;}
+function tcEncounterBoons(state){
+  const sm=smithingData(state),c=state.current;if(!c)return '';
+  const cc=tcRefreshCost(c,'chaos'),rc=tcRefreshCost(c,'rite');
+  const chaosLabel=cc===1?'AMEND DECREE':cc===2?'AMEND AGAIN':'THE COVENANT IS LOSING PATIENCE';
+  const riteLabel=rc===1?'AMEND RITE':rc===2?'AMEND AGAIN':'THE COVENANT IS LOSING PATIENCE';
+  return `<div class="tc-earned-refreshes"><div class="tc-kicker">amendments & forfeits</div><div class="tc-earned-refresh-grid">
+    <button type="button" data-use-boon="chaos" class="btn ghost small" ${sm.chaosRefreshes<cc?'disabled':''}>${chaosLabel} · ${cc} CHAOS REFRESH${cc===1?'':'ES'} (${sm.chaosRefreshes})</button>
+    <button type="button" data-use-boon="rite" class="btn ghost small" ${sm.riteRefreshes<rc?'disabled':''}>${riteLabel} · ${rc} RITE REFRESH${rc===1?'':'ES'} (${sm.riteRefreshes})</button>
+    <button type="button" data-forfeit-boon="chaos" class="btn text-btn small">Forfeit Chaos boon</button>
+    <button type="button" data-forfeit-boon="rite" class="btn text-btn small">Forfeit Rite boon</button>
+  </div></div>`;
+}
+async function useCovenantBoon(kind){
+  if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;
+  const key=kind==='chaos'?'chaosRefreshes':'riteRefreshes';const c=run.state.current;const cost=tcRefreshCost(c,kind);const sm=smithingData(run.state);
+  if(Number(sm[key]||0)<cost){window.__tcBoonBusy=false;return setToast(`That amendment costs ${cost} Refreshes.`);}
+  let staged=smithingCopy(run.state);staged.smithing[key]-=cost;staged.current[kind+'RefreshUses']=Number(staged.current[kind+'RefreshUses']||0)+1;
+  staged=kind==='chaos'?rerollChaos(staged,playerName()):rerollWeirdness(staged,playerName());
+  if(kind==='chaos')try{acknowledgedChaos.delete(staged.current.id)}catch{}
+  try{await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} amended. ${cost} Refresh${cost===1?'':'es'} spent.`});}finally{window.__tcBoonBusy=false;}
+}
+async function tcForfeitBoon(kind){
+  if(!run?.state?.current)return;const next=smithingCopy(run.state);next.current[kind==='chaos'?'chaosForfeited':'riteForfeited']=true;
+  next.lastAction=`${playerName()} forfeited the ${kind==='chaos'?'Chaos':'Rite'} reward. No draw will be awarded.`;
+  await commit(next,{successToast:'Potential boon forfeited. The Covenant has noted your cowardice.'});
 }
 
 function smithingFavorMarkup(state){
@@ -2880,148 +2976,111 @@ function renderSanctuary() {
 }
 
 function compactLoadout(label,b){return `<div class="tc-loadout"><div class="tc-kicker">${label}</div><div class="tc-loadout-name">${h(b.name)}</div><div class="tc-mini-stat"><b>skill</b><span>${h(b.native)}</span></div><div class="tc-mini-stat"><b>upgrade</b><span>${h(b.upgrade)}</span></div><div class="tc-mini-stat"><b>infusion</b><span>${h(b.affinity)}</span></div><div class="tc-mini-stat"><b>job</b><span>${h(b.role)}</span></div></div>`}
+
+async function tcDeferCapstone(){
+  if(window.__tcCapstoneDeferBusy||!run?.state?.current?.target?.exit)return;
+  const state=run.state;
+  if(state.region==='The Erdtree')return setToast('There is nowhere left to procrastinate.');
+  if(state.capstoneDeferUsed)return setToast('The Covenant already granted this region one delay.');
+  window.__tcCapstoneDeferBusy=true;
+  const btn=document.querySelector('#deferCapstone');if(btn)btn.disabled=true;
+  try{
+    const next=smithingCopy(state);
+    const deferredName=next.current.target.name;
+    next.capstoneDeferUsed=true;
+    next.capstoneDeferredName=deferredName;
+    next.capstoneDetourPending=true;
+    next.current=newEncounter(next);
+    next.capstoneDetourPending=false;
+    next.current.deferredCapstoneDetour=true;
+    next.current.deferredCapstoneName=deferredName;
+    next.current.covenantDebt='DEFERRED JUDGMENT: you asked for one more fight. Chaos on this detour is guaranteed late-tier.';
+    next.lastAction=`${playerName()} deferred ${deferredName}. One debt encounter has been issued.`;
+    next.updatedAt=new Date().toISOString();
+    pendingRevealId=next.current.id;
+    uiScreen='encounter';
+    await commit(next,{successToast:'Capstone deferred once. The Covenant has provided worse paperwork.'});
+  }finally{window.__tcCapstoneDeferBusy=false;}
+}
+function tcCapstoneDeferMarkup(state,c){
+  if(!c?.target?.exit||state.region==='The Erdtree'||state.capstoneDeferUsed)return '';
+  return `<div class="tc-capstone-defer">
+    <div><div class="tc-kicker red">one-time regional deferral</div><div class="tc-capstone-defer-copy">Not ready to cash this check? Take exactly one normal encounter first. The capstone then returns to RNG. The detour's Chaos is guaranteed late-tier.</div></div>
+    <button id="deferCapstone" type="button" class="btn curse">DEFER ONCE · ACCEPT DEBT ENCOUNTER</button>
+  </div>`;
+}
+
 function renderEncounter() {
   const state=run.state,c=state.current;
-  app.innerHTML=`<section class="tc-screen">${screenTop('Encounter Briefing')}
-    <div class="tc-brief-head"><div class="tc-kicker gold">${c.target.exit?'regional capstone':'current target'}</div><div class="tc-brief-boss">${h(c.target.name)}</div><div class="tc-brief-region">${h(state.region)}</div></div><div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url('${actualRegionImage(state.region)}')"></div>
-    <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout(playerLabel('chase',state),c.chase)}${compactLoadout(playerLabel('morgan',state),c.morgan)}</div>
-    ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
-    <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(personalizePlayers(c.chaosTrigger,state))}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(personalizePlayers(c.chaosConsequence,run.state))}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
-    <div class="tc-feature rite"><div class="tc-feature-row"><div class="tc-feature-glyph">✧</div><div><div class="tc-kicker violet">${h(c.weirdness?.tier||'True')} rite · ${Number(c.weirdness?.favor??1)>0?`+${Number(c.weirdness?.favor??1)} Favor`:'no Favor'}</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div></div></div>
-    ${tcEncounterBoons(state)}
-      <button id="complete" class="btn gold victory">${c.target.exit?'CAPSTONE DEFEATED · CONTINUE':'VICTORY · ROLL NEXT ENCOUNTER'}</button>
-    <div class="tc-actions-3"><button id="appealOpen" class="btn curse">Weapon Appeal</button></div>
-    <div id="appealConfirm"></div>
-  </section>${navMarkup('encounter')}`;
+  const chaosSummary=personalizePlayers(c.chaosTrigger||'Chaos pending',state);
+  app.innerHTML=`<section class="tc-encounter-shell">
+    <header class="tc-encounter-sticky">
+      <div><div class="tc-kicker gold">${c.target.exit?'REGIONAL CAPSTONE':'CURRENT TARGET'} · ${h(state.region)}</div><div class="tc-encounter-boss">${h(c.target.name)}</div></div>
+      <div class="tc-encounter-chaosline"><span>◉</span>${h(chaosSummary)}</div>
+    </header>
+    <nav class="tc-panel-tabs" aria-label="Encounter sections">
+      <button data-enc-panel="0" class="active">Boss</button><button data-enc-panel="1">Weapons</button><button data-enc-panel="2">Chaos</button><button data-enc-panel="3">Rite</button>
+    </nav>
+    <div class="tc-encounter-deck" id="tcEncounterDeck">
+      <article class="tc-enc-panel" data-panel-index="0">
+        <div class="tc-boss-art tc-photo tc-panel-art" style="background-image:linear-gradient(180deg,rgba(4,3,2,.08),rgba(5,4,3,.72)),url('${actualRegionImage(state.region)}')"></div>
+        <div class="tc-panel-content">
+          <div class="tc-kicker gold">${c.target.exit?'capstone briefing':'encounter briefing'}</div>
+          <div class="tc-panel-hero">${h(c.target.name)}</div>
+          ${c.covenantDebt?`<div class="tc-feature debt"><div class="tc-kicker red">COVENANT DEBT · THIS ENCOUNTER</div><div class="tc-feature-title">${h(c.covenantDebt)}</div></div>`:''}
+          ${c.target.exit&&!state.capstoneDeferUsed&&state.region!=='The Erdtree'?`<div class="tc-capstone-mini"><div><div class="tc-kicker red">one-time regional deferral</div><p>One normal encounter first. Its Chaos is guaranteed late-tier. Then the capstone returns to RNG.</p></div><button id="deferCapstone" class="btn curse">DEFER ONCE · ACCEPT DEBT</button></div>`:''}
+          ${c.penances?.length?`<details class="tc-penalty-summary"><summary>${c.penances.length} active armament ${c.penances.length===1?'penalty':'penalties'}</summary>${penanceMarkup(c)}</details>`:''}
+        </div>
+      </article>
+      <article class="tc-enc-panel" data-panel-index="1">
+        <div class="tc-panel-content"><div class="tc-kicker gold">assigned armaments</div><div class="tc-panel-hero small">The loadout corporate approved.</div><div class="tc-loadouts tc-loadouts-panel">${compactLoadout(playerLabel('chase',state),c.chase)}${compactLoadout(playerLabel('morgan',state),c.morgan)}</div></div>
+      </article>
+      <article class="tc-enc-panel" data-panel-index="2">
+        <div class="tc-panel-content"><div class="tc-kicker red">chaos decree</div><div class="tc-panel-hero small">When this happens:</div><div class="tc-chaos-trigger-large">${h(chaosSummary)}</div>
+        ${c.chaosTriggered?`<div class="tc-chaos-active"><div class="tc-kicker red">SEAL BROKEN</div><div class="tc-feature-title">${h(personalizePlayers(c.chaosConsequence,state))}</div></div>`:`<button id="triggerChaos" class="tc-seal-panel"><span>◉</span>BREAK THE SEAL</button>`}
+        <div class="tc-panel-boons">${tcEncounterBoons(state)}</div></div>
+      </article>
+      <article class="tc-enc-panel" data-panel-index="3">
+        <div class="tc-panel-content"><div class="tc-kicker violet">${h(c.weirdness?.tier||'True')} rite</div><div class="tc-panel-hero">${h(c.weirdness.name)}</div><div class="tc-rite-copy">${h(c.weirdness.text)}</div><div class="tc-panel-boons">${tcEncounterBoons(state)}</div></div>
+      </article>
+    </div>
+    <div class="tc-encounter-dots"><span class="active"></span><span></span><span></span><span></span></div>
+    <div class="tc-action-dock">
+      <button id="appealOpen" class="btn curse small">Weapon Appeal</button>
+      <button id="complete" class="btn gold">${c.target.exit?'CAPSTONE DEFEATED':'VICTORY'}</button>
+    </div>
+    ${navMarkup('encounter')}
+  </section>`;
   bindNav();
+  const deck=document.querySelector('#tcEncounterDeck'),tabs=[...document.querySelectorAll('[data-enc-panel]')],dots=[...document.querySelectorAll('.tc-encounter-dots span')];
+  const setPanel=i=>{tabs.forEach((b,j)=>b.classList.toggle('active',j===i));dots.forEach((d,j)=>d.classList.toggle('active',j===i));};
+  tabs.forEach(btn=>btn.addEventListener('click',()=>{const i=Number(btn.dataset.encPanel);deck?.scrollTo({left:(deck.clientWidth||1)*i,behavior:'smooth'});setPanel(i);}));
+  let scrollTimer;deck?.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.round(deck.scrollLeft/(deck.clientWidth||1));setPanel(Math.max(0,Math.min(3,i)));},60);},{passive:true});
+  document.querySelector('#deferCapstone')?.addEventListener('click',tcDeferCapstone);
   document.querySelector('#triggerChaos')?.addEventListener('click',()=>commit(triggerChaos(state,playerName())));
   document.querySelector('#appealOpen')?.addEventListener('click',showAppealMenu);
-  document.querySelector('#complete')?.addEventListener('click',()=>{
-    postBattleReport={encounterId:c.id,rite:null,chaos:null};
-    renderPostBattleReport();
-  });
+  document.querySelector('#complete')?.addEventListener('click',()=>{postBattleReport={encounterId:c.id,rite:null,chaos:null};renderPostBattleReport();});
 }
 
-
-function postBattleChoice(kind,value){
-  if(!postBattleReport || postBattleReport.encounterId!==run.state.current?.id) return;
-  postBattleReport[kind]=Boolean(value);
-  renderPostBattleReport();
-}
-function postBattleChoiceMarkup(kind,label,detail,reward,available=true){
-  if(!available){
-    return `<div class="tc-report-row muted"><div><div class="tc-kicker">${label}</div><div class="tc-report-detail">${detail}</div></div><span class="tc-report-stamp">not triggered</span></div>`;
-  }
-  if(reward<=0){
-    return `<div class="tc-report-row muted"><div><div class="tc-kicker">${label}</div><div class="tc-report-detail">${detail}</div></div><span class="tc-report-stamp">no reward</span></div>`;
-  }
-  const current=postBattleReport?.[kind];
-  return `<div class="tc-report-row"><div class="tc-report-copy"><div class="tc-kicker">${label} · ${reward} reward ${reward===1?'draw':'draws'}</div><div class="tc-report-detail">${detail}</div></div><div class="tc-report-choices">
-    <button type="button" data-report-kind="${kind}" data-report-value="1" class="${current===true?'active yes':''}">Yes</button>
-    <button type="button" data-report-kind="${kind}" data-report-value="0" class="${current===false?'active no':''}">No</button>
-  </div></div>`;
-}
 function renderPostBattleReport(){
   const state=run.state,c=state.current;
   if(!c){postBattleReport=null;return renderRun();}
-  if(!postBattleReport || postBattleReport.encounterId!==c.id) postBattleReport={encounterId:c.id,rite:null,chaos:null};
-  const riteDraws=Number(c.weirdness?.favor??1);
-  const chaosDraws=Number(c.chaosFavor??1);
-  const riteReady=riteDraws<=0 || postBattleReport.rite!==null;
-  const chaosAvailable=Boolean(c.chaosTriggered);
-  const chaosReady=!chaosAvailable || chaosDraws<=0 || postBattleReport.chaos!==null;
-  const draws=(postBattleReport.rite===true?Math.max(0,riteDraws):0)+(postBattleReport.chaos===true?Math.max(0,chaosDraws):0);
-  app.innerHTML=`<section class="tc-battle-report">
-    <div class="tc-report-kicker">Encounter Complete</div>
-    <div class="tc-report-victory">VICTORY</div>
-    <div class="tc-report-boss">${h(c.target?.name||'Enemy Felled')}</div>
-    <div class="tc-report-rule"></div>
-    ${postBattleChoiceMarkup('rite','Odd Rite',`${h(c.weirdness?.name||'No Rite')} · ${h(c.weirdness?.text||'')}`,riteDraws,true)}
-    ${postBattleChoiceMarkup('chaos','Chaos',chaosAvailable?`${h(chaosEventName(c.chaosConsequence||''))} · ${h(personalizePlayers(c.chaosConsequence||'',state))}`:'The Chaos seal never broke during this encounter.',chaosDraws,chaosAvailable)}
-    <div class="tc-report-total"><span>Covenant reward draws</span><strong>${draws}</strong></div>
-    <button id="finishBattleReport" class="btn gold" ${riteReady&&chaosReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
-    <div class="tc-report-note">${riteReady&&chaosReady?'Each earned draw can become Smithing Favor, a Refresh, or a rare Appeal Waiver.':'Answer the eligible honor-system checks first.'}</div>
+  if(!postBattleReport||postBattleReport.encounterId!==c.id)postBattleReport={encounterId:c.id,rite:null,chaos:null};
+  const riteDraws=Number(c.weirdness?.favor??1),chaosDraws=Number(c.chaosFavor??1),chaosAvailable=Boolean(c.chaosTriggered);
+  let step='rite';
+  if(postBattleReport.rite!==null)step=chaosAvailable&&postBattleReport.chaos===null?'chaos':'summary';
+  const draws=(postBattleReport.rite===true&&!c.riteForfeited?Math.max(0,riteDraws):0)+(postBattleReport.chaos===true&&!c.chaosForfeited?Math.max(0,chaosDraws):0);
+  const detail=step==='rite'?`${c.weirdness?.name||'Odd Rite'} · ${c.weirdness?.text||''}`:step==='chaos'?`${chaosEventName(c.chaosConsequence||'Chaos')} · ${personalizePlayers(c.chaosConsequence||'',state)}`:'';
+  app.innerHTML=`<section class="tc-report-flow">
+    <div class="tc-report-progress"><span class="done">1</span><i></i><span class="${step!=='rite'?'done':''}">2</span><i></i><span class="${step==='summary'?'done':''}">3</span></div>
+    <div class="tc-report-kicker">Encounter Complete</div><div class="tc-report-victory">VICTORY</div><div class="tc-report-boss">${h(c.target?.name||'Enemy Felled')}</div>
+    ${step==='rite'?`<div class="tc-report-stage"><div class="tc-kicker violet">STEP 1 · ODD RITE</div><div class="tc-report-question">Was the Rite honored?</div><div class="tc-report-stage-copy">${h(detail)}</div><div class="tc-report-bigchoices"><button data-report-kind="rite" data-report-value="1">HONORED</button><button data-report-kind="rite" data-report-value="0">FAILED</button></div></div>`:''}
+    ${step==='chaos'?`<div class="tc-report-stage"><div class="tc-kicker red">STEP 2 · CHAOS</div><div class="tc-report-question">Was the decree endured?</div><div class="tc-report-stage-copy">${h(detail)}</div><div class="tc-report-bigchoices"><button data-report-kind="chaos" data-report-value="1">ENDURED</button><button data-report-kind="chaos" data-report-value="0">FAILED</button></div></div>`:''}
+    ${step==='summary'?`<div class="tc-report-stage summary"><div class="tc-kicker gold">FILE REPORT</div><div class="tc-report-question">The paperwork is complete.</div><div class="tc-report-summary-grid"><div><span>RITE</span><strong>${c.riteForfeited?'FORFEITED':postBattleReport.rite?'HONORED':'FAILED'}</strong></div><div><span>CHAOS</span><strong>${c.chaosForfeited?'FORFEITED':!chaosAvailable?'NOT TRIGGERED':postBattleReport.chaos?'ENDURED':'FAILED'}</strong></div><div><span>REWARD DRAWS</span><strong>${draws}</strong></div></div><button id="finishBattleReport" class="btn gold">${c.target?.exit?'RECORD VICTORY · DRAW REWARDS':'RECORD VICTORY · DRAW REWARDS & ROLL NEXT'}</button></div>`:''}
   </section>`;
   document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
-}
-async function finalizePostBattleReport(){
-  if(window.__tcReportBusy)return;
-  const state=run.state,c=state.current;
-  if(!c || !postBattleReport || postBattleReport.encounterId!==c.id) return;
-  window.__tcReportBusy=true;
-  const submit=document.querySelector('#finishBattleReport');
-  if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
-  const nextState=smithingCopy(state);
-  const nc=nextState.current;
-  let draws=0;
-  const riteDraws=Number(nc.weirdness?.favor??1);
-  if(postBattleReport.rite===true && riteDraws>0 && !nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;
-  }
-  const chaosDraws=Number(nc.chaosFavor??1);
-  if(postBattleReport.chaos===true && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;
-  }
-  const rewards=[];
-  for(let i=0;i<draws;i++) rewards.push(drawCovenantReward(nextState));
-  nc.postBattleRewards=rewards.map(x=>x.label);
-  nc.favorEarned=rewards.filter(x=>x.kind==='favor'||x.kind==='favor2').reduce((sum,x)=>sum+(x.kind==='favor2'?2:1),0);
-  const completed=completeEncounter(nextState,playerName());
-  postBattleReport=null;
-  if(!completed.regionComplete&&!completed.runComplete&&completed.current){pendingRevealId=completed.current.id;uiScreen='encounter';}
-  pendingRewardReveal=rewards.length?{rewards:structuredClone(rewards),boss:c.target?.name||'Enemy Felled',index:0,spinning:true}:null;
-  const rewardText=rewards.length?'Covenant reward draw ready.':'Post-battle report filed.';
-  try{
-    const saved=await commit(completed,{successToast:rewardText});
-    if(!saved)pendingRewardReveal=null;
-  }
-  finally{window.__tcReportBusy=false;}
-}
-
-
-function renderRewardMachine(){
-  const data=pendingRewardReveal;
-  if(!data?.rewards?.length){pendingRewardReveal=null;return renderRun();}
-  const current=data.rewards[data.index]||data.rewards[0];
-  const total=data.rewards.length;
-  const symbols=['✦','◉','✧','⚖','☠','◇','✦','✧','◉'];
-  app.innerHTML=`<section class="tc-reward-machine">
-    <div class="tc-reward-kicker">Covenant Treasury</div>
-    <div class="tc-reward-title">DRAW ${data.index+1} <span>OF ${total}</span></div>
-    <div class="tc-reward-boss">Victory over ${h(data.boss||'the enemy')}</div>
-    <div class="tc-slot-frame" aria-live="polite">
-      <div class="tc-slot-reel" data-reel="0">${symbols.map(x=>`<span>${x}</span>`).join('')}</div>
-      <div class="tc-slot-reel" data-reel="1">${symbols.slice().reverse().map(x=>`<span>${x}</span>`).join('')}</div>
-      <div class="tc-slot-reel" data-reel="2">${symbols.slice(3).concat(symbols.slice(0,3)).map(x=>`<span>${x}</span>`).join('')}</div>
-    </div>
-    <div id="tcRewardResult" class="tc-reward-result ${tcRewardClass(current.kind)}" hidden>
-      <div class="tc-reward-icon">${tcRewardIcon(current.kind)}</div>
-      <div class="tc-reward-type">${current.kind==='tax'?'Covenant Tax':'Reward Acquired'}</div>
-      <div class="tc-reward-name">${h(current.label)}</div>
-      <div class="tc-reward-detail">${h(current.detail||'The Covenant has spoken.')}</div>
-    </div>
-    <button id="tcRewardContinue" class="btn gold" disabled>${data.index+1<total?'Draw Next Reward':'Continue'}</button>
-    <div class="tc-reward-quip">${current.kind==='tax'?'The Covenant giveth. The Covenant also has purchasing requirements.':'Honor has been converted into administratively approved loot.'}</div>
-  </section>`;
-  const reels=[...document.querySelectorAll('.tc-slot-reel')];
-  const result=document.querySelector('#tcRewardResult');
-  const btn=document.querySelector('#tcRewardContinue');
-  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-  const finish=()=>{
-    reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
-    result.hidden=false;result.classList.add('revealed');btn.disabled=false;data.spinning=false;
-  };
-  if(reduced){finish();}
-  else{
-    reels.forEach((reel,i)=>{reel.classList.add('spinning');reel.style.setProperty('--tc-spin-delay',`${i*110}ms`);});
-    window.setTimeout(finish,1250);
-  }
-  btn.addEventListener('click',()=>{
-    if(data.spinning)return;
-    if(data.index+1<total){data.index+=1;data.spinning=true;renderRewardMachine();return;}
-    pendingRewardReveal=null;renderRun();
-  });
+  if(step==='chaos'&&!chaosAvailable){postBattleReport.chaos=false;renderPostBattleReport();}
 }
 
 function showAppealMenu(){
@@ -3050,9 +3109,9 @@ function compendiumEntryMarkup(entry,index,state){
   const chaos=entry.chaosTriggered&&entry.chaosConsequence;
   const mods=Array.isArray(entry.penances)?entry.penances:[];
   if(!rich){
-    return `<details class="tc-comp-card legacy"><summary><div><div class="tc-comp-number">ENTRY ${String(Math.max(1,(run.state.history?.length||0)-index)).padStart(2,'0')} · ${h(entry.region||'Earlier run')}</div><div class="tc-comp-boss">${h(entry.name||'Unknown foe')}</div></div><span class="tc-comp-mark">${entry.exit?'CAPSTONE':'LEGACY'}</span></summary><div class="tc-comp-legacy">This kill predates the Compendium. The Covenant remembers the corpse, but not what nonsense got you there.</div></details>`;
+    return `<details class="tc-comp-card legacy"><summary><div><div class="tc-comp-number">ENTRY ${String(index+1).padStart(2,'0')} · ${h(entry.region||'Earlier run')}</div><div class="tc-comp-boss">${h(entry.name||'Unknown foe')}</div></div><span class="tc-comp-mark">${entry.exit?'CAPSTONE':'LEGACY'}</span></summary><div class="tc-comp-legacy">This kill predates the Compendium. The Covenant remembers the corpse, but not what nonsense got you there.</div></details>`;
   }
-  return `<details class="tc-comp-card ${entry.exit?'capstone':''}"><summary><div><div class="tc-comp-number">ENTRY ${String(Math.max(1,(run.state.history?.length||0)-index)).padStart(2,'0')} · ${h(entry.region||'Unknown region')} ${compendiumDate(entry.completedAt)?'· '+h(compendiumDate(entry.completedAt)):''}</div><div class="tc-comp-boss">${h(entry.name||'Unknown foe')}</div><div class="tc-comp-pair">${h(entry.chaseWeapon||'Unknown weapon')} × ${h(entry.morganWeapon||'Unknown weapon')}</div></div><span class="tc-comp-mark">${entry.exit?'CAPSTONE':'FELLED'}</span></summary>
+  return `<details class="tc-comp-card ${entry.exit?'capstone':''}"><summary><div><div class="tc-comp-number">ENTRY ${String(index+1).padStart(2,'0')} · ${h(entry.region||'Unknown region')} ${compendiumDate(entry.completedAt)?'· '+h(compendiumDate(entry.completedAt)):''}</div><div class="tc-comp-boss">${h(entry.name||'Unknown foe')}</div><div class="tc-comp-pair">${h(entry.chaseWeapon||'Unknown weapon')} × ${h(entry.morganWeapon||'Unknown weapon')}</div></div><span class="tc-comp-mark">${entry.exit?'CAPSTONE':'FELLED'}</span></summary>
     <div class="tc-comp-body">
       <div class="tc-comp-weapons"><div><span>${h(names.chase)}</span><strong>${h(entry.chaseWeapon||'—')}</strong>${entry.chaseBuild?.role?`<em>${h(entry.chaseBuild.role)}</em>`:''}</div><div><span>${h(names.morgan)}</span><strong>${h(entry.morganWeapon||'—')}</strong>${entry.morganBuild?.role?`<em>${h(entry.morganBuild.role)}</em>`:''}</div></div>
       ${entry.oddRite?`<div class="tc-comp-mod rite"><span>ODD RITE</span><strong>${h(entry.oddRite.name||'Unnamed Rite')}</strong><p>${h(entry.oddRite.text||'')}</p></div>`:''}
@@ -3073,6 +3132,46 @@ function compendiumLedgerMarkup(state){
     <div class="tc-comp-stats"><div><strong>${entries.length}</strong><span>Felled</span></div><div><strong>${rich.length}</strong><span>Full records</span></div><div><strong>${chaosCount}</strong><span>Chaos events</span></div><div><strong>${favor}</strong><span>Favor earned</span></div></div>
     <div class="tc-comp-list">${entries.map((entry,i)=>compendiumEntryMarkup(entry,i,state)).join('')}</div>`;
 }
+
+
+function tcChronicleFlavor(entry){
+  const pool=['Filed under: avoidable administrative violence.','Witnessed, documented, and unlikely to improve morale.','The Covenant considers this a successful use of company time.','Nobody asked whether this was a good idea.','Upper management has retained the incident for training purposes.'];
+  let seed=0;for(const ch of String(entry?.name||''))seed=(seed+ch.charCodeAt(0))%pool.length;return pool[seed];
+}
+function tcChronicleRegions(state){
+  const entries=Array.isArray(state.history)?state.history:[],groups=[];
+  for(const entry of entries){let g=groups.find(x=>x.region===(entry.region||'Earlier Run'));if(!g){g={region:entry.region||'Earlier Run',entries:[]};groups.push(g);}g.entries.push(entry);}
+  return groups;
+}
+function tcChronicleEntryButton(entry,index,state){
+  return `<button class="tc-chronicle-entry ${entry.exit?'capstone':''}" data-comp-entry="${index}"><span class="tc-chronicle-entry-num">${String(index+1).padStart(2,'0')}</span><span><strong>${h(entry.name||'Unknown foe')}</strong><em>${h(entry.chaseWeapon||'Unknown weapon')} × ${h(entry.morganWeapon||'Unknown weapon')}</em></span><b>${entry.exit?'◆':'›'}</b></button>`;
+}
+function compendiumLedgerMarkup(state){
+  const entries=Array.isArray(state.history)?state.history:[];
+  if(!entries.length)return `<div class="tc-comp-empty"><div class="tc-comp-empty-glyph">◇</div><div class="tc-value">The pages are still clean.</div><div class="tc-muted">This condition will not survive first contact with a boss.</div></div>`;
+  const groups=tcChronicleRegions(state),chaos=entries.filter(x=>x.chaosTriggered).length,forfeits=entries.filter(x=>x.riteOutcome==='Forfeited'||x.chaosOutcome==='Forfeited').length;
+  return `<div class="tc-chronicle-frontispiece"><div class="tc-chronicle-sigil">✦</div><div class="tc-kicker gold">THE TARNISHED COVENANT</div><div class="tc-chronicle-title">A Chronicle of Poor Decisions</div><div class="tc-chronicle-rule"></div><div class="tc-chronicle-stats"><span><strong>${entries.length}</strong> enemies felled</span><span><strong>${chaos}</strong> Chaos events</span><span><strong>${forfeits}</strong> boons forfeited</span></div></div>
+  <div class="tc-chronicle-book">${groups.map((g,gi)=>`<section class="tc-chronicle-chapter"><header><span>CHAPTER ${String(gi+1).padStart(2,'0')}</span><strong>${h(g.region)}</strong><em>${g.entries.length} ${g.entries.length===1?'record':'records'}</em></header><div>${g.entries.map(e=>tcChronicleEntryButton(e,entries.indexOf(e),state)).join('')}</div></section>`).join('')}</div>`;
+}
+function tcOpenChronicleEntry(index){
+  const state=run.state,entry=(state.history||[])[Number(index)];if(!entry)return;
+  const names=compendiumNames(entry,state),mods=Array.isArray(entry.penances)?entry.penances:[];
+  document.querySelector('#tcChronicleOverlay')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcChronicleOverlay" class="tc-chronicle-overlay"><article class="tc-chronicle-page">
+    <button id="tcCloseChronicle" class="tc-chronicle-close">×</button>
+    <div class="tc-kicker gold">${entry.exit?'CAPSTONE RECORD':'FIELD RECORD'} · ${h(entry.region||'Unknown region')}</div>
+    <div class="tc-chronicle-page-number">ENTRY ${String(Number(index)+1).padStart(2,'0')}</div><h2>${h(entry.name||'Unknown foe')}</h2><p class="tc-chronicle-flavor">${h(tcChronicleFlavor(entry))}</p>
+    <div class="tc-chronicle-divider">✦</div>
+    <section><div class="tc-kicker">ARMAMENTS CARRIED INTO BATTLE</div><div class="tc-chronicle-weapons"><div><span>${h(names.chase)}</span><strong>${h(entry.chaseWeapon||'—')}</strong><em>${h(entry.chaseBuild?.role||'')}</em></div><div><span>${h(names.morgan)}</span><strong>${h(entry.morganWeapon||'—')}</strong><em>${h(entry.morganBuild?.role||'')}</em></div></div></section>
+    ${entry.oddRite?`<section class="tc-chronicle-record rite"><div class="tc-record-head"><span>RITE OBSERVED</span><b>${h(entry.riteOutcome||'RECORDED')}</b></div><strong>${h(entry.oddRite.name||'Unnamed Rite')}</strong><p>${h(entry.oddRite.text||'')}</p></section>`:''}
+    <section class="tc-chronicle-record chaos"><div class="tc-record-head"><span>CHAOS RECORDED</span><b>${h(entry.chaosOutcome||(entry.chaosTriggered?'TRIGGERED':'NOT TRIGGERED'))}</b></div><strong>${h(entry.chaosTriggered?chaosEventName(entry.chaosConsequence||'Chaos'):'Seal remained intact')}</strong>${entry.chaosTriggered?`<p>${h(entry.chaosConsequence||'')}</p>`:''}</section>
+    ${mods.length?`<section class="tc-chronicle-record"><div class="tc-record-head"><span>ARMAMENT PENALTIES</span><b>${mods.length}</b></div>${mods.map(m=>`<p><strong>${h(m.name||'Penalty')}</strong> · ${h(m.text||'')}</p>`).join('')}</section>`:''}
+    ${Array.isArray(entry.rewards)&&entry.rewards.length?`<section class="tc-chronicle-record reward"><div class="tc-record-head"><span>REWARD ISSUED</span><b>FILED</b></div><p>${entry.rewards.map(h).join(' · ')}</p></section>`:''}
+    <footer>${entry.completedBy?`Recorded by ${h(entry.completedBy)}`:'Victory recorded'}${entry.completedAt?` · ${h(compendiumDate(entry.completedAt))}`:''}</footer>
+  </article></div>`);
+  document.querySelector('#tcCloseChronicle')?.addEventListener('click',()=>document.querySelector('#tcChronicleOverlay')?.remove());
+}
+if(!window.__tcChronicleBound){window.__tcChronicleBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-comp-entry]');if(b)tcOpenChronicleEntry(b.dataset.compEntry);});}
 
 function renderLedger() {
   const state=run.state;
@@ -3107,10 +3206,49 @@ function renderDecreeReveal(){
  bindNav();document.querySelector('#acceptDecree').addEventListener('click',()=>{pendingRevealId=null;uiScreen='encounter';renderRun();});
 }
 
+
+function tcCorporateContractEligible(state){
+  if(!state || state.runComplete || state.regionComplete)return null;
+  const sm=smithingData(state);
+  if(sm.activeContract)return null;
+  const pool=availableBellBearings(state).filter(b=>sm.favor>=smithingContractCost(b));
+  if(!pool.length)return null;
+  return pool[0];
+}
+function renderCorporateNotice(){
+  const state=run.state,b=tcCorporateContractEligible(state);
+  if(!b)return renderRun();
+  const sm=smithingData(state),cost=smithingContractCost(b);
+  app.innerHTML=`<section class="tc-corporate-screen">
+    <div class="tc-corp-paperclip">↳</div>
+    <div class="tc-kicker red">ACTION REQUIRED · UPPER MANAGEMENT</div>
+    <div class="tc-corp-subject">Corporate has forwarded a matter.</div>
+    <div class="tc-corp-rule"></div>
+    <p>Recent performance has attracted attention. This was avoidable.</p>
+    <div class="tc-corp-forward"><span>FORWARDED TO</span><strong>THE TWIN MAIDEN HUSKS</strong></div>
+    <div class="tc-corp-contract"><div class="tc-kicker ember">mandatory development opportunity</div><strong>${h(b.name)}</strong><span>${h(b.region)} · ${cost} Smithing Favor</span></div>
+    <p class="tc-corp-fine">Review is mandatory before further Covenant activity. Hewg has been CC’d.</p>
+    <button id="tcReviewCorporate" class="btn gold">REVIEW MANDATORY CONTRACT</button>
+  </section>`;
+  document.querySelector('#tcReviewCorporate')?.addEventListener('click',tcAcceptCorporateContract);
+}
+async function tcAcceptCorporateContract(){
+  if(window.__tcCorporateBusy)return;
+  const next=commissionSmithingContract(run.state);
+  if(!next)return setToast('Corporate appears to have lost the paperwork.');
+  window.__tcCorporateBusy=true;
+  const btn=document.querySelector('#tcReviewCorporate');if(btn){btn.disabled=true;btn.textContent='Forwarding to Hewg…';}
+  try{
+    const ok=await commit(next,{successToast:'Contract issued. Upper management considers this resolved.'});
+    if(ok!==false)setTimeout(()=>{try{renderSmithingContract();}catch(error){console.error(error);}},40);
+  }finally{window.__tcCorporateBusy=false;}
+}
+
 function renderRun() {
   const state=run.state;
   if(pendingRewardReveal?.rewards?.length) return renderRewardMachine();
   if(postBattleReport?.encounterId===state.current?.id) return renderPostBattleReport();
+  if(tcCorporateContractEligible(state)) return renderCorporateNotice();
   setRegionTheme(state.region);
   if (uiScreen==='encounter' && state.current?.chaosTriggered && !acknowledgedChaos.has(state.current.id)) return renderChaosEvent();
   if (state.runComplete) return renderRunComplete();
@@ -3296,7 +3434,7 @@ if (!window.__tcSmithingBound) {
     if(action==='close-contract'){document.querySelector('#tcSmithOverlay')?.remove();return;}
     if(action==='ledger'){ledgerView='smithing';uiScreen='ledger';renderRun();return;}
     if(action==='open-contract'){renderSmithingContract();return;}
-    if(action==='commission'){const next=commissionSmithingContract(run.state);if(!next)return setToast('No Bell Bearing Contract is available yet.');if(await commit(next,{successToast:'Bell Bearing Contract commissioned.'}))renderSmithingContract();return;}
+    if(action==='commission'){const next=commissionSmithingContract(run.state);if(!next)return setToast('No Bell Bearing Contract is available yet.');if(await commit(next,{successToast:'Contract commissioned. 3 Favor spent.'}))renderSmithingContract();return;}
     if(action==='fulfill-contract'){const next=fulfillSmithingContract(run.state);if(!next)return;if(await commit(next,{successToast:'Custodian sanctioned.'}))renderSmithingContract();return;}
     if(action==='claim-bearing'){const next=claimSmithingBearing(run.state);if(!next)return;if(await commit(next,{successToast:'Bell Bearing claimed. +1 Masterwork.'})){document.querySelector('#tcSmithOverlay')?.remove();ledgerView='smithing';uiScreen='ledger';renderRun();}return;}
     if(action==='favor-rite'){const next=claimForgeFavor(run.state,'rite');if(next)await commit(next,{successToast:'+1 Smithing Favor'});return;}
@@ -3334,141 +3472,7 @@ if(!window.__tcBoonBound){
 }
 
 
-/* --- Late information-architecture layer. Existing renderers still create and bind the controls. --- */
-let tcEncounterPanelIndex=0;
-let tcEncounterPanelId=null;
-let tcSanctuaryPanelIndex=0;
-function tcMakePanel(className,label,key,nodes){const panel=document.createElement('section');panel.className=className;panel.dataset.panel=key;const heading=document.createElement('div');heading.className='tc-panel-heading';heading.textContent=label;panel.appendChild(heading);nodes.filter(Boolean).forEach(node=>panel.appendChild(node));return panel;}
-function tcWirePanelTrack(track,tabs,count,getIndex,setIndex){
-  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));};
-  tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
-  let scrollTimer=null;track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));setIndex(i);tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));},70);},{passive:true});
-  requestAnimationFrame(()=>{track.scrollLeft=getIndex()*track.clientWidth;});
-}
-function tcEnhanceEncounterPanels(){
-  const screen=app.querySelector('.tc-screen');const complete=screen?.querySelector('#complete');if(!screen||!complete||screen.classList.contains('tc-encounter-shell'))return;
-  const c=run.state?.current;if(!c)return;if(tcEncounterPanelId!==c.id){tcEncounterPanelId=c.id;tcEncounterPanelIndex=0;}screen.classList.add('tc-encounter-shell');
-  const top=screen.querySelector('.tc-topline'),brief=screen.querySelector('.tc-brief-head'),art=screen.querySelector('.tc-boss-art'),defer=screen.querySelector('.tc-capstone-defer,.tc-capstone-deferral,.tc-capstone-defer-card'),debt=screen.querySelector('.tc-feature.debt');
-  const loadouts=screen.querySelector('.tc-loadouts'),weaponsHeading=loadouts?.previousElementSibling?.classList?.contains('tc-kicker')?loadouts.previousElementSibling:null,penalties=screen.querySelector('.tc-penalty-summary'),chaos=screen.querySelector('.tc-feature.chaos'),rite=screen.querySelector('.tc-feature.rite'),earned=screen.querySelector('.tc-earned-refreshes'),actions3=screen.querySelector('.tc-actions-3'),appealConfirm=screen.querySelector('#appealConfirm');
-  const sticky=document.createElement('div');sticky.className='tc-encounter-sticky';sticky.innerHTML=`<strong>${h(c.target?.name||'Current Encounter')}</strong><span>CHAOS · ${h(personalizePlayers(c.chaosTrigger||'No active trigger',run.state))}</span>`;top?.after(sticky);
-  const tabs=document.createElement('div');tabs.className='tc-encounter-tabs';['Boss','Weapons','Chaos','Rite'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcEncounterPanelIndex)b.classList.add('active');tabs.appendChild(b);});sticky.after(tabs);
-  const track=document.createElement('div');track.className='tc-encounter-track';const overviewNodes=[brief,art,defer,debt],weaponNodes=[weaponsHeading,loadouts,penalties],chaosNodes=[chaos],riteNodes=[rite,earned];
-  const claimed=new Set([top,sticky,tabs,brief,art,defer,debt,weaponsHeading,loadouts,penalties,chaos,rite,earned,complete,actions3,appealConfirm].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)riteNodes.push(node);});
-  track.append(tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes),tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes),tcMakePanel('tc-encounter-panel','Chaos Decree','chaos',chaosNodes),tcMakePanel('tc-encounter-panel','Rite & Amendments','rite',riteNodes));tabs.after(track);
-  const hint=document.createElement('div');hint.className='tc-encounter-hint';hint.textContent='Swipe between briefing panels';track.after(hint);
-  const bar=document.createElement('div');bar.className='tc-encounter-actions';bar.appendChild(complete);if(actions3)bar.appendChild(actions3);if(appealConfirm)bar.appendChild(appealConfirm);hint.after(bar);
-  tcWirePanelTrack(track,tabs,4,()=>tcEncounterPanelIndex,i=>{tcEncounterPanelIndex=i;});
-}
-const tcRenderEncounterBeforeIA=renderEncounter;renderEncounter=function(){tcRenderEncounterBeforeIA();tcEnhanceEncounterPanels();};
-
-function tcEnhanceSanctuaryPanels(){
-  const screen=app.querySelector('.tc-screen');if(!screen||screen.querySelector('#complete')||screen.classList.contains('tc-sanctuary-shell'))return;
-  const top=screen.querySelector('.tc-topline'),rune=screen.querySelector('.tc-rune'),title=screen.querySelector('.tc-title'),subtitle=screen.querySelector('.tc-subtitle'),art=screen.querySelector('.tc-grace-art'),hub=screen.querySelector('.tc-hub-grid'),forge=screen.querySelector('.tc-forge-notice,.tc-forge-favor'),code=screen.querySelector('.tc-code-row'),quick=screen.querySelector('.tc-quick');
-  if(!top||!title||!hub)return;screen.classList.add('tc-sanctuary-shell');
-  const tabs=document.createElement('div');tabs.className='tc-sanctuary-tabs';['Grace','Progress','Covenant'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcSanctuaryPanelIndex)b.classList.add('active');tabs.appendChild(b);});top.after(tabs);
-  const track=document.createElement('div');track.className='tc-sanctuary-track';
-  const graceNodes=[rune,title,subtitle,art],progressNodes=[hub],covenantNodes=[forge,code,quick];
-  const claimed=new Set([top,tabs,rune,title,subtitle,art,hub,forge,code,quick].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)covenantNodes.push(node);});
-  track.append(tcMakePanel('tc-sanctuary-panel','At the Grace','grace',graceNodes),tcMakePanel('tc-sanctuary-panel','Run Progress','progress',progressNodes),tcMakePanel('tc-sanctuary-panel','Covenant Office','covenant',covenantNodes));tabs.after(track);
-  const hint=document.createElement('div');hint.className='tc-sanctuary-hint';hint.textContent='Swipe between Site of Grace panels';track.after(hint);
-  tcWirePanelTrack(track,tabs,3,()=>tcSanctuaryPanelIndex,i=>{tcSanctuaryPanelIndex=i;});
-}
-const tcRenderSanctuaryBeforeIA=renderSanctuary;renderSanctuary=function(){tcRenderSanctuaryBeforeIA();tcEnhanceSanctuaryPanels();};
-
-function tcMandatoryContractEligible(state){if(!state?.current||!pendingRevealId||state.current.id!==pendingRevealId)return false;const sm=smithingData(state);return !sm.activeContract&&sm.favor>=3&&availableBellBearings(state).length>0;}
-function renderCorporateContractNotice(){
-  const state=run.state,sm=smithingData(state),available=availableBellBearings(state),preview=available[0];
-  app.innerHTML=`<section class="tc-corporate-screen"><div class="tc-corporate-letter"><div class="tc-corporate-stamp">Action<br>Required</div><div class="tc-corporate-overline">Notice From Upper Management</div><h1>Corporate Has Forwarded A Matter</h1><div class="tc-corporate-copy">Your recent performance has attracted administrative attention. A Bell Bearing Contract is now mandatory before normal encounter scheduling may resume.</div><div class="tc-corporate-meta"><strong>${sm.favor} Smithing Favor on file</strong><br>${preview?`${h(preview.region)} procurement is currently actionable.`:'An eligible procurement matter has been identified.'}</div><button id="tcReviewMandatoryContract" class="btn gold">Review Mandatory Contract</button><div class="tc-corporate-foot">Hewg has been CC’d. This meeting could not have been an email.</div></div></section>`;
-  document.querySelector('#tcReviewMandatoryContract')?.addEventListener('click',async()=>{const btn=document.querySelector('#tcReviewMandatoryContract');if(btn)btn.disabled=true;const next=commissionSmithingContract(run.state);if(!next){renderRun();return;}await commit(next,{successToast:'Upper Management has assigned a Bell Bearing Contract.'});renderSmithingContract();});
-}
-const tcRenderRunBeforeIA=renderRun;renderRun=function(){const state=run.state;if(!pendingRewardReveal?.rewards?.length&&!postBattleReport&&tcMandatoryContractEligible(state))return renderCorporateContractNotice();return tcRenderRunBeforeIA();};
-const tcSmithingHubBeforeIA=smithingHubMarkup;smithingHubMarkup=function(state){const sm=smithingData(state);if(!sm.activeContract&&sm.favor>=3&&availableBellBearings(state).length){return `<div class="tc-forge-notice quiet tc-corporate-pending"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">upper management review pending</div><div class="tc-forge-title">${sm.favor} Smithing Favor Has Been Noticed</div><div class="tc-muted">Corporate will forward an actionable Bell Bearing matter at the next safe transition.</div></div><span class="tc-forge-arrow">…</span></div>`;}return tcSmithingHubBeforeIA(state);};
-
-function tcCompendiumFlavor(entry,index){const lines=['Filed under: avoidable administrative violence.','The Covenant remembers. Unfortunately.','Armaments, rites, and poor judgment preserved for audit.','A complete record of something that probably seemed sensible at the time.','Recorded for posterity and future liability.'];return lines[index%lines.length];}
-function tcOpenCompendiumEntry(entry,index,card){document.querySelector('#tcCompendiumOverlay')?.remove();const source=card?.querySelector('.tc-comp-body,.tc-comp-legacy');const overlay=document.createElement('div');overlay.id='tcCompendiumOverlay';overlay.className='tc-comp-sheet-overlay';overlay.innerHTML=`<div class="tc-comp-sheet"><div class="tc-comp-sheet-top"><button class="tc-comp-sheet-close" type="button">‹ Compendium</button><span class="tc-comp-sheet-index">Entry ${String(Math.max(1,(run.state.history?.length||0)-index)).padStart(2,'0')}</span></div><div class="tc-comp-sheet-scroll"><div class="tc-comp-sheet-region">${h(entry.region||'Unknown Region')}</div><h2>${h(entry.name||'Unknown Foe')}</h2><div class="tc-comp-sheet-flavor">${h(tcCompendiumFlavor(entry,index))}</div>${source?source.outerHTML:`<div class="tc-comp-legacy">The Covenant retains only a partial record of this encounter.</div>`}</div></div>`;document.body.appendChild(overlay);overlay.querySelector('.tc-comp-sheet-close')?.addEventListener('click',()=>overlay.remove());}
-function tcEnhanceCompendium(){if(ledgerView!=='compendium')return;const list=app.querySelector('.tc-comp-list');if(!list||list.dataset.chronicle==='1')return;list.dataset.chronicle='1';const entries=Array.isArray(run.state.history)?run.state.history:[],cards=[...list.querySelectorAll('.tc-comp-card')];if(!cards.length)return;list.innerHTML='';const groups=new Map();cards.forEach((card,i)=>{const entry=entries[i]||{},region=entry.region||'Earlier Records';if(!groups.has(region))groups.set(region,[]);groups.get(region).push({card,entry,index:i});});groups.forEach((records,region)=>{const chapter=document.createElement('section');chapter.className='tc-comp-region';chapter.innerHTML=`<div class="tc-comp-region-head"><strong>${h(region)}</strong><span>${records.length} ${records.length===1?'record':'records'}</span></div><div class="tc-comp-region-cards"></div>`;const stack=chapter.querySelector('.tc-comp-region-cards');records.forEach(({card,entry,index})=>{try{card.style.setProperty('--tc-comp-art',`linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)), url("${actualRegionImage(entry.region||run.state.region)}")`);}catch{}card.open=false;const summary=card.querySelector('summary');summary?.addEventListener('click',e=>{e.preventDefault();card.open=false;tcOpenCompendiumEntry(entry,index,card);});stack.appendChild(card);});list.appendChild(chapter);});}
-const tcRenderLedgerBeforeIA=renderLedger;renderLedger=function(){tcRenderLedgerBeforeIA();tcEnhanceCompendium();};
-const tcIaExtra=document.createElement('style');tcIaExtra.textContent='.tc-battle-report{height:calc(100svh - 10px);min-height:0!important;overflow-y:auto;overscroll-behavior:contain}';document.head.appendChild(tcIaExtra);
-
-
-/* --- Cross-system regression hardening --- */
-function tcAffordableBellBearings(state){
-  if(!state)return [];
-  const sm=smithingData(state);
-  return availableBellBearings(state).filter(b=>sm.favor>=smithingContractCost(b));
-}
-
-/* Mandatory corporate work must survive refresh/navigation and must never fire
-   unless a contract can actually be paid for. */
-tcMandatoryContractEligible=function(state){
-  if(!state?.current)return false;
-  const sm=smithingData(state);
-  return !sm.activeContract && tcAffordableBellBearings(state).length>0;
-};
-
-renderCorporateContractNotice=function(){
-  const state=run.state,sm=smithingData(state),affordable=tcAffordableBellBearings(state),preview=affordable[0];
-  if(!preview){renderRun();return;}
-  const cost=smithingContractCost(preview);
-  app.innerHTML=`<section class="tc-corporate-screen"><div class="tc-corporate-letter"><div class="tc-corporate-stamp">Action<br>Required</div><div class="tc-corporate-overline">Notice From Upper Management</div><h1>Corporate Has Forwarded A Matter</h1><div class="tc-corporate-copy">Your recent performance has attracted administrative attention. A Bell Bearing Contract is now mandatory before normal encounter scheduling may resume.</div><div class="tc-corporate-meta"><strong>${sm.favor} Smithing Favor on file</strong><br>${h(preview.region)} procurement is actionable · contracts currently start at ${cost} Favor.</div><button id="tcReviewMandatoryContract" class="btn gold">Review Mandatory Contract</button><div class="tc-corporate-foot">Hewg has been CC’d. This meeting could not have been an email.</div></div></section>`;
-  document.querySelector('#tcReviewMandatoryContract')?.addEventListener('click',async()=>{
-    const btn=document.querySelector('#tcReviewMandatoryContract');if(btn)btn.disabled=true;
-    const next=commissionSmithingContract(run.state);
-    if(!next){setToast('Corporate records changed. Rechecking the file.');renderRun();return;}
-    const saved=await commit(next,{successToast:`Upper Management assigned a Bell Bearing Contract · ${next.smithing?.activeContract?.cost||'Favor'} spent.`});
-    if(saved)renderSmithingContract();else renderRun();
-  });
-};
-
-smithingHubMarkup=function(state){
-  const sm=smithingData(state);
-  const affordable=tcAffordableBellBearings(state);
-  if(!sm.activeContract&&affordable.length){
-    const nextCost=Math.min(...affordable.map(smithingContractCost));
-    return `<div class="tc-forge-notice quiet tc-corporate-pending"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">upper management review pending</div><div class="tc-forge-title">${sm.favor} Smithing Favor Has Been Noticed</div><div class="tc-muted">Corporate has an actionable Bell Bearing matter on file · ${nextCost} Favor minimum.</div></div><span class="tc-forge-arrow">…</span></div>`;
-  }
-  return tcSmithingHubBeforeIA(state);
-};
-
-/* A reveal/report is a state transition, not just a screen. Bottom navigation
-   must not erase it or let a player skip mandatory paperwork. */
-function tcTransitionIsLocked(){
-  const state=run?.state;
-  if(pendingRewardReveal?.rewards?.length)return true;
-  if(postBattleReport)return true;
-  if(tcMandatoryContractEligible(state))return true;
-  if(pendingRevealId && state?.current?.id===pendingRevealId)return true;
-  return false;
-}
-
-bindNav=function(){
-  document.querySelectorAll('[data-screen]').forEach(btn=>btn.addEventListener('click',()=>{
-    if(tcTransitionIsLocked()){
-      setToast('Finish the current Covenant notice first.');
-      renderRun();
-      return;
-    }
-    uiScreen=btn.dataset.screen;
-    renderRun();
-  }));
-};
-
-/* Avoid stacking duplicate modal sheets under fast taps. */
-const tcShowAppealMenuBeforeHardening=showAppealMenu;
-showAppealMenu=function(){
-  document.querySelector('#tcAppealOverlay')?.remove();
-  tcShowAppealMenuBeforeHardening();
-};
-
-/* Keep stale overlays from surviving a screen transition caused by shared-state
-   updates or a successful save. */
-const tcRenderRunBeforeHardening=renderRun;
-renderRun=function(){
-  document.querySelector('#tcAppealOverlay')?.remove();
-  const state=run?.state;
-  if(!pendingRewardReveal?.rewards?.length&&!postBattleReport&&tcMandatoryContractEligible(state))return renderCorporateContractNotice();
-  return tcRenderRunBeforeHardening();
-};
+if(!window.__tcForfeitBound){window.__tcForfeitBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-forfeit-boon]');if(b)tcForfeitBoon(b.dataset.forfeitBoon);});}
 
 </script>
 </body>
