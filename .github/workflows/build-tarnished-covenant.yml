@@ -150,6 +150,9 @@ jobs:
       - name: Add one-time capstone defer
         run: python tarnished-covenant/build-capstone-defer.py
 
+      - name: Apply compact encounter and chronicle UI
+        run: python tarnished-covenant/build-interface-overhaul.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
