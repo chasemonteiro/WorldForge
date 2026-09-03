@@ -123,6 +123,9 @@ jobs:
       - name: Enlarge and reflow phone UI
         run: python tarnished-covenant/build-mobile-readability.py
 
+      - name: Fix capstone save transition
+        run: python tarnished-covenant/build-capstone-save-fix.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
@@ -131,7 +134,7 @@ jobs:
           html = Path('tarnished-covenant/index.html').read_text()
           scripts = re.findall(r'<script(?:[^>]*)>(.*?)</script>', html, flags=re.S)
           if not scripts:
-              raise SystemExit('No inline script found')
+            raise SystemExit('No inline script found')
           Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
           PY
           node --check /tmp/tarnished-covenant.js
