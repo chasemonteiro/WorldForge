@@ -132,6 +132,9 @@ jobs:
       - name: Fix capstone save transition
         run: python tarnished-covenant/build-capstone-save-fix.py
 
+      - name: Animate Covenant reward draws
+        run: python tarnished-covenant/build-reward-slot.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
