@@ -135,6 +135,12 @@ jobs:
       - name: Keep Compendium entry numbers chronological
         run: python tarnished-covenant/build-compendium-stable-numbering.py
 
+      - name: Harden cross-system transitions
+        run: python tarnished-covenant/build-regression-hardening.py
+
+      - name: Assert regression invariants
+        run: python tarnished-covenant/test-regression-invariants.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
