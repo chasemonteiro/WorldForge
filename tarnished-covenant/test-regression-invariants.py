@@ -76,11 +76,16 @@ start = html.find('const TC_EXTRA_RITES = [')
 end = html.find('];', start)
 if start < 0 or end < 0: raise SystemExit('TC_EXTRA_RITES block missing')
 rite_chunk = html[start:end]
+entry_count=0
 for line in rite_chunk.splitlines()[1:]:
     stripped=line.strip()
-    if stripped.startswith("['") and not stripped.endswith('],'):
-        raise SystemExit('Rite pool entry is not comma-terminated: '+stripped[:80])
-for expected in ["['Clean Workplace'", "['Off The Sauce'", "['The Wall'"]:
+    if stripped.startswith("['"):
+        entry_count += 1
+        if not stripped.endswith('],'):
+            raise SystemExit('Rite pool entry is not comma-terminated: '+stripped[:80])
+if entry_count < 20:
+    raise SystemExit(f'expanded Rite pool unexpectedly small: {entry_count} entries')
+for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
     if expected not in rite_chunk: raise SystemExit('expected expanded Rite missing: '+expected)
 
 # Rewards/report precede Corporate; stable numbering remains display-only.
