@@ -138,6 +138,9 @@ jobs:
       - name: Add Aviary Ticket reward
         run: python tarnished-covenant/build-aviary-ticket.py
 
+      - name: Harden final reward Continue transition
+        run: python tarnished-covenant/build-reward-continue-fix.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
