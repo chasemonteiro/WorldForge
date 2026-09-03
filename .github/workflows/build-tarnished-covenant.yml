@@ -144,6 +144,9 @@ jobs:
       - name: Preserve Smithing wallet across regions
         run: python tarnished-covenant/build-region-state-persistence.py
 
+      - name: Apply challenge-first ruleset
+        run: python tarnished-covenant/build-challenge-ruleset.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
