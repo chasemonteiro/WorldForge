@@ -132,6 +132,9 @@ jobs:
       - name: Apply viewport navigation and mandatory corporate contracts
         run: python tarnished-covenant/build-information-architecture.py
 
+      - name: Keep Compendium entry numbers chronological
+        run: python tarnished-covenant/build-compendium-stable-numbering.py
+
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
