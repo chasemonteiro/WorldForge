@@ -1,5 +1,6 @@
 name: Patch Region Complete Resume
 
+# One-shot validator; remove after successful deployment.
 on:
   push:
     branches: [main]
