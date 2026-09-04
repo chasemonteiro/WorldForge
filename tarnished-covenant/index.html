@@ -3823,6 +3823,12 @@ showAppealMenu=function(){
 const tcRenderRunBeforeHardening=renderRun;
 renderRun=function(){
   document.querySelector('#tcAppealOverlay')?.remove();
+  /* Region-complete recovery must bypass the older wrapper chain entirely.
+     This state is already authoritative in Supabase; do not let transient
+     reward/UI wrappers prevent the player from choosing the next region. */
+  if(run?.state?.regionComplete && !pendingRewardReveal?.rewards?.length && !postBattleReport){
+    return renderRegionCompleteSafe();
+  }
   if(run?.state)run.state=tcNormalizeRunState(run.state);
   const transition=tcBlockingTransition(run?.state);
   if(transition==='corporate')return renderCorporateContractNotice();
