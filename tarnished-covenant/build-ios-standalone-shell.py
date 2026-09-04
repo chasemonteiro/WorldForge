@@ -25,6 +25,11 @@ html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
   max-height:100vh!important;
   padding-top:8px!important;
 }
+/* Keep the Encounter actions comfortably above the fixed bottom nav without
+   changing the viewport, nav, panel sizing, or Ledger geometry. */
+html.tc-standalone .tc-encounter-actions{
+  margin-bottom:12px!important;
+}
 '''
 
 # Replace any earlier standalone correction as one unit. This block is owned by
@@ -64,6 +69,8 @@ required = [
     'html.tc-standalone body:has(.tc-encounter-shell) .app-shell',
     'height:100vh!important',
     'padding-top:8px!important',
+    'html.tc-standalone .tc-encounter-actions',
+    'margin-bottom:12px!important',
     "window.navigator.standalone === true",
 ]
 for needle in required:
