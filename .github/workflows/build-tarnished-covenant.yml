@@ -95,24 +95,14 @@ jobs:
         run: python tarnished-covenant/build-fixed-nav-compositing.py
       - name: Assert regression invariants
         run: python tarnished-covenant/test-regression-invariants.py
-      - name: Mount navigation directly to document body
-        run: python tarnished-covenant/build-body-nav-portal.py
-      - name: Assert document-level navigation invariants
-        run: python tarnished-covenant/test-body-nav-portal.py
-      - name: Unify Grace and Encounter with document viewport
-        run: python tarnished-covenant/build-unified-viewport.py
-      - name: Assert unified viewport invariants
-        run: python tarnished-covenant/test-unified-viewport.py
       - name: Correct iOS Home Screen viewport
         run: python tarnished-covenant/build-ios-standalone-shell.py
-      - name: Stabilize standalone spacing and Ledger shell
-        run: python tarnished-covenant/build-standalone-spacing-ledger.py
-      - name: Assert standalone invariants
+      - name: Assert iOS standalone invariants
         run: |
           grep -q 'iOS standalone viewport correction' tarnished-covenant/index.html
-          grep -q 'Standalone spacing + stable Ledger shell' tarnished-covenant/index.html
-          grep -q 'tc-screen tc-ledger-shell' tarnished-covenant/index.html
           grep -q 'height:100vh!important' tarnished-covenant/index.html
+          if grep -q 'Persistent Ledger DOM cache' tarnished-covenant/index.html; then exit 1; fi
+          if grep -q 'Standalone spacing + stable Ledger shell' tarnished-covenant/index.html; then exit 1; fi
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
