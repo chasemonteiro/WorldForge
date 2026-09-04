@@ -1,0 +1,55 @@
+name: Patch Region Complete Resume
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-region-complete-resume.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout control script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: control
+      - name: Checkout Tarnished Covenant assets
+        uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          path: app
+      - name: Apply region-complete resume repair
+        run: python control/.github/scripts/patch-region-complete-resume.py app
+      - name: Verify focused invariants
+        run: |
+          grep -q 'Region-complete recovery must bypass the older wrapper chain entirely' app/tarnished-covenant/index.html
+          grep -q 'return renderRegionCompleteSafe();' app/tarnished-covenant/index.html
+          grep -q 'function tcRecoverRememberedRun' app/tarnished-covenant/index.html
+          grep -q 'function tcRefreshCost' app/tarnished-covenant/index.html
+          if grep -q 'for="severity"' app/tarnished-covenant/index.html; then exit 1; fi
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('app/tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+      - name: Validate maintenance script syntax
+        run: python -m py_compile app/tarnished-covenant/build-regression-hardening.py
+      - name: Commit repair
+        working-directory: app
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html tarnished-covenant/build-regression-hardening.py
+          git commit -m 'Bypass broken region-complete render chain'
+          git push origin tarnished-covenant-assets
