@@ -723,17 +723,27 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 .tc-corporate-screen{min-height:calc(100svh - env(safe-area-inset-top));max-width:620px;margin:auto;padding:24px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:center;text-align:center}.tc-corporate-letter{position:relative;border:1px solid #685d45;background:linear-gradient(165deg,#181610,#0d0c09);padding:27px 20px 21px;box-shadow:0 22px 70px rgba(0,0,0,.44)}.tc-corporate-stamp{width:70px;height:70px;margin:0 auto 15px;border:2px solid #9b5b4f;border-radius:50%;display:grid;place-items:center;color:#c87567;transform:rotate(-8deg);font:850 10px/1.05 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.tc-corporate-overline{font:900 10px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.18em;color:var(--red)}.tc-corporate-screen h1{font-size:clamp(34px,10vw,49px);margin:11px auto 13px;line-height:.96}.tc-corporate-copy{font-size:16px;line-height:1.5;color:#d5ccba;max-width:480px;margin:0 auto 18px}.tc-corporate-meta{margin:14px 0;padding:12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--ash);font-size:12px;line-height:1.4}.tc-corporate-screen .btn{margin-top:14px}.tc-corporate-foot{font:italic 11px/1.4 Georgia,serif;color:#7f7666;margin-top:10px}.tc-forge-notice.tc-corporate-pending{cursor:default}
 
 
-/* --- One physical viewport across every primary screen --- */
-html:has(.tc-bottom-nav),body:has(.tc-bottom-nav){min-height:100%;background-color:var(--bg)}
-body:has(.tc-bottom-nav) .app-shell{min-height:100dvh}
-body:has(.tc-sanctuary-shell) .app-shell,body:has(.tc-encounter-shell) .app-shell{height:100dvh;max-height:100dvh;min-height:100dvh}
-.tc-sanctuary-shell,.tc-encounter-shell{height:100%;min-height:100%}
-/* Content, not the screen, owns the nav clearance. This lets the patterned app
-   surface continue behind the nav exactly like Ledger/Compendium. */
+/* --- One dynamic viewport across every primary screen --- */
+html:has(.tc-bottom-nav),body:has(.tc-bottom-nav){
+  width:100%;min-height:100dvh;background-color:var(--bg);
+}
+body:has(.tc-bottom-nav){
+  padding-bottom:0!important;
+}
+body:has(.tc-bottom-nav) .app-shell{
+  width:100%;min-height:100dvh;
+}
+body:has(.tc-sanctuary-shell) .app-shell,
+body:has(.tc-encounter-shell) .app-shell{
+  height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
+}
+.tc-sanctuary-shell,.tc-encounter-shell{
+  height:100%!important;min-height:100%!important;
+}
+/* Content owns the nav clearance; the visual screen itself never stops early. */
 .tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
 .tc-encounter-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
 .tc-encounter-actions{position:relative;z-index:2;margin-bottom:calc(58px + env(safe-area-inset-bottom));padding-bottom:7px}
-@supports(height:100svh){body:has(.tc-sanctuary-shell) .app-shell,body:has(.tc-encounter-shell) .app-shell{height:100svh;max-height:100svh;min-height:100svh}}
 
 
 /* --- Site of Grace: useful run dashboard --- */
