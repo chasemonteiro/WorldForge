@@ -1,0 +1,56 @@
+name: Deploy Grace Art Frames
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-grace-art-frames.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Validate generated frame assets
+        run: |
+          test -s tarnished-covenant/assets/grace/grace-idle-1.svg
+          test -s tarnished-covenant/assets/grace/grace-idle-2.svg
+          test -s tarnished-covenant/assets/grace/grace-idle-3.svg
+          test -s tarnished-covenant/assets/grace/grace-idle-4.svg
+          python -m py_compile tarnished-covenant/build-grace-idle.py
+      - name: Apply generated Grace animation
+        run: |
+          python tarnished-covenant/build-grace-idle.py
+          python tarnished-covenant/build-launch-refresh.py
+      - name: Validate app
+        run: |
+          grep -q 'TC_GRACE_FAVOR_ODDS=5000' tarnished-covenant/index.html
+          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=400' tarnished-covenant/index.html
+          grep -q 'assets/grace/grace-idle-1.svg' tarnished-covenant/index.html
+          grep -q 'assets/grace/grace-idle-2.svg' tarnished-covenant/index.html
+          grep -q 'assets/grace/grace-idle-3.svg' tarnished-covenant/index.html
+          grep -q 'assets/grace/grace-idle-4.svg' tarnished-covenant/index.html
+          grep -q 'graceIdleFavorEncounterId' tarnished-covenant/index.html
+          grep -q 'tcStartGraceArt' tarnished-covenant/index.html
+          python tarnished-covenant/test-regression-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit live app
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Animate Site of Grace with generated frames'; git push origin HEAD:tarnished-covenant-assets; fi
