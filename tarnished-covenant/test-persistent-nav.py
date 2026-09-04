@@ -12,6 +12,11 @@ required=[
     "@keyframes tcScreenFade{from{opacity:.45}to{opacity:1}}",
     "document.body.classList.add('tc-run-active')",
     "body.tc-run-active{",
+    'window.visualViewport',
+    'function tcApplyVisualViewport()',
+    "--tc-vvh",
+    "--tc-nav-top",
+    "nav.querySelectorAll('[data-screen]').forEach",
 ]
 for needle in required:
     if needle not in html:
@@ -44,5 +49,30 @@ if 'body:has(.tc-bottom-nav)' in geometry or 'html:has(.tc-bottom-nav)' in geome
     raise SystemExit('first-paint geometry still depends on dynamic :has(.tc-bottom-nav)')
 if 'body.tc-run-active' not in geometry:
     raise SystemExit('explicit tc-run-active geometry missing')
+
+# CSS viewport units are only a fallback now. The final persistent-nav layer must
+# use the measured VisualViewport for both screen height and nav top position.
+persistent_start=html.rfind('/* --- Persistent bottom navigation: measured viewport chrome')
+if persistent_start<0:
+    raise SystemExit('measured persistent nav CSS block missing')
+persistent_tail=html[persistent_start:]
+for needle in [
+    'height:var(--tc-vvh,100dvh)!important',
+    'top:var(--tc-nav-top,auto)!important',
+    'bottom:auto!important',
+    'viewportTop+viewportHeight-navHeight',
+    'requestAnimationFrame(tcApplyVisualViewport)',
+    'setTimeout(tcApplyVisualViewport,260)'
+]:
+    if needle not in persistent_tail:
+        raise SystemExit('measured visual viewport invariant missing: '+needle)
+
+# Updating the selected tab must not rebuild the persistent bar on every screen.
+sync_start=html.rfind('function tcSyncPersistentNav()')
+sync_tail=html[sync_start:sync_start+900]
+if 'nav.innerHTML=' in sync_tail:
+    raise SystemExit('persistent nav is still rebuilding its buttons during sync')
+if "classList.toggle('active'" not in sync_tail:
+    raise SystemExit('persistent nav does not update active tab in-place')
 
 print('Tarnished Covenant persistent navigation: PASS')
