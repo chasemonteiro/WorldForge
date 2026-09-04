@@ -1,5 +1,6 @@
 name: Build Tarnished Covenant
 
+# validation trigger
 on:
   workflow_dispatch:
   push:
