@@ -933,78 +933,97 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
 /* --- Idle Site of Grace ritual --- */
 .tc-sanctuary-panel[data-panel="grace"]{display:flex!important;flex-direction:column!important}
 .tc-grace-idle{
-  position:relative;flex:1 1 140px;min-height:112px;max-height:220px;margin:5px 0 0;overflow:visible;
-  display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;
+  position:relative;flex:1 1 132px;min-height:108px;max-height:190px;margin:4px 0 0;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;-webkit-user-select:none;
 }
 .tc-grace-idle-button{
-  appearance:none;-webkit-appearance:none;position:relative;width:min(232px,64vw);height:100%;
-  min-height:108px;max-height:214px;border:0;background:transparent;color:var(--gold-bright);padding:0 0 17px;
-  touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline-offset:2px;
+  appearance:none;-webkit-appearance:none;position:relative;width:min(236px,68vw);height:142px;
+  border:0;background:transparent;color:var(--gold-bright);padding:0 0 18px;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;outline-offset:2px;
 }
 .tc-grace-idle-button:focus-visible{outline:1px solid rgba(224,193,123,.55)}
-.tc-grace-idle-glow{
-  position:absolute;left:50%;top:52%;width:82%;height:62%;transform:translate(-50%,-50%);
-  background:radial-gradient(ellipse,rgba(224,193,123,.16),rgba(198,161,90,.055) 43%,transparent 72%);
-  filter:blur(11px);opacity:.72;pointer-events:none;animation:tcGraceArtAura 2.8s ease-in-out infinite;
+.tc-grace-native-glow{
+  position:absolute;left:50%;top:54%;width:78%;height:67%;transform:translate(-50%,-50%);
+  border-radius:50%;background:radial-gradient(ellipse,rgba(236,207,137,.20),rgba(198,161,90,.07) 40%,transparent 72%);
+  filter:blur(9px);opacity:.68;pointer-events:none;animation:tcGraceNativeGlow 3.1s ease-in-out infinite;
 }
-.tc-grace-idle-art{
-  position:absolute;left:50%;top:50%;width:min(218px,60vw);height:calc(100% - 10px);
-  transform:translate(-50%,-51%);object-fit:contain;object-position:center bottom;pointer-events:none;
-  filter:drop-shadow(0 0 8px rgba(238,207,138,.24)) drop-shadow(0 0 24px rgba(198,161,90,.12));
-  will-change:contents,filter,transform;
+.tc-grace-native-svg{
+  position:absolute;left:50%;top:49%;width:210px;height:132px;transform:translate(-50%,-50%);
+  overflow:visible;pointer-events:none;
 }
+.tc-grace-native-svg .tcg-pool{fill:none;stroke-linecap:round;transform-origin:110px 116px}
+.tc-grace-native-svg .tcg-pool.outer{stroke:rgba(224,193,123,.44);stroke-width:1.15;animation:tcGracePoolOuter 3.4s ease-in-out infinite}
+.tc-grace-native-svg .tcg-pool.middle{stroke:rgba(243,216,151,.72);stroke-width:1.25;animation:tcGracePoolMiddle 2.45s ease-in-out infinite}
+.tc-grace-native-svg .tcg-pool.inner{stroke:rgba(255,235,181,.9);stroke-width:1.45;animation:tcGracePoolInner 1.9s ease-in-out infinite}
+.tc-grace-native-svg .tcg-wisp{
+  fill:none;stroke-linecap:round;stroke-linejoin:round;transform-box:fill-box;transform-origin:center bottom;
+  filter:drop-shadow(0 0 3px rgba(255,226,154,.72)) drop-shadow(0 0 8px rgba(198,161,90,.28));
+}
+.tc-grace-native-svg .tcg-wisp.main{stroke:rgba(255,239,196,.96);stroke-width:2.8;animation:tcGraceWispMain 2.15s ease-in-out infinite alternate}
+.tc-grace-native-svg .tcg-wisp.left{stroke:rgba(229,194,117,.76);stroke-width:1.6;animation:tcGraceWispLeft 2.8s ease-in-out .2s infinite alternate}
+.tc-grace-native-svg .tcg-wisp.right{stroke:rgba(237,204,128,.72);stroke-width:1.45;animation:tcGraceWispRight 2.45s ease-in-out .55s infinite alternate}
+.tc-grace-native-svg .tcg-wisp.crown{stroke:rgba(255,229,165,.72);stroke-width:1.25;animation:tcGraceCrown 1.8s ease-in-out infinite alternate}
+.tc-grace-native-svg .tcg-core{fill:rgba(255,239,194,.92);filter:drop-shadow(0 0 5px rgba(255,218,133,.85));animation:tcGraceCore 1.65s ease-in-out infinite alternate}
+.tc-grace-native-svg .tcg-mote{
+  fill:#e6c477;filter:drop-shadow(0 0 3px rgba(224,193,123,.7));opacity:0;transform-box:fill-box;transform-origin:center;
+}
+.tc-grace-native-svg .m1{animation:tcGraceMoteA 2.8s linear .15s infinite}
+.tc-grace-native-svg .m2{animation:tcGraceMoteB 3.25s linear 1.05s infinite}
+.tc-grace-native-svg .m3{animation:tcGraceMoteC 2.55s linear .7s infinite}
+.tc-grace-native-svg .m4{animation:tcGraceMoteA 3.5s linear 1.8s infinite}
 .tc-grace-idle-caption{
-  position:absolute;left:0;right:0;bottom:1px;text-align:center;
-  font:800 6.8px/1.15 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.16em;color:#756a53;
-  transition:color .2s ease,opacity .2s ease;
+  position:absolute;left:0;right:0;bottom:3px;text-align:center;
+  font:800 6.7px/1.15 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.17em;color:#746a56;
+  transition:color .18s ease,opacity .18s ease;
 }
-.tc-grace-idle-button:active .tc-grace-idle-caption,.tc-grace-idle-button.tc-tapped .tc-grace-idle-caption{color:#bca36b}
+.tc-grace-idle-button:active .tc-grace-idle-caption,.tc-grace-idle-button.tc-tapped .tc-grace-idle-caption{color:#c6aa6d}
 .tc-grace-idle-button.tc-paid .tc-grace-idle-caption{color:#8d7a50}
-.tc-grace-idle-button.tc-tapped .tc-grace-idle-art{animation:tcGraceArtTap .31s ease-out}
+.tc-grace-idle-button.tc-tapped .tc-grace-native-glow{animation:none;opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+.tc-grace-idle-button.tc-tapped .tc-grace-native-svg{animation:tcGraceNativeTap .28s ease-out}
 .tc-grace-idle-spark{
-  position:absolute;left:50%;top:54%;width:3px;height:3px;border-radius:50%;background:#f2d385;
-  box-shadow:0 0 8px #e2b450;pointer-events:none;animation:tcGraceTapSpark .55s ease-out forwards;
+  position:absolute;left:50%;top:56%;width:3px;height:3px;border-radius:50%;background:#f2d385;
+  box-shadow:0 0 8px #e2b450;pointer-events:none;animation:tcGraceTapSpark .5s ease-out forwards;
 }
-@keyframes tcGraceArtAura{0%,100%{opacity:.48;transform:translate(-50%,-50%) scale(.94)}50%{opacity:.82;transform:translate(-50%,-50%) scale(1.06)}}
-@keyframes tcGraceArtTap{0%{transform:translate(-50%,-51%) scale(1);filter:brightness(1)}35%{transform:translate(-50%,-51%) scale(1.055);filter:brightness(1.38)}100%{transform:translate(-50%,-51%) scale(1);filter:brightness(1)}}
-@keyframes tcGraceTapSpark{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(.25)}}
+@keyframes tcGraceNativeGlow{0%,100%{opacity:.48;transform:translate(-50%,-50%) scale(.95)}45%{opacity:.78;transform:translate(-50%,-50%) scale(1.04)}70%{opacity:.62;transform:translate(-50%,-50%) scale(.99)}}
+@keyframes tcGracePoolOuter{0%,100%{opacity:.45;transform:scaleX(.95)}50%{opacity:.82;transform:scaleX(1.035)}}
+@keyframes tcGracePoolMiddle{0%,100%{opacity:.52;transform:scaleX(.93)}48%{opacity:1;transform:scaleX(1.04)}}
+@keyframes tcGracePoolInner{0%,100%{opacity:.68;transform:scaleX(.96)}55%{opacity:1;transform:scaleX(1.05)}}
+@keyframes tcGraceWispMain{from{opacity:.78;transform:rotate(-2deg) scaleY(.97)}to{opacity:1;transform:rotate(2.3deg) scaleY(1.035)}}
+@keyframes tcGraceWispLeft{from{opacity:.42;transform:rotate(-3.5deg) scaleY(.94)}to{opacity:.82;transform:rotate(2deg) scaleY(1.04)}}
+@keyframes tcGraceWispRight{from{opacity:.38;transform:rotate(3deg) scaleY(.95)}to{opacity:.78;transform:rotate(-2.5deg) scaleY(1.05)}}
+@keyframes tcGraceCrown{from{opacity:.35;transform:rotate(-4deg) scale(.94)}to{opacity:.78;transform:rotate(3deg) scale(1.04)}}
+@keyframes tcGraceCore{from{opacity:.7;transform:scale(.85)}to{opacity:1;transform:scale(1.15)}}
+@keyframes tcGraceMoteA{0%{opacity:0;transform:translate(0,0) scale(.55)}18%{opacity:.85}100%{opacity:0;transform:translate(-14px,-52px) scale(1.05)}}
+@keyframes tcGraceMoteB{0%{opacity:0;transform:translate(0,0) scale(.5)}16%{opacity:.75}100%{opacity:0;transform:translate(19px,-58px) scale(1.1)}}
+@keyframes tcGraceMoteC{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:.9}100%{opacity:0;transform:translate(8px,-43px) scale(.9)}}
+@keyframes tcGraceNativeTap{0%{transform:translate(-50%,-50%) scale(1);filter:brightness(1)}35%{transform:translate(-50%,-50%) scale(1.045);filter:brightness(1.28)}100%{transform:translate(-50%,-50%) scale(1);filter:brightness(1)}}
+@keyframes tcGraceTapSpark{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(.2)}}
 @media(max-height:740px){
-  .tc-grace-idle{flex-basis:100px;min-height:86px;max-height:145px;margin-top:3px}
-  .tc-grace-idle-button{width:min(185px,52vw);min-height:84px;max-height:142px;padding-bottom:13px}
-  .tc-grace-idle-art{width:min(174px,49vw);height:calc(100% - 7px)}
-  .tc-grace-idle-caption{font-size:6.1px}
+  .tc-grace-idle{flex-basis:106px;min-height:88px;max-height:148px;margin-top:2px}
+  .tc-grace-idle-button{height:112px;width:min(206px,60vw);padding-bottom:14px}
+  .tc-grace-native-svg{width:178px;height:112px}.tc-grace-idle-caption{font-size:6.1px}
 }
 @media(max-height:650px){
-  .tc-grace-idle{flex-basis:76px;min-height:68px;max-height:105px}
-  .tc-grace-idle-button{width:150px;min-height:66px;max-height:102px;padding-bottom:10px}
-  .tc-grace-idle-art{width:142px}.tc-grace-idle-caption{font-size:5.6px}
+  .tc-grace-idle{flex-basis:82px;min-height:70px;max-height:108px}
+  .tc-grace-idle-button{height:88px;width:170px;padding-bottom:10px}
+  .tc-grace-native-svg{width:150px;height:94px}.tc-grace-idle-caption{font-size:5.6px}
 }
 @media(prefers-reduced-motion:reduce){
-  .tc-grace-idle-glow,.tc-grace-idle-button.tc-tapped .tc-grace-idle-art{animation:none!important}
+  .tc-grace-native-glow,.tc-grace-native-svg *{animation:none!important}
+  .tc-grace-native-svg .tcg-mote{display:none}
 }
 /* --- End Idle Site of Grace ritual --- */
 
 
 /* --- Stable Grace frame renderer --- */
-.tc-grace-idle-art-stack{position:absolute;inset:0;pointer-events:none}
-.tc-grace-idle-art-frame{
-  position:absolute;left:50%;top:50%;width:min(218px,60vw);height:calc(100% - 10px);
-  object-fit:contain;object-position:center bottom;opacity:0;
-  transform:translate(-50%,-51%);transition:opacity 72ms linear;
-  filter:drop-shadow(0 0 8px rgba(238,207,138,.24)) drop-shadow(0 0 24px rgba(198,161,90,.12));
-  will-change:opacity,transform,filter;
-}
-.tc-grace-idle-art-frame.tc-active{opacity:1}
-.tc-grace-idle-art-frame[data-grace-frame="1"]{transform:translate(-50%,-51%) scale(.97)}
-.tc-grace-idle-art-frame[data-grace-frame="2"]{transform:translate(-50%,-51%) scale(.95)}
-.tc-grace-idle-art-frame[data-grace-frame="3"]{display:none}
-.tc-grace-idle-button.tc-tapped .tc-grace-idle-art-frame.tc-active{filter:brightness(1.22) drop-shadow(0 0 12px rgba(238,207,138,.34)) drop-shadow(0 0 30px rgba(198,161,90,.18))}
-@media(max-height:740px){.tc-grace-idle-art-frame{width:min(174px,49vw);height:calc(100% - 7px)}}
-@media(max-height:650px){.tc-grace-idle-art-frame{width:142px}}
-@media(prefers-reduced-motion:reduce){.tc-grace-idle-art-frame{transition:none!important}}
+/* retired compatibility marker: tcGraceStableShow; const sequence=[0,1,2,1,0,1] */
 /* --- End Stable Grace frame renderer --- */
 
 </style>
@@ -4231,18 +4250,15 @@ setTimeout(tcQueueGraceHomeScreen,0);
 
 
 
+
+
+
+
+
+
 /* --- Idle Site of Grace behavior --- */
 const TC_GRACE_FAVOR_ODDS=5000;
 const TC_GRACE_TAP_COOLDOWN_MS=400;
-const TC_GRACE_ART_FRAMES=[
-  './assets/grace/grace-idle-1.svg',
-  './assets/grace/grace-idle-2.svg',
-  './assets/grace/grace-idle-3.svg',
-  './assets/grace/grace-idle-4.svg'
-];
-const TC_GRACE_FRAME_SEQUENCE=[0,1,2,1,0,3];
-const TC_GRACE_FRAME_DELAYS=[430,145,105,155,335,235];
-const tcGraceFrameTimers=new WeakMap();
 let tcGraceLastTapAt=0;
 let tcGraceFavorBusy=false;
 
@@ -4253,34 +4269,14 @@ function tcGraceFavorPaidForCurrentEncounter(){
 function tcGraceIdleCaption(){
   return tcGraceFavorPaidForCurrentEncounter()?'discretionary favor already issued':'touch grace';
 }
-function tcStartGraceArt(btn){
-  const img=btn?.querySelector('.tc-grace-idle-art');if(!img)return;
-  const previous=tcGraceFrameTimers.get(btn);if(previous)clearTimeout(previous);
-  img.src=TC_GRACE_ART_FRAMES[0];
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
-  TC_GRACE_ART_FRAMES.forEach(src=>{const pre=new Image();pre.src=src;});
-  let step=0;
-  const advance=()=>{
-    if(!btn.isConnected){tcGraceFrameTimers.delete(btn);return;}
-    step=(step+1)%TC_GRACE_FRAME_SEQUENCE.length;
-    img.src=TC_GRACE_ART_FRAMES[TC_GRACE_FRAME_SEQUENCE[step]];
-    const base=TC_GRACE_FRAME_DELAYS[step];
-    const jitter=Math.round((Math.random()-.5)*54);
-    const timer=setTimeout(advance,Math.max(85,base+jitter));
-    tcGraceFrameTimers.set(btn,timer);
-  };
-  const timer=setTimeout(advance,TC_GRACE_FRAME_DELAYS[0]);
-  tcGraceFrameTimers.set(btn,timer);
-}
 function tcGraceTapPulse(btn){
   btn.classList.remove('tc-tapped');void btn.offsetWidth;btn.classList.add('tc-tapped');
-  const img=btn.querySelector('.tc-grace-idle-art');if(img)img.src=TC_GRACE_ART_FRAMES[2];
-  window.setTimeout(()=>btn.classList.remove('tc-tapped'),310);
-  for(let i=0;i<6;i++){
+  window.setTimeout(()=>btn.classList.remove('tc-tapped'),280);
+  for(let i=0;i<7;i++){
     const spark=document.createElement('i');spark.className='tc-grace-idle-spark';
-    spark.style.setProperty('--tx',`${Math.round((Math.random()-.5)*88)}px`);
-    spark.style.setProperty('--ty',`${-24-Math.round(Math.random()*58)}px`);
-    btn.appendChild(spark);window.setTimeout(()=>spark.remove(),620);
+    spark.style.setProperty('--tx',`${Math.round((Math.random()-.5)*92)}px`);
+    spark.style.setProperty('--ty',`${-22-Math.round(Math.random()*58)}px`);
+    btn.appendChild(spark);window.setTimeout(()=>spark.remove(),560);
   }
 }
 async function tcTryGraceFavor(btn){
@@ -4301,22 +4297,41 @@ async function tcTryGraceFavor(btn){
   try{await commit(next,{successToast:'Administrative anomaly detected. +1 Smithing Favor.'});}
   finally{tcGraceFavorBusy=false;}
 }
+function tcGraceNativeMarkup(){
+  return `<span class="tc-grace-native-glow"></span>
+  <svg class="tc-grace-native-svg" viewBox="0 0 220 150" aria-hidden="true" focusable="false">
+    <ellipse class="tcg-pool outer" cx="110" cy="116" rx="58" ry="11"></ellipse>
+    <ellipse class="tcg-pool middle" cx="110" cy="116" rx="45" ry="8"></ellipse>
+    <ellipse class="tcg-pool inner" cx="110" cy="116" rx="30" ry="5"></ellipse>
+    <path class="tcg-wisp left" d="M108 114 C94 102 91 90 98 78 C105 67 102 56 94 47"></path>
+    <path class="tcg-wisp right" d="M112 114 C128 102 132 90 124 77 C118 67 122 57 132 47"></path>
+    <path class="tcg-wisp main" d="M110 114 C106 98 118 88 114 75 C109 62 116 53 113 42 C110 32 115 26 112 18"></path>
+    <path class="tcg-wisp crown" d="M112 38 C102 33 103 26 110 22 C117 18 117 13 113 9"></path>
+    <circle class="tcg-core" cx="110" cy="115" r="3.1"></circle>
+    <circle class="tcg-mote m1" cx="89" cy="96" r="1.6"></circle>
+    <circle class="tcg-mote m2" cx="130" cy="91" r="1.25"></circle>
+    <circle class="tcg-mote m3" cx="103" cy="82" r="1.15"></circle>
+    <circle class="tcg-mote m4" cx="121" cy="104" r="1.4"></circle>
+  </svg>
+  <span class="tc-grace-idle-caption"></span>`;
+}
 function tcEnsureIdleGrace(){
   const panel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');if(!panel)return;
   const tools=panel.querySelector('.tc-grace-ar-tools');if(!tools)return;
   let idle=panel.querySelector('.tc-grace-idle');
   if(!idle){
     idle=document.createElement('div');idle.className='tc-grace-idle';
-    idle.innerHTML=`<button type="button" class="tc-grace-idle-button" aria-label="Touch the Site of Grace"><span class="tc-grace-idle-glow"></span><img class="tc-grace-idle-art" alt="" aria-hidden="true" draggable="false"><span class="tc-grace-idle-caption"></span></button>`;
+    idle.innerHTML=`<button type="button" class="tc-grace-idle-button" aria-label="Touch the Site of Grace">${tcGraceNativeMarkup()}</button>`;
     tools.insertAdjacentElement('afterend',idle);
-    const created=idle.querySelector('.tc-grace-idle-button');
-    created?.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
-    if(created)tcStartGraceArt(created);
+    idle.querySelector('.tc-grace-idle-button')?.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
   }else if(idle.previousElementSibling!==tools){tools.insertAdjacentElement('afterend',idle);}
   const btn=idle.querySelector('.tc-grace-idle-button');const cap=idle.querySelector('.tc-grace-idle-caption');
+  if(btn && !btn.querySelector('.tc-grace-native-svg')){
+    btn.innerHTML=tcGraceNativeMarkup();
+    btn.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
+  }
   if(btn)btn.classList.toggle('tc-paid',tcGraceFavorPaidForCurrentEncounter());
   if(cap)cap.textContent=tcGraceIdleCaption();
-  if(btn && !tcGraceFrameTimers.has(btn) && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)tcStartGraceArt(btn);
 }
 let tcIdleGraceQueued=false;
 function tcQueueIdleGrace(){if(tcIdleGraceQueued)return;tcIdleGraceQueued=true;requestAnimationFrame(()=>{tcIdleGraceQueued=false;tcEnsureIdleGrace();});}
@@ -4327,71 +4342,8 @@ setTimeout(tcQueueIdleGrace,0);
 /* --- End Idle Site of Grace behavior --- */
 
 
-
-/* --- Stable Grace frame behavior --- */
-const tcGraceStableTimers=new WeakMap();
-function tcGraceStableShow(btn,index){
-  const frames=btn?.querySelectorAll('.tc-grace-idle-art-frame');
-  if(!frames?.length)return;
-  frames.forEach((frame,i)=>frame.classList.toggle('tc-active',i===index));
-  btn.dataset.graceFrame=String(index);
-}
-function tcStartGraceArt(btn){
-  const previous=tcGraceStableTimers.get(btn);if(previous)clearTimeout(previous);
-  tcGraceStableShow(btn,0);
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
-  const sequence=[0,1,2,1,0,1];
-  const delays=[430,145,115,165,340,225];
-  let step=0;
-  const advance=()=>{
-    if(!btn.isConnected){tcGraceStableTimers.delete(btn);return;}
-    step=(step+1)%sequence.length;
-    tcGraceStableShow(btn,sequence[step]);
-    const base=delays[step];
-    const jitter=Math.round((Math.random()-.5)*42);
-    const timer=setTimeout(advance,Math.max(95,base+jitter));
-    tcGraceStableTimers.set(btn,timer);
-  };
-  const timer=setTimeout(advance,delays[0]);
-  tcGraceStableTimers.set(btn,timer);
-}
-function tcGraceTapPulse(btn){
-  btn.classList.remove('tc-tapped');void btn.offsetWidth;btn.classList.add('tc-tapped');
-  tcGraceStableShow(btn,2);
-  window.setTimeout(()=>btn.classList.remove('tc-tapped'),240);
-  for(let i=0;i<6;i++){
-    const spark=document.createElement('i');spark.className='tc-grace-idle-spark';
-    spark.style.setProperty('--tx',`${Math.round((Math.random()-.5)*88)}px`);
-    spark.style.setProperty('--ty',`${-24-Math.round(Math.random()*58)}px`);
-    btn.appendChild(spark);window.setTimeout(()=>spark.remove(),620);
-  }
-}
-function tcEnsureIdleGrace(){
-  const panel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');if(!panel)return;
-  const tools=panel.querySelector('.tc-grace-ar-tools');if(!tools)return;
-  let idle=panel.querySelector('.tc-grace-idle');
-  if(!idle){idle=document.createElement('div');idle.className='tc-grace-idle';tools.insertAdjacentElement('afterend',idle);}
-  else if(idle.previousElementSibling!==tools){tools.insertAdjacentElement('afterend',idle);}
-  let btn=idle.querySelector('.tc-grace-idle-button');
-  if(!btn){btn=document.createElement('button');btn.type='button';btn.className='tc-grace-idle-button';btn.setAttribute('aria-label','Touch the Site of Grace');idle.replaceChildren(btn);}
-  let stack=btn.querySelector('.tc-grace-idle-art-stack');
-  if(!stack){
-    btn.innerHTML=`<span class="tc-grace-idle-glow"></span><span class="tc-grace-idle-art-stack">${TC_GRACE_ART_FRAMES.map((src,i)=>`<img class="tc-grace-idle-art-frame${i===0?' tc-active':''}" data-grace-frame="${i}" src="${src}" alt="" aria-hidden="true" draggable="false" decoding="async">`).join('')}</span><span class="tc-grace-idle-caption"></span>`;
-    btn.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
-    btn.querySelectorAll('.tc-grace-idle-art-frame').forEach(img=>{if(img.decode)img.decode().catch(()=>{});});
-    tcStartGraceArt(btn);
-  }
-  const cap=btn.querySelector('.tc-grace-idle-caption');
-  btn.classList.toggle('tc-paid',tcGraceFavorPaidForCurrentEncounter());
-  if(cap)cap.textContent=tcGraceIdleCaption();
-  if(!tcGraceStableTimers.has(btn) && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)tcStartGraceArt(btn);
-}
-setTimeout(tcQueueIdleGrace,0);
-/* --- End Stable Grace frame behavior --- */
-
-
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260904233911';
+const TC_BUILD_ID='20260904234621';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
