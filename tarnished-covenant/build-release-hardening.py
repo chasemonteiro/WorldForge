@@ -82,11 +82,13 @@ s = s.replace(
 if 'rewards: structuredClone(encounter?.postBattleRewards || [])' not in s:
     raise SystemExit('could not patch Compendium reward snapshot')
 
-needle = """      ${mods.length?`<div class=\"tc-comp-mod penalties\"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
-      <div class=\"tc-comp-footer\"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:'No Favor'}</strong></div>"""
-replacement = """      ${mods.length?`<div class=\"tc-comp-mod penalties\"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
+# build-ledger-compendium owns custom-name rendering. Match that personalized
+# markup here instead of the obsolete Chase/Morgan-era footer text.
+needle = """      ${mods.length?`<div class=\"tc-comp-mod penalties\"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(personalizePlayers(x.text||'',{playerNames:[names.chase,names.morgan]}))}</p>`).join('')}</div>`:''}
+      <div class=\"tc-comp-footer\"><span>${entry.completedBy?`recorded by ${h(personalizePlayers(entry.completedBy,{playerNames:[names.chase,names.morgan]}))}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:'No Favor'}</strong></div>"""
+replacement = """      ${mods.length?`<div class=\"tc-comp-mod penalties\"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(personalizePlayers(x.text||'',{playerNames:[names.chase,names.morgan]}))}</p>`).join('')}</div>`:''}
       ${Array.isArray(entry.rewards)&&entry.rewards.length?`<div class=\"tc-comp-mod rewards\"><span>COVENANT REWARDS</span><p>${entry.rewards.map(h).join(' · ')}</p></div>`:''}
-      <div class=\"tc-comp-footer\"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:(Array.isArray(entry.rewards)&&entry.rewards.length?'Boons earned':'No reward')}</strong></div>"""
+      <div class=\"tc-comp-footer\"><span>${entry.completedBy?`recorded by ${h(personalizePlayers(entry.completedBy,{playerNames:[names.chase,names.morgan]}))}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:(Array.isArray(entry.rewards)&&entry.rewards.length?'Boons earned':'No reward')}</strong></div>"""
 if needle in s:
     s=s.replace(needle,replacement,1)
 else:
