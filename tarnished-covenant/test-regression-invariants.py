@@ -105,9 +105,7 @@ for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
 require('(run.state.history?.length||0)-index')
 require("document.querySelector('#tcAppealOverlay')?.remove();")
 
-# Lock the exact shared navigation geometry from the archived pre-regression
-# generated app (2026-09-04 00:11Z). Do not reintroduce the later safe-area
-# resize or any viewport simulation.
+# Lock the exact shared navigation geometry from the archived pre-regression app.
 require('height:70px;padding:5px 10px calc(5px + env(safe-area-inset-bottom))')
 require('.app-shell{max-width:760px;padding:16px 14px calc(86px + env(safe-area-inset-bottom))}')
 for forbidden in [
@@ -119,6 +117,11 @@ for forbidden in [
     'tc-persistent-nav'
 ]:
     forbid(forbidden, 'obsolete viewport/navigation experiment remains: '+forbidden)
+
+# A fixed bottom nav must never be hosted by a transformed screen ancestor.
+# Safari can then treat the transformed screen as the fixed-position containing block.
+require('@keyframes tcIn{from{opacity:.35}to{opacity:1}}')
+forbid('transform:translateY(5px)', 'screen entrance transform can trap fixed bottom navigation')
 
 if html.count('startApp().catch(') != 1:
     raise SystemExit(f'expected one app bootstrap, found {html.count("startApp().catch(")}')
