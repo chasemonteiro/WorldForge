@@ -3,9 +3,8 @@ from pathlib import Path
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
 
-# iOS Home Screen web apps cache status-bar configuration at install time.
-# Keep black-translucent: current WebKit reports incorrect standalone viewport
-# heights when the app was installed without this mode.
+# Keep the installed iOS web app in the viewport mode that avoids the short
+# standalone svh box seen on this device.
 s = s.replace(
     '<meta name="apple-mobile-web-app-status-bar-style" content="black">',
     '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">',
@@ -17,25 +16,34 @@ css = r'''
 html.tc-standalone,html.tc-standalone body{
   min-height:100vh!important;
 }
-/* Grace + Encounter are the only primary screens locked to 100svh. WebKit's
-   installed-app viewport can resolve svh short; use the standalone vh box. */
+/* body already owns env(safe-area-inset-top). Grace + Encounter used to add
+   that same inset again inside app-shell, which pushed both screens down by
+   roughly one iPhone status-bar safe area. Keep only the normal 8px shell gap. */
 html.tc-standalone body:has(.tc-encounter-shell) .app-shell,
 html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
   height:100vh!important;
   max-height:100vh!important;
+  padding-top:8px!important;
 }
 '''
 
-# Remove the previous experimental standalone block if present.
-start = s.find('/* --- iOS standalone shell: keep Home Screen geometry deterministic --- */')
-if start != -1:
-    end = s.find('</style>', start)
-    if end == -1:
-        raise SystemExit('could not locate end of old standalone CSS')
-    s = s[:start] + s[end:]
+# Replace any earlier standalone correction as one unit. This block is owned by
+# this patch and is intentionally the final CSS inserted before </style>.
+for marker in (
+    '/* --- iOS standalone shell: keep Home Screen geometry deterministic --- */',
+    '/* --- iOS standalone viewport correction --- */',
+):
+    start = s.find(marker)
+    if start != -1:
+        end = s.find('</style>', start)
+        if end == -1:
+            raise SystemExit('could not locate standalone CSS end')
+        s = s[:start] + s[end:]
+        break
 
-if 'iOS standalone viewport correction' not in s:
-    s = s.replace('</style>', css + '\n</style>', 1)
+if '</style>' not in s:
+    raise SystemExit('style marker missing')
+s = s.replace('</style>', css + '\n</style>', 1)
 
 js = r'''
 <script>
@@ -55,6 +63,7 @@ required = [
     'iOS standalone viewport correction',
     'html.tc-standalone body:has(.tc-encounter-shell) .app-shell',
     'height:100vh!important',
+    'padding-top:8px!important',
     "window.navigator.standalone === true",
 ]
 for needle in required:
