@@ -6,6 +6,7 @@ on:
     paths:
       - 'tarnished-covenant/chunks/**'
       - 'tarnished-covenant/build-*.py'
+      - 'tarnished-covenant/test-*.py'
       - 'tarnished-covenant/regional-pools.js'
       - '.github/workflows/build-tarnished-covenant.yml'
 
@@ -19,161 +20,111 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: tarnished-covenant-assets
-
       - name: Assemble page
-        run: |
-          cat tarnished-covenant/chunks/part0.txt \
-              tarnished-covenant/chunks/part1.txt \
-              tarnished-covenant/chunks/part2.txt \
-              tarnished-covenant/chunks/part3.txt \
-              tarnished-covenant/chunks/part4.txt \
-              tarnished-covenant/chunks/part5.txt \
-              tarnished-covenant/chunks/part6.txt \
-              > tarnished-covenant/index.html
-
+        run: cat tarnished-covenant/chunks/part{0,1,2,3,4,5,6}.txt > tarnished-covenant/index.html
       - name: Patch app behavior
         run: python tarnished-covenant/build-behavior.py
-
       - name: Patch progression and Remembrances
         run: python tarnished-covenant/build-progression.py
-
       - name: Repair region table closure
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('tarnished-covenant/index.html')
-          s = p.read_text()
-          old = "  }\n\n\nregions['Siofra River + Nokron']"
-          new = "  }\n};\n\nregions['Siofra River + Nokron']"
-          if old not in s:
-              raise SystemExit('region closure repair target not found')
-          p.write_text(s.replace(old, new, 1))
+          p=Path('tarnished-covenant/index.html');s=p.read_text();old="  }\n\n\nregions['Siofra River + Nokron']";new="  }\n};\n\nregions['Siofra River + Nokron']"
+          if old not in s: raise SystemExit('region closure repair target not found')
+          p.write_text(s.replace(old,new,1))
           PY
-
       - name: Apply spreadsheet regional pools
         run: python tarnished-covenant/build-regional-pools.py
-
       - name: Apply screen-based UI
         run: python tarnished-covenant/build-ui.py
-
       - name: Normalize Chaos render hook
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('tarnished-covenant/index.html')
-          s = p.read_text()
-          s = s.replace('if(state.runComplete) return renderRunComplete();', 'if (state.runComplete) return renderRunComplete();', 1)
-          p.write_text(s)
+          p=Path('tarnished-covenant/index.html');s=p.read_text();s=s.replace('if(state.runComplete) return renderRunComplete();','if (state.runComplete) return renderRunComplete();',1);p.write_text(s)
           PY
-
       - name: Apply ornate theme and expanded Chaos
         run: python tarnished-covenant/build-chaos-theme.py
-
       - name: Apply sourced promotional imagery
         run: python tarnished-covenant/build-images.py
-
       - name: Polish image crops and encounter entry
         run: python tarnished-covenant/build-layout-polish.py
-
       - name: Apply custom character names
         run: python tarnished-covenant/build-character-names.py
-
       - name: Polish Chaos reveal motion and readability
         run: python tarnished-covenant/build-chaos-polish.py
-
       - name: Apply Smithing Favor and Bell Bearing Contracts
         run: python tarnished-covenant/build-smithing-system.py
-
       - name: Expand risk pools and rebalance Favor
         run: python tarnished-covenant/build-risk-rebalance-runner.py
-
       - name: Make Chaos triggers objective
         run: python tarnished-covenant/build-objective-chaos-triggers.py
-
       - name: Add compendium encounter challenges
         run: python tarnished-covenant/build-compendium-challenges.py
-
       - name: Rebuild Chaos reveal and add Old Souls rules
         run: python tarnished-covenant/build-chaos-redesign.py
-
       - name: Escalate Chaos with run progress
         run: python tarnished-covenant/build-escalating-chaos.py
-
       - name: Run stability and regression pass
         run: python tarnished-covenant/build-stability-pass.py
-
       - name: Apply final navigation safety layer
         run: python tarnished-covenant/build-nav-safety.py
-
       - name: Apply compact one-screen Chaos layout
         run: python tarnished-covenant/build-chaos-compact.py
-
       - name: Move Favor bookkeeping to post-battle report
         run: python tarnished-covenant/build-post-battle-runner.py
-
       - name: Add in-app refresh control
         run: python tarnished-covenant/build-refresh-button.py
-
       - name: Make session persistence durable
         run: python tarnished-covenant/build-durable-session.py
-
       - name: Redesign Ledger as run compendium
         run: python tarnished-covenant/build-ledger-compendium.py
-
       - name: Randomize Covenant rewards and gate rerolls
         run: python tarnished-covenant/build-random-rewards.py
-
       - name: Run release hardening and usability checks
         run: python tarnished-covenant/build-release-hardening.py
-
       - name: Enlarge and reflow phone UI
         run: python tarnished-covenant/build-mobile-readability.py
-
       - name: Fix capstone save transition
         run: python tarnished-covenant/build-capstone-save-fix.py
-
       - name: Animate Covenant reward draws
         run: python tarnished-covenant/build-reward-slot.py
-
       - name: Add Aviary Ticket reward
         run: python tarnished-covenant/build-aviary-ticket.py
-
       - name: Harden final reward Continue transition
         run: python tarnished-covenant/build-reward-continue-fix.py
-
       - name: Preserve Smithing wallet across regions
         run: python tarnished-covenant/build-region-state-persistence.py
-
       - name: Apply challenge-first ruleset
         run: python tarnished-covenant/build-challenge-ruleset.py
-
       - name: Add one-time capstone defer
         run: python tarnished-covenant/build-capstone-defer.py
-
       - name: Apply compact encounter and chronicle UI
         run: python tarnished-covenant/build-interface-overhaul.py
-
+      - name: Apply viewport navigation and mandatory corporate contracts
+        run: python tarnished-covenant/build-information-architecture.py
+      - name: Anchor bottom navigation to safe area
+        run: python tarnished-covenant/build-bottom-nav-safearea.py
+      - name: Turn Site of Grace into run dashboard
+        run: python tarnished-covenant/build-sanctuary-dashboard.py
+      - name: Apply consolidated maintenance core
+        run: python tarnished-covenant/build-regression-hardening.py
+      - name: Assert regression invariants
+        run: python tarnished-covenant/test-regression-invariants.py
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          html = Path('tarnished-covenant/index.html').read_text()
-          scripts = re.findall(r'<script(?:[^>]*)>(.*?)</script>', html, flags=re.S)
-          if not scripts:
-            raise SystemExit('No inline script found')
+          html=Path('tarnished-covenant/index.html').read_text();scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
           Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
           PY
           node --check /tmp/tarnished-covenant.js
-
       - name: Commit assembled page
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tarnished-covenant/index.html
-          if git diff --cached --quiet; then
-            echo 'No changes to commit.'
-          else
-            git commit -m 'Assemble Tarnished Covenant app'
-            git push origin tarnished-covenant-assets
-          fi
+          if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Assemble Tarnished Covenant app'; git push origin tarnished-covenant-assets; fi
