@@ -48,7 +48,11 @@ for name in ['index.html','build-regression-hardening.py']:
     for needle in [
         'Region-complete recovery must bypass the older wrapper chain entirely.',
         'return renderRegionCompleteSafe();',
-        'function tcRecoverRememberedRun',
     ]:
         if needle not in text:
             raise SystemExit(f'{name}: missing invariant: {needle}')
+
+# Resume ownership lives in build-durable-session.py; only the generated app
+# should contain the runtime recovery function at this point.
+if 'function tcRecoverRememberedRun' not in (tc/'index.html').read_text():
+    raise SystemExit('index.html: runtime resume guard missing')
