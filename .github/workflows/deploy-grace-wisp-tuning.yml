@@ -1,0 +1,52 @@
+name: Deploy Grace Wisp Tuning
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-grace-wisp-tuning.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Validate builder source
+        run: |
+          python -m py_compile tarnished-covenant/build-grace-wisp-tuning.py
+          python -m py_compile tarnished-covenant/build-grace-animation-stability.py
+      - name: Apply Grace wisp tuning
+        run: |
+          python tarnished-covenant/build-grace-wisp-tuning.py
+          python tarnished-covenant/build-launch-refresh.py
+      - name: Validate app
+        run: |
+          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
+          grep -q 'tcg-flame-body' tarnished-covenant/index.html
+          grep -q 'far-left' tarnished-covenant/index.html
+          grep -q 'far-right' tarnished-covenant/index.html
+          grep -q 'root-left' tarnished-covenant/index.html
+          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
+          if grep -q 'tc-grace-idle-art-frame' tarnished-covenant/index.html; then exit 1; fi
+          python tarnished-covenant/test-regression-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit live app
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Tune native Site of Grace wisps'; git push origin HEAD:tarnished-covenant-assets; fi
