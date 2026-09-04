@@ -1,5 +1,5 @@
 name: Verify Tarnished Rebuild
-# rerun after reward-slot source repair
+# rerun after reward ownership repair
 
 on:
   push:
