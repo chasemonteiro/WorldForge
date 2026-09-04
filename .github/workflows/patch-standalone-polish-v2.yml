@@ -1,0 +1,51 @@
+name: Patch Standalone Polish V2
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/patch-standalone-polish-v2.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Apply corrected standalone polish
+        run: python tarnished-covenant/build-standalone-spacing-ledger.py
+      - name: Verify corrected activation
+        run: |
+          grep -q 'height:clamp(250px,38vh,350px)!important' tarnished-covenant/index.html
+          grep -q 'height:clamp(230px,34vh,320px)!important' tarnished-covenant/index.html
+          grep -q 'tc-screen tc-ledger-shell' tarnished-covenant/index.html
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('tarnished-covenant/index.html').read_text()
+          a=s.index('/* --- Standalone spacing + stable Ledger shell --- */')
+          b=s.index('</style>',a)
+          assert '@media (display-mode: standalone)' not in s[a:b]
+          PY
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text();scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+      - name: Commit corrected polish
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'Already patched.'
+          else
+            git commit -m 'Activate standalone spacing and Ledger shell'
+            git push origin tarnished-covenant-assets
+          fi
