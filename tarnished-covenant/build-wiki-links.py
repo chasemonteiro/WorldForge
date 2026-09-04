@@ -11,7 +11,10 @@ s=re.sub(r"\n?/\* --- Contextual wiki link styles --- \*/.*?/\* --- End contextu
 css=r'''
 /* --- Contextual wiki link styles --- */
 .tc-wiki-link{display:inline-flex;align-items:center;gap:4px;color:var(--gold-bright);text-decoration:none;border-bottom:1px solid rgba(224,193,123,.34);padding:5px 1px 4px;font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.10em;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.tc-wiki-link:active{opacity:.68}.tc-wiki-boss{margin-top:7px}.tc-wiki-weapon{margin:0 0 8px}.tc-grace-wiki-row{text-align:center;margin:-2px 0 9px}.tc-grace-target .tc-wiki-link{margin-top:7px}.tc-comp-sheet .tc-wiki-boss{margin:1px 0 14px}.tc-comp-sheet .tc-wiki-weapon{margin:1px 0 7px}
+.tc-wiki-link:active{opacity:.68}.tc-wiki-boss{margin-top:7px}.tc-wiki-weapon{margin:0 0 8px}.tc-grace-target .tc-wiki-link{margin-top:7px}.tc-comp-sheet .tc-wiki-boss{margin:1px 0 14px}.tc-comp-sheet .tc-wiki-weapon{margin:1px 0 7px}
+.tc-grace-wiki-target{margin:14px 8px 0;padding:13px 10px 12px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);text-align:center;background:linear-gradient(90deg,transparent,rgba(198,161,90,.045),transparent)}
+.tc-grace-wiki-name{font:400 clamp(21px,6vw,28px)/1.08 Georgia,serif;color:var(--ink);margin:6px 0 2px;text-wrap:balance}
+.tc-grace-wiki-target .tc-kicker{color:var(--gold)}
 /* --- End contextual wiki link styles --- */
 '''
 if '</style>' not in s: raise SystemExit('style marker missing')
@@ -19,16 +22,15 @@ s=s.replace('</style>',css+'\n</style>',1)
 
 js=r'''
 /* --- Contextual Elden Ring wiki links --- */
-const TC_WIKI_BASE='https://eldenring.wiki.fextralife.com/';
+const TC_WIKI_BASE='https://eldenring.wiki.gg/wiki/';
 function tcWikiTitle(name,kind='boss'){
   let out=String(name||'').trim().replace(/[’‘]/g,"'").replace(/[–—]/g,'-');
   if(kind==='boss')out=out.replace(/\s*\([^)]*\)\s*$/,'').trim();
   return out;
 }
 function tcWikiUrl(name,kind='boss'){
-  const title=tcWikiTitle(name,kind);
-  if(!title)return '';
-  return TC_WIKI_BASE+encodeURIComponent(title).replace(/%20/g,'+');
+  const title=tcWikiTitle(name,kind);if(!title)return '';
+  return TC_WIKI_BASE+encodeURIComponent(title.replace(/\s+/g,'_'));
 }
 function tcWikiAnchor(name,kind,label){
   const url=tcWikiUrl(name,kind);if(!url)return null;
@@ -41,14 +43,24 @@ function tcWikiAnchor(name,kind,label){
 }
 function tcDecorateGraceWiki(){
   const target=run?.state?.current?.target?.name;if(!target)return;
-  const dashboardName=document.querySelector('.tc-sanctuary-panel[data-panel="grace"] .tc-grace-target-name,.tc-grace-target-name');
+  const gracePanel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');
+  if(gracePanel&&!gracePanel.querySelector('.tc-grace-wiki-target')){
+    const box=document.createElement('div');box.className='tc-grace-wiki-target';
+    box.innerHTML=`<div class="tc-kicker">current target</div><div class="tc-grace-wiki-name">${h(target)}</div>`;
+    const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)box.appendChild(a);
+    const art=gracePanel.querySelector('.tc-grace-art');(art||gracePanel.lastElementChild)?.insertAdjacentElement('afterend',box);
+  }
+  const dashboardName=document.querySelector('.tc-grace-target-name');
   if(dashboardName&&!dashboardName.parentElement.querySelector(':scope > .tc-wiki-link')){
     const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)dashboardName.insertAdjacentElement('afterend',a);
   }
-  const oldGrid=document.querySelector('.tc-sanctuary-panel[data-panel="grace"] .tc-hub-grid,.tc-screen .tc-hub-grid');
-  if(oldGrid&&!oldGrid.parentElement.querySelector(':scope > .tc-grace-wiki-row')){
-    const row=document.createElement('div');row.className='tc-grace-wiki-row';
-    const a=tcWikiAnchor(target,'boss','Current target wiki');if(a){row.appendChild(a);oldGrid.insertAdjacentElement('afterend',row);}
+  if(!gracePanel){
+    const art=document.querySelector('.tc-screen .tc-grace-art');
+    if(art&&!art.parentElement.querySelector('.tc-grace-wiki-target')){
+      const box=document.createElement('div');box.className='tc-grace-wiki-target';
+      box.innerHTML=`<div class="tc-kicker">current target</div><div class="tc-grace-wiki-name">${h(target)}</div>`;
+      const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)box.appendChild(a);art.insertAdjacentElement('afterend',box);
+    }
   }
 }
 function tcDecorateEncounterWiki(){
@@ -91,6 +103,6 @@ idx=s.rfind('</script>')
 if idx<0: raise SystemExit('script end marker missing')
 s=s[:idx]+js+'\n'+s[idx:]
 
-for needle in ['TC_WIKI_BASE','tcWikiUrl','tcDecorateGraceWiki','tcDecorateEncounterWiki','tcDecorateCompendiumWiki','tc-wiki-link']:
+for needle in ['TC_WIKI_BASE','eldenring.wiki.gg/wiki/','tcWikiUrl','tcDecorateGraceWiki','tc-grace-wiki-target','tcDecorateEncounterWiki','tcDecorateCompendiumWiki','tc-wiki-link']:
     if needle not in s: raise SystemExit('wiki link invariant missing: '+needle)
 p.write_text(s)
