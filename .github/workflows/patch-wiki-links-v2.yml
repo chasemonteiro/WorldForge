@@ -1,0 +1,46 @@
+name: Patch Covenant Wiki Links V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-wiki-links-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Apply Eldenpedia wiki links
+        run: python tarnished-covenant/build-wiki-links.py
+      - name: Verify wiki links
+        run: |
+          grep -q 'eldenring.wiki.gg/wiki/' tarnished-covenant/index.html
+          grep -q 'tc-grace-wiki-target' tarnished-covenant/index.html
+          grep -q 'tcDecorateGraceWiki' tarnished-covenant/index.html
+          grep -q 'tcDecorateEncounterWiki' tarnished-covenant/index.html
+          grep -q 'tcDecorateCompendiumWiki' tarnished-covenant/index.html
+          if grep -q 'eldenring.wiki.fextralife.com' tarnished-covenant/index.html; then exit 1; fi
+      - name: Validate JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit wiki links
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          git commit -m 'Use Eldenpedia wiki links and Grace target card'
+          git push origin HEAD:tarnished-covenant-assets
