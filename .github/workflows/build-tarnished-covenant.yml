@@ -126,6 +126,13 @@ jobs:
         run: |
           grep -q 'Grace home-screen composition' tarnished-covenant/index.html
           grep -q 'tcComposeGraceHomeScreen' tarnished-covenant/index.html
+      - name: Add idle Site of Grace ritual
+        run: python tarnished-covenant/build-grace-idle.py
+      - name: Assert idle Grace ritual
+        run: |
+          grep -q 'Idle Site of Grace ritual' tarnished-covenant/index.html
+          grep -q 'TC_GRACE_FAVOR_ODDS=5000' tarnished-covenant/index.html
+          grep -q 'graceIdleFavorEncounterId' tarnished-covenant/index.html
       - name: Finalize Home Screen build id
         run: python tarnished-covenant/build-launch-refresh.py
       - name: Assert final regression invariants
