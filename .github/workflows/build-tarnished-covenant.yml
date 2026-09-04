@@ -97,6 +97,13 @@ jobs:
         run: python tarnished-covenant/build-fixed-nav-compositing.py
       - name: Assert regression invariants
         run: python tarnished-covenant/test-regression-invariants.py
+      - name: Return primary section nav to first panel
+        run: python tarnished-covenant/build-section-home-nav.py
+      - name: Assert section-home navigation
+        run: |
+          grep -q 'Bottom nav returns primary sections to panel one' tarnished-covenant/index.html
+          grep -q "tcSanctuaryPanelIndex=0" tarnished-covenant/index.html
+          grep -q "tcEncounterPanelIndex=0" tarnished-covenant/index.html
       - name: Correct iOS Home Screen viewport
         run: python tarnished-covenant/build-ios-standalone-shell.py
       - name: Assert iOS standalone invariants
