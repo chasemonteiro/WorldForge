@@ -105,10 +105,14 @@ for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
 require('(run.state.history?.length||0)-index')
 require("document.querySelector('#tcAppealOverlay')?.remove();")
 
-# The bottom-safe-area patch must stay narrow. The failed viewport simulation
-# made Ledger change the apparent position of Grace/Encounter after refresh.
-require('box-sizing:border-box;height:calc(58px + env(safe-area-inset-bottom))')
+# Lock the exact shared navigation geometry from the archived pre-regression
+# generated app (2026-09-04 00:11Z). Do not reintroduce the later safe-area
+# resize or any viewport simulation.
+require('height:70px;padding:5px 10px calc(5px + env(safe-area-inset-bottom))')
+require('.app-shell{max-width:760px;padding:16px 14px calc(86px + env(safe-area-inset-bottom))}')
 for forbidden in [
+    'box-sizing:border-box;height:calc(58px + env(safe-area-inset-bottom))',
+    '.app-shell{max-width:760px;padding:16px 14px calc(66px + env(safe-area-inset-bottom))}',
     'One dynamic viewport across every primary screen',
     'body.tc-run-active',
     'tcVisualViewport',
