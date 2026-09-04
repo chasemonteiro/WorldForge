@@ -1,4 +1,5 @@
 from pathlib import Path
+import runpy
 
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
@@ -125,3 +126,8 @@ for needle in required:
         raise SystemExit('standalone invariant missing: ' + needle)
 
 p.write_text(s)
+
+# Every standalone build also gets a build ID + network freshness check. iOS can
+# restore an installed web app from a frozen snapshot instead of performing a
+# new navigation; this gives future builds a way to detect and replace stale UI.
+runpy.run_path('tarnished-covenant/build-launch-refresh.py')
