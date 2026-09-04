@@ -3,36 +3,38 @@ from pathlib import Path
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
 
-# iOS Add-to-Home-Screen runs as a standalone web app. Avoid the translucent
-# status-bar mode, which lets the page extend under system chrome and gives
-# WebKit a different viewport/safe-area model than regular Safari.
+# iOS Home Screen web apps cache status-bar configuration at install time.
+# Keep black-translucent: current WebKit reports incorrect standalone viewport
+# heights when the app was installed without this mode.
 s = s.replace(
-    '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">',
     '<meta name="apple-mobile-web-app-status-bar-style" content="black">',
+    '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">',
     1,
 )
 
 css = r'''
-/* --- iOS standalone shell: keep Home Screen geometry deterministic --- */
-html.tc-standalone,html.tc-standalone body{min-height:100%;height:100%;}
-html.tc-standalone body{
-  padding:0!important;
-  overflow-x:hidden;
+/* --- iOS standalone viewport correction --- */
+html.tc-standalone,html.tc-standalone body{
+  min-height:100vh!important;
 }
-html.tc-standalone .app-shell{
-  min-height:100%;
-  padding-top:calc(16px + env(safe-area-inset-top))!important;
-  padding-bottom:calc(86px + env(safe-area-inset-bottom))!important;
-}
-html.tc-standalone .tc-bottom-nav{
-  bottom:0!important;
-  height:calc(70px + env(safe-area-inset-bottom))!important;
-  padding:5px 10px calc(5px + env(safe-area-inset-bottom))!important;
-  box-sizing:border-box!important;
+/* Grace + Encounter are the only primary screens locked to 100svh. WebKit's
+   installed-app viewport can resolve svh short; use the standalone vh box. */
+html.tc-standalone body:has(.tc-encounter-shell) .app-shell,
+html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
+  height:100vh!important;
+  max-height:100vh!important;
 }
 '''
 
-if 'iOS standalone shell: keep Home Screen geometry deterministic' not in s:
+# Remove the previous experimental standalone block if present.
+start = s.find('/* --- iOS standalone shell: keep Home Screen geometry deterministic --- */')
+if start != -1:
+    end = s.find('</style>', start)
+    if end == -1:
+        raise SystemExit('could not locate end of old standalone CSS')
+    s = s[:start] + s[end:]
+
+if 'iOS standalone viewport correction' not in s:
     s = s.replace('</style>', css + '\n</style>', 1)
 
 js = r'''
@@ -49,11 +51,11 @@ if "document.documentElement.classList.add('tc-standalone')" not in s:
     s = s.replace('</head>', js + '\n</head>', 1)
 
 required = [
-    'content="black">',
-    'html.tc-standalone body',
-    'height:calc(70px + env(safe-area-inset-bottom))!important',
+    'apple-mobile-web-app-status-bar-style" content="black-translucent"',
+    'iOS standalone viewport correction',
+    'html.tc-standalone body:has(.tc-encounter-shell) .app-shell',
+    'height:100vh!important',
     "window.navigator.standalone === true",
-    "document.documentElement.classList.add('tc-standalone')",
 ]
 for needle in required:
     if needle not in s:
