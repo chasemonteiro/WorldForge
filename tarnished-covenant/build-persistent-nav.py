@@ -78,15 +78,31 @@ bindNav=function(){
   }
 };
 
+/* First-paint geometry must not depend on Safari noticing a newly mounted nav.
+   Set an explicit run-state class before any specialized screen renderer runs. */
+const tcRenderRunBeforePersistentChrome=renderRun;
+renderRun=function(){
+  document.body.classList.add('tc-run-active');
+  return tcRenderRunBeforePersistentChrome();
+};
+
+/* Leaving the run restores normal document safe-area behavior and removes chrome. */
+const tcRenderHomeBeforePersistentChrome=renderHome;
+renderHome=function(){
+  document.body.classList.remove('tc-run-active');
+  if(tcPersistentBottomNav)tcPersistentBottomNav.hidden=true;
+  return tcRenderHomeBeforePersistentChrome();
+};
+
 /* Bootstrap can restore a run before any subsequent tap. Re-sync once the first
-   synchronous render settles so the nav is viewport-attached from frame one. */
-queueMicrotask(()=>{if(run)tcSyncPersistentNav();});
+   synchronous render settles; geometry itself is already active before render. */
+queueMicrotask(()=>{if(run){document.body.classList.add('tc-run-active');tcSyncPersistentNav();}});
 '''
 idx=s.rfind('</script>')
 if idx<0: raise SystemExit('script end marker missing')
 s=s[:idx]+js+'\n'+s[idx:]
 
-for needle in ['tc-persistent-nav','tc-nav-anchor','tcPersistentNavObserver','document.body.appendChild(tcPersistentBottomNav)','navMarkup=function(active)','document.addEventListener(\'click\',event=>']:
+for needle in ['tc-persistent-nav','tc-nav-anchor','tcPersistentNavObserver','document.body.appendChild(tcPersistentBottomNav)','navMarkup=function(active)',"document.body.classList.add('tc-run-active')",'tcRenderRunBeforePersistentChrome',"document.body.classList.remove('tc-run-active')"]:
     if needle not in s: raise SystemExit('persistent nav invariant missing: '+needle)
 
 p.write_text(s)
