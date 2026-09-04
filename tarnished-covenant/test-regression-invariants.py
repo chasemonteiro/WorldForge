@@ -22,26 +22,40 @@ for needle in [
     'data-ledger-view="compendium"', 'data-ledger-view="smithing"',
 ]: require(needle)
 
-for needle in ['tc-encounter-shell','tc-sanctuary-shell','tcEnhanceEncounterPanels','tcEnhanceSanctuaryPanels','tcEnhanceCompendium','tcAffordableBellBearings','tcTransitionIsLocked']:
-    require(needle)
+# Final information architecture + maintenance core.
+for needle in [
+    'tc-encounter-shell','tc-sanctuary-shell','tcEnhanceEncounterPanels',
+    'tcEnhanceSanctuaryPanels','tcEnhanceCompendium','tcAffordableBellBearings',
+    'tcNormalizeRunState','tcBlockingTransition','tcTransitionIsLocked',
+    'tcNavDelegationInstalled'
+]: require(needle)
 
 # Tiered Smithing economy.
 forbid("Contract commissioned. 3 Favor spent.")
 require('return 4 + tier*2;')
 require('pool.filter(b=>sm.favor>=smithingContractCost(b))')
 
-# Region changes preserve Smithing / reward inventory.
+# Region changes preserve Smithing / reward inventory and use the shared
+# normalization boundary instead of inventing another state shape.
 require('const tcStartNextRegionBeforeHardening=startNextRegion;')
-require('next.smithing=structuredClone(state?.smithing||smithingData(state));')
-require('next.smithing=smithingData(next);')
+require('const source=tcNormalizeRunState(state);')
+require('next.smithing=structuredClone(source?.smithing||smithingData(source));')
+require('tcNormalizeRunState(next);')
 
-# Final navigation binder cannot destroy transition state.
+# Navigation is delegated once. The final binder cannot destroy transition
+# state or install a fresh listener after every render.
 last_bind = html.rfind('bindNav=function()')
-if last_bind < 0: raise SystemExit('hardened bindNav override missing')
-bind_tail = html[last_bind:last_bind+800]
+if last_bind < 0: raise SystemExit('maintenance bindNav override missing')
+bind_tail = html[last_bind:last_bind+1200]
 if 'pendingRevealId = null' in bind_tail or 'pendingRevealId=null' in bind_tail:
     raise SystemExit('final navigation binder still clears pending reveal state')
-require("setToast('Finish the current Covenant notice first.')")
+for needle in [
+    'if(tcNavDelegationInstalled)return;',
+    "app.addEventListener('click',event=>",
+    "event.target.closest?.('[data-screen]')",
+    "setToast('Finish the current Covenant notice first.')"
+]:
+    if needle not in bind_tail: raise SystemExit('delegated navigation invariant missing: '+needle)
 
 # Corporate interruption is persisted, affordable, safe-transition-bound.
 require('pendingCorporateForEncounterId')
@@ -54,6 +68,21 @@ for needle in ['sm.pendingCorporateForEncounterId===state.current.id','tcAfforda
     if needle not in elig_tail: raise SystemExit('mandatory contract eligibility missing safe-transition guard: '+needle)
 require('next.smithing.pendingCorporateForEncounterId=null;')
 require('next.smithing.pendingCorporateForEncounterId=next.current.id;')
+
+# Transition priority is centralized. Reward/report must precede Corporate,
+# Corporate precedes the ordinary encounter reveal.
+transition_start=html.rfind('function tcBlockingTransition(')
+if transition_start < 0: raise SystemExit('central transition resolver missing')
+transition_tail=html[transition_start:transition_start+900]
+expected_order=[
+    "return 'reward'", "return 'post-battle'", "return 'corporate'", "return 'encounter-reveal'"
+]
+pos=-1
+for needle in expected_order:
+    nxt=transition_tail.find(needle)
+    if nxt < 0 or nxt <= pos: raise SystemExit('transition priority is missing or out of order: '+needle)
+    pos=nxt
+require("if(transition==='corporate')return renderCorporateContractNotice();")
 
 # Custom names in archived entries.
 require('compendiumNames=function(entry,state)')
@@ -88,11 +117,12 @@ if entry_count < 20:
 for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
     if expected not in rite_chunk: raise SystemExit('expected expanded Rite missing: '+expected)
 
-# Rewards/report precede Corporate; stable numbering remains display-only.
-require("if(!pendingRewardReveal?.rewards?.length&&!postBattleReport&&tcMandatoryContractEligible(state))")
+# Stable numbering remains a display transform; no history mutation is needed.
 require('(run.state.history?.length||0)-index')
 require("document.querySelector('#tcAppealOverlay')?.remove();")
 
+# Single-file patch pipelines are especially vulnerable to accidental duplicate
+# bootstraps. There must be exactly one application start.
 if html.count('startApp().catch(') != 1:
     raise SystemExit(f'expected one app bootstrap, found {html.count("startApp().catch(")}')
 
