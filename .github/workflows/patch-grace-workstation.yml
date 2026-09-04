@@ -1,0 +1,46 @@
+name: Patch Grace Workstation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-grace-workstation.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Apply compact Grace workstation
+        run: python tarnished-covenant/build-wiki-links.py
+      - name: Verify Grace workstation
+        run: |
+          grep -q 'TC_GRACE_MEMOS' tarnished-covenant/index.html
+          grep -q 'Covenant Office Memorandum' tarnished-covenant/index.html
+          grep -q 'tcDecorateGraceOffice' tarnished-covenant/index.html
+          grep -q 'overflow-y:hidden!important' tarnished-covenant/index.html
+          grep -q 'eldenring.wiki.gg/wiki/' tarnished-covenant/index.html
+          grep -q 'https://www.tarnished.dev/weapon-calculator' tarnished-covenant/index.html
+      - name: Validate JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit Grace workstation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          git commit -m 'Compact Site of Grace into pre-fight workstation'
+          git push origin HEAD:tarnished-covenant-assets
