@@ -23,17 +23,44 @@ if '</style>' not in s: raise SystemExit('style marker missing')
 s=s.replace('</style>',css+'\n</style>',1)
 
 js=r'''
+function tcStablePanelTrack(track,tabs,count,getIndex,setIndex){
+  const setActive=i=>tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});setActive(i);};
+  tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
+  let scrollTimer=null;
+  track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));setIndex(i);setActive(i);},70);},{passive:true});
+  requestAnimationFrame(()=>{const prior=track.style.scrollBehavior;track.style.scrollBehavior='auto';const i=Math.max(0,Math.min(count-1,getIndex()));track.scrollLeft=i*track.clientWidth;setActive(i);requestAnimationFrame(()=>{track.style.scrollBehavior=prior;});});
+}
+if(typeof tcWirePanelTrack==='function')tcWirePanelTrack=tcStablePanelTrack;
+
 function tcPairEncounterRefreshes(){
   const screen=app.querySelector('.tc-encounter-shell');if(!screen)return;
-  const earned=screen.querySelector('.tc-earned-refreshes');if(!earned)return;
-  const chaosBtn=earned.querySelector('[data-use-boon="chaos"]');
-  const riteBtn=earned.querySelector('[data-use-boon="rite"]');
+  const chaosBtn=screen.querySelector('[data-use-boon="chaos"]');
+  const riteBtn=screen.querySelector('[data-use-boon="rite"]');
   const chaosPanel=screen.querySelector('.tc-encounter-panel[data-panel="chaos"]');
   const ritePanel=screen.querySelector('.tc-encounter-panel[data-panel="rite"]');
-  const place=(btn,panel,label)=>{if(!btn||!panel)return;const box=document.createElement('div');box.className='tc-panel-refresh';box.innerHTML=`<div class="tc-kicker">${label}</div>`;box.appendChild(btn);panel.appendChild(box);};
+  const place=(btn,panel,label)=>{
+    if(!btn||!panel)return;
+    btn.type='button';
+    const oldBox=btn.closest('.tc-panel-refresh');
+    if(oldBox?.parentElement===panel)return;
+    const box=document.createElement('div');box.className='tc-panel-refresh';box.innerHTML=`<div class="tc-kicker">${label}</div>`;box.appendChild(btn);panel.appendChild(box);
+    if(oldBox&&!oldBox.querySelector('[data-use-boon]'))oldBox.remove();
+  };
   place(chaosBtn,chaosPanel,'Chaos reserve');
   place(riteBtn,ritePanel,'Rite reserve');
-  earned.remove();
+  screen.querySelectorAll('.tc-earned-refreshes').forEach(node=>{if(!node.querySelector('[data-use-boon]'))node.remove();});
+}
+
+if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
+  window.__tcBoonStabilized=true;
+  const tcUseCovenantBoonBeforePairing=useCovenantBoon;
+  useCovenantBoon=async function(kind){
+    if(window.__tcBoonBusy)return;
+    window.__tcBoonBusy=true;
+    try{return await tcUseCovenantBoonBeforePairing(kind);}
+    finally{window.__tcBoonBusy=false;}
+  };
 }
 const tcRenderEncounterBeforeBoonPairing=renderEncounter;
 renderEncounter=function(){tcRenderEncounterBeforeBoonPairing();tcPairEncounterRefreshes();};
