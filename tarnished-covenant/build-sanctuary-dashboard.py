@@ -1,0 +1,55 @@
+from pathlib import Path
+
+p=Path('tarnished-covenant/index.html')
+s=p.read_text()
+
+css=r'''
+/* --- Site of Grace: useful run dashboard --- */
+.tc-grace-dashboard{display:flex;flex-direction:column;gap:10px;text-align:left;padding:4px 2px 12px}
+.tc-grace-status{position:relative;overflow:hidden;border:1px solid rgba(198,161,90,.28);min-height:178px;padding:18px 16px;display:flex;flex-direction:column;justify-content:flex-end;background:#0c0b08;isolation:isolate}
+.tc-grace-status:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-grace-image);background-size:cover;background-position:center 43%;opacity:.42;filter:saturate(.78) contrast(1.04)}
+.tc-grace-status:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(7,6,4,.16),rgba(7,6,4,.48) 38%,rgba(7,6,4,.97) 100%)}
+.tc-grace-eyebrow{font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--gold-bright);margin-bottom:6px}
+.tc-grace-region{font:400 clamp(28px,8vw,38px)/.98 Georgia,serif;color:var(--ink);text-wrap:balance}.tc-grace-resting{font:italic 12px/1.3 Georgia,serif;color:#b9af9e;margin-top:5px}
+.tc-grace-target{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 3px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.tc-grace-target-name{font:400 clamp(23px,6.5vw,30px)/1.02 Georgia,serif;color:var(--ink);text-wrap:balance}.tc-grace-target .tc-kicker{margin-bottom:5px}.tc-grace-go{border:1px solid rgba(198,161,90,.32);background:rgba(18,15,10,.78);color:var(--gold-bright);padding:12px 10px;font:850 9px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.tc-grace-stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line-soft);background:rgba(10,9,7,.56)}.tc-grace-stat{padding:11px 8px;text-align:center}.tc-grace-stat+.tc-grace-stat{border-left:1px solid var(--line-soft)}.tc-grace-stat strong{display:block;font:400 23px/1 Georgia,serif;color:var(--gold-bright)}.tc-grace-stat span{display:block;margin-top:4px;color:var(--ash);font:800 7.5px/1.15 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
+.tc-grace-progress{padding:3px 2px}.tc-grace-progress-head{display:flex;justify-content:space-between;gap:10px;align-items:end}.tc-grace-progress-head strong{font:400 17px/1 Georgia,serif}.tc-grace-progress .tc-progress-line{margin:8px 0 5px}
+.tc-sanctuary-panel[data-panel="grace"] .tc-panel-heading{margin-bottom:7px}.tc-sanctuary-panel[data-panel="grace"]{text-align:left!important}.tc-sanctuary-hint{display:none}
+@media(max-height:720px){.tc-grace-status{min-height:135px;padding:13px}.tc-grace-target{padding:9px 3px}.tc-grace-stat{padding:8px 5px}.tc-grace-stat strong{font-size:20px}}
+'''
+if '</style>' not in s: raise SystemExit('style marker missing')
+s=s.replace('</style>',css+'\n</style>',1)
+
+js=r'''
+/* Site of Grace is now a live run dashboard rather than a second splash screen. */
+function tcGraceDashboardMarkup(state){
+  const c=state.current,sm=smithingData(state),done=requiredRemembrances(state).filter(x=>hasRemembrance(state,x)).length,required=requiredRemembrances(state).length;
+  const req=Math.max(1,capstoneRequirement(state)),remaining=Math.max(0,req-state.cleared),pct=hubProgressPct(state);
+  const target=c?.target?.name||'Awaiting decree';
+  const img=typeof actualRegionImage==='function'?actualRegionImage(state.region):'';
+  return `<div class="tc-grace-dashboard">
+    <div class="tc-grace-status" style="--tc-grace-image:url('${img}')"><div class="tc-grace-eyebrow">Resting at grace</div><div class="tc-grace-region">${h(state.region)}</div><div class="tc-grace-resting">The Covenant is synchronized. The next bad idea is ready.</div></div>
+    <div class="tc-grace-target"><div><div class="tc-kicker gold">next encounter</div><div class="tc-grace-target-name">${h(target)}</div></div><button type="button" class="tc-grace-go" data-screen="encounter">View ›</button></div>
+    <div class="tc-grace-stats"><div class="tc-grace-stat"><strong>${state.cleared}</strong><span>region felled</span></div><div class="tc-grace-stat"><strong>${sm.favor}</strong><span>smithing favor</span></div><div class="tc-grace-stat"><strong>${done}/${required}</strong><span>remembrances</span></div></div>
+    <div class="tc-grace-progress"><div class="tc-grace-progress-head"><div><div class="tc-kicker">regional progress</div><strong>${remaining?`${remaining} before capstone`:'Capstone eligible'}</strong></div><span class="tc-muted">${pct}%</span></div><div class="tc-progress-line"><span style="width:${pct}%"></span></div></div>
+  </div>`;
+}
+
+/* Replace only the contents of the Grace panel after the established Sanctuary
+   enhancer has done its normal work. Progress and Covenant retain their existing
+   live controls and listeners. */
+const tcRenderSanctuaryBeforeDashboard=renderSanctuary;
+renderSanctuary=function(){
+  tcRenderSanctuaryBeforeDashboard();
+  const panel=app.querySelector('.tc-sanctuary-panel[data-panel="grace"]');
+  if(!panel)return;
+  panel.innerHTML=`<div class="tc-panel-heading">At the Grace</div>${tcGraceDashboardMarkup(run.state)}`;
+};
+'''
+idx=s.rfind('</script>')
+if idx<0: raise SystemExit('script end marker missing')
+s=s[:idx]+js+'\n'+s[idx:]
+for needle in ['tcGraceDashboardMarkup','tc-grace-dashboard','next encounter','Resting at grace']:
+    if needle not in s: raise SystemExit('sanctuary dashboard invariant missing: '+needle)
+p.write_text(s)
