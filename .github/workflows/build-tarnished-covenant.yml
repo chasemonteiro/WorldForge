@@ -120,6 +120,12 @@ jobs:
           grep -q 'tcDecorateGraceWiki' tarnished-covenant/index.html
           grep -q 'tcDecorateEncounterWiki' tarnished-covenant/index.html
           grep -q 'tcDecorateCompendiumWiki' tarnished-covenant/index.html
+      - name: Compose Grace as a home screen
+        run: python tarnished-covenant/build-grace-home-screen.py
+      - name: Assert Grace home-screen composition
+        run: |
+          grep -q 'Grace home-screen composition' tarnished-covenant/index.html
+          grep -q 'tcComposeGraceHomeScreen' tarnished-covenant/index.html
       - name: Finalize Home Screen build id
         run: python tarnished-covenant/build-launch-refresh.py
       - name: Assert final regression invariants
