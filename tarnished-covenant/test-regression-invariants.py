@@ -121,6 +121,18 @@ for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
 require('(run.state.history?.length||0)-index')
 require("document.querySelector('#tcAppealOverlay')?.remove();")
 
+# All primary surfaces share the same physical viewport. Grace and Encounter may
+# no longer reserve a fake footer beneath themselves; the fixed nav overlays the
+# full-height app just as it does on Ledger / Compendium.
+for needle in [
+    'One physical viewport across every primary screen',
+    'padding:calc(8px + env(safe-area-inset-top)) 14px 0',
+    'body:has(.tc-bottom-nav) .app-shell{min-height:100dvh}',
+    '.tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}',
+    '.tc-encounter-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}',
+    '.tc-encounter-actions{position:relative;z-index:2;margin-bottom:calc(58px + env(safe-area-inset-bottom))'
+]: require(needle)
+
 # Single-file patch pipelines are especially vulnerable to accidental duplicate
 # bootstraps. There must be exactly one application start.
 if html.count('startApp().catch(') != 1:
