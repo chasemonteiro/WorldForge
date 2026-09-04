@@ -1,6 +1,6 @@
 name: Build Tarnished Covenant
 
-# temporary validation trigger
+# temporary validation trigger v2
 on:
   workflow_dispatch:
   push:
