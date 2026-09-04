@@ -88,13 +88,15 @@ if marker not in s:
     raise SystemExit('renderLedger marker missing')
 s = s.replace(marker, helpers + '\n' + marker, 1)
 
-# Replace the ledger renderer with three complementary views.
+# Replace the ledger renderer with three complementary views. Ledger gets a
+# dedicated class so it can opt out of the global screen-entry animation; that
+# animation replayed on every Ledger render/tab change and read as a flicker.
 pat = r"function renderLedger\(\) \{.*?\n\}\n\nfunction renderSettings\(\)"
 new_renderer = r'''function renderLedger() {
   const state=run.state;
   const title=ledgerView==='smithing'?'Smithing Ledger':ledgerView==='compendium'?'Covenant Compendium':'Remembrance Ledger';
   const body=ledgerView==='smithing'?smithingLedgerMarkup(state):ledgerView==='compendium'?compendiumLedgerMarkup(state):remembranceLedgerBody(state);
-  app.innerHTML=`<section class="tc-screen">${screenTop(title)}
+  app.innerHTML=`<section class="tc-screen tc-ledger-screen">${screenTop(title)}
     <div class="tc-ledger-tabs tc-ledger-tabs-3"><button class="${ledgerView==='remembrances'?'active':''}" data-ledger-view="remembrances">Progress</button><button class="${ledgerView==='compendium'?'active':''}" data-ledger-view="compendium">Compendium</button><button class="${ledgerView==='smithing'?'active':''}" data-ledger-view="smithing">Smithing</button></div>
     ${body}
     ${navMarkup('ledger')}</section>`;
@@ -108,6 +110,7 @@ if n != 1:
 
 css = r'''
 /* --- Ledger Compendium: the stupid things we survived --- */
+.tc-ledger-screen{animation:none!important}
 .tc-ledger-tabs-3{grid-template-columns:repeat(3,1fr)}
 .tc-comp-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:end;padding:8px 3px 15px;border-bottom:1px solid rgba(198,161,90,.24)}
 .tc-comp-title{font:400 clamp(24px,7vw,34px)/1.02 Georgia,serif;margin:5px 0 6px;color:var(--ink)}
@@ -131,7 +134,7 @@ if '</style>' not in s:
     raise SystemExit('style marker missing')
 s = s.replace('</style>', css + '\n</style>', 1)
 
-for needle in ['Covenant Compendium','compendiumLedgerMarkup(state)','chaseWeapon: encounter?.chase?.name','data-ledger-view="compendium"']:
+for needle in ['Covenant Compendium','compendiumLedgerMarkup(state)','chaseWeapon: encounter?.chase?.name','data-ledger-view="compendium"','tc-ledger-screen','animation:none!important']:
     if needle not in s:
         raise SystemExit('compendium invariant missing: '+needle)
 
