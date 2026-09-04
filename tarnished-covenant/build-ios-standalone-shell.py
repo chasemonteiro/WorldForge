@@ -28,7 +28,7 @@ html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
 /* Keep the Encounter actions comfortably above the fixed bottom nav without
    changing the viewport, nav, panel sizing, or Ledger geometry. */
 html.tc-standalone .tc-encounter-actions{
-  margin-bottom:12px!important;
+  margin-bottom:22px!important;
 }
 '''
 
@@ -70,7 +70,7 @@ required = [
     'height:100vh!important',
     'padding-top:8px!important',
     'html.tc-standalone .tc-encounter-actions',
-    'margin-bottom:12px!important',
+    'margin-bottom:22px!important',
     "window.navigator.standalone === true",
 ]
 for needle in required:
