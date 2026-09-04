@@ -2,9 +2,6 @@ name: Build Tarnished Covenant
 
 on:
   workflow_dispatch:
-  push:
-    branches: [tarnished-covenant-assets]
-    paths: ['tarnished-covenant/build-sanctuary-dashboard.py']
 
 permissions:
   contents: write
@@ -17,8 +14,7 @@ jobs:
         with:
           ref: tarnished-covenant-assets
       - name: Assemble page
-        run: |
-          cat tarnished-covenant/chunks/part0.txt tarnished-covenant/chunks/part1.txt tarnished-covenant/chunks/part2.txt tarnished-covenant/chunks/part3.txt tarnished-covenant/chunks/part4.txt tarnished-covenant/chunks/part5.txt tarnished-covenant/chunks/part6.txt > tarnished-covenant/index.html
+        run: cat tarnished-covenant/chunks/part{0,1,2,3,4,5,6}.txt > tarnished-covenant/index.html
       - name: Patch app behavior
         run: python tarnished-covenant/build-behavior.py
       - name: Patch progression and Remembrances
