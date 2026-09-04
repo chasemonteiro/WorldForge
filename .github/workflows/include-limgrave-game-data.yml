@@ -1,12 +1,9 @@
 name: Include Limgrave Game Data
 
+# Manual-only maintenance utility. Do not mutate the deployed asset branch
+# automatically when index.html changes; production builds own the final page.
 on:
-  push:
-    branches: [tarnished-covenant-assets]
-    paths:
-      - 'tarnished-covenant/index.html'
-      - 'tarnished-covenant/limgrave-game-items.js'
-      - '.github/workflows/include-limgrave-game-data.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
