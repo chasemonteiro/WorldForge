@@ -759,16 +759,19 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 
 
 
+
 /* --- iOS standalone viewport correction --- */
 html.tc-standalone,html.tc-standalone body{
   min-height:100vh!important;
 }
-/* Grace + Encounter are the only primary screens locked to 100svh. WebKit's
-   installed-app viewport can resolve svh short; use the standalone vh box. */
+/* body already owns env(safe-area-inset-top). Grace + Encounter used to add
+   that same inset again inside app-shell, which pushed both screens down by
+   roughly one iPhone status-bar safe area. Keep only the normal 8px shell gap. */
 html.tc-standalone body:has(.tc-encounter-shell) .app-shell,
 html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
   height:100vh!important;
   max-height:100vh!important;
+  padding-top:8px!important;
 }
 
 </style>
