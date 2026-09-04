@@ -753,6 +753,22 @@ body:has(.tc-encounter-shell) .app-shell{
 /* --- Site of Grace: useful run dashboard --- */
 .tc-grace-dashboard{display:flex;flex-direction:column;gap:10px;text-align:left;padding:4px 2px 12px}.tc-grace-status{position:relative;overflow:hidden;border:1px solid rgba(198,161,90,.28);min-height:178px;padding:18px 16px;display:flex;flex-direction:column;justify-content:flex-end;background:#0c0b08;isolation:isolate}.tc-grace-status:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-grace-image);background-size:cover;background-position:center 43%;opacity:.42;filter:saturate(.78) contrast(1.04)}.tc-grace-status:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(7,6,4,.16),rgba(7,6,4,.48) 38%,rgba(7,6,4,.97) 100%)}.tc-grace-eyebrow{font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--gold-bright);margin-bottom:6px}.tc-grace-region{font:400 clamp(28px,8vw,38px)/.98 Georgia,serif;color:var(--ink);text-wrap:balance}.tc-grace-resting{font:italic 12px/1.3 Georgia,serif;color:#b9af9e;margin-top:5px}.tc-grace-target{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 3px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.tc-grace-target-name{font:400 clamp(23px,6.5vw,30px)/1.02 Georgia,serif;color:var(--ink);text-wrap:balance}.tc-grace-target .tc-kicker{margin-bottom:5px}.tc-grace-go{border:1px solid rgba(198,161,90,.32);background:rgba(18,15,10,.78);color:var(--gold-bright);padding:12px 10px;font:850 9px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}.tc-grace-stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line-soft);background:rgba(10,9,7,.56)}.tc-grace-stat{padding:11px 8px;text-align:center}.tc-grace-stat+.tc-grace-stat{border-left:1px solid var(--line-soft)}.tc-grace-stat strong{display:block;font:400 23px/1 Georgia,serif;color:var(--gold-bright)}.tc-grace-stat span{display:block;margin-top:4px;color:var(--ash);font:800 7.5px/1.15 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}.tc-grace-progress{padding:3px 2px}.tc-grace-progress-head{display:flex;justify-content:space-between;gap:10px;align-items:end}.tc-grace-progress-head strong{font:400 17px/1 Georgia,serif}.tc-grace-progress .tc-progress-line{margin:8px 0 5px}.tc-sanctuary-panel[data-panel="grace"] .tc-panel-heading{margin-bottom:7px}.tc-sanctuary-panel[data-panel="grace"]{text-align:left!important}.tc-sanctuary-hint{display:none}@media(max-height:720px){.tc-grace-status{min-height:135px;padding:13px}.tc-grace-target{padding:9px 3px}.tc-grace-stat{padding:8px 5px}.tc-grace-stat strong{font-size:20px}}
 
+
+/* --- Encounter boon pairing + illustrated remembrance ledger --- */
+.tc-panel-refresh{margin:12px 0 2px;padding:11px 10px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);background:rgba(10,9,7,.46)}
+.tc-panel-refresh .tc-kicker{margin-bottom:8px}.tc-panel-refresh .btn{width:100%}
+.tc-rem-hero{position:relative;isolation:isolate;overflow:hidden;min-height:132px;margin:8px 0 14px;padding:16px;display:flex;align-items:flex-end;border:1px solid rgba(198,161,90,.28);background:#0b0a08}
+.tc-rem-hero:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-ledger-art);background-size:cover;background-position:center 42%;opacity:.42;filter:saturate(.76) contrast(1.05)}
+.tc-rem-hero:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(5,5,4,.08),rgba(5,5,4,.35) 42%,rgba(5,5,4,.96))}
+.tc-rem-hero-copy{max-width:82%}.tc-rem-hero-title{font:400 clamp(25px,7vw,34px)/1 Georgia,serif;color:var(--ink);margin-top:5px}.tc-rem-hero-sub{font:italic 12px/1.35 Georgia,serif;color:#b9af9e;margin-top:5px}
+.tc-rem-grid.illustrated{gap:7px}.tc-rem.illustrated{position:relative;isolation:isolate;overflow:hidden;min-height:76px;padding:12px 11px;align-items:center;border:1px solid var(--line-soft);background:#0b0a08}
+.tc-rem.illustrated:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-rem-art);background-size:cover;background-position:center;opacity:.19;filter:saturate(.65) contrast(1.08)}
+.tc-rem.illustrated:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,7,5,.98) 0%,rgba(7,7,5,.83) 64%,rgba(7,7,5,.55) 100%)}
+.tc-rem.illustrated.done:before{opacity:.31}.tc-rem-name{font:400 17px/1.12 Georgia,serif;color:var(--ink);max-width:78%}.tc-rem.illustrated.done .tc-rem-name{color:#dfc985}
+.tc-region-list.illustrated{grid-template-columns:1fr}.tc-region-chip.illustrated{position:relative;isolation:isolate;overflow:hidden;min-height:62px;padding:11px 12px;display:flex;align-items:end;font:400 15px/1.15 Georgia,serif;color:#b9af9e;background:#0b0a08}
+.tc-region-chip.illustrated:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-region-art);background-size:cover;background-position:center;opacity:.18;filter:saturate(.65)}
+.tc-region-chip.illustrated:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,7,5,.96),rgba(7,7,5,.63))}.tc-region-chip.illustrated.done{color:var(--gold-bright);border-color:rgba(198,161,90,.30)}
+
 </style>
 </head>
 <body>
@@ -3364,6 +3380,33 @@ const tcIaExtra=document.createElement('style');tcIaExtra.textContent='.tc-battl
 
 function tcGraceDashboardMarkup(state){const c=state.current,sm=smithingData(state),done=requiredRemembrances(state).filter(x=>hasRemembrance(state,x)).length,required=requiredRemembrances(state).length;const req=Math.max(1,capstoneRequirement(state)),remaining=Math.max(0,req-state.cleared),pct=hubProgressPct(state);const target=c?.target?.name||'Awaiting decree';const img=typeof actualRegionImage==='function'?actualRegionImage(state.region):'';return `<div class="tc-grace-dashboard"><div class="tc-grace-status" style="--tc-grace-image:url('${img}')"><div class="tc-grace-eyebrow">Resting at grace</div><div class="tc-grace-region">${h(state.region)}</div><div class="tc-grace-resting">The Covenant is synchronized. The next bad idea is ready.</div></div><div class="tc-grace-target"><div><div class="tc-kicker gold">next encounter</div><div class="tc-grace-target-name">${h(target)}</div></div><button type="button" class="tc-grace-go" data-screen="encounter">View ›</button></div><div class="tc-grace-stats"><div class="tc-grace-stat"><strong>${state.cleared}</strong><span>region felled</span></div><div class="tc-grace-stat"><strong>${sm.favor}</strong><span>smithing favor</span></div><div class="tc-grace-stat"><strong>${done}/${required}</strong><span>remembrances</span></div></div><div class="tc-grace-progress"><div class="tc-grace-progress-head"><div><div class="tc-kicker">regional progress</div><strong>${remaining?`${remaining} before capstone`:'Capstone eligible'}</strong></div><span class="tc-muted">${pct}%</span></div><div class="tc-progress-line"><span style="width:${pct}%"></span></div></div></div>`;}
 const tcRenderSanctuaryBeforeDashboard=renderSanctuary;renderSanctuary=function(){tcRenderSanctuaryBeforeDashboard();const panel=app.querySelector('.tc-sanctuary-panel[data-panel="grace"]');if(!panel)return;panel.innerHTML=`<div class="tc-panel-heading">At the Grace</div>${tcGraceDashboardMarkup(run.state)}`;};
+
+
+function tcPairEncounterRefreshes(){
+  const screen=app.querySelector('.tc-encounter-shell');if(!screen)return;
+  const earned=screen.querySelector('.tc-earned-refreshes');if(!earned)return;
+  const chaosBtn=earned.querySelector('[data-use-boon="chaos"]');
+  const riteBtn=earned.querySelector('[data-use-boon="rite"]');
+  const chaosPanel=screen.querySelector('.tc-encounter-panel[data-panel="chaos"]');
+  const ritePanel=screen.querySelector('.tc-encounter-panel[data-panel="rite"]');
+  const place=(btn,panel,label)=>{if(!btn||!panel)return;const box=document.createElement('div');box.className='tc-panel-refresh';box.innerHTML=`<div class="tc-kicker">${label}</div>`;box.appendChild(btn);panel.appendChild(box);};
+  place(chaosBtn,chaosPanel,'Chaos reserve');
+  place(riteBtn,ritePanel,'Rite reserve');
+  earned.remove();
+}
+const tcRenderEncounterBeforeBoonPairing=renderEncounter;
+renderEncounter=function(){tcRenderEncounterBeforeBoonPairing();tcPairEncounterRefreshes();};
+
+function tcLedgerArtForRegion(region){return typeof actualRegionImage==='function'?actualRegionImage(region||run?.state?.region):'';}
+function tcLedgerArtForRemembrance(name,state){return tcLedgerArtForRegion(REMEMBRANCE_REGION?.[name]||state?.region);}
+remembranceLedgerBody=function(state){
+  const req=requiredRemembrances(state),done=req.filter(x=>hasRemembrance(state,x));
+  const regionNames=Object.keys(regions).filter(r=>state.includeDlc||!r.includes('· DLC')).filter(r=>r!=='The Erdtree');
+  const heroArt=tcLedgerArtForRegion(state.region);
+  return `<div class="tc-rem-hero" style="--tc-ledger-art:url('${heroArt}')"><div class="tc-rem-hero-copy"><div class="tc-kicker gold">remembrance ledger</div><div class="tc-rem-hero-title">${done.length} of ${req.length} claimed</div><div class="tc-rem-hero-sub">The dead are filed by region. The final seal opens when the archive is complete.</div></div></div>
+    <div class="tc-rem-grid illustrated">${req.map(name=>{const claimed=hasRemembrance(state,name),art=tcLedgerArtForRemembrance(name,state);return `<div class="tc-rem illustrated ${claimed?'done':''}" style="--tc-rem-art:url('${art}')"><span class="tc-rem-name">${h(name)}</span><span class="stamp">${claimed?'claimed':'missing'}</span></div>`}).join('')}</div>
+    <div class="tc-kicker gold" style="margin-top:20px">world progress</div><div class="tc-region-list illustrated">${regionNames.map(r=>{const cleared=(state.clearedRegions||[]).includes(r);return `<div class="tc-region-chip illustrated ${cleared?'done':''}" style="--tc-region-art:url('${tcLedgerArtForRegion(r)}')">${h(r)}${r===state.region?' · ACTIVE':cleared?' · CLEARED':''}</div>`}).join('')}</div>`;
+};
 
 
 /* --- Covenant maintenance core: normalization, transitions, regressions --- */
