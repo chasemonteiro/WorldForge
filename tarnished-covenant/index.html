@@ -701,11 +701,6 @@ button:disabled{pointer-events:none;filter:saturate(.55)}
 
 
 /* --- Information architecture pass: navigate between information, don't make it smaller --- */
-html:has(.tc-encounter-shell),body:has(.tc-encounter-shell),html:has(.tc-sanctuary-shell),body:has(.tc-sanctuary-shell){height:100%;overflow:hidden}
-body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shell{
-  height:100svh;max-height:100svh;overflow:hidden;
-  padding:calc(8px + env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));
-}
 .tc-encounter-shell,.tc-sanctuary-shell{height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0!important}
 .tc-encounter-shell .tc-topline,.tc-sanctuary-shell .tc-topline{flex:0 0 auto;margin-bottom:7px}
 .tc-encounter-sticky{flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:8px 10px 9px;margin:0 0 7px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);background:rgba(9,8,6,.82)}
@@ -741,6 +736,24 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 .tc-region-list.illustrated{grid-template-columns:1fr}.tc-region-chip.illustrated{position:relative;isolation:isolate;overflow:hidden;min-height:62px;padding:11px 12px;display:flex;align-items:end;font:400 15px/1.15 Georgia,serif;color:#b9af9e;background:#0b0a08}
 .tc-region-chip.illustrated:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-region-art);background-size:cover;background-position:center;opacity:.18;filter:saturate(.65)}
 .tc-region-chip.illustrated:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,7,5,.96),rgba(7,7,5,.63))}.tc-region-chip.illustrated.done{color:var(--gold-bright);border-color:rgba(198,161,90,.30)}
+
+
+/* --- Unified primary-screen viewport: one document model for Grace, Encounter, Ledger --- */
+html{min-height:100%}
+body{min-height:100dvh}
+body:has(.tc-encounter-shell),body:has(.tc-sanctuary-shell){
+  height:auto!important;
+  min-height:100dvh!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shell{
+  height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  padding:8px 14px 70px!important;
+}
 
 </style>
 </head>
