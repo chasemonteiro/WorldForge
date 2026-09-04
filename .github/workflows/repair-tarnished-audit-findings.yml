@@ -1,0 +1,136 @@
+name: Repair Tarnished Audit Findings
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-tarnished-audit-findings.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Patch durable sources and live app
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # 1) Baseline source: do not register a service worker that does not exist.
+          p=Path('tarnished-covenant/chunks/part4.txt'); s=p.read_text()
+          sw="""if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
+          }
+
+          """
+          if sw not in s: raise SystemExit('baseline service worker block missing')
+          p.write_text(s.replace(sw,'',1))
+
+          # 2) Challenge-only ruleset must also own Restart Covenant.
+          p=Path('tarnished-covenant/build-challenge-ruleset.py'); s=p.read_text()
+          anchor="s=s.replace(\"severity: document.querySelector('#severity').value,\",\"severity: 'cursed',\",1)\n"
+          if anchor not in s: raise SystemExit('challenge ruleset new-run anchor missing')
+          addition=r'''
+
+# Restart Covenant is challenge-only too. Do not resurrect the retired difficulty selector.
+s=re.sub(r'''\s*<div>\s*<label class="label" for="restartSeverity">difficulty</label>\s*<select id="restartSeverity">.*?</select>\s*</div>''','',s,count=1,flags=re.S)
+s=s.replace("const severity = document.querySelector('#restartSeverity')?.value || state.severity;","const severity = 'cursed';",1)
+'''
+          if 'Restart Covenant is challenge-only too.' not in s:
+              s=s.replace(anchor,anchor+addition,1)
+          inv="for x in ['tcPickRite(state)','tcPickChaosTrigger(state)','TC_CHAOS_DEBTS','tcRefreshCost','data-forfeit-boon','DOUBLE DECREE','severity: \\'cursed\\'']:\n"
+          if inv not in s: raise SystemExit('challenge ruleset invariant anchor missing')
+          if "if 'restartSeverity' in s:" not in s:
+              s=s.replace(inv,"if 'restartSeverity' in s: raise SystemExit('retired restart difficulty selector remains')\n\n"+inv,1)
+          p.write_text(s)
+
+          # 3) Compendium uses saved custom Tarnished names for archived text and recorder labels.
+          p=Path('tarnished-covenant/build-ledger-compendium.py'); s=p.read_text()
+          replacements={
+            "${h(entry.chaosConsequence||'The seal broke. Details lost to history.')}": "${h(personalizePlayers(entry.chaosConsequence||'The seal broke. Details lost to history.',{playerNames:[names.chase,names.morgan]}))}",
+            "${h(x.text||'')}": "${h(personalizePlayers(x.text||'',{playerNames:[names.chase,names.morgan]}))}",
+            "recorded by ${h(entry.completedBy)}": "recorded by ${h(personalizePlayers(entry.completedBy,{playerNames:[names.chase,names.morgan]}))}",
+          }
+          for old,new in replacements.items():
+              if new not in s:
+                  if old not in s: raise SystemExit('Compendium personalization target missing: '+old[:50])
+                  s=s.replace(old,new,1)
+          p.write_text(s)
+
+          # 4) Strengthen existing regression invariants for the discovered defects.
+          p=Path('tarnished-covenant/test-regression-invariants.py'); s=p.read_text()
+          marker="forbid(\"Contract commissioned. 3 Favor spent.\")\n"
+          if marker not in s: raise SystemExit('regression insertion marker missing')
+          extra=r'''
+# Challenge-only restart and custom-name archive regressions.
+forbid('id="restartSeverity"', 'retired restart difficulty selector returned')
+forbid("querySelector('#restartSeverity')", 'restart can still leave challenge-only ruleset')
+if not Path('tarnished-covenant/sw.js').exists():
+    forbid("serviceWorker.register('./sw.js')", 'app registers a missing service worker')
+for needle in [
+    'personalizePlayers(entry.chaosConsequence',
+    'personalizePlayers(x.text',
+    'personalizePlayers(entry.completedBy',
+    'tc-screen tc-ledger-screen',
+    '.tc-ledger-screen{animation:none!important}'
+]: require(needle)
+
+'''
+          if 'retired restart difficulty selector returned' not in s:
+              s=s.replace(marker,extra+marker,1)
+          p.write_text(s)
+
+          # 5) Apply only the same narrow fixes to the currently deployed generated app.
+          p=Path('tarnished-covenant/index.html'); s=p.read_text()
+          s=s.replace(sw,'',1)
+          s,n=re.subn(r'''\s*<div>\s*<label class="label" for="restartSeverity">difficulty</label>\s*<select id="restartSeverity">.*?</select>\s*</div>''','',s,count=1,flags=re.S)
+          if n != 1: raise SystemExit('live restart difficulty selector target missing')
+          old="const severity = document.querySelector('#restartSeverity')?.value || state.severity;"
+          if old not in s: raise SystemExit('live restart severity read missing')
+          s=s.replace(old,"const severity = 'cursed';",1)
+          for old,new in replacements.items():
+              if new not in s:
+                  if old not in s: raise SystemExit('live Compendium personalization target missing: '+old[:50])
+                  s=s.replace(old,new,1)
+          bad='@keyframes tcIn{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}'
+          good='@keyframes tcIn{from{opacity:.35}to{opacity:1}}'
+          if good not in s:
+              if bad not in s: raise SystemExit('live screen animation target missing')
+              s=s.replace(bad,good,1)
+          p.write_text(s)
+          PY
+
+      - name: Bump Home Screen build id
+        run: python tarnished-covenant/build-launch-refresh.py
+
+      - name: Validate repaired app
+        run: |
+          python tarnished-covenant/test-regression-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          for bad in ['id="restartSeverity"',"querySelector('#restartSeverity')","serviceWorker.register('./sw.js')",'transform:translateY(5px)']:
+              if bad in html: raise SystemExit('audit defect remains: '+bad)
+          for good in ['personalizePlayers(entry.chaosConsequence','personalizePlayers(x.text','personalizePlayers(entry.completedBy','Covenant Office Memorandum','tarnished.dev/weapon-calculator','eldenring.wiki.gg/wiki/','tc-screen tc-ledger-screen','Bottom nav returns primary sections to panel one','iOS standalone viewport correction']:
+              if good not in html: raise SystemExit('working feature missing: '+good)
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+
+      - name: Commit audit repairs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/chunks/part4.txt tarnished-covenant/build-challenge-ruleset.py tarnished-covenant/build-ledger-compendium.py tarnished-covenant/test-regression-invariants.py tarnished-covenant/index.html
+          git commit -m 'Repair Tarnished Covenant audit findings'
+          git push origin HEAD:tarnished-covenant-assets
