@@ -864,6 +864,9 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 }
 /* --- End contextual wiki link styles --- */
 
+
+/* Ledger visual stability: do not replay global screen-entry animation. */
+.tc-ledger-screen{animation:none!important}
 </style>
 
 <script>
@@ -3389,7 +3392,7 @@ function renderLedger() {
   const state=run.state;
   const title=ledgerView==='smithing'?'Smithing Ledger':ledgerView==='compendium'?'Covenant Compendium':'Remembrance Ledger';
   const body=ledgerView==='smithing'?smithingLedgerMarkup(state):ledgerView==='compendium'?compendiumLedgerMarkup(state):remembranceLedgerBody(state);
-  app.innerHTML=`<section class="tc-screen">${screenTop(title)}
+  app.innerHTML=`<section class="tc-screen tc-ledger-screen">${screenTop(title)}
     <div class="tc-ledger-tabs tc-ledger-tabs-3"><button class="${ledgerView==='remembrances'?'active':''}" data-ledger-view="remembrances">Progress</button><button class="${ledgerView==='compendium'?'active':''}" data-ledger-view="compendium">Compendium</button><button class="${ledgerView==='smithing'?'active':''}" data-ledger-view="smithing">Smithing</button></div>
     ${body}
     ${navMarkup('ledger')}</section>`;
