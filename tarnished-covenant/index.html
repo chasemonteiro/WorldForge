@@ -3512,7 +3512,7 @@ function renderRegionCompleteSafe(){
     </div>
   </section>${navMarkup('sanctuary')}`;
   bindNav();
-  document.querySelector('#safeRefresh')?.addEventListener('click',()=>location.reload());
+  document.querySelector('#safeRefresh')?.addEventListener('click',()=>tcForceFreshNavigation());
   document.querySelectorAll('[data-safe-travel]').forEach(btn=>btn.addEventListener('click',()=>{
     try{
       const next=startNextRegion(state,playerName(),btn.dataset.safeTravel,state.severity);
@@ -3877,6 +3877,36 @@ if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
 
 if(!window.__tcForfeitBound){window.__tcForfeitBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-forfeit-boon]');if(b)tcForfeitBoon(b.dataset.forfeitBoon);});}
 
+
+/* --- Home Screen freshness guard --- */
+const TC_BUILD_ID='20260904043112';
+let tcFreshnessCheckRunning=false;
+function tcForceFreshNavigation(){
+  const url=new URL(location.href);
+  url.searchParams.set('tcv',String(Date.now()));
+  location.replace(url.toString());
+}
+async function tcCheckForFreshBuild(){
+  if(tcFreshnessCheckRunning||!navigator.onLine)return;
+  tcFreshnessCheckRunning=true;
+  try{
+    const probe=new URL(location.href);
+    probe.searchParams.set('tc_probe',String(Date.now()));
+    const response=await fetch(probe.toString(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+    if(!response.ok)return;
+    const text=await response.text();
+    const match=text.match(/const TC_BUILD_ID='([^']+)'/);
+    if(match&&match[1]!==TC_BUILD_ID){
+      const fresh=new URL(location.href);
+      fresh.searchParams.set('tcv',match[1]);
+      location.replace(fresh.toString());
+    }
+  }catch(error){console.warn('Freshness check failed',error);}
+  finally{tcFreshnessCheckRunning=false;}
+}
+window.addEventListener('pageshow',()=>setTimeout(tcCheckForFreshBuild,350));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcCheckForFreshBuild,200);});
+/* --- End Home Screen freshness guard --- */
 </script>
 </body>
 </html>
