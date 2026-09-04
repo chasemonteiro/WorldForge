@@ -157,7 +157,8 @@ css=r'''
 .tc-reward-icon{font:400 42px/1 Georgia,serif;color:var(--gold-bright);margin-bottom:6px}.tc-reward-result.tax .tc-reward-icon,.tc-reward-result.tax .tc-reward-name{color:#e17e71}.tc-reward-type{font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.16em;color:var(--ash)}.tc-reward-name{font:400 27px/1.08 Georgia,serif;color:var(--gold-bright);margin:7px 0}.tc-reward-detail{font-size:15px;line-height:1.45;color:#d4cab8;max-width:500px;margin:auto}.tc-reward-machine .btn{max-width:430px;margin:0 auto}.tc-reward-quip{font-size:12px;line-height:1.4;color:var(--ash);font-style:italic;margin:10px auto 0;max-width:470px}
 @media(max-width:380px){.tc-slot-reel{height:82px;font-size:41px;line-height:82px}.tc-slot-reel span{height:82px;min-height:82px}.tc-slot-reel .winner{font-size:43px}.tc-reward-detail{font-size:14px}}@media(prefers-reduced-motion:reduce){.tc-slot-reel,.tc-slot-reel span,.tc-reward-result{animation:none!important}}
 '''
-if '
+
+tap_css=r'''
 /* Reward reveal Continue must remain a real iOS Home Screen tap target. */
 .tc-reward-machine #tcRewardContinue{
   position:relative;
@@ -166,9 +167,9 @@ if '
   touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
 }
-
-</style>' not in s: raise SystemExit('style end missing')
-s=s.replace('</style>',css+'\n</style>',1)
+'''
+if '</style>' not in s: raise SystemExit('style end missing')
+s=s.replace('</style>',css+'\n'+tap_css+'\n</style>',1)
 
 for invariant in ['TC_COVENANT_TAXES','function renderRewardMachine()','pendingRewardReveal','Bone Dart Audit','Covenant Treasury']:
     if invariant not in s: raise SystemExit('slot invariant missing: '+invariant)
