@@ -102,6 +102,10 @@ jobs:
         run: python tarnished-covenant/build-regression-hardening.py
       - name: Assert regression invariants
         run: python tarnished-covenant/test-regression-invariants.py
+      - name: Make bottom navigation persistent viewport chrome
+        run: python tarnished-covenant/build-persistent-nav.py
+      - name: Assert persistent navigation invariants
+        run: python tarnished-covenant/test-persistent-nav.py
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
