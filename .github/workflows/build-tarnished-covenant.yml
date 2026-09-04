@@ -103,6 +103,16 @@ jobs:
         run: python tarnished-covenant/build-unified-viewport.py
       - name: Assert unified viewport invariants
         run: python tarnished-covenant/test-unified-viewport.py
+      - name: Correct iOS Home Screen viewport
+        run: python tarnished-covenant/build-ios-standalone-shell.py
+      - name: Stabilize standalone spacing and Ledger shell
+        run: python tarnished-covenant/build-standalone-spacing-ledger.py
+      - name: Assert standalone invariants
+        run: |
+          grep -q 'iOS standalone viewport correction' tarnished-covenant/index.html
+          grep -q 'Standalone spacing + stable Ledger shell' tarnished-covenant/index.html
+          grep -q 'tc-screen tc-ledger-shell' tarnished-covenant/index.html
+          grep -q 'height:100vh!important' tarnished-covenant/index.html
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
