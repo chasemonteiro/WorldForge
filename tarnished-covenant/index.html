@@ -724,21 +724,18 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 
 
 /* --- One dynamic viewport across every primary screen --- */
-html:has(.tc-bottom-nav),body:has(.tc-bottom-nav){
-  width:100%;min-height:100dvh;background-color:var(--bg);
+/* Geometry is keyed to an explicit runtime class rather than :has(.tc-bottom-nav).
+   Safari can delay :has() invalidation when the persistent nav is mounted after
+   first paint, which made Grace / Encounter start too high until Ledger rerendered. */
+html{width:100%;min-height:100dvh;background-color:var(--bg)}
+body.tc-run-active{
+  width:100%;min-height:100dvh;background-color:var(--bg);padding:0!important;
 }
-/* The base body already carries iPhone safe-area padding. Primary app shells
-   also account for the top inset themselves, so leaving body padding in place
-   double-counts the status bar and pushes fixed-height Encounter controls under
-   the bottom nav. The app shell/nav own safe-area spacing while a run is open. */
-body:has(.tc-bottom-nav){
-  padding:0!important;
-}
-body:has(.tc-bottom-nav) .app-shell{
+body.tc-run-active .app-shell{
   width:100%;min-height:100dvh;
 }
-body:has(.tc-sanctuary-shell) .app-shell,
-body:has(.tc-encounter-shell) .app-shell{
+body.tc-run-active .app-shell:has(.tc-sanctuary-shell),
+body.tc-run-active .app-shell:has(.tc-encounter-shell){
   height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
 }
 .tc-sanctuary-shell,.tc-encounter-shell{
@@ -3637,9 +3634,25 @@ bindNav=function(){
   }
 };
 
+/* First-paint geometry must not depend on Safari noticing a newly mounted nav.
+   Set an explicit run-state class before any specialized screen renderer runs. */
+const tcRenderRunBeforePersistentChrome=renderRun;
+renderRun=function(){
+  document.body.classList.add('tc-run-active');
+  return tcRenderRunBeforePersistentChrome();
+};
+
+/* Leaving the run restores normal document safe-area behavior and removes chrome. */
+const tcRenderHomeBeforePersistentChrome=renderHome;
+renderHome=function(){
+  document.body.classList.remove('tc-run-active');
+  if(tcPersistentBottomNav)tcPersistentBottomNav.hidden=true;
+  return tcRenderHomeBeforePersistentChrome();
+};
+
 /* Bootstrap can restore a run before any subsequent tap. Re-sync once the first
-   synchronous render settles so the nav is viewport-attached from frame one. */
-queueMicrotask(()=>{if(run)tcSyncPersistentNav();});
+   synchronous render settles; geometry itself is already active before render. */
+queueMicrotask(()=>{if(run){document.body.classList.add('tc-run-active');tcSyncPersistentNav();}});
 
 </script>
 </body>
