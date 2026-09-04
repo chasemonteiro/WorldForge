@@ -811,6 +811,16 @@ html.tc-standalone .tc-reveal{padding:0 2px!important}
 html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadouts{grid-template-columns:1fr!important}
 html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-loadout{border-left:0!important;border-top:1px solid #54452b!important}
 
+
+/* Reward reveal Continue must remain a real iOS Home Screen tap target. */
+.tc-reward-machine #tcRewardContinue{
+  position:relative;
+  z-index:20;
+  pointer-events:auto;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
 </style>
 
 <script>
@@ -3070,7 +3080,7 @@ function renderRewardMachine(){
       <div class="tc-reward-name">${h(current.label)}</div>
       <div class="tc-reward-detail">${h(current.detail||'The Covenant has spoken.')}</div>
     </div>
-    <button id="tcRewardContinue" class="btn gold" disabled>${data.index+1<total?'Draw Next Reward':'Continue'}</button>
+    <button id="tcRewardContinue" type="button" class="btn gold" disabled aria-disabled="true">${data.index+1<total?'Draw Next Reward':'Continue'}</button>
     <div class="tc-reward-quip">${current.kind==='tax'?'The Covenant giveth. The Covenant also has purchasing requirements.':'Honor has been converted into administratively approved loot.'}</div>
   </section>`;
   const reels=[...document.querySelectorAll('.tc-slot-reel')];
@@ -3079,18 +3089,23 @@ function renderRewardMachine(){
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const finish=()=>{
     reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
-    result.hidden=false;result.classList.add('revealed');btn.disabled=false;data.spinning=false;
+    result.hidden=false;result.classList.add('revealed');data.spinning=false;btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
   };
   if(reduced){finish();}
   else{
     reels.forEach((reel,i)=>{reel.classList.add('spinning');reel.style.setProperty('--tc-spin-delay',`${i*110}ms`);});
     window.setTimeout(finish,1250);
   }
-  btn.addEventListener('click',()=>{
-    if(data.spinning)return;
+  const advanceReward=(event)=>{
+    if(event)event.preventDefault();
+    if(btn.dataset.ready!=='1'||btn.disabled)return;
+    btn.dataset.ready='0';btn.disabled=true;btn.setAttribute('aria-disabled','true');data.spinning=false;
     if(data.index+1<total){data.index+=1;data.spinning=true;renderRewardMachine();return;}
     pendingRewardReveal=null;renderRun();
-  });
+  };
+  btn.addEventListener('click',advanceReward);
+  btn.addEventListener('pointerup',event=>{if(event.pointerType==='touch')advanceReward(event);});
+  btn.addEventListener('touchend',advanceReward,{passive:false});
 }
 
 function showAppealMenu(){
