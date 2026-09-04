@@ -1,0 +1,60 @@
+name: Patch Covenant Resume Guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-resume-guard.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout control script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: control
+      - name: Checkout Tarnished Covenant assets
+        uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          path: app
+      - name: Apply startup resume guard
+        run: python control/.github/scripts/patch-resume-guard.py app
+      - name: Verify focused resume behavior
+        run: |
+          grep -q 'function tcRecoverRememberedRun' app/tarnished-covenant/index.html
+          grep -q 'Retry Existing Covenant' app/tarnished-covenant/index.html
+          grep -q 'Starting a new run is intentionally blocked' app/tarnished-covenant/index.html
+          grep -q 'Startup resume guard' app/tarnished-covenant/build-durable-session.py
+          grep -q 'function tcRefreshCost' app/tarnished-covenant/index.html
+          if grep -q 'for="severity"' app/tarnished-covenant/index.html; then exit 1; fi
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('app/tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+      - name: Validate durable session patch syntax
+        run: python -m py_compile app/tarnished-covenant/build-durable-session.py
+      - name: Commit resume guard
+        working-directory: app
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html tarnished-covenant/build-durable-session.py
+          if git diff --cached --quiet; then
+            echo 'Resume guard already present.'
+          else
+            git commit -m 'Protect remembered Covenant on startup'
+            git push origin tarnished-covenant-assets
+          fi
