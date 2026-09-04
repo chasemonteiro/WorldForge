@@ -22,7 +22,6 @@ for needle in [
     'data-ledger-view="compendium"', 'data-ledger-view="smithing"',
 ]: require(needle)
 
-# Final information architecture + maintenance core.
 for needle in [
     'tc-encounter-shell','tc-sanctuary-shell','tcEnhanceEncounterPanels',
     'tcEnhanceSanctuaryPanels','tcEnhanceCompendium','tcAffordableBellBearings',
@@ -30,20 +29,15 @@ for needle in [
     'tcNavDelegationInstalled'
 ]: require(needle)
 
-# Tiered Smithing economy.
 forbid("Contract commissioned. 3 Favor spent.")
 require('return 4 + tier*2;')
 require('pool.filter(b=>sm.favor>=smithingContractCost(b))')
 
-# Region changes preserve Smithing / reward inventory and use the shared
-# normalization boundary instead of inventing another state shape.
 require('const tcStartNextRegionBeforeHardening=startNextRegion;')
 require('const source=tcNormalizeRunState(state);')
 require('next.smithing=structuredClone(source?.smithing||smithingData(source));')
 require('tcNormalizeRunState(next);')
 
-# Navigation is delegated once. The final binder cannot destroy transition
-# state or install a fresh listener after every render.
 last_bind = html.rfind('bindNav=function()')
 if last_bind < 0: raise SystemExit('maintenance bindNav override missing')
 bind_tail = html[last_bind:last_bind+1200]
@@ -57,7 +51,6 @@ for needle in [
 ]:
     if needle not in bind_tail: raise SystemExit('delegated navigation invariant missing: '+needle)
 
-# Corporate interruption is persisted, affordable, safe-transition-bound.
 require('pendingCorporateForEncounterId')
 require('completed.smithing.pendingCorporateForEncounterId = completed.current.id;')
 last_elig = html.rfind('tcMandatoryContractEligible=function(state)')
@@ -69,14 +62,10 @@ for needle in ['sm.pendingCorporateForEncounterId===state.current.id','tcAfforda
 require('next.smithing.pendingCorporateForEncounterId=null;')
 require('next.smithing.pendingCorporateForEncounterId=next.current.id;')
 
-# Transition priority is centralized. Reward/report must precede Corporate,
-# Corporate precedes the ordinary encounter reveal.
 transition_start=html.rfind('function tcBlockingTransition(')
 if transition_start < 0: raise SystemExit('central transition resolver missing')
 transition_tail=html[transition_start:transition_start+900]
-expected_order=[
-    "return 'reward'", "return 'post-battle'", "return 'corporate'", "return 'encounter-reveal'"
-]
+expected_order=["return 'reward'", "return 'post-battle'", "return 'corporate'", "return 'encounter-reveal'"]
 pos=-1
 for needle in expected_order:
     nxt=transition_tail.find(needle)
@@ -84,13 +73,11 @@ for needle in expected_order:
     pos=nxt
 require("if(transition==='corporate')return renderCorporateContractNotice();")
 
-# Custom names in archived entries.
 require('compendiumNames=function(entry,state)')
 require('if(Array.isArray(saved))')
 require("saved[0]||current[0]||'Tarnished One'")
 require("saved[1]||current[1]||'Tarnished Two'")
 
-# Restart must keep this phone in the same room while clearing transient UI.
 for needle in [
     'const restarted = await backend.restartRun',
     'run = {...oldRun, ...restarted, joinCode: restarted?.joinCode || oldRun?.joinCode};',
@@ -99,8 +86,6 @@ for needle in [
     "setToast('Covenant restarted. Same room, fresh run.');"
 ]: require(needle)
 
-# Semantic validation for the expanded Rite array. Every array-entry line must
-# be comma-terminated; JavaScript syntax alone does not catch missing commas here.
 start = html.find('const TC_EXTRA_RITES = [')
 end = html.find('];', start)
 if start < 0 or end < 0: raise SystemExit('TC_EXTRA_RITES block missing')
@@ -117,29 +102,24 @@ if entry_count < 20:
 for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
     if expected not in rite_chunk: raise SystemExit('expected expanded Rite missing: '+expected)
 
-# Stable numbering remains a display transform; no history mutation is needed.
 require('(run.state.history?.length||0)-index')
 require("document.querySelector('#tcAppealOverlay')?.remove();")
 
-# Every primary surface uses the same dynamic viewport contract. iOS small
-# viewport units (svh) are intentionally forbidden here because they made Grace
-# and Encounter terminate above the physical bottom while Ledger continued.
+# One dynamic viewport and one owner for iPhone safe-area spacing. The body must
+# not add a second top inset underneath the viewport-oriented shell.
 for needle in [
     'One dynamic viewport across every primary screen',
     'padding:calc(8px + env(safe-area-inset-top)) 14px 0',
     'body:has(.tc-bottom-nav){',
-    'padding-bottom:0!important',
+    'padding:0!important',
     'body:has(.tc-bottom-nav) .app-shell',
     'height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important',
     '.tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}',
     '.tc-encounter-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}'
 ]: require(needle)
 
-# Reject the exact special-case viewport fallback that caused the mismatch.
 forbid('@supports(height:100svh)')
 
-# Single-file patch pipelines are especially vulnerable to accidental duplicate
-# bootstraps. There must be exactly one application start.
 if html.count('startApp().catch(') != 1:
     raise SystemExit(f'expected one app bootstrap, found {html.count("startApp().catch(")}')
 
