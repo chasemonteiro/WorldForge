@@ -25,8 +25,12 @@ css = r'''
 html:has(.tc-bottom-nav),body:has(.tc-bottom-nav){
   width:100%;min-height:100dvh;background-color:var(--bg);
 }
+/* The base body already carries iPhone safe-area padding. Primary app shells
+   also account for the top inset themselves, so leaving body padding in place
+   double-counts the status bar and pushes fixed-height Encounter controls under
+   the bottom nav. The app shell/nav own safe-area spacing while a run is open. */
 body:has(.tc-bottom-nav){
-  padding-bottom:0!important;
+  padding:0!important;
 }
 body:has(.tc-bottom-nav) .app-shell{
   width:100%;min-height:100dvh;
@@ -52,7 +56,7 @@ for needle in [
     'One dynamic viewport across every primary screen',
     'padding:calc(8px + env(safe-area-inset-top)) 14px 0',
     'height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important',
-    'padding-bottom:0!important',
+    'body:has(.tc-bottom-nav){\n  padding:0!important;',
     '.tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}'
 ]:
     if needle not in s:
