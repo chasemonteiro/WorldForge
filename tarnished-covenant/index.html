@@ -771,6 +771,43 @@ html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
   max-height:100vh!important;
 }
 
+
+/* --- Standalone spacing + stable Ledger shell --- */
+@media (display-mode: standalone) {
+  /* The fixed-height briefing now has the full installed-app viewport. Let the
+     boss art use more of it instead of leaving a dead band above the actions. */
+  html.tc-standalone .tc-encounter-panel[data-panel="boss"] .tc-boss-art{
+    height:clamp(190px,31vh,275px)!important;
+    max-height:34vh!important;
+  }
+  html.tc-standalone .tc-encounter-panel[data-panel="boss"]{
+    padding-bottom:4px!important;
+  }
+  html.tc-standalone .tc-encounter-hint{
+    margin-top:-5px!important;
+    margin-bottom:3px!important;
+  }
+
+  /* Do not make iOS tear down the fixed app viewport just because Ledger is a
+     vertically scrolling screen. The app shell stays fixed; Ledger scrolls in it. */
+  html.tc-standalone:has(.tc-ledger-shell),
+  html.tc-standalone body:has(.tc-ledger-shell){
+    height:100%!important;
+    overflow:hidden!important;
+  }
+  html.tc-standalone body:has(.tc-ledger-shell) .app-shell{
+    height:100vh!important;
+    max-height:100vh!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(86px + env(safe-area-inset-bottom))!important;
+  }
+  html.tc-standalone .tc-ledger-shell{
+    min-height:100%!important;
+  }
+}
+
 </style>
 
 <script>
@@ -3107,7 +3144,7 @@ function renderLedger() {
   const state=run.state;
   const title=ledgerView==='smithing'?'Smithing Ledger':ledgerView==='compendium'?'Covenant Compendium':'Remembrance Ledger';
   const body=ledgerView==='smithing'?smithingLedgerMarkup(state):ledgerView==='compendium'?compendiumLedgerMarkup(state):remembranceLedgerBody(state);
-  app.innerHTML=`<section class="tc-screen">${screenTop(title)}
+  app.innerHTML=`<section class="tc-screen tc-ledger-shell">${screenTop(title)}
     <div class="tc-ledger-tabs tc-ledger-tabs-3"><button class="${ledgerView==='remembrances'?'active':''}" data-ledger-view="remembrances">Progress</button><button class="${ledgerView==='compendium'?'active':''}" data-ledger-view="compendium">Compendium</button><button class="${ledgerView==='smithing'?'active':''}" data-ledger-view="smithing">Smithing</button></div>
     ${body}
     ${navMarkup('ledger')}</section>`;
