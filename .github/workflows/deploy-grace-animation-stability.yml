@@ -1,47 +1,13 @@
 name: Deploy Grace Animation Stability
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/deploy-grace-animation-stability.yml'
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  deploy:
+  retired:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: tarnished-covenant-assets
-          fetch-depth: 0
-      - name: Validate builder source
-        run: python -m py_compile tarnished-covenant/build-grace-animation-stability.py
-      - name: Apply stable Grace renderer
-        run: |
-          python tarnished-covenant/build-grace-animation-stability.py
-          python tarnished-covenant/build-launch-refresh.py
-      - name: Validate app
-        run: |
-          grep -q 'Stable Grace frame renderer' tarnished-covenant/index.html
-          grep -q 'const sequence=\[0,1,2,1,0,1\]' tarnished-covenant/index.html
-          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=400' tarnished-covenant/index.html
-          if grep -q 'scaleY(1.08)' tarnished-covenant/index.html; then exit 1; fi
-          python tarnished-covenant/test-regression-invariants.py
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          html=Path('tarnished-covenant/index.html').read_text()
-          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
-          if not scripts: raise SystemExit('No inline script found')
-          Path('/tmp/tc.js').write_text('\n'.join(scripts))
-          PY
-          node --check /tmp/tc.js
-      - name: Commit live app
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tarnished-covenant/index.html
-          if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Stabilize Site of Grace animation'; git push origin HEAD:tarnished-covenant-assets; fi
+      - run: echo 'Retired one-shot workflow. Use the normal Tarnished Covenant build workflow.'
