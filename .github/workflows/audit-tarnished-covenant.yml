@@ -1,4 +1,5 @@
 name: Audit Tarnished Covenant
+# rerun after audit repairs
 
 on:
   push:
