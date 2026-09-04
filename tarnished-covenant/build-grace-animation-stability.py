@@ -20,7 +20,7 @@ css=r'''
 .tc-grace-idle-art-frame.tc-active{opacity:1}
 .tc-grace-idle-art-frame[data-grace-frame="1"]{transform:translate(-50%,-51%) scale(.97)}
 .tc-grace-idle-art-frame[data-grace-frame="2"]{transform:translate(-50%,-51%) scale(.95)}
-.tc-grace-idle-art-frame[data-grace-frame="3"]{transform:translate(-50%,-50%) scaleX(.96) scaleY(1.08)}
+.tc-grace-idle-art-frame[data-grace-frame="3"]{display:none}
 .tc-grace-idle-button.tc-tapped .tc-grace-idle-art-frame.tc-active{filter:brightness(1.22) drop-shadow(0 0 12px rgba(238,207,138,.34)) drop-shadow(0 0 30px rgba(198,161,90,.18))}
 @media(max-height:740px){.tc-grace-idle-art-frame{width:min(174px,49vw);height:calc(100% - 7px)}}
 @media(max-height:650px){.tc-grace-idle-art-frame{width:142px}}
@@ -43,17 +43,19 @@ function tcStartGraceArt(btn){
   const previous=tcGraceStableTimers.get(btn);if(previous)clearTimeout(previous);
   tcGraceStableShow(btn,0);
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const sequence=[0,1,2,1,0,1];
+  const delays=[430,145,115,165,340,225];
   let step=0;
   const advance=()=>{
     if(!btn.isConnected){tcGraceStableTimers.delete(btn);return;}
-    step=(step+1)%TC_GRACE_FRAME_SEQUENCE.length;
-    tcGraceStableShow(btn,TC_GRACE_FRAME_SEQUENCE[step]);
-    const base=TC_GRACE_FRAME_DELAYS[step];
+    step=(step+1)%sequence.length;
+    tcGraceStableShow(btn,sequence[step]);
+    const base=delays[step];
     const jitter=Math.round((Math.random()-.5)*42);
     const timer=setTimeout(advance,Math.max(95,base+jitter));
     tcGraceStableTimers.set(btn,timer);
   };
-  const timer=setTimeout(advance,TC_GRACE_FRAME_DELAYS[0]);
+  const timer=setTimeout(advance,delays[0]);
   tcGraceStableTimers.set(btn,timer);
 }
 function tcGraceTapPulse(btn){
