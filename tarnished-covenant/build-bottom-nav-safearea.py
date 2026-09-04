@@ -22,21 +22,18 @@ s = s.replace(".app-shell{max-width:760px;padding:16px 14px calc(86px + env(safe
 
 css = r'''
 /* --- One dynamic viewport across every primary screen --- */
-html:has(.tc-bottom-nav),body:has(.tc-bottom-nav){
-  width:100%;min-height:100dvh;background-color:var(--bg);
+/* Geometry is keyed to an explicit runtime class rather than :has(.tc-bottom-nav).
+   Safari can delay :has() invalidation when the persistent nav is mounted after
+   first paint, which made Grace / Encounter start too high until Ledger rerendered. */
+html{width:100%;min-height:100dvh;background-color:var(--bg)}
+body.tc-run-active{
+  width:100%;min-height:100dvh;background-color:var(--bg);padding:0!important;
 }
-/* The base body already carries iPhone safe-area padding. Primary app shells
-   also account for the top inset themselves, so leaving body padding in place
-   double-counts the status bar and pushes fixed-height Encounter controls under
-   the bottom nav. The app shell/nav own safe-area spacing while a run is open. */
-body:has(.tc-bottom-nav){
-  padding:0!important;
-}
-body:has(.tc-bottom-nav) .app-shell{
+body.tc-run-active .app-shell{
   width:100%;min-height:100dvh;
 }
-body:has(.tc-sanctuary-shell) .app-shell,
-body:has(.tc-encounter-shell) .app-shell{
+body.tc-run-active .app-shell:has(.tc-sanctuary-shell),
+body.tc-run-active .app-shell:has(.tc-encounter-shell){
   height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
 }
 .tc-sanctuary-shell,.tc-encounter-shell{
@@ -55,15 +52,17 @@ for needle in [
     'box-sizing:border-box;height:calc(58px + env(safe-area-inset-bottom))',
     'One dynamic viewport across every primary screen',
     'padding:calc(8px + env(safe-area-inset-top)) 14px 0',
-    'height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important',
-    'body:has(.tc-bottom-nav){\n  padding:0!important;',
+    'body.tc-run-active{',
+    'padding:0!important;',
     '.tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}'
 ]:
     if needle not in s:
         raise SystemExit('full-screen navigation invariant missing: '+needle)
 
-# Explicitly reject the old special-case small viewport override. It is the
-# iPhone mismatch we are fixing and should not be reintroduced later.
+# Explicitly reject the old nav-dependent geometry selector and old small viewport
+# override. Neither should ever control first-paint layout again.
+if 'body:has(.tc-bottom-nav)' in css or 'html:has(.tc-bottom-nav)' in css:
+    raise SystemExit('nav-dependent :has geometry must not return')
 if '@supports(height:100svh)' in css or 'height:100svh' in css:
     raise SystemExit('svh viewport override must not return')
 
