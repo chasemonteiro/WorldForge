@@ -133,6 +133,14 @@ jobs:
           grep -q 'Idle Site of Grace ritual' tarnished-covenant/index.html
           grep -q 'TC_GRACE_FAVOR_ODDS=5000' tarnished-covenant/index.html
           grep -q 'graceIdleFavorEncounterId' tarnished-covenant/index.html
+      - name: Stabilize idle Grace animation
+        run: python tarnished-covenant/build-grace-animation-stability.py
+      - name: Assert stable Grace animation
+        run: |
+          grep -q 'Stable Grace frame renderer' tarnished-covenant/index.html
+          grep -q 'tcGraceStableShow' tarnished-covenant/index.html
+          grep -q 'const sequence=\[0,1,2,1,0,1\]' tarnished-covenant/index.html
+          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=400' tarnished-covenant/index.html
       - name: Finalize Home Screen build id
         run: python tarnished-covenant/build-launch-refresh.py
       - name: Assert final regression invariants
