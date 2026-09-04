@@ -1,11 +1,7 @@
 name: Build Tarnished Covenant
 
-# temporary validation trigger v2
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/build-tarnished-covenant.yml']
 
 permissions:
   contents: write
