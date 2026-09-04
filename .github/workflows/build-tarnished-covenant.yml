@@ -2,6 +2,9 @@ name: Build Tarnished Covenant
 
 on:
   workflow_dispatch:
+  push:
+    branches: [tarnished-covenant-assets]
+    paths: ['tarnished-covenant/build-sanctuary-dashboard.py']
 
 permissions:
   contents: write
@@ -15,14 +18,7 @@ jobs:
           ref: tarnished-covenant-assets
       - name: Assemble page
         run: |
-          cat tarnished-covenant/chunks/part0.txt \
-              tarnished-covenant/chunks/part1.txt \
-              tarnished-covenant/chunks/part2.txt \
-              tarnished-covenant/chunks/part3.txt \
-              tarnished-covenant/chunks/part4.txt \
-              tarnished-covenant/chunks/part5.txt \
-              tarnished-covenant/chunks/part6.txt \
-              > tarnished-covenant/index.html
+          cat tarnished-covenant/chunks/part0.txt tarnished-covenant/chunks/part1.txt tarnished-covenant/chunks/part2.txt tarnished-covenant/chunks/part3.txt tarnished-covenant/chunks/part4.txt tarnished-covenant/chunks/part5.txt tarnished-covenant/chunks/part6.txt > tarnished-covenant/index.html
       - name: Patch app behavior
         run: python tarnished-covenant/build-behavior.py
       - name: Patch progression and Remembrances
@@ -95,6 +91,8 @@ jobs:
         run: python tarnished-covenant/build-information-architecture.py
       - name: Anchor bottom navigation to safe area
         run: python tarnished-covenant/build-bottom-nav-safearea.py
+      - name: Turn Site of Grace into run dashboard
+        run: python tarnished-covenant/build-sanctuary-dashboard.py
       - name: Apply consolidated maintenance core
         run: python tarnished-covenant/build-regression-hardening.py
       - name: Assert regression invariants
