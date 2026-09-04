@@ -1,0 +1,159 @@
+name: Audit Tarnished Covenant
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-tarnished-covenant.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Audit current generated app
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import re, subprocess
+          p=Path('tarnished-covenant/index.html'); html=p.read_text()
+          issues=[]
+          def issue(msg): issues.append(msg); print('BUG:',msg)
+          if "serviceWorker.register('./sw.js')" in html and not Path('tarnished-covenant/sw.js').exists():
+              issue('registers ./sw.js but no service worker file exists')
+          if 'id="restartSeverity"' in html or "querySelector('#restartSeverity')" in html:
+              issue('Restart Covenant can expose/consume the retired difficulty selector')
+          if 'h(entry.chaosConsequence||' in html and 'personalizePlayers(entry.chaosConsequence' not in html:
+              issue('Compendium Chaos archive can leak legacy Chase/Morgan names')
+          if "${h(x.text||'')}" in html and 'personalizePlayers(x.text' not in html:
+              issue('Compendium Appeal penalty archive can leak legacy Chase/Morgan names')
+          if "recorded by ${h(entry.completedBy)}" in html and 'personalizePlayers(entry.completedBy' not in html:
+              issue('Compendium recorder attribution can leak legacy Chase/Morgan session identities')
+          m=re.search(r"const TC_BUILD_ID='(\d{14})'",html)
+          if m:
+              bid=datetime.strptime(m.group(1),'%Y%m%d%H%M%S').replace(tzinfo=timezone.utc)
+              stamp=subprocess.check_output(['git','log','-1','--format=%cI','--','tarnished-covenant/index.html'],text=True).strip()
+              commit=datetime.fromisoformat(stamp.replace('Z','+00:00'))
+              if commit-bid > __import__('datetime').timedelta(minutes=5):
+                  issue(f'Home Screen freshness ID predates deployed index by {(commit-bid).total_seconds()/3600:.1f} hours')
+          refs=set()
+          refs.update(re.findall(r'(?:src|href)=["\'](\./[^"\']+)',html))
+          refs.update(re.findall(r'url\(["\']?(\./[^)"\']+)',html))
+          missing=[]
+          for ref in refs:
+              clean=ref.split('?',1)[0].split('#',1)[0]
+              fp=Path('tarnished-covenant')/clean[2:]
+              if not fp.exists(): missing.append(clean)
+          if missing: issue('missing local asset references: '+', '.join(sorted(missing)))
+          print(f'AUDIT_CURRENT_ISSUES={len(issues)}')
+          Path('/tmp/current-audit.txt').write_text('\n'.join(issues))
+          PY
+
+      - name: Validate current JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/current.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/current.js
+          python tarnished-covenant/test-regression-invariants.py
+
+      - name: Dry rebuild from durable sources
+        run: |
+          cp tarnished-covenant/index.html /tmp/deployed-index.html
+          cat tarnished-covenant/chunks/part{0,1,2,3,4,5,6}.txt > tarnished-covenant/index.html
+          python tarnished-covenant/build-behavior.py
+          python tarnished-covenant/build-progression.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/index.html');s=p.read_text();old="  }\n\n\nregions['Siofra River + Nokron']";new="  }\n};\n\nregions['Siofra River + Nokron']"
+          if old not in s: raise SystemExit('region closure repair target not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          python tarnished-covenant/build-regional-pools.py
+          python tarnished-covenant/build-ui.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/index.html');s=p.read_text();s=s.replace('if(state.runComplete) return renderRunComplete();','if (state.runComplete) return renderRunComplete();',1);p.write_text(s)
+          PY
+          python tarnished-covenant/build-chaos-theme.py
+          python tarnished-covenant/build-images.py
+          python tarnished-covenant/build-layout-polish.py
+          python tarnished-covenant/build-character-names.py
+          python tarnished-covenant/build-chaos-polish.py
+          python tarnished-covenant/build-smithing-system.py
+          python tarnished-covenant/build-risk-rebalance-runner.py
+          python tarnished-covenant/build-objective-chaos-triggers.py
+          python tarnished-covenant/build-compendium-challenges.py
+          python tarnished-covenant/build-chaos-redesign.py
+          python tarnished-covenant/build-escalating-chaos.py
+          python tarnished-covenant/build-stability-pass.py
+          python tarnished-covenant/build-nav-safety.py
+          python tarnished-covenant/build-chaos-compact.py
+          python tarnished-covenant/build-post-battle-runner.py
+          python tarnished-covenant/build-refresh-button.py
+          python tarnished-covenant/build-durable-session.py
+          python tarnished-covenant/build-ledger-compendium.py
+          python tarnished-covenant/build-random-rewards.py
+          python tarnished-covenant/build-challenge-ruleset.py
+          python tarnished-covenant/build-release-hardening.py
+          python tarnished-covenant/build-mobile-readability.py
+          python tarnished-covenant/build-capstone-save-fix.py
+          python tarnished-covenant/build-reward-slot.py
+          python tarnished-covenant/build-information-architecture.py
+          python tarnished-covenant/build-sanctuary-dashboard.py
+          python tarnished-covenant/build-ledger-art-refresh-pairing.py
+          python tarnished-covenant/build-regression-hardening.py
+          python tarnished-covenant/build-fixed-nav-compositing.py
+          python tarnished-covenant/build-section-home-nav.py
+          python tarnished-covenant/build-ios-standalone-shell.py
+          python tarnished-covenant/build-wiki-links.py
+
+      - name: Audit dry rebuilt app
+        run: |
+          python tarnished-covenant/test-regression-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text(); issues=[]
+          def issue(msg): issues.append(msg); print('BUG:',msg)
+          checks=[
+            ('id="restartSeverity"' in html or "querySelector('#restartSeverity')" in html,'durable rebuild retains retired restart difficulty selector'),
+            ("serviceWorker.register('./sw.js')" in html and not Path('tarnished-covenant/sw.js').exists(),'durable rebuild registers missing service worker'),
+            ('h(entry.chaosConsequence||' in html and 'personalizePlayers(entry.chaosConsequence' not in html,'durable rebuild leaks custom names in archived Chaos'),
+            ("${h(x.text||'')}" in html and 'personalizePlayers(x.text' not in html,'durable rebuild leaks custom names in archived penalties'),
+            ('tc-ledger-screen' not in html,'durable rebuild loses Ledger flicker fix'),
+            ('Covenant Office Memorandum' not in html,'durable rebuild loses Grace office memo'),
+            ('tarnished.dev/weapon-calculator' not in html,'durable rebuild loses AR calculator'),
+            ('eldenring.wiki.gg/wiki/' not in html,'durable rebuild loses wiki links'),
+            ('Bottom nav returns primary sections to panel one' not in html,'durable rebuild loses section reset behavior'),
+            ('iOS standalone viewport correction' not in html,'durable rebuild loses iOS viewport fix'),
+          ]
+          for bad,msg in checks:
+              if bad: issue(msg)
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/rebuilt.js').write_text('\n'.join(scripts))
+          print(f'AUDIT_REBUILD_ISSUES={len(issues)}')
+          Path('/tmp/rebuild-audit.txt').write_text('\n'.join(issues))
+          PY
+          node --check /tmp/rebuilt.js
+
+      - name: Audit summary
+        if: always()
+        run: |
+          echo '--- current generated app ---'
+          cat /tmp/current-audit.txt 2>/dev/null || true
+          echo '--- durable rebuild ---'
+          cat /tmp/rebuild-audit.txt 2>/dev/null || true
+          echo 'Read-only audit complete; no repository changes were pushed.'
