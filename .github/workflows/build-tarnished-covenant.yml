@@ -75,6 +75,8 @@ jobs:
         run: python tarnished-covenant/build-ledger-compendium.py
       - name: Randomize Covenant rewards and gate rerolls
         run: python tarnished-covenant/build-random-rewards.py
+      - name: Apply challenge-first ruleset
+        run: python tarnished-covenant/build-challenge-ruleset.py
       - name: Run release hardening and usability checks
         run: python tarnished-covenant/build-release-hardening.py
       - name: Enlarge and reflow phone UI
