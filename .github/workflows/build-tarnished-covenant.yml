@@ -105,6 +105,14 @@ jobs:
           grep -q 'height:100vh!important' tarnished-covenant/index.html
           if grep -q 'Persistent Ledger DOM cache' tarnished-covenant/index.html; then exit 1; fi
           if grep -q 'Standalone spacing + stable Ledger shell' tarnished-covenant/index.html; then exit 1; fi
+      - name: Add contextual Elden Ring wiki links
+        run: python tarnished-covenant/build-wiki-links.py
+      - name: Assert contextual wiki links
+        run: |
+          grep -q 'Contextual Elden Ring wiki links' tarnished-covenant/index.html
+          grep -q 'tcDecorateGraceWiki' tarnished-covenant/index.html
+          grep -q 'tcDecorateEncounterWiki' tarnished-covenant/index.html
+          grep -q 'tcDecorateCompendiumWiki' tarnished-covenant/index.html
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
