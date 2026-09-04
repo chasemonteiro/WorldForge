@@ -2,7 +2,12 @@ name: Build Tarnished Covenant
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-tarnished-covenant.yml'
 
+# Temporary validation trigger; restored to manual-only after this refactor pass.
 permissions:
   contents: write
 
@@ -93,9 +98,7 @@ jobs:
         run: python tarnished-covenant/build-reward-slot.py
       - name: Apply viewport navigation and mandatory corporate contracts
         run: python tarnished-covenant/build-information-architecture.py
-      - name: Keep Compendium entry numbers chronological
-        run: python tarnished-covenant/build-compendium-stable-numbering.py
-      - name: Harden cross-system transitions
+      - name: Apply consolidated maintenance core
         run: python tarnished-covenant/build-regression-hardening.py
       - name: Assert regression invariants
         run: python tarnished-covenant/test-regression-invariants.py
