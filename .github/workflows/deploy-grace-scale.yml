@@ -1,0 +1,81 @@
+name: Deploy Larger Native Grace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-grace-scale.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Enlarge native Grace in durable source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('tarnished-covenant/build-grace-wisp-tuning.py')
+          s=p.read_text()
+          s=re.sub(r'\n?/\* --- Grace native scale --- \*/.*?/\* --- End Grace native scale --- \*/\n?', '\n', s, flags=re.S)
+          block=r'''
+          /* --- Grace native scale --- */
+          .tc-grace-idle{flex-basis:148px;min-height:116px;max-height:205px}
+          .tc-grace-idle-button{width:min(276px,78vw);height:168px;padding-bottom:18px}
+          .tc-grace-native-svg{width:258px;height:162px;top:49.5%}
+          .tc-grace-native-glow{width:92%;height:80%;top:54%}
+          @media(max-height:740px){
+            .tc-grace-idle{flex-basis:112px;min-height:92px;max-height:154px}
+            .tc-grace-idle-button{height:126px;width:min(228px,66vw);padding-bottom:14px}
+            .tc-grace-native-svg{width:210px;height:132px}
+            .tc-grace-native-glow{width:88%;height:76%}
+          }
+          @media(max-height:650px){
+            .tc-grace-idle{flex-basis:88px;min-height:72px;max-height:112px}
+            .tc-grace-idle-button{height:98px;width:188px;padding-bottom:10px}
+            .tc-grace-native-svg{width:170px;height:107px}
+            .tc-grace-native-glow{width:84%;height:72%}
+          }
+          /* --- End Grace native scale --- */
+          '''
+          marker='/* --- End Grace wisp tuning --- */'
+          if marker not in s: raise SystemExit('Grace wisp tuning end marker missing')
+          s=s.replace(marker,block+'\n'+marker,1)
+          p.write_text(s)
+          PY
+          python -m py_compile tarnished-covenant/build-grace-wisp-tuning.py
+      - name: Apply larger Grace to live app
+        run: |
+          python tarnished-covenant/build-grace-wisp-tuning.py
+          python tarnished-covenant/build-launch-refresh.py
+      - name: Validate app
+        run: |
+          grep -q 'Grace native scale' tarnished-covenant/index.html
+          grep -q 'width:min(276px,78vw)' tarnished-covenant/index.html
+          grep -q 'width:258px;height:162px' tarnished-covenant/index.html
+          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
+          grep -q 'TC_GRACE_FAVOR_ODDS=5000' tarnished-covenant/index.html
+          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
+          python tarnished-covenant/test-regression-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit source and live app
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/build-grace-wisp-tuning.py tarnished-covenant/index.html
+          if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Enlarge native Site of Grace'; git push origin HEAD:tarnished-covenant-assets; fi
