@@ -90,18 +90,6 @@ jobs:
         run: python tarnished-covenant/build-capstone-save-fix.py
       - name: Animate Covenant reward draws
         run: python tarnished-covenant/build-reward-slot.py
-      - name: Add Aviary Ticket reward
-        run: python tarnished-covenant/build-aviary-ticket.py
-      - name: Harden final reward Continue transition
-        run: python tarnished-covenant/build-reward-continue-fix.py
-      - name: Preserve Smithing wallet across regions
-        run: python tarnished-covenant/build-region-state-persistence.py
-      - name: Apply challenge-first ruleset
-        run: python tarnished-covenant/build-challenge-ruleset.py
-      - name: Add one-time capstone defer
-        run: python tarnished-covenant/build-capstone-defer.py
-      - name: Apply compact encounter and chronicle UI
-        run: python tarnished-covenant/build-interface-overhaul.py
       - name: Apply viewport navigation and mandatory corporate contracts
         run: python tarnished-covenant/build-information-architecture.py
       - name: Anchor bottom navigation to safe area
