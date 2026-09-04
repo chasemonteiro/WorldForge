@@ -5,42 +5,29 @@ p=Path('tarnished-covenant/index.html')
 s=p.read_text()
 
 # -----------------------------------------------------------------------------
-# Covenant reward machine: visible reward feedback plus a rare comic tax result.
+# Covenant reward machine: visible reward feedback plus comic tax results.
+# Reward probabilities are owned by build-challenge-ruleset.py. This layer only
+# supplies the tax catalog/helpers and the theatrical reveal UI.
 # -----------------------------------------------------------------------------
-old="""function drawCovenantReward(state){
-  const sm=state.smithing || (state.smithing=smithingData(state));
-  const roll=Math.random();
-  if(roll<0.40){sm.favor+=1;return {kind:'favor',label:'+1 Smithing Favor'};}
-  if(roll<0.45){sm.favor+=2;return {kind:'favor',label:'+2 Smithing Favor'};}
-  if(roll<0.65){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh'};}
-  if(roll<0.85){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh'};}
-  sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver'};
-}"""
-new="""const TC_COVENANT_TAXES=[
+reward_marker='function drawCovenantReward(state){'
+if reward_marker not in s: raise SystemExit('drawCovenantReward marker missing')
+helpers="""const TC_COVENANT_TAXES=[
   {label:'Bone Dart Audit',detail:'Before the next encounter, spend half of your currently held runes on Bone Darts. If the merchant runs out, the bureaucracy accepts as many as you can buy.'},
   {label:'Merchant Compliance',detail:'Before the next encounter, spend 25% of your currently held runes on throwables, arrows, or bolts. The Covenant requires receipts.'},
   {label:'Inventory Tithe',detail:'Before the next encounter, buy at least 20 Rainbow Stones or Glowstones. This improves nothing.'},
   {label:'Procurement Error',detail:'Spend 5,000 runes on consumables you do not intend to use. If you have fewer than 5,000, spend what you have.'}
 ];
-function drawCovenantReward(state){
-  const sm=state.smithing || (state.smithing=smithingData(state));
-  const roll=Math.random();
-  if(roll<0.38){sm.favor+=1;return {kind:'favor',label:'+1 Smithing Favor',detail:'One mark of Smithing Favor is added to the Covenant treasury.'};}
-  if(roll<0.43){sm.favor+=2;return {kind:'favor2',label:'+2 Smithing Favor',detail:'A rare double grant. The accountants are furious.'};}
-  if(roll<0.61){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Reroll one unopened Chaos trigger on a future encounter.'};}
-  if(roll<0.79){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Reroll one Odd Rite on a future encounter.'};}
-  if(roll<0.94){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'Your next Weapon Appeal is penalty-free.'};}
-  const tax=pick(TC_COVENANT_TAXES);
-  return {kind:'tax',label:tax.label,detail:tax.detail};
-}
 function tcRewardIcon(kind){
-  const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',tax:'☠'};
+  const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',aviary:'✈',tax:'☠'};
   return icons[kind]||'◇';
 }
 function tcRewardClass(kind){return kind==='tax'?'tax':kind==='chaos'?'chaos':kind==='rite'?'rite':kind==='appeal'?'appeal':'favor';}
 """
-if old not in s: raise SystemExit('drawCovenantReward target missing')
-s=s.replace(old,new,1)
+if 'const TC_COVENANT_TAXES=[' not in s:
+    s=s.replace(reward_marker,helpers+'\n'+reward_marker,1)
+else:
+    if 'function tcRewardIcon(kind)' not in s:
+        s=s.replace(reward_marker,helpers.split('function tcRewardIcon',1)[1].join(['function tcRewardIcon',''])+'\n'+reward_marker,1)
 
 # Transient reveal state is intentionally local: shared progression is saved first,
 # while the device that submitted the report gets the theatrical reveal.
@@ -171,7 +158,7 @@ tap_css=r'''
 if '</style>' not in s: raise SystemExit('style end missing')
 s=s.replace('</style>',css+'\n'+tap_css+'\n</style>',1)
 
-for invariant in ['TC_COVENANT_TAXES','function renderRewardMachine()','pendingRewardReveal','Bone Dart Audit','Covenant Treasury']:
+for invariant in ['TC_COVENANT_TAXES','function renderRewardMachine()','pendingRewardReveal','Bone Dart Audit','Covenant Treasury','Dynasty Frequent Flier']:
     if invariant not in s: raise SystemExit('slot invariant missing: '+invariant)
 
 p.write_text(s)
