@@ -3816,6 +3816,9 @@ bindNav=function(){
       renderRun();
       return;
     }
+    /* --- Bottom nav returns primary sections to panel one --- */
+    if(btn.dataset.screen==='sanctuary' && typeof tcSanctuaryPanelIndex!=='undefined')tcSanctuaryPanelIndex=0;
+    if(btn.dataset.screen==='encounter' && typeof tcEncounterPanelIndex!=='undefined')tcEncounterPanelIndex=0;
     uiScreen=btn.dataset.screen;
     renderRun();
   });
