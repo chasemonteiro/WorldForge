@@ -771,57 +771,6 @@ html.tc-standalone body:has(.tc-sanctuary-shell) .app-shell{
   max-height:100vh!important;
 }
 
-
-
-
-/* --- Standalone spacing + stable Ledger shell --- */
-/* Keep artwork substantial but do not use it to paper over panel-scroll bugs. */
-html.tc-standalone .tc-encounter-panel[data-panel="boss"] .tc-boss-art{
-  height:clamp(180px,24vh,230px)!important;
-  max-height:230px!important;
-  aspect-ratio:auto!important;
-  margin:7px 0 8px!important;
-}
-html.tc-standalone .tc-encounter-panel[data-panel="boss"]{
-  padding-top:2px!important;
-  padding-bottom:6px!important;
-}
-html.tc-standalone .tc-encounter-hint{
-  margin:-2px 0 4px!important;
-}
-html.tc-standalone .tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{
-  height:clamp(175px,23vh,225px)!important;
-  max-height:225px!important;
-  aspect-ratio:auto!important;
-  margin:8px 0!important;
-}
-html.tc-standalone .tc-sanctuary-panel[data-panel="grace"] .tc-title{
-  margin-top:8px!important;
-}
-
-/* Ledger remains in the fixed installed-app shell, but Ledger itself is the
-   scroll container. Its scroll position therefore survives DOM detachment. */
-html.tc-standalone:has(.tc-ledger-shell),
-html.tc-standalone body:has(.tc-ledger-shell){
-  height:100%!important;
-  overflow:hidden!important;
-}
-html.tc-standalone body:has(.tc-ledger-shell) .app-shell{
-  height:100vh!important;
-  max-height:100vh!important;
-  overflow:hidden!important;
-  padding:16px 14px calc(70px + env(safe-area-inset-bottom))!important;
-}
-html.tc-standalone .tc-ledger-shell{
-  height:100%!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior-y:contain;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:18px!important;
-}
-
 </style>
 
 <script>
@@ -3158,7 +3107,7 @@ function renderLedger() {
   const state=run.state;
   const title=ledgerView==='smithing'?'Smithing Ledger':ledgerView==='compendium'?'Covenant Compendium':'Remembrance Ledger';
   const body=ledgerView==='smithing'?smithingLedgerMarkup(state):ledgerView==='compendium'?compendiumLedgerMarkup(state):remembranceLedgerBody(state);
-  app.innerHTML=`<section class="tc-screen tc-ledger-shell">${screenTop(title)}
+  app.innerHTML=`<section class="tc-screen">${screenTop(title)}
     <div class="tc-ledger-tabs tc-ledger-tabs-3"><button class="${ledgerView==='remembrances'?'active':''}" data-ledger-view="remembrances">Progress</button><button class="${ledgerView==='compendium'?'active':''}" data-ledger-view="compendium">Compendium</button><button class="${ledgerView==='smithing'?'active':''}" data-ledger-view="smithing">Smithing</button></div>
     ${body}
     ${navMarkup('ledger')}</section>`;
@@ -3428,10 +3377,10 @@ let tcEncounterPanelId=null;
 let tcSanctuaryPanelIndex=0;
 function tcMakePanel(className,label,key,nodes){const panel=document.createElement('section');panel.className=className;panel.dataset.panel=key;const heading=document.createElement('div');heading.className='tc-panel-heading';heading.textContent=label;panel.appendChild(heading);nodes.filter(Boolean).forEach(node=>panel.appendChild(node));return panel;}
 function tcWirePanelTrack(track,tabs,count,getIndex,setIndex){
-  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);const panels=track.querySelectorAll('.tc-encounter-panel,.tc-sanctuary-panel');if(panels[i])panels[i].scrollTop=0;track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));};
+  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));};
   tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
   let scrollTimer=null;track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));setIndex(i);tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));},70);},{passive:true});
-  requestAnimationFrame(()=>{track.scrollLeft=getIndex()*track.clientWidth;track.querySelectorAll('.tc-encounter-panel,.tc-sanctuary-panel').forEach(panel=>{panel.scrollTop=0;});});
+  requestAnimationFrame(()=>{track.scrollLeft=getIndex()*track.clientWidth;});
 }
 function tcEnhanceEncounterPanels(){
   const screen=app.querySelector('.tc-screen');const complete=screen?.querySelector('#complete');if(!screen||!complete||screen.classList.contains('tc-encounter-shell'))return;
@@ -3633,31 +3582,6 @@ renderRun=function(){
   const transition=tcBlockingTransition(run?.state);
   if(transition==='corporate')return renderCorporateContractNotice();
   return tcRenderRunBeforeHardening();
-};
-
-
-
-/* --- Persistent Ledger DOM cache --- */
-let tcLedgerCachedNode=null;
-let tcLedgerCachedSignature='';
-const tcRenderLedgerBeforeDomCache=renderLedger;
-renderLedger=function(){
-  const signature=ledgerView+'|'+JSON.stringify(run.state);
-  if(tcLedgerCachedNode && tcLedgerCachedSignature===signature){
-    app.replaceChildren(tcLedgerCachedNode);
-    return;
-  }
-  tcRenderLedgerBeforeDomCache();
-  tcLedgerCachedNode=app.querySelector('.tc-ledger-shell');
-  tcLedgerCachedSignature=signature;
-};
-const tcRenderRunBeforeLedgerDomCache=renderRun;
-renderRun=function(){
-  if(uiScreen!=='ledger'){
-    const mounted=app.querySelector('.tc-ledger-shell');
-    if(mounted && mounted===tcLedgerCachedNode) mounted.remove();
-  }
-  return tcRenderRunBeforeLedgerDomCache();
 };
 
 </script>
