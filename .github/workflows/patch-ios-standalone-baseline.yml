@@ -1,0 +1,35 @@
+name: Patch iOS Standalone Baseline
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/patch-ios-standalone-baseline.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Patch iOS standalone shell
+        run: python tarnished-covenant/build-ios-standalone-shell.py
+      - name: Verify standalone-only shell
+        run: |
+          grep -q 'apple-mobile-web-app-status-bar-style" content="black"' tarnished-covenant/index.html
+          grep -q 'tc-standalone' tarnished-covenant/index.html
+          grep -q 'navigator.standalone' tarnished-covenant/index.html
+      - name: Commit standalone patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'Already patched.'
+          else
+            git commit -m 'Patch iOS Home Screen layout'
+            git push origin tarnished-covenant-assets
+          fi
