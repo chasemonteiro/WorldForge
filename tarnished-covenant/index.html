@@ -727,8 +727,12 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 html:has(.tc-bottom-nav),body:has(.tc-bottom-nav){
   width:100%;min-height:100dvh;background-color:var(--bg);
 }
+/* The base body already carries iPhone safe-area padding. Primary app shells
+   also account for the top inset themselves, so leaving body padding in place
+   double-counts the status bar and pushes fixed-height Encounter controls under
+   the bottom nav. The app shell/nav own safe-area spacing while a run is open. */
 body:has(.tc-bottom-nav){
-  padding-bottom:0!important;
+  padding:0!important;
 }
 body:has(.tc-bottom-nav) .app-shell{
   width:100%;min-height:100dvh;
