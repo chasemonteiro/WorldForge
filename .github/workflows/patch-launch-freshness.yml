@@ -1,0 +1,44 @@
+name: Patch Home Screen Freshness
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-launch-freshness.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Add launch freshness guard
+        run: python tarnished-covenant/build-launch-refresh.py
+      - name: Verify freshness guard
+        run: |
+          grep -q 'Home Screen freshness guard' tarnished-covenant/index.html
+          grep -q 'tcCheckForFreshBuild' tarnished-covenant/index.html
+          grep -q "cache:'no-store'" tarnished-covenant/index.html
+          grep -q 'function tcRecoverRememberedRun' tarnished-covenant/index.html
+          grep -q 'return renderRegionCompleteSafe();' tarnished-covenant/index.html
+      - name: Validate JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit fresh launch guard
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          git commit -m 'Make installed Covenant refresh across deploys'
+          git push origin HEAD:tarnished-covenant-assets
