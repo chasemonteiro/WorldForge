@@ -2,6 +2,10 @@ name: Build Tarnished Covenant
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-tarnished-covenant.yml'
 
 permissions:
   contents: write
@@ -85,8 +89,6 @@ jobs:
         run: python tarnished-covenant/build-reward-slot.py
       - name: Apply viewport navigation and mandatory corporate contracts
         run: python tarnished-covenant/build-information-architecture.py
-      - name: Anchor bottom navigation to safe area
-        run: python tarnished-covenant/build-bottom-nav-safearea.py
       - name: Turn Site of Grace into run dashboard
         run: python tarnished-covenant/build-sanctuary-dashboard.py
       - name: Pair refreshes and illustrate Ledger
