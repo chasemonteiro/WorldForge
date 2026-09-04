@@ -105,18 +105,27 @@ for expected in ["['Clean Workplace'", "['Off The Sauce'"]:
 require('(run.state.history?.length||0)-index')
 require("document.querySelector('#tcAppealOverlay')?.remove();")
 
-# One dynamic viewport and one owner for iPhone safe-area spacing. The body must
-# not add a second top inset underneath the viewport-oriented shell.
+# One dynamic viewport and one owner for iPhone safe-area spacing. Geometry must
+# be keyed to the explicit run class, never to a dynamically inserted nav element.
 for needle in [
     'One dynamic viewport across every primary screen',
     'padding:calc(8px + env(safe-area-inset-top)) 14px 0',
-    'body:has(.tc-bottom-nav){',
+    'body.tc-run-active{',
     'padding:0!important',
-    'body:has(.tc-bottom-nav) .app-shell',
+    'body.tc-run-active .app-shell',
     'height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important',
     '.tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}',
     '.tc-encounter-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}'
 ]: require(needle)
+
+# The viewport block itself must not wait for Safari to invalidate :has() after
+# the persistent nav is mounted.
+geometry_start=html.find('/* --- One dynamic viewport across every primary screen --- */')
+geometry_end=html.find('</style>',geometry_start)
+if geometry_start<0 or geometry_end<0: raise SystemExit('viewport geometry block missing')
+geometry=html[geometry_start:geometry_end]
+if 'body:has(.tc-bottom-nav)' in geometry or 'html:has(.tc-bottom-nav)' in geometry:
+    raise SystemExit('viewport geometry still depends on dynamic nav :has selector')
 
 forbid('@supports(height:100svh)')
 
