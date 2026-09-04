@@ -1,7 +1,11 @@
 name: Build Tarnished Covenant
 
+# temporary validation trigger
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/build-tarnished-covenant.yml']
 
 permissions:
   contents: write
@@ -93,8 +97,12 @@ jobs:
         run: python tarnished-covenant/build-regression-hardening.py
       - name: Keep fixed nav out of transformed screen context
         run: python tarnished-covenant/build-fixed-nav-compositing.py
+      - name: Mount navigation directly to document body
+        run: python tarnished-covenant/build-body-nav-portal.py
       - name: Assert regression invariants
         run: python tarnished-covenant/test-regression-invariants.py
+      - name: Assert document-level navigation invariants
+        run: python tarnished-covenant/test-body-nav-portal.py
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
