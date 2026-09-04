@@ -832,18 +832,36 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
 /* --- Contextual wiki link styles --- */
 .tc-wiki-link{display:inline-flex;align-items:center;gap:4px;color:var(--gold-bright);text-decoration:none;border-bottom:1px solid rgba(224,193,123,.34);padding:5px 1px 4px;font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.10em;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .tc-wiki-link:active{opacity:.68}.tc-wiki-boss{margin-top:7px}.tc-wiki-weapon{margin:0 0 8px}.tc-grace-target .tc-wiki-link{margin-top:7px}.tc-comp-sheet .tc-wiki-boss{margin:1px 0 14px}.tc-comp-sheet .tc-wiki-weapon{margin:1px 0 7px}
-.tc-grace-wiki-target{margin:14px 8px 0;padding:13px 10px 12px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);text-align:center;background:linear-gradient(90deg,transparent,rgba(198,161,90,.045),transparent)}
-.tc-grace-wiki-name{font:400 clamp(21px,6vw,28px)/1.08 Georgia,serif;color:var(--ink);margin:6px 0 2px;text-wrap:balance}
+.tc-grace-wiki-target{margin:7px 8px 0;padding:9px 10px 8px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);text-align:center;background:linear-gradient(90deg,transparent,rgba(198,161,90,.045),transparent);flex:0 0 auto}
+.tc-grace-wiki-name{font:400 clamp(18px,5.2vw,24px)/1.08 Georgia,serif;color:var(--ink);margin:4px 0 1px;text-wrap:balance}
 .tc-grace-wiki-target .tc-kicker{color:var(--gold)}
-.tc-grace-ar-tools{margin:12px 8px 0;padding:13px 12px 12px;border:1px solid rgba(198,161,90,.25);background:linear-gradient(180deg,rgba(198,161,90,.06),rgba(8,8,6,.24));text-align:center}
-.tc-grace-ar-title{font:850 8px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:8px}
-.tc-grace-ar-weapons{display:grid;gap:5px;margin:0 0 10px;font:400 15px/1.25 Georgia,serif;color:var(--ink)}
+.tc-grace-ar-tools{margin:7px 8px 0;padding:9px 10px;border:1px solid rgba(198,161,90,.25);background:linear-gradient(180deg,rgba(198,161,90,.06),rgba(8,8,6,.24));text-align:center;flex:0 0 auto}
+.tc-grace-ar-title{font:850 8px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:5px}
+.tc-grace-ar-weapons{display:grid;gap:2px;margin:0 0 7px;font:400 13px/1.15 Georgia,serif;color:var(--ink)}
 .tc-grace-ar-weapons span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tc-grace-ar-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:42px;padding:10px 12px;border:1px solid rgba(224,193,123,.48);background:linear-gradient(180deg,rgba(198,161,90,.14),rgba(94,72,34,.08));color:var(--gold-bright);text-decoration:none;font:850 9px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.10em;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.tc-grace-ar-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:36px;padding:8px 10px;border:1px solid rgba(224,193,123,.48);background:linear-gradient(180deg,rgba(198,161,90,.14),rgba(94,72,34,.08));color:var(--gold-bright);text-decoration:none;font:850 9px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.10em;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .tc-grace-ar-button:active{opacity:.72}
+
+/* Grace is a one-screen pre-fight workstation. The old giant branding block is
+   intentionally hidden after IA has used it to construct the panel. */
+.tc-sanctuary-panel[data-panel="grace"]{overflow-y:hidden!important;padding-bottom:8px!important}
+.tc-sanctuary-panel[data-panel="grace"]>.tc-rune,
+.tc-sanctuary-panel[data-panel="grace"]>.tc-title,
+.tc-sanctuary-panel[data-panel="grace"]>.tc-subtitle{display:none!important}
+.tc-grace-office-memo{margin:4px 8px 8px;padding:9px 12px 10px;border-top:1px solid rgba(198,161,90,.25);border-bottom:1px solid rgba(198,161,90,.18);background:linear-gradient(90deg,transparent,rgba(198,161,90,.055),transparent);text-align:center;flex:0 0 auto}
+.tc-grace-office-label{font:850 8px/1.1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.16em;color:var(--gold);margin-bottom:5px}
+.tc-grace-office-copy{font:italic 12px/1.32 Georgia,serif;color:#cfc5b2;max-width:560px;margin:auto;text-wrap:balance}
+.tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{height:min(24svh,185px)!important;min-height:125px!important;margin:6px 0 7px!important;flex:0 1 auto}
+@media(max-height:760px){
+  .tc-grace-office-memo{padding:7px 10px;margin-top:2px;margin-bottom:5px}.tc-grace-office-copy{font-size:10.5px}
+  .tc-sanctuary-panel[data-panel="grace"] .tc-grace-art{height:18svh!important;min-height:100px!important;margin:4px 0 5px!important}
+  .tc-grace-wiki-target{margin-top:4px;padding-top:6px;padding-bottom:6px}.tc-grace-ar-tools{margin-top:4px;padding-top:6px;padding-bottom:6px}
+}
 /* --- End contextual wiki link styles --- */
 
 </style>
@@ -3934,9 +3952,25 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout
 
 
 
+
+
 /* --- Contextual Elden Ring wiki links --- */
 const TC_WIKI_BASE='https://eldenring.wiki.gg/wiki/';
 const TC_AR_CALCULATOR='https://www.tarnished.dev/weapon-calculator';
+const TC_GRACE_MEMOS=[
+  'Death remains an unexcused absence unless accompanied by a Site of Grace.',
+  'Finger guidance is advisory. Liability remains with the Tarnished.',
+  'Management has reviewed your rune loss and elected not to comment.',
+  'All demigod disputes must be resolved off company time.',
+  'Flasks are classified as personal protective equipment. Refill accordingly.',
+  'The Erdtree cannot currently accommodate your request for flexible scheduling.',
+  'Repeated exposure to Scarlet Rot may affect eligibility for remote work.',
+  'Please direct all complaints regarding gravity to the appropriate regional authority.',
+  'Rune recovery remains the sole responsibility of the employee.',
+  'Torrent is not approved for indoor use, regardless of operational urgency.',
+  'Grace has been extended as a courtesy and should not be interpreted as job security.',
+  'Any resemblance between this assignment and a reasonable workload is coincidental.'
+];
 function tcWikiTitle(name,kind='boss'){
   let out=String(name||'').trim().replace(/[’‘]/g,"'").replace(/[–—]/g,'-');
   if(kind==='boss')out=out.replace(/\s*\([^)]*\)\s*$/,'').trim();
@@ -3967,9 +4001,30 @@ function tcBuildArTools(){
   box.querySelector('a')?.addEventListener('click',e=>e.stopPropagation());
   return box;
 }
+function tcGraceMemoForState(state){
+  const seed=String(state?.current?.id||state?.current?.target?.name||state?.region||'grace');
+  let hash=0;for(let i=0;i<seed.length;i++)hash=((hash<<5)-hash+seed.charCodeAt(i))|0;
+  return TC_GRACE_MEMOS[Math.abs(hash)%TC_GRACE_MEMOS.length];
+}
+function tcDecorateGraceOffice(gracePanel){
+  if(!gracePanel)return;
+  const text=tcGraceMemoForState(run?.state);
+  let memo=gracePanel.querySelector('.tc-grace-office-memo');
+  if(!memo){
+    memo=document.createElement('div');memo.className='tc-grace-office-memo';
+    const art=gracePanel.querySelector('.tc-grace-art');
+    if(art)art.insertAdjacentElement('beforebegin',memo);else gracePanel.appendChild(memo);
+  }
+  if(memo.dataset.memo!==text){
+    memo.dataset.memo=text;
+    memo.innerHTML=`<div class="tc-grace-office-label">Covenant Office Memorandum</div><div class="tc-grace-office-copy">${h(text)}</div>`;
+  }
+  gracePanel.scrollTop=0;
+}
 function tcDecorateGraceWiki(){
   const target=run?.state?.current?.target?.name;if(!target)return;
   const gracePanel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');
+  tcDecorateGraceOffice(gracePanel);
   if(gracePanel&&!gracePanel.querySelector('.tc-grace-wiki-target')){
     const box=document.createElement('div');box.className='tc-grace-wiki-target';
     box.innerHTML=`<div class="tc-kicker">current target</div><div class="tc-grace-wiki-name">${h(target)}</div>`;
