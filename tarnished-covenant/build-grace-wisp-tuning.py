@@ -83,6 +83,26 @@ css=r'''
 @keyframes tcGraceFineLeft{from{opacity:.25;transform:rotate(-1deg) scaleY(.95)}to{opacity:.68;transform:rotate(2.2deg) scaleY(1.05)}}
 @keyframes tcGraceFineRight{from{opacity:.24;transform:rotate(1.5deg) scaleY(.96)}to{opacity:.65;transform:rotate(-2deg) scaleY(1.045)}}
 @keyframes tcGraceCrownSide{from{opacity:.2;transform:rotate(2deg) scale(.95)}to{opacity:.6;transform:rotate(-3deg) scale(1.05)}}
+
+/* --- Grace native scale --- */
+.tc-grace-idle{flex-basis:148px;min-height:116px;max-height:205px}
+.tc-grace-idle-button{width:min(276px,78vw);height:168px;padding-bottom:18px}
+.tc-grace-native-svg{width:258px;height:162px;top:49.5%}
+.tc-grace-native-glow{width:92%;height:80%;top:54%}
+@media(max-height:740px){
+  .tc-grace-idle{flex-basis:112px;min-height:92px;max-height:154px}
+  .tc-grace-idle-button{height:126px;width:min(228px,66vw);padding-bottom:14px}
+  .tc-grace-native-svg{width:210px;height:132px}
+  .tc-grace-native-glow{width:88%;height:76%}
+}
+@media(max-height:650px){
+  .tc-grace-idle{flex-basis:88px;min-height:72px;max-height:112px}
+  .tc-grace-idle-button{height:98px;width:188px;padding-bottom:10px}
+  .tc-grace-native-svg{width:170px;height:107px}
+  .tc-grace-native-glow{width:84%;height:72%}
+}
+/* --- End Grace native scale --- */
+
 /* --- End Grace wisp tuning --- */
 '''
 if '</style>' not in s: raise SystemExit('style marker missing')
