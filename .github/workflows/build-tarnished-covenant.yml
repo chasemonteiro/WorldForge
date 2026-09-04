@@ -1,7 +1,11 @@
 name: Build Tarnished Covenant
 
+# temporary validation trigger
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/build-tarnished-covenant.yml']
 
 permissions:
   contents: write
@@ -99,6 +103,10 @@ jobs:
         run: python tarnished-covenant/build-body-nav-portal.py
       - name: Assert document-level navigation invariants
         run: python tarnished-covenant/test-body-nav-portal.py
+      - name: Unify Grace and Encounter with document viewport
+        run: python tarnished-covenant/build-unified-viewport.py
+      - name: Assert unified viewport invariants
+        run: python tarnished-covenant/test-unified-viewport.py
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
