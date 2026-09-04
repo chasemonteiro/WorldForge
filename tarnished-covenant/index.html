@@ -704,7 +704,7 @@ button:disabled{pointer-events:none;filter:saturate(.55)}
 html:has(.tc-encounter-shell),body:has(.tc-encounter-shell),html:has(.tc-sanctuary-shell),body:has(.tc-sanctuary-shell){height:100%;overflow:hidden}
 body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shell{
   height:100svh;max-height:100svh;overflow:hidden;
-  padding:calc(8px + env(safe-area-inset-top)) 14px 0;
+  padding:calc(8px + env(safe-area-inset-top)) 14px calc(70px + env(safe-area-inset-bottom));
 }
 .tc-encounter-shell,.tc-sanctuary-shell{height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0!important}
 .tc-encounter-shell .tc-topline,.tc-sanctuary-shell .tc-topline{flex:0 0 auto;margin-bottom:7px}
@@ -721,30 +721,6 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 .tc-comp-region{margin:18px 0 24px}.tc-comp-region-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:0 4px 8px;border-bottom:1px solid rgba(198,161,90,.28)}.tc-comp-region-head strong{font:400 24px/1.05 Georgia,serif;color:var(--ink)}.tc-comp-region-head span{font:850 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}.tc-comp-region-cards{display:grid;gap:9px;margin-top:9px}.tc-comp-card{position:relative;isolation:isolate;cursor:pointer}.tc-comp-card>summary{position:relative;z-index:2;min-height:104px;padding:17px 14px!important}.tc-comp-card>summary:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-comp-art);background-size:cover;background-position:center;opacity:.27;filter:saturate(.72) contrast(1.05)}.tc-comp-card>summary:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,7,5,.97) 0%,rgba(8,7,5,.85) 58%,rgba(8,7,5,.46) 100%)}.tc-comp-card>.tc-comp-body,.tc-comp-card>.tc-comp-legacy{display:none!important}.tc-comp-card .tc-comp-boss{font-size:clamp(24px,7vw,31px)!important}.tc-comp-card .tc-comp-mark{align-self:start;margin-top:2px}
 .tc-comp-sheet-overlay{position:fixed;z-index:110;inset:0;background:#080806;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:tcCompIn .22s ease-out}@keyframes tcCompIn{from{opacity:.2;transform:translateX(12px)}to{opacity:1;transform:none}}.tc-comp-sheet{width:min(720px,100%);height:100%;margin:auto;display:flex;flex-direction:column;padding:12px 14px 18px}.tc-comp-sheet-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:3px 0 10px;border-bottom:1px solid var(--line-soft)}.tc-comp-sheet-close{border:0;background:transparent;color:var(--gold-bright);padding:8px 2px;font:850 10px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.tc-comp-sheet-index{font:850 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:var(--ash)}.tc-comp-sheet-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 2px 30px;overscroll-behavior:contain}.tc-comp-sheet-region{color:var(--gold);font:850 9px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.13em}.tc-comp-sheet h2{font:400 clamp(34px,10vw,48px)/.96 Georgia,serif;margin:8px 0 5px;text-wrap:balance}.tc-comp-sheet-flavor{font:italic 12px/1.4 Georgia,serif;color:var(--ash);margin:0 0 18px}.tc-comp-sheet .tc-comp-body,.tc-comp-sheet .tc-comp-legacy{display:block!important;border:1px solid var(--line-soft);padding:13px;background:rgba(12,11,8,.62)}
 .tc-corporate-screen{min-height:calc(100svh - env(safe-area-inset-top));max-width:620px;margin:auto;padding:24px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:center;text-align:center}.tc-corporate-letter{position:relative;border:1px solid #685d45;background:linear-gradient(165deg,#181610,#0d0c09);padding:27px 20px 21px;box-shadow:0 22px 70px rgba(0,0,0,.44)}.tc-corporate-stamp{width:70px;height:70px;margin:0 auto 15px;border:2px solid #9b5b4f;border-radius:50%;display:grid;place-items:center;color:#c87567;transform:rotate(-8deg);font:850 10px/1.05 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}.tc-corporate-overline{font:900 10px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.18em;color:var(--red)}.tc-corporate-screen h1{font-size:clamp(34px,10vw,49px);margin:11px auto 13px;line-height:.96}.tc-corporate-copy{font-size:16px;line-height:1.5;color:#d5ccba;max-width:480px;margin:0 auto 18px}.tc-corporate-meta{margin:14px 0;padding:12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--ash);font-size:12px;line-height:1.4}.tc-corporate-screen .btn{margin-top:14px}.tc-corporate-foot{font:italic 11px/1.4 Georgia,serif;color:#7f7666;margin-top:10px}.tc-forge-notice.tc-corporate-pending{cursor:default}
-
-
-/* --- One dynamic viewport across every primary screen --- */
-/* Geometry is keyed to an explicit runtime class rather than :has(.tc-bottom-nav).
-   Safari can delay :has() invalidation when the persistent nav is mounted after
-   first paint, which made Grace / Encounter start too high until Ledger rerendered. */
-html{width:100%;min-height:100dvh;background-color:var(--bg)}
-body.tc-run-active{
-  width:100%;min-height:100dvh;background-color:var(--bg);padding:0!important;
-}
-body.tc-run-active .app-shell{
-  width:100%;min-height:100dvh;
-}
-body.tc-run-active .app-shell:has(.tc-sanctuary-shell),
-body.tc-run-active .app-shell:has(.tc-encounter-shell){
-  height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;
-}
-.tc-sanctuary-shell,.tc-encounter-shell{
-  height:100%!important;min-height:100%!important;
-}
-/* Content owns the nav clearance; the visual screen itself never stops early. */
-.tc-sanctuary-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
-.tc-encounter-panel{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
-.tc-encounter-actions{position:relative;z-index:2;margin-bottom:calc(58px + env(safe-area-inset-bottom));padding-bottom:7px}
 
 
 /* --- Site of Grace: useful run dashboard --- */
@@ -765,21 +741,6 @@ body.tc-run-active .app-shell:has(.tc-encounter-shell){
 .tc-region-list.illustrated{grid-template-columns:1fr}.tc-region-chip.illustrated{position:relative;isolation:isolate;overflow:hidden;min-height:62px;padding:11px 12px;display:flex;align-items:end;font:400 15px/1.15 Georgia,serif;color:#b9af9e;background:#0b0a08}
 .tc-region-chip.illustrated:before{content:"";position:absolute;z-index:-2;inset:0;background-image:var(--tc-region-art);background-size:cover;background-position:center;opacity:.18;filter:saturate(.65)}
 .tc-region-chip.illustrated:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,7,5,.96),rgba(7,7,5,.63))}.tc-region-chip.illustrated.done{color:var(--gold-bright);border-color:rgba(198,161,90,.30)}
-
-
-/* --- Persistent bottom navigation: measured viewport chrome, never screen content --- */
-.tc-nav-anchor{display:none!important}
-body.tc-run-active{min-height:var(--tc-vvh,100dvh)!important}
-body.tc-run-active .app-shell{min-height:var(--tc-vvh,100dvh)!important}
-body.tc-run-active:has(.tc-sanctuary-shell) .app-shell,
-body.tc-run-active:has(.tc-encounter-shell) .app-shell{height:var(--tc-vvh,100dvh)!important;max-height:var(--tc-vvh,100dvh)!important;min-height:var(--tc-vvh,100dvh)!important}
-body>.tc-bottom-nav.tc-persistent-nav{position:fixed!important;z-index:130!important;left:50%!important;right:auto!important;top:var(--tc-nav-top,auto)!important;bottom:auto!important;transform:translateX(-50%)!important;width:min(760px,100%)!important;animation:none!important}
-body>.tc-bottom-nav.tc-persistent-nav[hidden]{display:none!important}
-/* A fixed descendant of an animated/transformed screen becomes screen-relative
-   in WebKit. The persistent bar is outside .tc-screen; keep screen entry motion
-   visual-only so no future fixed descendants inherit that trap either. */
-.tc-screen{animation:tcScreenFade .18s ease-out!important}
-@keyframes tcScreenFade{from{opacity:.45}to{opacity:1}}
 
 </style>
 </head>
@@ -3576,143 +3537,6 @@ renderRun=function(){
   if(transition==='corporate')return renderCorporateContractNotice();
   return tcRenderRunBeforeHardening();
 };
-
-
-/* --- Persistent bottom navigation lifecycle + measured iOS visual viewport --- */
-let tcPersistentBottomNav=null;
-let tcPersistentNavObserver=null;
-let tcPersistentNavClickInstalled=false;
-let tcViewportListenersInstalled=false;
-
-function tcPersistentNavHtml(){
-  return `<button data-screen="sanctuary"><span class="nicon">⌂</span><span>Site of Grace</span></button>
-    <button data-screen="encounter"><span class="nicon">✦</span><span>Encounter</span></button>
-    <button data-screen="ledger"><span class="nicon">▤</span><span>Ledger</span></button>
-    <button data-screen="settings"><span class="nicon">⚙</span><span>Settings</span></button>`;
-}
-
-function tcEnsurePersistentNav(){
-  if(tcPersistentBottomNav?.isConnected)return tcPersistentBottomNav;
-  tcPersistentBottomNav=document.createElement('nav');
-  tcPersistentBottomNav.className='tc-bottom-nav tc-persistent-nav';
-  tcPersistentBottomNav.innerHTML=tcPersistentNavHtml();
-  tcPersistentBottomNav.hidden=true;
-  document.body.appendChild(tcPersistentBottomNav);
-  return tcPersistentBottomNav;
-}
-
-/* iOS can report a stale CSS viewport until a long/scrollable screen forces a
-   relayout. Do not let document length determine app geometry. Read the actual
-   visual viewport in pixels and use that value for both the full-screen shell
-   and the nav's top edge. A synchronous rect read forces the first layout now. */
-function tcApplyVisualViewport(){
-  if(!document.body.classList.contains('tc-run-active'))return;
-  const vv=window.visualViewport;
-  const viewportHeight=Math.max(1,Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight));
-  const viewportTop=Math.round(vv?.offsetTop||0);
-  document.documentElement.style.setProperty('--tc-vvh',`${viewportHeight}px`);
-  const nav=tcEnsurePersistentNav();
-  if(nav.hidden)return;
-  const navHeight=Math.max(1,Math.round(nav.getBoundingClientRect().height));
-  const navTop=Math.max(0,viewportTop+viewportHeight-navHeight);
-  document.documentElement.style.setProperty('--tc-nav-top',`${navTop}px`);
-  /* Force the shell to consume the same measurement before the next paint. */
-  document.querySelector('.app-shell')?.getBoundingClientRect();
-}
-
-function tcInstallViewportListeners(){
-  if(tcViewportListenersInstalled)return;
-  tcViewportListenersInstalled=true;
-  const refresh=()=>tcApplyVisualViewport();
-  window.visualViewport?.addEventListener('resize',refresh,{passive:true});
-  window.visualViewport?.addEventListener('scroll',refresh,{passive:true});
-  window.addEventListener('resize',refresh,{passive:true});
-  window.addEventListener('orientationchange',()=>setTimeout(refresh,50),{passive:true});
-  window.addEventListener('pageshow',()=>{
-    refresh();
-    requestAnimationFrame(refresh);
-    setTimeout(refresh,80);
-    setTimeout(refresh,260);
-  });
-}
-
-function tcSyncPersistentNav(){
-  const anchor=app.querySelector('.tc-nav-anchor');
-  const nav=tcEnsurePersistentNav();
-  if(!anchor){nav.hidden=true;return;}
-  const active=anchor.dataset.tcNavActive||uiScreen||'sanctuary';
-  nav.querySelectorAll('[data-screen]').forEach(btn=>btn.classList.toggle('active',btn.dataset.screen===active));
-  nav.hidden=false;
-  tcApplyVisualViewport();
-}
-
-/* Normal app screens render an invisible anchor instead of recreating the bar.
-   MutationObserver hides the persistent chrome automatically on modal/transition
-   screens that do not render an anchor. */
-navMarkup=function(active){
-  return `<span class="tc-nav-anchor" data-tc-nav-active="${h(active)}" aria-hidden="true"></span>`;
-};
-
-bindNav=function(){
-  tcInstallViewportListeners();
-  tcSyncPersistentNav();
-  if(!tcPersistentNavClickInstalled){
-    tcPersistentNavClickInstalled=true;
-    document.addEventListener('click',event=>{
-      const btn=event.target.closest?.('.tc-persistent-nav [data-screen]');
-      if(!btn)return;
-      if(tcTransitionIsLocked()){
-        event.preventDefault();
-        setToast('Finish the current Covenant notice first.');
-        renderRun();
-        return;
-      }
-      uiScreen=btn.dataset.screen;
-      renderRun();
-    });
-  }
-  if(!tcPersistentNavObserver){
-    tcPersistentNavObserver=new MutationObserver(()=>queueMicrotask(tcSyncPersistentNav));
-    tcPersistentNavObserver.observe(app,{childList:true,subtree:true});
-  }
-};
-
-/* First-paint geometry must be explicit before any specialized run screen paints. */
-const tcRenderRunBeforePersistentChrome=renderRun;
-renderRun=function(){
-  document.body.classList.add('tc-run-active');
-  tcInstallViewportListeners();
-  /* Seed the viewport variable before screen markup is replaced. */
-  const vv=window.visualViewport;
-  const firstHeight=Math.max(1,Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight));
-  document.documentElement.style.setProperty('--tc-vvh',`${firstHeight}px`);
-  const result=tcRenderRunBeforePersistentChrome();
-  tcSyncPersistentNav();
-  /* iOS standalone can settle its visual viewport just after first paint. These
-     remeasures are independent of navigation and replace the old Ledger side effect. */
-  requestAnimationFrame(tcApplyVisualViewport);
-  setTimeout(tcApplyVisualViewport,80);
-  setTimeout(tcApplyVisualViewport,260);
-  return result;
-};
-
-/* Leaving the run restores normal document safe-area behavior and removes chrome. */
-const tcRenderHomeBeforePersistentChrome=renderHome;
-renderHome=function(){
-  document.body.classList.remove('tc-run-active');
-  document.documentElement.style.removeProperty('--tc-vvh');
-  document.documentElement.style.removeProperty('--tc-nav-top');
-  if(tcPersistentBottomNav)tcPersistentBottomNav.hidden=true;
-  return tcRenderHomeBeforePersistentChrome();
-};
-
-queueMicrotask(()=>{
-  if(run){
-    document.body.classList.add('tc-run-active');
-    tcInstallViewportListeners();
-    tcSyncPersistentNav();
-  }
-});
 
 </script>
 </body>
