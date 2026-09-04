@@ -29,6 +29,14 @@ for needle in [
     'tcNavDelegationInstalled'
 ]: require(needle)
 
+# Challenge-only restart and custom-name archive regressions.
+forbid('id=\"restartSeverity\"', 'retired restart difficulty selector returned')
+forbid("querySelector('#restartSeverity')", 'restart can still leave challenge-only ruleset')
+if not Path('tarnished-covenant/sw.js').exists():
+    forbid("serviceWorker.register('./sw.js')", 'app registers a missing service worker')
+for needle in ['personalizePlayers(entry.chaosConsequence','personalizePlayers(x.text','personalizePlayers(entry.completedBy','tc-screen tc-ledger-screen','.tc-ledger-screen{animation:none!important}']:
+    require(needle)
+
 forbid("Contract commissioned. 3 Favor spent.")
 require('return 4 + tier*2;')
 require('pool.filter(b=>sm.favor>=smithingContractCost(b))')

@@ -131,10 +131,6 @@ let pending = false;
 let toastTimer = null;
 const incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
-}
-
 function h(value = '') {
   return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }

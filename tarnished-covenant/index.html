@@ -53,7 +53,7 @@ h1{font-weight:400;font-size:clamp(34px,10vw,50px);line-height:.98;margin:7px 0}
 .app-shell{max-width:760px;padding:16px 14px calc(86px + env(safe-area-inset-bottom))}
 .site-header.compact{display:none}
 .tc-screen{min-height:calc(100svh - 110px);animation:tcIn .22s ease-out}
-@keyframes tcIn{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes tcIn{from{opacity:.35}to{opacity:1}}
 .tc-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 15px}
 .tc-brand-small{font:800 8px/1 system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
 .tc-sync{font:750 8px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ash)}
@@ -2350,10 +2350,6 @@ let postBattleReport = null;
 let pendingRewardReveal = null;
 const incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.warn));
-}
-
 function h(value = '') {
   return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }
@@ -3370,10 +3366,10 @@ function compendiumEntryMarkup(entry,index,state){
     <div class="tc-comp-body">
       <div class="tc-comp-weapons"><div><span>${h(names.chase)}</span><strong>${h(entry.chaseWeapon||'—')}</strong>${entry.chaseBuild?.role?`<em>${h(entry.chaseBuild.role)}</em>`:''}</div><div><span>${h(names.morgan)}</span><strong>${h(entry.morganWeapon||'—')}</strong>${entry.morganBuild?.role?`<em>${h(entry.morganBuild.role)}</em>`:''}</div></div>
       ${entry.oddRite?`<div class="tc-comp-mod rite"><span>ODD RITE</span><strong>${h(entry.oddRite.name||'Unnamed Rite')}</strong><p>${h(entry.oddRite.text||'')}</p></div>`:''}
-      ${entry.chaosTriggered?`<div class="tc-comp-mod chaos"><span>CHAOS · TRIGGERED</span><strong>${h(typeof chaosEventName==='function'?chaosEventName(entry.chaosConsequence||'Chaos'): 'Chaos')}</strong><p>${h(entry.chaosConsequence||'The seal broke. Details lost to history.')}</p></div>`:`<div class="tc-comp-mod quiet"><span>CHAOS</span><strong>Seal remained intact</strong></div>`}
-      ${mods.length?`<div class="tc-comp-mod penalties"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
+      ${entry.chaosTriggered?`<div class="tc-comp-mod chaos"><span>CHAOS · TRIGGERED</span><strong>${h(typeof chaosEventName==='function'?chaosEventName(entry.chaosConsequence||'Chaos'): 'Chaos')}</strong><p>${h(personalizePlayers(entry.chaosConsequence||'The seal broke. Details lost to history.',{playerNames:[names.chase,names.morgan]}))}</p></div>`:`<div class="tc-comp-mod quiet"><span>CHAOS</span><strong>Seal remained intact</strong></div>`}
+      ${mods.length?`<div class="tc-comp-mod penalties"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(personalizePlayers(x.text||'',{playerNames:[names.chase,names.morgan]}))}</p>`).join('')}</div>`:''}
       ${Array.isArray(entry.rewards)&&entry.rewards.length?`<div class="tc-comp-mod rewards"><span>COVENANT REWARDS</span><p>${entry.rewards.map(h).join(' · ')}</p></div>`:''}
-      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:(Array.isArray(entry.rewards)&&entry.rewards.length?'Boons earned':'No reward')}</strong></div>
+      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(personalizePlayers(entry.completedBy,{playerNames:[names.chase,names.morgan]}))}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:(Array.isArray(entry.rewards)&&entry.rewards.length?'Boons earned':'No reward')}</strong></div>
     </div>
   </details>`;
 }
@@ -3447,14 +3443,13 @@ function showRestart() {
     <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
     <div class="grid2 restart-grid">
       <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
-      <div><label class="label" for="restartSeverity">difficulty</label><select id="restartSeverity"><option value="normal" ${state.severity==='normal'?'selected':''}>Silly</option><option value="hard" ${state.severity==='hard'?'selected':''}>Maidenless</option><option value="cursed" ${state.severity==='cursed'?'selected':''}>Miyazaki Has Noticed You</option></select></div>
     </div>
     <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Erase Run & Restart</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
   </div>`;
   document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
   document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
     const region = document.querySelector('#restartRegion')?.value || state.region;
-    const severity = document.querySelector('#restartSeverity')?.value || state.severity;
+    const severity = 'cursed';
     const button = document.querySelector('#confirmRestart');
     if (button) { button.disabled = true; button.textContent = 'Restarting…'; }
 
@@ -3921,35 +3916,6 @@ if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
 if(!window.__tcForfeitBound){window.__tcForfeitBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-forfeit-boon]');if(b)tcForfeitBoon(b.dataset.forfeitBoon);});}
 
 
-/* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260904043112';
-let tcFreshnessCheckRunning=false;
-function tcForceFreshNavigation(){
-  const url=new URL(location.href);
-  url.searchParams.set('tcv',String(Date.now()));
-  location.replace(url.toString());
-}
-async function tcCheckForFreshBuild(){
-  if(tcFreshnessCheckRunning||!navigator.onLine)return;
-  tcFreshnessCheckRunning=true;
-  try{
-    const probe=new URL(location.href);
-    probe.searchParams.set('tc_probe',String(Date.now()));
-    const response=await fetch(probe.toString(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
-    if(!response.ok)return;
-    const text=await response.text();
-    const match=text.match(/const TC_BUILD_ID='([^']+)'/);
-    if(match&&match[1]!==TC_BUILD_ID){
-      const fresh=new URL(location.href);
-      fresh.searchParams.set('tcv',match[1]);
-      location.replace(fresh.toString());
-    }
-  }catch(error){console.warn('Freshness check failed',error);}
-  finally{tcFreshnessCheckRunning=false;}
-}
-window.addEventListener('pageshow',()=>setTimeout(tcCheckForFreshBuild,350));
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcCheckForFreshBuild,200);});
-/* --- End Home Screen freshness guard --- */
 
 
 
@@ -4096,6 +4062,36 @@ document.addEventListener('click',e=>{if(e.target.closest('.tc-comp-card,.tc-bot
 setTimeout(tcQueueWikiDecoration,0);
 /* --- End contextual Elden Ring wiki links --- */
 
+
+/* --- Home Screen freshness guard --- */
+const TC_BUILD_ID='20260904133906';
+let tcFreshnessCheckRunning=false;
+function tcForceFreshNavigation(){
+  const url=new URL(location.href);
+  url.searchParams.set('tcv',String(Date.now()));
+  location.replace(url.toString());
+}
+async function tcCheckForFreshBuild(){
+  if(tcFreshnessCheckRunning||!navigator.onLine)return;
+  tcFreshnessCheckRunning=true;
+  try{
+    const probe=new URL(location.href);
+    probe.searchParams.set('tc_probe',String(Date.now()));
+    const response=await fetch(probe.toString(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+    if(!response.ok)return;
+    const text=await response.text();
+    const match=text.match(/const TC_BUILD_ID='([^']+)'/);
+    if(match&&match[1]!==TC_BUILD_ID){
+      const fresh=new URL(location.href);
+      fresh.searchParams.set('tcv',match[1]);
+      location.replace(fresh.toString());
+    }
+  }catch(error){console.warn('Freshness check failed',error);}
+  finally{tcFreshnessCheckRunning=false;}
+}
+window.addEventListener('pageshow',()=>setTimeout(tcCheckForFreshBuild,350));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcCheckForFreshBuild,200);});
+/* --- End Home Screen freshness guard --- */
 </script>
 </body>
 </html>

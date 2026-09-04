@@ -65,9 +65,9 @@ function compendiumEntryMarkup(entry,index,state){
     <div class="tc-comp-body">
       <div class="tc-comp-weapons"><div><span>${h(names.chase)}</span><strong>${h(entry.chaseWeapon||'—')}</strong>${entry.chaseBuild?.role?`<em>${h(entry.chaseBuild.role)}</em>`:''}</div><div><span>${h(names.morgan)}</span><strong>${h(entry.morganWeapon||'—')}</strong>${entry.morganBuild?.role?`<em>${h(entry.morganBuild.role)}</em>`:''}</div></div>
       ${entry.oddRite?`<div class="tc-comp-mod rite"><span>ODD RITE</span><strong>${h(entry.oddRite.name||'Unnamed Rite')}</strong><p>${h(entry.oddRite.text||'')}</p></div>`:''}
-      ${entry.chaosTriggered?`<div class="tc-comp-mod chaos"><span>CHAOS · TRIGGERED</span><strong>${h(typeof chaosEventName==='function'?chaosEventName(entry.chaosConsequence||'Chaos'): 'Chaos')}</strong><p>${h(entry.chaosConsequence||'The seal broke. Details lost to history.')}</p></div>`:`<div class="tc-comp-mod quiet"><span>CHAOS</span><strong>Seal remained intact</strong></div>`}
-      ${mods.length?`<div class="tc-comp-mod penalties"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(x.text||'')}</p>`).join('')}</div>`:''}
-      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(entry.completedBy)}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:'No Favor'}</strong></div>
+      ${entry.chaosTriggered?`<div class="tc-comp-mod chaos"><span>CHAOS · TRIGGERED</span><strong>${h(typeof chaosEventName==='function'?chaosEventName(entry.chaosConsequence||'Chaos'): 'Chaos')}</strong><p>${h(personalizePlayers(entry.chaosConsequence||'The seal broke. Details lost to history.',{playerNames:[names.chase,names.morgan]}))}</p></div>`:`<div class="tc-comp-mod quiet"><span>CHAOS</span><strong>Seal remained intact</strong></div>`}
+      ${mods.length?`<div class="tc-comp-mod penalties"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(personalizePlayers(x.text||'',{playerNames:[names.chase,names.morgan]}))}</p>`).join('')}</div>`:''}
+      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(personalizePlayers(entry.completedBy,{playerNames:[names.chase,names.morgan]}))}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:'No Favor'}</strong></div>
     </div>
   </details>`;
 }

@@ -8,6 +8,10 @@ s=p.read_text()
 s=re.sub(r'''\s*<div>\s*<label class="label" for="severity">difficulty</label>\s*<select id="severity">.*?</select>\s*</div>''','',s,count=1,flags=re.S)
 s=s.replace("severity: document.querySelector('#severity').value,","severity: 'cursed',",1)
 
+# Restart Covenant is challenge-only too. Do not resurrect the retired difficulty selector.
+s=re.sub(r'''\s*<div>\s*<label class="label" for="restartSeverity">difficulty</label>\s*<select id="restartSeverity">.*?</select>\s*</div>''','',s,count=1,flags=re.S)
+s=s.replace("const severity = document.querySelector('#restartSeverity')?.value || state.severity;","const severity = 'cursed';",1)
+
 # New encounters use anti-repeat pickers instead of raw replacement RNG.
 s=s.replace('const weird = pick(weirdness);','const weird = tcPickRite(state);',1)
 s=s.replace('chaosTrigger: pick(chaosTriggers),','chaosTrigger: tcPickChaosTrigger(state),',1)
@@ -174,6 +178,8 @@ css=r'''
 @media(max-width:430px){.tc-earned-refresh-grid{grid-template-columns:1fr}}
 '''
 s=s.replace('</style>',css+'\n</style>',1)
+
+if 'restartSeverity' in s: raise SystemExit('retired restart difficulty selector remains')
 
 for x in ['tcPickRite(state)','tcPickChaosTrigger(state)','TC_CHAOS_DEBTS','tcRefreshCost','data-forfeit-boon','DOUBLE DECREE','severity: \'cursed\'']:
     if x not in s: raise SystemExit('challenge ruleset invariant missing: '+x)
