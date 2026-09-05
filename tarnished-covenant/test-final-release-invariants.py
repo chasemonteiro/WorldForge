@@ -44,6 +44,11 @@ for needle in [
 ]:
     require(needle)
 
+# Refresh buttons must delegate directly to the real handler. The real handler
+# already owns the busy flag; a second wrapper makes every click return early.
+require("if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;")
+forbid('tcUseCovenantBoonBeforePairing')
+
 # Native Grace only: 100ms accepted taps, local counter, no retired raster renderer.
 for needle in [
     'const TC_GRACE_TAP_COOLDOWN_MS=100;',
