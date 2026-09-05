@@ -5,6 +5,17 @@ from datetime import datetime, timezone
 p=Path('tarnished-covenant/index.html')
 s=p.read_text()
 
+# Keep the custom Safari / iOS Home Screen icon present on every full rebuild.
+# The PNG itself is a durable asset on the app branch; the versioned filename
+# also helps iOS avoid reusing an older cached touch icon.
+s=re.sub(r'\n?\s*<link rel="apple-touch-icon"[^>]*>','',s)
+s=re.sub(r'\n?\s*<link rel="icon"[^>]*data-tc-app-icon[^>]*>','',s)
+icon_anchor='  <meta name="apple-mobile-web-app-title" content="Tarnished Covenant">\n'
+if icon_anchor not in s:
+    raise SystemExit('apple mobile title anchor missing')
+icon_tags='''  <link rel="apple-touch-icon" sizes="180x180" href="./assets/tarnished-covenant-icon-v1.png">\n  <link rel="icon" type="image/png" sizes="180x180" href="./assets/tarnished-covenant-icon-v1.png" data-tc-app-icon>\n'''
+s=s.replace(icon_anchor,icon_anchor+icon_tags,1)
+
 # Replace any previous freshness guard so every generated build gets a new ID.
 s=re.sub(r"\n?/\* --- Home Screen freshness guard --- \*/.*?/\* --- End Home Screen freshness guard --- \*/\n?", "\n", s, flags=re.S)
 
@@ -19,6 +30,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'']:
-    if needle not in s: raise SystemExit('freshness invariant missing: '+needle)
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png']:
+    if needle not in s: raise SystemExit('freshness/icon invariant missing: '+needle)
 p.write_text(s)
