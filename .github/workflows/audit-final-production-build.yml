@@ -1,0 +1,72 @@
+name: Audit Final Tarnished Production Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-final-production-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Load and validate production recipe
+        run: |
+          git show origin/main:.github/workflows/build-tarnished-covenant.yml > /tmp/tc-build.yml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          y=yaml.safe_load(Path('/tmp/tc-build.yml').read_text())
+          steps=y['jobs']['build']['steps']
+          names=[s.get('name','') for s in steps]
+          for required in ['Assert native Grace animation','Apply final reward and archive hardening','Assert final release invariants']:
+              if required not in names: raise SystemExit('production recipe missing: '+required)
+          for retired in ['Assert stable Grace animation']:
+              if retired in names: raise SystemExit('retired production step returned: '+retired)
+          text=Path('/tmp/tc-build.yml').read_text()
+          if 'build-aviary-ticket.py' in text: raise SystemExit('obsolete probability-owning aviary builder entered production recipe')
+          if 'TC_GRACE_TAP_COOLDOWN_MS=400' in text: raise SystemExit('obsolete Grace cadence returned to production recipe')
+          PY
+      - name: Compile all builders and tests
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import py_compile
+          files=sorted(Path('tarnished-covenant').glob('build-*.py'))+sorted(Path('tarnished-covenant').glob('test-*.py'))
+          for f in files: py_compile.compile(str(f),doraise=True)
+          print(f'Compiled {len(files)} builder/test files')
+          PY
+      - name: Execute exact production build without push
+        run: |
+          ruby -ryaml - <<'RB'
+          y=YAML.load_file('/tmp/tc-build.yml')
+          y.fetch('jobs').fetch('build').fetch('steps').each do |step|
+            next unless step['run']
+            next if step['name']=='Commit assembled page'
+            puts "\n=== #{step['name']} ==="
+            File.write('/tmp/tc-step.sh', "set -euo pipefail\n" + step['run'].to_s + "\n")
+            exit 1 unless system('bash','/tmp/tc-step.sh')
+          end
+          RB
+      - name: Final semantic audit
+        run: |
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          h=Path('tarnished-covenant/index.html').read_text()
+          if h.count('function drawCovenantReward(state){')!=1: raise SystemExit('multiple reward probability owners')
+          if h.count('const TC_GRACE_TAP_COOLDOWN_MS=100;')!=1: raise SystemExit('Grace cadence duplication/drift')
+          if h.count('startApp().catch(')!=1: raise SystemExit('app bootstrap duplication')
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',h,flags=re.S)
+          Path('/tmp/tc-final-audit.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc-final-audit.js
