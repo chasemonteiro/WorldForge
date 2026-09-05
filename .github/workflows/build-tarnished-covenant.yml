@@ -135,16 +135,21 @@ jobs:
           grep -q 'graceIdleFavorEncounterId' tarnished-covenant/index.html
       - name: Stabilize idle Grace animation
         run: python tarnished-covenant/build-grace-animation-stability.py
-      - name: Assert stable Grace animation
+      - name: Assert native Grace animation
         run: |
-          grep -q 'Stable Grace frame renderer' tarnished-covenant/index.html
-          grep -q 'tcGraceStableShow' tarnished-covenant/index.html
-          grep -q 'const sequence=\[0,1,2,1,0,1\]' tarnished-covenant/index.html
-          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=400' tarnished-covenant/index.html
+          grep -q 'Grace wisp tuning' tarnished-covenant/index.html
+          grep -q 'Grace fidget tuning' tarnished-covenant/index.html
+          grep -q 'tc-grace-tap-count' tarnished-covenant/index.html
+          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
+          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
+      - name: Apply final reward and archive hardening
+        run: python tarnished-covenant/build-final-release-hardening.py
       - name: Finalize Home Screen build id
         run: python tarnished-covenant/build-launch-refresh.py
       - name: Assert final regression invariants
         run: python tarnished-covenant/test-regression-invariants.py
+      - name: Assert final release invariants
+        run: python tarnished-covenant/test-final-release-invariants.py
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
