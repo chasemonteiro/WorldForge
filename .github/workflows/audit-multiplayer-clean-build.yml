@@ -1,0 +1,87 @@
+name: Audit Covenant Multiplayer Clean Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-multiplayer-clean-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Compile builders and tests
+        run: python -m py_compile tarnished-covenant/build-*.py tarnished-covenant/test-*.py
+      - name: Clean production rebuild
+        run: |
+          cat tarnished-covenant/chunks/part{0,1,2,3,4,5,6}.txt > tarnished-covenant/index.html
+          python tarnished-covenant/build-behavior.py
+          python tarnished-covenant/build-progression.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/index.html');s=p.read_text();old="  }\n\n\nregions['Siofra River + Nokron']";new="  }\n};\n\nregions['Siofra River + Nokron']"
+          if old not in s: raise SystemExit('region closure repair target not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          python tarnished-covenant/build-regional-pools.py
+          python tarnished-covenant/build-ui.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/index.html');s=p.read_text();s=s.replace('if(state.runComplete) return renderRunComplete();','if (state.runComplete) return renderRunComplete();',1);p.write_text(s)
+          PY
+          python tarnished-covenant/build-chaos-theme.py
+          python tarnished-covenant/build-images.py
+          python tarnished-covenant/build-layout-polish.py
+          python tarnished-covenant/build-character-names.py
+          python tarnished-covenant/build-chaos-polish.py
+          python tarnished-covenant/build-smithing-system.py
+          python tarnished-covenant/build-risk-rebalance-runner.py
+          python tarnished-covenant/build-objective-chaos-triggers.py
+          python tarnished-covenant/build-compendium-challenges.py
+          python tarnished-covenant/build-chaos-redesign.py
+          python tarnished-covenant/build-escalating-chaos.py
+          python tarnished-covenant/build-stability-pass.py
+          python tarnished-covenant/build-nav-safety.py
+          python tarnished-covenant/build-chaos-compact.py
+          python tarnished-covenant/build-post-battle-runner.py
+          python tarnished-covenant/build-refresh-button.py
+          python tarnished-covenant/build-durable-session.py
+          python tarnished-covenant/build-ledger-compendium.py
+          python tarnished-covenant/build-random-rewards.py
+          python tarnished-covenant/build-challenge-ruleset.py
+          python tarnished-covenant/build-release-hardening.py
+          python tarnished-covenant/build-mobile-readability.py
+          python tarnished-covenant/build-capstone-save-fix.py
+          python tarnished-covenant/build-reward-slot.py
+          python tarnished-covenant/build-information-architecture.py
+          python tarnished-covenant/build-sanctuary-dashboard.py
+          python tarnished-covenant/build-ledger-art-refresh-pairing.py
+          python tarnished-covenant/build-regression-hardening.py
+          python tarnished-covenant/build-fixed-nav-compositing.py
+          python tarnished-covenant/build-section-home-nav.py
+          python tarnished-covenant/build-ios-standalone-shell.py
+          python tarnished-covenant/build-wiki-links.py
+          python tarnished-covenant/build-grace-home-screen.py
+          python tarnished-covenant/build-grace-idle.py
+          python tarnished-covenant/build-grace-animation-stability.py
+          python tarnished-covenant/build-final-release-hardening.py
+          python tarnished-covenant/build-launch-refresh.py
+      - name: Validate clean multiplayer build
+        run: |
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline scripts found')
+          Path('/tmp/tc-clean.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc-clean.js
