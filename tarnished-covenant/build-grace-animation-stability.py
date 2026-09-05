@@ -24,3 +24,7 @@ for retired in ['TC_GRACE_ART_FRAMES','tc-grace-idle-art-frame','tc-grace-idle-a
         raise SystemExit('Retired image-frame Grace residue: '+retired)
 
 p.write_text(s)
+
+# Multiplayer hardening must run late, after the final encounter/Grace wrappers
+# exist, so clean production builds cannot resurrect stale shared-state behavior.
+runpy.run_path('tarnished-covenant/build-multiplayer-hardening.py')
