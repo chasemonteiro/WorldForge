@@ -1,0 +1,90 @@
+name: Audit Tarnished Covenant Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-tarnished-covenant-release.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Preserve current live app and load production recipe
+        run: |
+          cp tarnished-covenant/index.html /tmp/tc-live.html
+          git show origin/main:.github/workflows/build-tarnished-covenant.yml > /tmp/tc-build.yml
+      - name: Compile all Python builders
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import py_compile
+          files=sorted(Path('tarnished-covenant').glob('build-*.py'))+[Path('tarnished-covenant/test-regression-invariants.py')]
+          for f in files:
+              py_compile.compile(str(f),doraise=True)
+          print(f'Compiled {len(files)} Python build/test files')
+          PY
+      - name: Dry-run exact production build without commit
+        run: |
+          ruby -ryaml - <<'RB'
+          y=YAML.load_file('/tmp/tc-build.yml')
+          steps=y.fetch('jobs').fetch('build').fetch('steps')
+          steps.each do |step|
+            next unless step['run']
+            next if step['name']=='Commit assembled page'
+            puts "\n=== #{step['name']} ==="
+            File.write('/tmp/tc-step.sh', "set -euo pipefail\n" + step['run'].to_s + "\n")
+            ok=system('bash','/tmp/tc-step.sh')
+            exit 1 unless ok
+          end
+          RB
+      - name: Audit newest Grace and release invariants
+        run: |
+          grep -q 'const TC_GRACE_TAP_COOLDOWN_MS=100;' tarnished-covenant/index.html
+          grep -q 'const TC_GRACE_FAVOR_ODDS=5000;' tarnished-covenant/index.html
+          grep -q 'tc-grace-tap-count' tarnished-covenant/index.html
+          grep -q 'tcIncrementGraceTapCounter(btn)' tarnished-covenant/index.html
+          grep -q 'Grace fidget tuning' tarnished-covenant/index.html
+          grep -q 'Grace native scale' tarnished-covenant/index.html
+          grep -q 'graceIdleFavorEncounterId' tarnished-covenant/index.html
+          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then echo 'retired image frames returned'; exit 1; fi
+          if grep -q 'tc-grace-idle-art-frame' tarnished-covenant/index.html; then echo 'retired image frame DOM returned'; exit 1; fi
+          test "$(grep -o "const TC_GRACE_TAP_COOLDOWN_MS=100;" tarnished-covenant/index.html | wc -l)" -eq 1
+          test "$(grep -o "startApp().catch(" tarnished-covenant/index.html | wc -l)" -eq 1
+          python tarnished-covenant/test-regression-invariants.py
+      - name: Parse all inline JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline scripts found')
+          Path('/tmp/tc-audit.js').write_text('\n'.join(scripts))
+          print(f'Parsed {len(scripts)} inline script blocks')
+          PY
+          node --check /tmp/tc-audit.js
+      - name: Compare fresh rebuild to live app
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, difflib
+          live=Path('/tmp/tc-live.html').read_text()
+          rebuilt=Path('tarnished-covenant/index.html').read_text()
+          def norm(s):
+              s=re.sub(r"const TC_BUILD_ID='[^']*';", "const TC_BUILD_ID='NORMALIZED';", s)
+              return s
+          a,b=norm(live),norm(rebuilt)
+          if a!=b:
+              diff=list(difflib.unified_diff(a.splitlines(),b.splitlines(),fromfile='live',tofile='fresh-rebuild',n=2))
+              print('\n'.join(diff[:400]))
+              raise SystemExit(f'Fresh production rebuild differs from live app ({len(diff)} diff lines)')
+          print('Fresh production rebuild matches live app after build-id normalization')
+          PY
