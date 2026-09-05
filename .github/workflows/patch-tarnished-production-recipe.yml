@@ -20,36 +20,46 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
           p=Path('.github/workflows/build-tarnished-covenant.yml')
-          s=p.read_text()
+          lines=p.read_text().splitlines()
 
-          pattern=r"      - name: Assert stable Grace animation\n        run: \|\n(?:          .*\n){4}"
-          replacement="""      - name: Assert native Grace animation
-                run: |
-                  grep -q 'Grace wisp tuning' tarnished-covenant/index.html
-                  grep -q 'Grace fidget tuning' tarnished-covenant/index.html
-                  grep -q 'tc-grace-tap-count' tarnished-covenant/index.html
-                  grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
-                  if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
-          """
-          replacement=replacement.replace('              run:','        run:').replace('                grep','          grep').replace('                if','          if')
-          s,n=re.subn(pattern,replacement,s,count=1)
-          if n!=1: raise SystemExit('obsolete Grace assertion block not found')
+          def step_index(name):
+              target='      - name: '+name
+              try:return lines.index(target)
+              except ValueError:raise SystemExit('workflow step not found: '+name)
 
-          build_anchor="      - name: Finalize Home Screen build id\n        run: python tarnished-covenant/build-launch-refresh.py\n"
-          build_insert="      - name: Apply final reward and archive hardening\n        run: python tarnished-covenant/build-final-release-hardening.py\n"+build_anchor
-          if 'Apply final reward and archive hardening' not in s:
-              if build_anchor not in s: raise SystemExit('build-id anchor missing')
-              s=s.replace(build_anchor,build_insert,1)
+          # Replace the obsolete raster/400ms assertion step as one YAML block.
+          i=step_index('Assert stable Grace animation')
+          j=i+1
+          while j<len(lines) and not lines[j].startswith('      - name:'):
+              j+=1
+          lines[i:j]=[
+              '      - name: Assert native Grace animation',
+              '        run: |',
+              "          grep -q 'Grace wisp tuning' tarnished-covenant/index.html",
+              "          grep -q 'Grace fidget tuning' tarnished-covenant/index.html",
+              "          grep -q 'tc-grace-tap-count' tarnished-covenant/index.html",
+              "          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html",
+              "          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi",
+          ]
 
-          js_anchor="      - name: Validate JavaScript syntax\n        run: |\n"
-          js_insert="      - name: Assert final release invariants\n        run: python tarnished-covenant/test-final-release-invariants.py\n"+js_anchor
-          if 'Assert final release invariants' not in s:
-              if js_anchor not in s: raise SystemExit('JS validation anchor missing')
-              s=s.replace(js_anchor,js_insert,1)
+          # Final reward/archive durability runs after every other late UI layer.
+          if not any('Apply final reward and archive hardening' in x for x in lines):
+              i=step_index('Finalize Home Screen build id')
+              lines[i:i]=[
+                  '      - name: Apply final reward and archive hardening',
+                  '        run: python tarnished-covenant/build-final-release-hardening.py',
+              ]
 
-          p.write_text(s)
+          # Final release-specific invariants run alongside the broader regression suite.
+          if not any('Assert final release invariants' in x for x in lines):
+              i=step_index('Validate JavaScript syntax')
+              lines[i:i]=[
+                  '      - name: Assert final release invariants',
+                  '        run: python tarnished-covenant/test-final-release-invariants.py',
+              ]
+
+          p.write_text('\n'.join(lines)+'\n')
           PY
           python - <<'PY'
           import yaml
