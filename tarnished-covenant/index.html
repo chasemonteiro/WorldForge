@@ -2543,13 +2543,16 @@ function createLocalBackend(warning = '') {
     },
     async joinRun() { throw new Error('Shared rooms are not connected yet. Add Supabase settings to config.js.'); },
     async getRun() { return loadLocalRun(); },
-    async restartRun(runId, state) {
+    async restartRun(runId, expectedRevision, state) {
       const current = loadLocalRun();
-      const revision = (current?.revision ?? 0) + 1;
-      const run = { ...(current || {}), id: runId, state, revision };
-      saveLocalRun(run);
-      if (listener) queueMicrotask(() => listener(run));
-      return run;
+      if (current && Number(current.revision ?? 0) !== Number(expectedRevision ?? 0)) {
+        return { success:false, ...current };
+      }
+      const revision = Number(expectedRevision ?? current?.revision ?? 0) + 1;
+      const restarted = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(restarted);
+      if (listener) queueMicrotask(() => listener(restarted));
+      return { success:true, ...restarted };
     },
     async updateRun(runId, expectedRevision, state) {
       const current = loadLocalRun();
@@ -2609,14 +2612,20 @@ function createSupabaseBackend(supabase) {
         revision: Number(row.revision)
       };
     },
-    async restartRun(runId, state) {
-      const { data, error } = await supabase.rpc('restart_covenant_run', {
+    async restartRun(runId, expectedRevision, state) {
+      const { data, error } = await supabase.rpc('restart_covenant_run_guarded', {
         p_run_id: runId,
+        p_expected_revision: expectedRevision,
         p_new_state: state
       });
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
-      return { id: runId, state: row.state, revision: Number(row.revision) };
+      return {
+        success: Boolean(row.success),
+        id: runId,
+        state: row.state,
+        revision: Number(row.revision)
+      };
     },
     subscribe(runId, fn) {
       if (channel) supabase.removeChannel(channel);
@@ -2938,7 +2947,13 @@ async function commit(nextState, { retryBuilder = null, successToast = '' } = {}
       }
 
       expectedRevision = run.revision;
-      desiredState = retryBuilder(run.state);
+      const rebuiltState = retryBuilder(run.state);
+      if (!rebuiltState) {
+        renderRun();
+        setToast('The run changed on the other phone. That action no longer applies.');
+        return false;
+      }
+      desiredState = rebuiltState;
     }
 
     renderRun();
@@ -2946,6 +2961,18 @@ async function commit(nextState, { retryBuilder = null, successToast = '' } = {}
     return false;
   } catch (error) {
     console.error(error);
+    if (backend?.mode === 'shared' && run?.id) {
+      try {
+        const latest = await backend.getRun(run.id);
+        const changed = tcApplyAuthoritativeRun(latest, {source:'save-recovery'});
+        if (changed) {
+          setToast('Connection hiccup. Shared run resynced; check the latest state before retrying.');
+          return false;
+        }
+      } catch (syncError) {
+        console.warn('Shared save recovery fetch failed', syncError);
+      }
+    }
     setToast('Save failed. Try again.');
     return false;
   } finally {
@@ -3333,12 +3360,40 @@ function tcEncounterBoons(state){
 }
 async function useCovenantBoon(kind){
   if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;
-  const key=kind==='chaos'?'chaosRefreshes':'riteRefreshes';const c=run.state.current;const cost=tcRefreshCost(c,kind);const sm=smithingData(run.state);
+  const key=kind==='chaos'?'chaosRefreshes':'riteRefreshes';
+  const c=run.state.current;
+  const encounterId=c.id;
+  const originalUses=Number(c?.[kind+'RefreshUses']||0);
+  const originalChaosTriggered=Boolean(c.chaosTriggered);
+  const originalChaosText=String(originalChaosTriggered?c.chaosConsequence||'':c.chaosTrigger||'');
+  const originalRiteName=String(c.weirdness?.name||'');
+  const cost=tcRefreshCost(c,kind);
+  const actor=playerName();
+  const buildRefresh=(latest)=>{
+    const lc=latest?.current;if(!lc||lc.id!==encounterId)return null;
+    if(Number(lc?.[kind+'RefreshUses']||0)!==originalUses)return null;
+    if(kind==='chaos'){
+      if(Boolean(lc.chaosTriggered)!==originalChaosTriggered)return null;
+      const latestChaosText=String(originalChaosTriggered?lc.chaosConsequence||'':lc.chaosTrigger||'');
+      if(latestChaosText!==originalChaosText)return null;
+    }
+    if(kind==='rite'&&String(lc.weirdness?.name||'')!==originalRiteName)return null;
+    const latestSm=smithingData(latest);
+    if(Number(latestSm[key]||0)<cost)return null;
+    let rebased=smithingCopy(latest);
+    rebased.smithing[key]-=cost;
+    rebased.current[kind+'RefreshUses']=originalUses+1;
+    rebased=kind==='chaos'?rerollChaos(rebased,actor):rerollWeirdness(rebased,actor);
+    return rebased;
+  };
+  const sm=smithingData(run.state);
   if(Number(sm[key]||0)<cost){window.__tcBoonBusy=false;return setToast(`That amendment costs ${cost} Refreshes.`);}
-  let staged=smithingCopy(run.state);staged.smithing[key]-=cost;staged.current[kind+'RefreshUses']=Number(staged.current[kind+'RefreshUses']||0)+1;
-  staged=kind==='chaos'?rerollChaos(staged,playerName()):rerollWeirdness(staged,playerName());
-  if(kind==='chaos')try{acknowledgedChaos.delete(staged.current.id)}catch{}
-  try{await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} amended. ${cost} Refresh${cost===1?'':'es'} spent.`});}finally{window.__tcBoonBusy=false;}
+  const staged=buildRefresh(run.state);
+  if(!staged){window.__tcBoonBusy=false;return setToast('That amendment changed on the other phone.');}
+  try{
+    const saved=await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} amended. ${cost} Refresh${cost===1?'':'es'} spent.`,retryBuilder:buildRefresh});
+    if(saved&&kind==='chaos')try{acknowledgedChaos.delete(encounterId)}catch{}
+  }finally{window.__tcBoonBusy=false;}
 }
 async function tcForfeitBoon(kind){
   if(!run?.state?.current)return;const next=smithingCopy(run.state);next.current[kind==='chaos'?'chaosForfeited':'riteForfeited']=true;
@@ -3775,7 +3830,13 @@ function showRestart() {
 
     try {
       const oldRun = run;
-      const restarted = await backend.restartRun(run.id, buildFreshState(run.state));
+      const restarted = await backend.restartRun(run.id, run.revision, buildFreshState(run.state));
+      if (!restarted?.success) {
+        run = {...oldRun, ...restarted, joinCode: restarted?.joinCode || oldRun?.joinCode};
+        renderRun();
+        setToast('The Covenant changed on the other phone before restart. Review the latest state first.');
+        return;
+      }
       unsubscribe?.();
       run = {...oldRun, ...restarted, joinCode: restarted?.joinCode || oldRun?.joinCode};
       session = {runId:run.id, joinCode:run.joinCode || session?.joinCode, displayName:session?.displayName || playerName()};
@@ -4125,7 +4186,7 @@ compendiumNames=function(entry,state){
    screens, but lock/priority semantics live here. */
 function tcBlockingTransition(state=run?.state){
   if(pendingRewardReveal?.rewards?.length)return 'reward';
-  if(postBattleReport)return 'post-battle';
+  if(postBattleReport?.encounterId===state?.current?.id)return 'post-battle';
   if(tcMandatoryContractEligible(state))return 'corporate';
   if(pendingRevealId && state?.current?.id===pendingRevealId)return 'encounter-reveal';
   return null;
@@ -4436,7 +4497,20 @@ async function tcTryGraceFavor(btn){
   next.graceIdleFavorEncounterId=encounterId;
   next.lastAction='A Site of Grace produced an administrative anomaly. +1 Smithing Favor.';
   next.updatedAt=new Date().toISOString();
-  try{await commit(next,{successToast:'Administrative anomaly detected. +1 Smithing Favor.'});}
+  try{
+    await commit(next,{
+      successToast:'Administrative anomaly detected. +1 Smithing Favor.',
+      retryBuilder:(latest)=>{
+        if(!latest?.current||latest.current.id!==encounterId||latest.graceIdleFavorEncounterId===encounterId)return null;
+        const rebased=smithingCopy(latest);
+        rebased.smithing.favor=Number(rebased.smithing.favor||0)+1;
+        rebased.graceIdleFavorEncounterId=encounterId;
+        rebased.lastAction='A Site of Grace produced an administrative anomaly. +1 Smithing Favor.';
+        rebased.updatedAt=new Date().toISOString();
+        return rebased;
+      }
+    });
+  }
   finally{tcGraceFavorBusy=false;}
 }
 function tcGraceNativeMarkup(){
@@ -4536,8 +4610,68 @@ function tcIncrementGraceTapCounter(btn){
 
 
 
+
+/* --- Multiplayer synchronization hardening --- */
+let tcSharedSyncBusy=false;
+
+function tcClearStaleSharedTransients(previousState,nextState){
+  const previousId=previousState?.current?.id||null;
+  const nextId=nextState?.current?.id||null;
+  if(postBattleReport?.encounterId && postBattleReport.encounterId!==nextId)postBattleReport=null;
+  if(pendingRevealId && pendingRevealId!==nextId)pendingRevealId=null;
+  if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
+}
+
+function tcApplyAuthoritativeRun(incoming,{source='realtime'}={}){
+  if(!incoming?.state||!run)return false;
+  const incomingRevision=Number(incoming.revision||0);
+  const currentRevision=Number(run.revision||0);
+  if(incomingRevision<=currentRevision)return false;
+  const previousState=run.state;
+  run={...run,...incoming,revision:incomingRevision};
+  tcClearStaleSharedTransients(previousState,run.state);
+  try{renderRun();}catch(error){console.error(`Shared ${source} render failed`,error);}
+  return true;
+}
+
+async function tcSyncAuthoritativeRun(source='recovery'){
+  if(backend?.mode!=='shared'||!run?.id||tcSharedSyncBusy||pending)return false;
+  tcSharedSyncBusy=true;
+  try{
+    const latest=await backend.getRun(run.id);
+    return tcApplyAuthoritativeRun(latest,{source});
+  }catch(error){
+    console.warn(`Shared ${source} sync failed`,error);
+    return false;
+  }finally{tcSharedSyncBusy=false;}
+}
+
+subscribe=function(){
+  unsubscribe?.();
+  if(!run?.id)return;
+  unsubscribe=backend.subscribe(run.id,incoming=>{
+    if(!incoming?.state)return;
+    tcApplyAuthoritativeRun(incoming,{source:'realtime'});
+  });
+  if(backend.mode==='shared')window.setTimeout(()=>tcSyncAuthoritativeRun('subscribe'),350);
+};
+
+if(!window.__tcMultiplayerRecoveryBound){
+  window.__tcMultiplayerRecoveryBound=true;
+  window.addEventListener('online',()=>tcSyncAuthoritativeRun('online'));
+  window.addEventListener('pageshow',()=>tcSyncAuthoritativeRun('pageshow'));
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')tcSyncAuthoritativeRun('resume');
+  });
+  window.__tcMultiplayerHeartbeat=window.setInterval(()=>{
+    if(document.visibilityState==='visible')tcSyncAuthoritativeRun('heartbeat');
+  },30000);
+}
+/* --- End multiplayer synchronization hardening --- */
+
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260905031142';
+const TC_BUILD_ID='20260905151746';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
