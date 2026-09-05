@@ -2490,6 +2490,12 @@ function saveSession(value) {
 function clearSession() {
   try { localStorage.removeItem(SESSION_KEY); } catch {}
   try { document.cookie = `${SESSION_COOKIE}=; Max-Age=0; Path=${sessionCookiePath()}; SameSite=Lax; Secure`; } catch {}
+  incomingCode = '';
+  try {
+    const url = new URL(location.href);
+    url.searchParams.delete('join');
+    history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  } catch {}
 }
 
 function loadLocalRun() {
@@ -2516,7 +2522,7 @@ async function createBackend(config = {}) {
   if (!online) return createLocalBackend();
 
   try {
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/+esm');
     const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
       auth: { persistSession: true, autoRefreshToken: true }
     });
@@ -2631,14 +2637,26 @@ function createSupabaseBackend(supabase) {
     },
     subscribe(runId, fn) {
       if (channel) supabase.removeChannel(channel);
-      channel = supabase.channel(`covenant-${runId}`)
+      let intentionalClose = false;
+      let localChannel = null;
+      localChannel = supabase.channel(`covenant-${runId}`)
         .on('postgres_changes', {
           event: 'UPDATE', schema: 'public', table: 'runs', filter: `id=eq.${runId}`
-        }, payload => fn(normalizeRun(payload.new)))
-        .subscribe();
+        }, payload => {
+          const incoming = normalizeRun(payload.new);
+          if (incoming?.id && incoming.id !== runId) return;
+          fn(incoming);
+        })
+        .subscribe((status, error) => {
+          if (typeof window.tcHandleRealtimeChannelStatus === 'function') {
+            window.tcHandleRealtimeChannelStatus(status, error, runId, intentionalClose);
+          }
+        });
+      channel = localChannel;
       return () => {
-        if (channel) supabase.removeChannel(channel);
-        channel = null;
+        intentionalClose = true;
+        if (localChannel) supabase.removeChannel(localChannel);
+        if (channel === localChannel) channel = null;
       };
     }
   };
@@ -2659,13 +2677,14 @@ let session = loadSession();
 let run = null;
 let unsubscribe = null;
 let pending = false;
+let tcEntryMutationBusy = false;
 let toastTimer = null;
 let uiScreen = 'sanctuary';
 let pendingRevealId = null;
 const acknowledgedChaos = new Set();
 let postBattleReport = null;
 let pendingRewardReveal = null;
-const incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
+let incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
 
 function h(value = '') {
   return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -2865,6 +2884,8 @@ function renderNewRun(identity) {
     const one = document.querySelector('#characterOne').value.trim();
     const two = document.querySelector('#characterTwo').value.trim();
     if (!one || !two) return setToast('Name both Tarnished first.');
+    if (tcEntryMutationBusy) return;
+    tcEntryMutationBusy = true;
     const state = initialRunState({
       region: 'Limgrave + Stormveil',
       severity: 'cursed',
@@ -2883,11 +2904,15 @@ function renderNewRun(identity) {
     } catch (error) {
       console.error(error);
       setToast(error.message || 'Could not create Covenant.');
+    } finally {
+      tcEntryMutationBusy = false;
     }
   });
 }
 
 async function joinSharedRun(code, identity) {
+  if (tcEntryMutationBusy) return false;
+  tcEntryMutationBusy = true;
   try {
     const joined = await backend.joinRun(code, identity);
     run = joined;
@@ -2899,6 +2924,9 @@ async function joinSharedRun(code, identity) {
   } catch (error) {
     console.error(error);
     setToast(error.message || 'Could not join that Covenant.');
+    return false;
+  } finally {
+    tcEntryMutationBusy = false;
   }
 }
 
@@ -2925,8 +2953,13 @@ async function commit(nextState, { retryBuilder = null, successToast = '' } = {}
 
     for (let attempt = 0; attempt < 2; attempt += 1) {
       const result = await backend.updateRun(run.id, expectedRevision, desiredState);
+      const resultRevision = Number(result.revision || 0);
       if (result.success) {
-        run = { ...run, state: result.state, revision: result.revision };
+        if (resultRevision >= Number(run.revision || 0)) {
+          const previousState = run.state;
+          run = { ...run, state: result.state, revision: resultRevision };
+          if (typeof tcClearStaleSharedTransients === 'function') tcClearStaleSharedTransients(previousState, run.state);
+        }
         try {
           renderRun();
         } catch (renderError) {
@@ -2941,7 +2974,11 @@ async function commit(nextState, { retryBuilder = null, successToast = '' } = {}
         return true;
       }
 
-      run = { ...run, state: result.state, revision: result.revision };
+      if (resultRevision >= Number(run.revision || 0)) {
+        const previousState = run.state;
+        run = { ...run, state: result.state, revision: resultRevision };
+        if (typeof tcClearStaleSharedTransients === 'function') tcClearStaleSharedTransients(previousState, run.state);
+      }
       if (!retryBuilder) {
         renderRun();
         setToast('The run changed on the other phone. Try again.');
@@ -2979,6 +3016,7 @@ async function commit(nextState, { retryBuilder = null, successToast = '' } = {}
     return false;
   } finally {
     pending = false;
+    if (typeof tcDrainDeferredSharedSync === 'function') queueMicrotask(tcDrainDeferredSharedSync);
   }
 }
 
@@ -4613,8 +4651,15 @@ function tcIncrementGraceTapCounter(btn){
 
 
 
+
+
+
+
 /* --- Multiplayer synchronization hardening --- */
 let tcSharedSyncBusy=false;
+let tcDeferredSharedSyncSource='';
+let tcRealtimeStatus='UNKNOWN';
+let tcRealtimeRepairTimer=null;
 
 function tcClearStaleSharedTransients(previousState,nextState){
   const previousId=previousState?.current?.id||null;
@@ -4626,6 +4671,10 @@ function tcClearStaleSharedTransients(previousState,nextState){
 
 function tcApplyAuthoritativeRun(incoming,{source='realtime'}={}){
   if(!incoming?.state||!run)return false;
+  if(incoming?.id&&run?.id&&incoming.id!==run.id){
+    console.warn(`Ignored late ${source} payload for another Covenant`,incoming.id);
+    return false;
+  }
   const incomingRevision=Number(incoming.revision||0);
   const currentRevision=Number(run.revision||0);
   if(incomingRevision<=currentRevision)return false;
@@ -4636,23 +4685,62 @@ function tcApplyAuthoritativeRun(incoming,{source='realtime'}={}){
   return true;
 }
 
+function tcDrainDeferredSharedSync(){
+  if(pending||tcSharedSyncBusy||!tcDeferredSharedSyncSource)return;
+  const source=tcDeferredSharedSyncSource;
+  tcDeferredSharedSyncSource='';
+  tcSyncAuthoritativeRun(`deferred-${source}`);
+}
+
 async function tcSyncAuthoritativeRun(source='recovery'){
-  if(backend?.mode!=='shared'||!run?.id||tcSharedSyncBusy||pending)return false;
+  if(backend?.mode!=='shared'||!run?.id)return false;
+  if(pending||tcSharedSyncBusy){tcDeferredSharedSyncSource=source;return false;}
   tcSharedSyncBusy=true;
   try{
-    const latest=await backend.getRun(run.id);
+    const runId=run.id;
+    const latest=await backend.getRun(runId);
+    if(run?.id!==runId)return false;
     return tcApplyAuthoritativeRun(latest,{source});
   }catch(error){
     console.warn(`Shared ${source} sync failed`,error);
     return false;
-  }finally{tcSharedSyncBusy=false;}
+  }finally{
+    tcSharedSyncBusy=false;
+    queueMicrotask(tcDrainDeferredSharedSync);
+  }
 }
+
+function tcScheduleRealtimeRepair(source='realtime'){
+  if(backend?.mode!=='shared'||!run?.id||tcRealtimeRepairTimer)return;
+  tcRealtimeRepairTimer=window.setTimeout(()=>{
+    tcRealtimeRepairTimer=null;
+    if(backend?.mode!=='shared'||!run?.id||navigator.onLine===false)return;
+    try{subscribe();}catch(error){console.warn('Realtime resubscribe failed',error);}
+    tcSyncAuthoritativeRun(`repair-${source}`);
+  },1200);
+}
+
+window.tcHandleRealtimeChannelStatus=function(status,error,runId,intentionalClose=false){
+  if(!run?.id||run.id!==runId)return;
+  tcRealtimeStatus=status||'UNKNOWN';
+  if(status==='SUBSCRIBED'){
+    if(tcRealtimeRepairTimer){clearTimeout(tcRealtimeRepairTimer);tcRealtimeRepairTimer=null;}
+    window.setTimeout(()=>tcSyncAuthoritativeRun('realtime-subscribed'),0);
+    return;
+  }
+  if(intentionalClose)return;
+  if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+    console.warn(`Realtime channel ${status}`,error||'');
+    tcScheduleRealtimeRepair(String(status).toLowerCase());
+  }
+};
 
 subscribe=function(){
   unsubscribe?.();
   if(!run?.id)return;
-  unsubscribe=backend.subscribe(run.id,incoming=>{
-    if(!incoming?.state)return;
+  const subscribedRunId=run.id;
+  unsubscribe=backend.subscribe(subscribedRunId,incoming=>{
+    if(!incoming?.state||run?.id!==subscribedRunId)return;
     tcApplyAuthoritativeRun(incoming,{source:'realtime'});
   });
   if(backend.mode==='shared')window.setTimeout(()=>tcSyncAuthoritativeRun('subscribe'),350);
@@ -4660,10 +4748,13 @@ subscribe=function(){
 
 if(!window.__tcMultiplayerRecoveryBound){
   window.__tcMultiplayerRecoveryBound=true;
-  window.addEventListener('online',()=>tcSyncAuthoritativeRun('online'));
-  window.addEventListener('pageshow',()=>tcSyncAuthoritativeRun('pageshow'));
+  window.addEventListener('online',()=>{tcScheduleRealtimeRepair('online');tcSyncAuthoritativeRun('online');});
+  window.addEventListener('pageshow',()=>{if(tcRealtimeStatus!=='SUBSCRIBED')tcScheduleRealtimeRepair('pageshow');tcSyncAuthoritativeRun('pageshow');});
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible')tcSyncAuthoritativeRun('resume');
+    if(document.visibilityState==='visible'){
+      if(tcRealtimeStatus!=='SUBSCRIBED')tcScheduleRealtimeRepair('resume');
+      tcSyncAuthoritativeRun('resume');
+    }
   });
   window.__tcMultiplayerHeartbeat=window.setInterval(()=>{
     if(document.visibilityState==='visible')tcSyncAuthoritativeRun('heartbeat');
@@ -4672,9 +4763,8 @@ if(!window.__tcMultiplayerRecoveryBound){
 /* --- End multiplayer synchronization hardening --- */
 
 
-
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260905153455';
+const TC_BUILD_ID='20260905155524';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
