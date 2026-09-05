@@ -45,9 +45,15 @@ for needle in [
     require(needle)
 
 # Refresh buttons must delegate directly to the real handler. The real handler
-# already owns the busy flag; a second wrapper makes every click return early.
-require("if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;")
-forbid('tcUseCovenantBoonBeforePairing')
+# already owns the busy flag; any outer stability wrapper makes every click return early.
+core_boon_guard = "if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;"
+require(core_boon_guard)
+require("const btn=event.target.closest('[data-use-boon]');")
+require("if(btn)useCovenantBoon(btn.dataset.useBoon);")
+forbid('tcUseCovenantBoonBefore')
+forbid("if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized)")
+if html.count(core_boon_guard) != 1:
+    raise SystemExit('expected exactly one Covenant boon busy guard')
 
 # Native Grace only: 100ms accepted taps, local counter, no retired raster renderer.
 for needle in [
