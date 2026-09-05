@@ -1,0 +1,57 @@
+name: Deploy Tarnished Covenant App Icon
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-tarnished-app-icon.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Reconstruct Home Screen icon
+        run: |
+          cat tarnished-covenant/assets/icon-parts/part{0,1,2,3,4,5,6,7}.txt | tr -d '\n\r' | base64 -d > tarnished-covenant/assets/tarnished-covenant-icon-v1.png
+          python - <<'PY'
+          from pathlib import Path
+          import struct
+          p=Path('tarnished-covenant/assets/tarnished-covenant-icon-v1.png')
+          b=p.read_bytes()
+          if b[:8] != b'\x89PNG\r\n\x1a\n': raise SystemExit('icon is not a PNG')
+          w,h=struct.unpack('>II',b[16:24])
+          if (w,h)!=(180,180): raise SystemExit(f'wrong icon dimensions: {(w,h)}')
+          if len(b)<10000: raise SystemExit('icon file unexpectedly small')
+          print('Validated app icon:',w,h,len(b),'bytes')
+          PY
+      - name: Wire icon into app
+        run: python tarnished-covenant/build-app-icon.py
+      - name: Validate app
+        run: |
+          grep -q 'rel="apple-touch-icon" sizes="180x180"' tarnished-covenant/index.html
+          grep -q 'tarnished-covenant-icon-v1.png' tarnished-covenant/index.html
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/tc-icon-check.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc-icon-check.js
+      - name: Commit icon and live page
+        run: |
+          rm -rf tarnished-covenant/assets/icon-parts
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A tarnished-covenant/index.html tarnished-covenant/assets tarnished-covenant/build-app-icon.py
+          git commit -m 'Add Tarnished Covenant Home Screen icon'
+          git push origin HEAD:tarnished-covenant-assets
