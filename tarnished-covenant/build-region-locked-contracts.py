@@ -5,27 +5,48 @@ p = Path('tarnished-covenant/index.html')
 s = p.read_text()
 
 # -----------------------------------------------------------------------------
-# Region-locked Bell Bearing contracts
+# Sequential, visited-region Bell Bearing contracts
 #
-# Favor is global and can be banked across the run, but a Bell Bearing contract
-# may only become eligible while the Covenant is physically in that bearing's
-# region. A banked affordable contract gets one safe entry opportunity on region
-# arrival; if Favor becomes sufficient later, the existing post-battle safe
-# transition path will surface it then.
+# Favor is global and bankable. Smithing and Somber each advance in their own
+# strict Bell Bearing sequence. Only the next unclaimed bearing in each track may
+# become a contract, and its region must be the current region or one the run has
+# already cleared/visited. This allows Corporate to send the Covenant backward
+# for skipped procurement, but never forward into an unvisited region.
 # -----------------------------------------------------------------------------
 
-bell_pattern = re.compile(
-    r"function bellAccessible\(state,b\)\{\s*"
-    r"try \{ return b\.region===state\.region \|\| regionUnlocked\(state,b\.region\) \|\| \(state\.clearedRegions\|\|\[\]\)\.includes\(b\.region\); \}\s*"
-    r"catch \{ return b\.region===state\.region; \}\s*"
-    r"\}"
+helpers_pattern = re.compile(
+    r"function bellById\(id\)\{\s*return TC_BELL_BEARINGS\.find\(x=>x\.id===id\);\s*\}\s*"
+    r"function bellAccessible\(state,b\)\{.*?\}\s*"
+    r"function availableBellBearings\(state\)\{.*?\n\}",
+    re.S,
 )
-bell_new = """function bellAccessible(state,b){
-  return Boolean(b&&state&&b.region===state.region);
+helpers_new = """function bellById(id){ return TC_BELL_BEARINGS.find(x=>x.id===id); }
+function bellRegionVisited(state,b){
+  return Boolean(b&&state&&(b.region===state.region||(state.clearedRegions||[]).includes(b.region)));
+}
+function nextBellBearingForKind(state,kind){
+  const sm=smithingData(state);
+  return TC_BELL_BEARINGS.find(b=>b.kind===kind&&!sm.acquired.includes(b.id))||null;
+}
+function bellAccessible(state,b){
+  if(!b||!bellRegionVisited(state,b))return false;
+  const next=nextBellBearingForKind(state,b.kind);
+  return Boolean(next&&next.id===b.id);
+}
+function availableBellBearings(state){
+  const sm=smithingData(state);
+  return TC_BELL_BEARINGS.filter(b=>!sm.acquired.includes(b.id) && (!sm.activeContract || sm.activeContract.bearingId!==b.id) && bellAccessible(state,b));
 }"""
-s, n = bell_pattern.subn(bell_new, s, count=1)
-if n != 1 and 'return Boolean(b&&state&&b.region===state.region);' not in s:
-    raise SystemExit('Bell Bearing accessibility target missing')
+s, n = helpers_pattern.subn(helpers_new, s, count=1)
+if n != 1:
+    # Support rerunning over a previously patched build.
+    rerun_pattern = re.compile(
+        r"function bellById\(id\)\{.*?\nfunction availableBellBearings\(state\)\{.*?\n\}",
+        re.S,
+    )
+    s, n = rerun_pattern.subn(helpers_new, s, count=1)
+if n != 1 and 'function nextBellBearingForKind(state,kind)' not in s:
+    raise SystemExit('Bell Bearing helper block target missing')
 
 old_eligible = "function tcMandatoryContractEligible(state){if(!state?.current||!pendingRevealId||state.current.id!==pendingRevealId)return false;const sm=smithingData(state);return !sm.activeContract&&sm.favor>=3&&availableBellBearings(state).length>0;}"
 new_eligible = """let tcPendingRegionContractEncounterId=null;
@@ -66,7 +87,12 @@ elif 'tcPendingRegionContractEncounterId!==nextId' not in s:
     raise SystemExit('Shared transient cleanup target missing')
 
 required = [
-    'return Boolean(b&&state&&b.region===state.region);',
+    'function bellRegionVisited(state,b)',
+    "b.region===state.region||(state.clearedRegions||[]).includes(b.region)",
+    'function nextBellBearingForKind(state,kind)',
+    "b.kind===kind&&!sm.acquired.includes(b.id)",
+    'const next=nextBellBearingForKind(state,b.kind);',
+    'return Boolean(next&&next.id===b.id);',
     'let tcPendingRegionContractEncounterId=null;',
     'const safeTransition=pendingRevealId===state.current.id||tcPendingRegionContractEncounterId===state.current.id;',
     'availableBellBearings(state).some(b=>sm.favor>=smithingContractCost(b))',
@@ -75,16 +101,16 @@ required = [
 ]
 for needle in required:
     if needle not in s:
-        raise SystemExit('Region-locked contract invariant missing: ' + needle)
+        raise SystemExit('Sequential contract invariant missing: ' + needle)
 
-# The old unlock/cleared-region eligibility rule must no longer exist in the
-# Bell Bearing accessibility helper.
-match = re.search(r'function bellAccessible\(state,b\)\{(.*?)\}', s, re.S)
-if not match:
-    raise SystemExit('Bell accessibility helper missing after patch')
-body = match.group(1)
-if 'regionUnlocked' in body or 'clearedRegions' in body:
-    raise SystemExit('Bell contracts are still accessible outside the current region')
+# General unlock status must never grant procurement access. Only current or
+# actually visited/cleared regions are geographically eligible.
+visited_match = re.search(r'function bellRegionVisited\(state,b\)\{(.*?)\}', s, re.S)
+if not visited_match:
+    raise SystemExit('Bell visited-region helper missing after patch')
+visited_body = visited_match.group(1)
+if 'regionUnlocked' in visited_body:
+    raise SystemExit('Bell contracts can still send players into unvisited unlocked regions')
 
 p.write_text(s)
-print(f'Region-locked Bell Bearing contracts applied; patched {travel_count or 2} travel paths.')
+print(f'Sequential visited-region Bell Bearing contracts applied; patched {travel_count or 2} travel paths.')
