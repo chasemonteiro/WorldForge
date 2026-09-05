@@ -1,6 +1,11 @@
 from pathlib import Path
 import re
+import runpy
 from datetime import datetime, timezone
+
+# This is the final production build step. Ensure late UI/stability layers cannot
+# leave an outer Covenant-boon busy wrapper around the real refresh handler.
+runpy.run_path('tarnished-covenant/build-refresh-handler-final.py')
 
 p=Path('tarnished-covenant/index.html')
 s=p.read_text()
