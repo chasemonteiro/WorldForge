@@ -17,6 +17,17 @@ jobs:
         with:
           ref: tarnished-covenant-assets
           fetch-depth: 0
+      - name: Repair Grace counter matcher
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/build-grace-fidget.py')
+          s=p.read_text()
+          old="""if 'tc-grace-tap-count' not in s:\n    caption=r'<span class=\\\"tc-grace-idle-caption\\\"></span>'\n    if caption not in s:\n        raise SystemExit('Grace caption markup missing')\n    s=s.replace(caption, caption+r'<span class=\\\"tc-grace-tap-count\\\">${tcGraceTapCountLabel()}</span>', 1)\n"""
+          new="""if 'tc-grace-tap-count' not in s:\n    caption_pattern=r'(<span class=(?:\\\\\"|\")tc-grace-idle-caption(?:\\\\\"|\")></span>)'\n    match=re.search(caption_pattern,s)\n    if not match:\n        raise SystemExit('Grace caption markup missing')\n    replacement=match.group(1)+r'<span class=\\\"tc-grace-tap-count\\\">${tcGraceTapCountLabel()}</span>'\n    s=s[:match.start()]+replacement+s[match.end():]\n"""
+          if old not in s: raise SystemExit('Old counter matcher block missing')
+          p.write_text(s.replace(old,new,1))
+          PY
       - name: Validate Grace fidget source
         run: |
           python -m py_compile tarnished-covenant/build-grace-fidget.py
@@ -43,9 +54,9 @@ jobs:
           Path('/tmp/tc.js').write_text('\n'.join(scripts))
           PY
           node --check /tmp/tc.js
-      - name: Commit live app
+      - name: Commit source and live app
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tarnished-covenant/index.html
+          git add tarnished-covenant/build-grace-fidget.py tarnished-covenant/index.html
           if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Add Grace tap counter and livelier wisps'; git push origin HEAD:tarnished-covenant-assets; fi
