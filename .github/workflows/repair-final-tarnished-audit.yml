@@ -1,0 +1,251 @@
+name: Repair Final Tarnished Audit Findings
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-final-tarnished-audit.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Harden durable reward and archive ownership
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/build-regression-hardening.py')
+          s=p.read_text()
+          anchor="# Remove obsolete fixed-cost copy left behind after Bell Bearing costs became tiered.\n"
+          if 'Final reward/archive ownership hardening' not in s:
+              block=r'''# Final reward/archive ownership hardening. Reward probabilities stay owned by
+          # build-challenge-ruleset.py; this late maintenance layer owns persistence,
+          # presentation helpers, and complete immutable history snapshots.
+          # --- Final reward/archive ownership hardening ---
+          boon_old="""    appealWaivers: Number(raw.appealWaivers || 0),
+              chaosRefreshes: Number(raw.chaosRefreshes || 0),
+              riteRefreshes: Number(raw.riteRefreshes || 0)
+            };"""
+          boon_new="""    appealWaivers: Number(raw.appealWaivers || 0),
+              chaosRefreshes: Number(raw.chaosRefreshes || 0),
+              riteRefreshes: Number(raw.riteRefreshes || 0),
+              aviaryTickets: Number(raw.aviaryTickets || 0)
+            };"""
+          if boon_old in s:
+              s=s.replace(boon_old,boon_new,1)
+          elif 'aviaryTickets: Number(raw.aviaryTickets || 0)' not in s:
+              raise SystemExit('Frequent Flier inventory schema target missing')
+
+          ledger_old="""    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
+            </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes are the only way to reroll a current Rite or unopened Chaos decree.</div></div>`;"""
+          ledger_new="""    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
+              <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+            </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.</div></div>`;"""
+          if ledger_old in s:
+              s=s.replace(ledger_old,ledger_new,1)
+          elif 'Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.' not in s:
+              raise SystemExit('Frequent Flier ledger target missing')
+
+          import re
+          icon=r'''function tcRewardIcon(kind){
+            const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',aviary:'✈',tax:'☠'};
+            return icons[kind]||'◇';
+          }'''
+          s,n=re.subn(r"function tcRewardIcon\(kind\)\{.*?\n\}",icon,s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('reward icon helper missing')
+          cls="function tcRewardClass(kind){return kind==='tax'?'tax':kind==='chaos'?'chaos':kind==='rite'?'rite':kind==='appeal'?'appeal':kind==='aviary'?'aviary':'favor';}"
+          s,n=re.subn(r"function tcRewardClass\(kind\)\{[^\n]*\}",cls,s,count=1)
+          if n!=1: raise SystemExit('reward class helper missing')
+
+          archive_old="""    rewards: structuredClone(encounter?.postBattleRewards || [])
+            });"""
+          archive_new="""    rewards: structuredClone(encounter?.postBattleRewards || []),
+              riteOutcome: encounter?.riteForfeited?'Forfeited':(encounter?.smithingRiteFavor?'Honored':'Failed'),
+              chaosOutcome: encounter?.chaosForfeited?'Forfeited':(encounter?.chaosTriggered?(encounter?.smithingChaosFavor?'Honored':'Failed'):'Not triggered')
+            });"""
+          if archive_old in s:
+              s=s.replace(archive_old,archive_new,1)
+          elif 'riteOutcome:' not in s or 'chaosOutcome:' not in s:
+              raise SystemExit('Compendium outcome archive target missing')
+
+          if '/* --- Frequent Flier inventory layout --- */' not in s:
+              css=r'''
+          /* --- Frequent Flier inventory layout --- */
+          .tc-boon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+          @media(max-width:430px){.tc-boon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+          /* --- End Frequent Flier inventory layout --- */
+          '''
+              if '</style>' not in s: raise SystemExit('style marker missing')
+              s=s.replace('</style>',css+'\n</style>',1)
+          # --- End Final reward/archive ownership hardening ---
+          '''
+              if anchor not in s: raise SystemExit('maintenance insertion anchor missing')
+              s=s.replace(anchor,block+'\n'+anchor,1)
+          p.write_text(s)
+          PY
+          python -m py_compile tarnished-covenant/build-regression-hardening.py
+      - name: Strengthen regression invariants
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/test-regression-invariants.py');s=p.read_text()
+          marker="print('Tarnished Covenant regression invariants: PASS')"
+          block=r'''
+          # Final release: reward inventory/archive and native Grace must remain durable.
+          for needle in [
+              'aviaryTickets: Number(raw.aviaryTickets || 0)',
+              "aviary:'✈'",
+              'Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.',
+              "riteOutcome: encounter?.riteForfeited?'Forfeited'",
+              "chaosOutcome: encounter?.chaosForfeited?'Forfeited'",
+              'const TC_GRACE_TAP_COOLDOWN_MS=100;',
+              'tc-grace-tap-count',
+              'tcIncrementGraceTapCounter(btn)',
+              'Grace fidget tuning'
+          ]: require(needle)
+          forbid('TC_GRACE_ART_FRAMES','retired raster Grace frames returned')
+          forbid('tc-grace-idle-art-frame','retired raster Grace frame DOM returned')
+          '' '
+          block=block.replace("'' '\n",'')
+          if 'Final release: reward inventory/archive' not in s:
+              if marker not in s: raise SystemExit('regression print marker missing')
+              s=s.replace(marker,block+'\n'+marker,1)
+          p.write_text(s)
+          PY
+          python -m py_compile tarnished-covenant/test-regression-invariants.py
+      - name: Remove fake Grace compatibility marker
+        run: |
+          cat > tarnished-covenant/build-grace-animation-stability.py <<'PY'
+          from pathlib import Path
+          import re
+          import runpy
+
+          p=Path('tarnished-covenant/index.html')
+          runpy.run_path('tarnished-covenant/build-grace-wisp-tuning.py')
+          runpy.run_path('tarnished-covenant/build-grace-fidget.py')
+          s=p.read_text()
+          s=re.sub(r"\n?/\* --- Stable Grace frame renderer --- \*/.*?/\* --- End Stable Grace frame renderer --- \*/\n?", "\n", s, flags=re.S)
+          s=re.sub(r"\n?/\* --- Stable Grace frame behavior --- \*/.*?/\* --- End Stable Grace frame behavior --- \*/\n?", "\n", s, flags=re.S)
+          for needle in [
+              'tc-grace-native-svg','tcGraceNativeMarkup','TC_GRACE_TAP_COOLDOWN_MS=100',
+              'Grace wisp tuning','Grace fidget tuning','tc-grace-tap-count','tcIncrementGraceTapCounter(btn)'
+          ]:
+              if needle not in s: raise SystemExit('Native Grace invariant missing: '+needle)
+          for retired in ['TC_GRACE_ART_FRAMES','tc-grace-idle-art-frame','tc-grace-idle-art-stack']:
+              if retired in s: raise SystemExit('Retired image-frame Grace residue: '+retired)
+          p.write_text(s)
+          PY
+          python -m py_compile tarnished-covenant/build-grace-animation-stability.py
+      - name: Patch current live app only for confirmed runtime defects
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('tarnished-covenant/index.html');s=p.read_text()
+          old="""    appealWaivers: Number(raw.appealWaivers || 0),
+              chaosRefreshes: Number(raw.chaosRefreshes || 0),
+              riteRefreshes: Number(raw.riteRefreshes || 0)
+            };"""
+          new="""    appealWaivers: Number(raw.appealWaivers || 0),
+              chaosRefreshes: Number(raw.chaosRefreshes || 0),
+              riteRefreshes: Number(raw.riteRefreshes || 0),
+              aviaryTickets: Number(raw.aviaryTickets || 0)
+            };"""
+          if old in s:s=s.replace(old,new,1)
+          elif 'aviaryTickets: Number(raw.aviaryTickets || 0)' not in s:raise SystemExit('live inventory target missing')
+          icon=r'''function tcRewardIcon(kind){
+            const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',aviary:'✈',tax:'☠'};
+            return icons[kind]||'◇';
+          }'''
+          s,n=re.subn(r"function tcRewardIcon\(kind\)\{.*?\n\}",icon,s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('live icon helper missing')
+          s,n=re.subn(r"function tcRewardClass\(kind\)\{[^\n]*\}","function tcRewardClass(kind){return kind==='tax'?'tax':kind==='chaos'?'chaos':kind==='rite'?'rite':kind==='appeal'?'appeal':kind==='aviary'?'aviary':'favor';}",s,count=1)
+          if n!=1: raise SystemExit('live class helper missing')
+          old="""    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
+            </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes are the only way to reroll a current Rite or unopened Chaos decree.</div></div>`;"""
+          new="""    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
+              <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+            </div><div class=\"tc-muted\">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.</div></div>`;"""
+          if old in s:s=s.replace(old,new,1)
+          elif 'Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.' not in s:raise SystemExit('live boon ledger target missing')
+          if '/* --- Frequent Flier inventory layout --- */' not in s:
+              css='''\n/* --- Frequent Flier inventory layout --- */\n.tc-boon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}\n@media(max-width:430px){.tc-boon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}\n/* --- End Frequent Flier inventory layout --- */\n'''
+              s=s.replace('</style>',css+'\n</style>',1)
+          # Live already contains the outcome fields; preserve and verify them.
+          for needle in ["riteOutcome: encounter?.riteForfeited?'Forfeited'","chaosOutcome: encounter?.chaosForfeited?'Forfeited'"]:
+              if needle not in s: raise SystemExit('live outcome archive missing: '+needle)
+          p.write_text(s)
+          PY
+          python tarnished-covenant/build-launch-refresh.py
+      - name: Validate repaired live app and durable source
+        run: |
+          grep -q 'aviaryTickets: Number(raw.aviaryTickets || 0)' tarnished-covenant/index.html
+          grep -q "aviary:'✈'" tarnished-covenant/index.html
+          grep -q 'Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.' tarnished-covenant/index.html
+          grep -q "riteOutcome: encounter?.riteForfeited?'Forfeited'" tarnished-covenant/index.html
+          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
+          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
+          python tarnished-covenant/test-regression-invariants.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text();scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          Path('/tmp/tc.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tc.js
+      - name: Retire obsolete probability-owning aviary builder
+        run: |
+          cat > tarnished-covenant/build-aviary-ticket.py <<'PY'
+          """Retired compatibility guard.
+
+          Dynasty Frequent Flier is part of the challenge-first reward table. Reward
+          probabilities are owned only by build-challenge-ruleset.py; persistence and
+          presentation are enforced by build-regression-hardening.py.
+          """
+          from pathlib import Path
+          s=Path('tarnished-covenant/index.html').read_text()
+          for needle in ['aviaryTickets', "kind:'aviary'", 'Dynasty Frequent Flier']:
+              if needle not in s: raise SystemExit('Frequent Flier invariant missing: '+needle)
+          PY
+      - name: Commit repaired asset source and live app
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/build-regression-hardening.py tarnished-covenant/test-regression-invariants.py tarnished-covenant/build-grace-animation-stability.py tarnished-covenant/build-aviary-ticket.py tarnished-covenant/index.html
+          git commit -m 'Repair final Tarnished Covenant audit findings'
+          git push origin HEAD:tarnished-covenant-assets
+      - name: Update permanent production assertions on main
+        run: |
+          git checkout -B main origin/main
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/build-tarnished-covenant.yml');s=p.read_text()
+          old="""      - name: Assert stable Grace animation
+                  run: |
+                    grep -q 'Stable Grace frame renderer' tarnished-covenant/index.html
+                    grep -q 'tcGraceStableShow' tarnished-covenant/index.html
+                    grep -q 'const sequence=\\[0,1,2,1,0,1\\]' tarnished-covenant/index.html
+                    grep -q 'TC_GRACE_TAP_COOLDOWN_MS=400' tarnished-covenant/index.html
+          """
+          new="""      - name: Assert native Grace animation
+                  run: |
+                    grep -q 'Grace wisp tuning' tarnished-covenant/index.html
+                    grep -q 'Grace fidget tuning' tarnished-covenant/index.html
+                    grep -q 'tc-grace-tap-count' tarnished-covenant/index.html
+                    grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
+                    if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
+          """
+          if old not in s: raise SystemExit('old Grace assertion block missing')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+          git add .github/workflows/build-tarnished-covenant.yml
+          git commit -m 'Harden final Tarnished Covenant build assertions'
+          git push origin main
