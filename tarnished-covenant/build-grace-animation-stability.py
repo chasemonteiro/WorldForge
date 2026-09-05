@@ -7,12 +7,16 @@ p=Path('tarnished-covenant/index.html')
 # Retired: image-frame Grace caused iOS decode/compositing flashes.
 # This step now owns the late native-Grace tuning while preserving build-order compatibility.
 runpy.run_path('tarnished-covenant/build-grace-wisp-tuning.py')
+runpy.run_path('tarnished-covenant/build-grace-fidget.py')
 s=p.read_text()
 
 s=re.sub(r"\n?/\* --- Stable Grace frame renderer --- \*/.*?/\* --- End Stable Grace frame renderer --- \*/\n?", "\n", s, flags=re.S)
 s=re.sub(r"\n?/\* --- Stable Grace frame behavior --- \*/.*?/\* --- End Stable Grace frame behavior --- \*/\n?", "\n", s, flags=re.S)
 
-for needle in ['tc-grace-native-svg','tcGraceNativeMarkup','TC_GRACE_TAP_COOLDOWN_MS=100','Grace wisp tuning']:
+for needle in [
+    'tc-grace-native-svg','tcGraceNativeMarkup','TC_GRACE_TAP_COOLDOWN_MS=100',
+    'Grace wisp tuning','Grace fidget tuning','tc-grace-tap-count','tcIncrementGraceTapCounter(btn)'
+]:
     if needle not in s: raise SystemExit('Native Grace invariant missing: '+needle)
 for retired in ['TC_GRACE_ART_FRAMES','tc-grace-idle-art-frame','tc-grace-idle-art-stack']:
     if retired in s: raise SystemExit('Retired image-frame Grace residue: '+retired)
