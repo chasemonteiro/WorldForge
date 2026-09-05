@@ -81,4 +81,5 @@ if html.count('startApp().catch(') != 1:
     raise SystemExit('expected exactly one app bootstrap')
 
 print('Tarnished Covenant final release invariants: PASS')
+runpy.run_path('tarnished-covenant/test-region-locked-contracts.py')
 runpy.run_path('tarnished-covenant/test-multiplayer-invariants.py')
