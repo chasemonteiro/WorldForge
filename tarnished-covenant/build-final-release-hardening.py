@@ -8,9 +8,32 @@ s = p.read_text()
 # Final release hardening
 #
 # Challenge Rules owns reward probabilities. This late layer owns only durable
-# reward inventory/presentation and complete immutable archive fields that must
-# exist after the earlier reward/history builders have run.
+# reward inventory/presentation, complete immutable archive fields, and fixes
+# for late UI wrappers that must not override the underlying gameplay handlers.
 # -----------------------------------------------------------------------------
+
+# The refresh-pairing UI used to wrap useCovenantBoon with a second busy guard.
+# The real handler already owns that guard, so the wrapper set __tcBoonBusy=true
+# before calling it and caused every Chaos/Rite Refresh click to return early.
+duplicate_refresh_guard = """if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
+  window.__tcBoonStabilized=true;
+  const tcUseCovenantBoonBeforePairing=useCovenantBoon;
+  useCovenantBoon=async function(kind){
+    if(window.__tcBoonBusy)return;
+    window.__tcBoonBusy=true;
+    try{return await tcUseCovenantBoonBeforePairing(kind);}
+    finally{window.__tcBoonBusy=false;}
+  };
+}
+"""
+if duplicate_refresh_guard in s:
+    s = s.replace(duplicate_refresh_guard, '', 1)
+elif 'tcUseCovenantBoonBeforePairing' in s:
+    raise SystemExit('unexpected Covenant boon wrapper shape')
+
+core_refresh_guard = "if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;"
+if core_refresh_guard not in s:
+    raise SystemExit('core Covenant boon guard missing')
 
 # Dynasty Frequent Flier is a bankable pass. One pass grants five bird trips.
 old = """    appealWaivers: Number(raw.appealWaivers || 0),
@@ -92,8 +115,12 @@ for needle in [
     "riteOutcome: encounter?.riteForfeited?'Forfeited'",
     "chaosOutcome: encounter?.chaosForfeited?'Forfeited'",
     'Final release reward durability',
+    core_refresh_guard,
 ]:
     if needle not in s:
         raise SystemExit('final release invariant missing: ' + needle)
+
+if 'tcUseCovenantBoonBeforePairing' in s:
+    raise SystemExit('duplicate Covenant boon wrapper remains')
 
 p.write_text(s)
