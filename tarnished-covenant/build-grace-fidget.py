@@ -23,10 +23,12 @@ s=s.replace(needle, needle+'tcIncrementGraceTapCounter(btn);', 1)
 
 # The wisp builder recreates this markup before this layer runs on a normal build.
 if 'tc-grace-tap-count' not in s:
-    caption=r'<span class=\"tc-grace-idle-caption\"></span>'
-    if caption not in s:
+    caption_pattern=r'(<span class=(?:\\"|")tc-grace-idle-caption(?:\\"|")></span>)'
+    match=re.search(caption_pattern,s)
+    if not match:
         raise SystemExit('Grace caption markup missing')
-    s=s.replace(caption, caption+r'<span class=\"tc-grace-tap-count\">${tcGraceTapCountLabel()}</span>', 1)
+    replacement=match.group(1)+r'<span class=\"tc-grace-tap-count\">${tcGraceTapCountLabel()}</span>'
+    s=s[:match.start()]+replacement+s[match.end():]
 
 css=r'''
 /* --- Grace fidget tuning --- */
