@@ -12,10 +12,12 @@ s = p.read_text()
 # for late UI wrappers that must not override the underlying gameplay handlers.
 # -----------------------------------------------------------------------------
 
-# The refresh-pairing UI used to wrap useCovenantBoon with a second busy guard.
-# The real handler already owns that guard, so the wrapper set __tcBoonBusy=true
-# before calling it and caused every Chaos/Rite Refresh click to return early.
-duplicate_refresh_guard = """if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
+# The real useCovenantBoon handler already owns the busy flag. Any outer wrapper
+# that sets __tcBoonBusy before calling it causes every Refresh click to return
+# immediately. Remove every known late wrapper, regardless of which UI pass
+# injected it.
+duplicate_refresh_guards = [
+"""if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
   window.__tcBoonStabilized=true;
   const tcUseCovenantBoonBeforePairing=useCovenantBoon;
   useCovenantBoon=async function(kind){
@@ -25,11 +27,19 @@ duplicate_refresh_guard = """if(typeof useCovenantBoon==='function'&&!window.__t
     finally{window.__tcBoonBusy=false;}
   };
 }
-"""
-if duplicate_refresh_guard in s:
-    s = s.replace(duplicate_refresh_guard, '', 1)
-elif 'tcUseCovenantBoonBeforePairing' in s:
-    raise SystemExit('unexpected Covenant boon wrapper shape')
+""",
+"""if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
+  window.__tcBoonStabilized=true;
+  const tcUseCovenantBoonBeforeInteractionStabilization=useCovenantBoon;
+  useCovenantBoon=async function(kind){if(window.__tcBoonBusy)return;window.__tcBoonBusy=true;try{return await tcUseCovenantBoonBeforeInteractionStabilization(kind);}finally{window.__tcBoonBusy=false;}};
+}
+""",
+]
+for wrapper in duplicate_refresh_guards:
+    s = s.replace(wrapper, '')
+
+if 'tcUseCovenantBoonBefore' in s:
+    raise SystemExit('outer Covenant boon wrapper remains')
 
 core_refresh_guard = "if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;"
 if core_refresh_guard not in s:
@@ -92,8 +102,6 @@ elif 'riteOutcome:' not in s or 'chaosOutcome:' not in s:
     raise SystemExit('Compendium outcome archive target missing')
 
 # Four boon counters: two columns on phone, four across when room permits.
-start = '/* --- Final release reward durability --- */'
-end = '/* --- End final release reward durability --- */'
 s = re.sub(r'\n?/\* --- Final release reward durability --- \*/.*?/\* --- End final release reward durability --- \*/\n?', '\n', s, flags=re.S)
 css = """
 /* --- Final release reward durability --- */
@@ -120,7 +128,7 @@ for needle in [
     if needle not in s:
         raise SystemExit('final release invariant missing: ' + needle)
 
-if 'tcUseCovenantBoonBeforePairing' in s:
+if 'tcUseCovenantBoonBefore' in s:
     raise SystemExit('duplicate Covenant boon wrapper remains')
 
 p.write_text(s)
