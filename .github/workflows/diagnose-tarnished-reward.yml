@@ -1,0 +1,27 @@
+name: Diagnose Tarnished Reward Inventory
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-tarnished-reward.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+      - name: Locate Frequent Flier ownership
+        run: |
+          echo '=== Python sources ==='
+          grep -R -n -E 'aviaryTickets|Dynasty Frequent Flier|Frequent Flier' tarnished-covenant/*.py || true
+          echo '=== Live app ==='
+          grep -n -E 'aviaryTickets|Dynasty Frequent Flier|Frequent Flier' tarnished-covenant/index.html || true
+          echo '=== Reward helper counts ==='
+          grep -o 'function tcRewardIcon(kind)' tarnished-covenant/index.html | wc -l
+          grep -o 'function drawCovenantReward(state)' tarnished-covenant/index.html | wc -l
