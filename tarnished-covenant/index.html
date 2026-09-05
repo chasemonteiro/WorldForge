@@ -4214,13 +4214,6 @@ function tcRepairEncounterRefreshes(){
 const tcRenderEncounterBeforeInteractionStabilization=renderEncounter;
 renderEncounter=function(){tcRenderEncounterBeforeInteractionStabilization();tcRepairEncounterRefreshes();};
 
-if(typeof useCovenantBoon==='function'&&!window.__tcBoonStabilized){
-  window.__tcBoonStabilized=true;
-  const tcUseCovenantBoonBeforeInteractionStabilization=useCovenantBoon;
-  useCovenantBoon=async function(kind){if(window.__tcBoonBusy)return;window.__tcBoonBusy=true;try{return await tcUseCovenantBoonBeforeInteractionStabilization(kind);}finally{window.__tcBoonBusy=false;}};
-}
-
-
 if(!window.__tcForfeitBound){window.__tcForfeitBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-forfeit-boon]');if(b)tcForfeitBoon(b.dataset.forfeitBoon);});}
 
 
@@ -4542,8 +4535,9 @@ function tcIncrementGraceTapCounter(btn){
 
 
 
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260905030219';
+const TC_BUILD_ID='20260905031142';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
