@@ -3247,8 +3247,17 @@ function smithingCopy(state) {
   return next;
 }
 function bellById(id){ return TC_BELL_BEARINGS.find(x=>x.id===id); }
+function bellRegionVisited(state,b){
+  return Boolean(b&&state&&(b.region===state.region||(state.clearedRegions||[]).includes(b.region)));
+}
+function nextBellBearingForKind(state,kind){
+  const sm=smithingData(state);
+  return TC_BELL_BEARINGS.find(b=>b.kind===kind&&!sm.acquired.includes(b.id))||null;
+}
 function bellAccessible(state,b){
-  return Boolean(b&&state&&b.region===state.region);
+  if(!b||!bellRegionVisited(state,b))return false;
+  const next=nextBellBearingForKind(state,b.kind);
+  return Boolean(next&&next.id===b.id);
 }
 function availableBellBearings(state){
   const sm=smithingData(state);
@@ -4675,6 +4684,8 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(postBattleReport?.encounterId && postBattleReport.encounterId!==nextId)postBattleReport=null;
   if(pendingRevealId && pendingRevealId!==nextId)pendingRevealId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -4773,8 +4784,9 @@ if(!window.__tcMultiplayerRecoveryBound){
 
 
 
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260905162155';
+const TC_BUILD_ID='20260905163052';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
