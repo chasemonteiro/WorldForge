@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import runpy
 
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
@@ -132,3 +133,8 @@ if 'tcUseCovenantBoonBefore' in s:
     raise SystemExit('duplicate Covenant boon wrapper remains')
 
 p.write_text(s)
+
+# Keep the Bell Bearing progression policy in the permanent build path. This
+# deliberately runs after the information-architecture layer has created the
+# mandatory Corporate contract transition it patches.
+runpy.run_path('tarnished-covenant/build-region-locked-contracts.py')
