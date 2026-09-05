@@ -7,6 +7,12 @@ from datetime import datetime, timezone
 # leave an outer Covenant-boon busy wrapper around the real refresh handler.
 runpy.run_path('tarnished-covenant/build-refresh-handler-final.py')
 
+# Bell Bearing contracts are regional gameplay events: Favor stays banked, but
+# eligibility only exists in the bearing's current region. Apply and assert this
+# at the end of every build so earlier progression/UI layers cannot loosen it.
+runpy.run_path('tarnished-covenant/build-region-locked-contracts.py')
+runpy.run_path('tarnished-covenant/test-region-locked-contracts.py')
+
 p=Path('tarnished-covenant/index.html')
 s=p.read_text()
 
