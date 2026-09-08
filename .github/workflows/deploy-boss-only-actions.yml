@@ -54,3 +54,4 @@ jobs:
             git commit -m 'Keep Encounter actions on Boss panel only'
             git push origin HEAD:tarnished-covenant-assets
           fi
+# retry after robust formatted-source patch
