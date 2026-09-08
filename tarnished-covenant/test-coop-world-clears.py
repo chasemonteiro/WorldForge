@@ -1,5 +1,4 @@
 from pathlib import Path
-import re
 
 html = Path('tarnished-covenant/index.html').read_text()
 
@@ -11,9 +10,8 @@ def forbid(needle, message=None):
     if needle in html:
         raise SystemExit(message or f'forbidden co-op residue: {needle}')
 
-# Victory is now a two-host-world process, not a one-click encounter completion.
+# Victory is a two-host-world process, not a one-click encounter completion.
 for needle in [
-    'tcBindCoopWorldClearControls(state,c);',
     'function tcWorldClears(encounter)',
     'function tcBothWorldsCleared(encounter)',
     "next.current.worldClears=[...clears,slot];",
@@ -24,6 +22,21 @@ for needle in [
     require(needle)
 
 forbid("document.querySelector('#complete')?.addEventListener('click',()=>{\n    postBattleReport={encounterId:c.id,rite:null,chaos:null};")
+
+# CRITICAL UI regression guard: the modern Encounter enhancer needs the raw
+# #complete button to exist while renderEncounter returns. Co-op controls must
+# mount only after the modern Boss / Weapons / Chaos / Rite transformation.
+require('/* Co-op victory controls mount after Encounter panel enhancement. */')
+forbid('  tcBindCoopWorldClearControls(state,c);')
+require("const screen=app.querySelector('.tc-screen');const complete=screen?.querySelector('#complete');")
+require("screen.classList.add('tc-encounter-shell');")
+require('const rendered=tcRenderRunBeforeCoopWorlds();')
+require('tcBindCoopWorldClearControls(run?.state,run?.state?.current);')
+
+render_pos = html.find('const rendered=tcRenderRunBeforeCoopWorlds();')
+mount_pos = html.find('tcBindCoopWorldClearControls(run?.state,run?.state?.current);', render_pos)
+if render_pos < 0 or mount_pos <= render_pos:
+    raise SystemExit('co-op world-clear controls do not mount after the modern Encounter render')
 
 # The post-battle report becomes eligible only after both world slots are present.
 require('if(tcBothWorldsCleared(c)){')
@@ -47,7 +60,7 @@ for needle in [
 
 forbid("pendingRewardReveal=rewards.length?{rewards:structuredClone(rewards),boss:c.target?.name||'Enemy Felled',index:0,spinning:true}:null;")
 
-# A previous shared reveal cannot be overwritten by advancing the next encounter.
+# A previous shared reveal cannot be overwritten by another victory.
 require("if(tcSharedRewardUnresolved(state))return setToast('Both Tarnished must review the previous reward first.');")
 require('Both Tarnished must review the previous Covenant reward before another victory can be recorded.')
 
@@ -59,12 +72,11 @@ assert clears(['chase']) == ['chase']
 assert len(clears(['chase','morgan'])) == 2
 assert len(clears(['morgan','chase','morgan'])) == 2
 
-# Both player identities must independently acknowledge the same reveal before
-# the shared pending item can be discarded.
+# Both identities independently acknowledge the same reveal before it vanishes.
 seen = []
 seen = list(dict.fromkeys(seen + ['Chase']))
 assert not all(x in seen for x in ('Chase','Morgan'))
 seen = list(dict.fromkeys(seen + ['Morgan']))
 assert all(x in seen for x in ('Chase','Morgan'))
 
-print('Tarnished Covenant co-op world-clear/shared-reward invariants: PASS')
+print('Tarnished Covenant co-op + modern Encounter UI invariants: PASS')
