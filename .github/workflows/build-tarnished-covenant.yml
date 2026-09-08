@@ -148,8 +148,14 @@ jobs:
         run: python tarnished-covenant/build-multiplayer-hardening.py
       - name: Apply multiplayer synchronization hardening v2
         run: python tarnished-covenant/build-multiplayer-hardening-v2.py
+      - name: Apply sequential visited-region Bell Bearing contracts
+        run: python tarnished-covenant/build-region-locked-contracts.py
       - name: Repair final Covenant refresh handler
         run: python tarnished-covenant/build-refresh-handler-final.py
+      - name: Apply co-op dual-world encounter completion
+        run: python tarnished-covenant/build-coop-world-clears.py
+      - name: Make reward payout one shared first-come draw
+        run: python tarnished-covenant/build-shared-reward-draw.py
       - name: Finalize Home Screen build id
         run: python tarnished-covenant/build-launch-refresh.py
       - name: Assert final regression invariants
@@ -160,6 +166,12 @@ jobs:
         run: python tarnished-covenant/test-multiplayer-invariants.py
       - name: Assert multiplayer v2 invariants
         run: python tarnished-covenant/test-multiplayer-v2-invariants.py
+      - name: Assert Bell Bearing progression invariants
+        run: python tarnished-covenant/test-region-locked-contracts.py
+      - name: Assert co-op encounter invariants
+        run: python tarnished-covenant/test-coop-world-clears.py
+      - name: Assert shared reward draw invariants
+        run: python tarnished-covenant/test-shared-reward-draw.py
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
