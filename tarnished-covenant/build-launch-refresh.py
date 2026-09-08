@@ -27,6 +27,12 @@ if 'function tcWorldClears(encounter)' not in app_path.read_text():
 # exact result. Apply this after the co-op layer and assert the combined state.
 if 'function tcSharedRewardDrawPending(state)' not in app_path.read_text():
     runpy.run_path('tarnished-covenant/build-shared-reward-draw.py')
+
+# Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
+# action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
+# and uncluttered.
+runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
+
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
 
@@ -58,6 +64,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','bossPanel.appendChild(bar);']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
