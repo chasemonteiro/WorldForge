@@ -60,3 +60,4 @@ jobs:
             git commit -m 'Let either player claim the one shared reward draw'
             git push origin HEAD:tarnished-covenant-assets
           fi
+# retry after final-build ordering fix
