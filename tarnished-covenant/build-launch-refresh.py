@@ -8,10 +8,17 @@ from datetime import datetime, timezone
 runpy.run_path('tarnished-covenant/build-refresh-handler-final.py')
 
 # Bell Bearing contracts are regional gameplay events: Favor stays banked, but
-# eligibility only exists in the bearing's current region. Apply and assert this
-# at the end of every build so earlier progression/UI layers cannot loosen it.
+# eligibility follows the next sequential bearing in the current or a previously
+# visited region. Apply and assert this at the end of every build so earlier
+# progression/UI layers cannot loosen it.
 runpy.run_path('tarnished-covenant/build-region-locked-contracts.py')
 runpy.run_path('tarnished-covenant/test-region-locked-contracts.py')
+
+# Co-op bosses are one Covenant encounter across two host worlds. Both world
+# clears must be recorded before the one payout is rolled, and that same reward
+# reveal must be available on both phones.
+runpy.run_path('tarnished-covenant/build-coop-world-clears.py')
+runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 
 p=Path('tarnished-covenant/index.html')
 s=p.read_text()
