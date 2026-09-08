@@ -11,6 +11,12 @@ s = p.read_text()
 # Covenant treats those two in-game kills as ONE encounter: record both world
 # clears, then file one post-battle report, roll one reward payout, and show the
 # same payout independently on both phones.
+#
+# IMPORTANT: the modern Encounter UI is a late enhancement that looks for the
+# original #complete button before it transforms the raw briefing into the
+# Boss / Weapons / Chaos / Rite panel interface. Do NOT replace #complete inside
+# renderEncounter. Leave it in the DOM until the modern enhancer finishes, then
+# mount the co-op controls from the final renderRun wrapper.
 # -----------------------------------------------------------------------------
 
 # Remove an older copy if this late build step is re-run on an assembled page.
@@ -22,16 +28,21 @@ s = re.sub(
     flags=re.S,
 )
 
-# The old victory button immediately opened a local post-battle report after a
-# single kill. Replace that binding with the shared two-world clear controls.
+# The legacy one-click handler must be removed, but the #complete ELEMENT must
+# remain until tcEnhanceEncounterPanels() has used it to construct the modern UI.
 old_complete = """  document.querySelector('#complete')?.addEventListener('click',()=>{
     postBattleReport={encounterId:c.id,rite:null,chaos:null};
     renderPostBattleReport();
   });"""
-new_complete = """  tcBindCoopWorldClearControls(state,c);"""
+early_coop_mount = "  tcBindCoopWorldClearControls(state,c);"
+complete_marker = "  /* Co-op victory controls mount after Encounter panel enhancement. */"
 if old_complete in s:
-    s = s.replace(old_complete, new_complete, 1)
-elif 'tcBindCoopWorldClearControls(state,c);' not in s:
+    s = s.replace(old_complete, complete_marker, 1)
+elif early_coop_mount in s:
+    # Repair the first co-op build, which mounted too early and caused the
+    # modern Encounter enhancer to bail out to the raw legacy briefing.
+    s = s.replace(early_coop_mount, complete_marker, 1)
+elif complete_marker not in s:
     raise SystemExit('single-world victory binding target missing')
 
 # Reward results were previously placed only in the initiating phone's local
@@ -50,7 +61,7 @@ if old_reward in s:
 elif 'completed.sharedRewardReveal=rewards.length?' not in s:
     raise SystemExit('local reward reveal assignment target missing')
 
-# Finishing the slot/reward machine now acknowledges the shared reveal for this
+# Finishing the slot/reward machine acknowledges the shared reveal for this
 # device identity instead of merely clearing a local variable.
 old_finish = """    if(data.index+1<total){data.index+=1;data.spinning=true;renderRewardMachine();return;}
     pendingRewardReveal=null;renderRun();"""
@@ -182,7 +193,11 @@ renderRun=function(){
       postBattleReport=null;
     }
   }
-  return tcRenderRunBeforeCoopWorlds();
+  const rendered=tcRenderRunBeforeCoopWorlds();
+  /* The modern Encounter enhancer has now finished and #complete has been moved
+     into its final action area. Replace it only now, never before enhancement. */
+  if(!postBattleReport&&!pendingRewardReveal)tcBindCoopWorldClearControls(run?.state,run?.state?.current);
+  return rendered;
 };
 /* --- End co-op dual-world clears + shared reward reveal --- */
 '''
@@ -192,7 +207,7 @@ if idx < 0:
 s = s[:idx] + js + s[idx:]
 
 required = [
-    'tcBindCoopWorldClearControls(state,c);',
+    complete_marker,
     'function tcWorldClears(encounter)',
     'function tcBothWorldsCleared(encounter)',
     "next.current.worldClears=[...clears,slot];",
@@ -204,15 +219,21 @@ required = [
     "['Chase','Morgan'].every(name=>seen.includes(name))",
     'void tcAcknowledgeSharedRewardReveal(data);',
     'Both Tarnished must review the previous Covenant reward',
+    'const rendered=tcRenderRunBeforeCoopWorlds();',
+    'tcBindCoopWorldClearControls(run?.state,run?.state?.current);',
 ]
 for needle in required:
     if needle not in s:
         raise SystemExit('co-op invariant missing: ' + needle)
 
+# Regression guard: never mount the co-op controls inside renderEncounter before
+# the modern panel enhancer has had access to #complete.
+if early_coop_mount in s:
+    raise SystemExit('co-op controls still mount before Encounter enhancement')
 if old_complete in s:
     raise SystemExit('single-kill victory handler remains')
 if old_reward in s:
     raise SystemExit('local-only reward reveal assignment remains')
 
 p.write_text(s)
-print('Co-op dual-world clears and shared reward reveal applied.')
+print('Co-op dual-world clears and shared reward reveal applied after Encounter enhancement.')
