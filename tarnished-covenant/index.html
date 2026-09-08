@@ -1182,6 +1182,14 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 @media(max-width:430px){.tc-world-clear-grid{grid-template-columns:1fr}.tc-world-clear-head{align-items:center}}
 /* --- End co-op dual-world clears --- */
 
+
+/* --- Shared Covenant reward draw gate --- */
+.tc-shared-draw-screen{min-height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;padding:18px 4px 84px}
+.tc-shared-draw-card{width:min(520px,100%);text-align:center;border:1px solid rgba(198,161,90,.42);padding:26px 18px 20px;background:radial-gradient(circle at 50% 10%,rgba(198,161,90,.12),transparent 42%),linear-gradient(180deg,rgba(28,24,16,.92),rgba(8,7,5,.96));clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
+.tc-shared-draw-glyph{font-size:44px;color:var(--gold-bright);margin-bottom:7px;text-shadow:0 0 26px rgba(224,193,123,.22)}
+.tc-shared-draw-card h1{font-size:clamp(31px,9vw,44px);margin:6px 0 8px}.tc-shared-draw-boss{font-style:italic;color:var(--ash);margin-bottom:18px}.tc-shared-draw-copy{font-size:14px;line-height:1.5;color:#d4cab8;margin:0 auto 18px;max-width:410px}.tc-shared-draw-count{font:850 10px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:var(--gold);margin-bottom:13px}
+/* --- End Shared Covenant reward draw gate --- */
+
 </style>
 
 <script>
@@ -3676,10 +3684,8 @@ async function finalizePostBattleReport(){
   if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
     nc.smithingChaosFavor=true;draws+=chaosDraws;
   }
-  const rewards=[];
-  for(let i=0;i<draws;i++) rewards.push(drawCovenantReward(nextState));
-  nc.postBattleRewards=rewards.map(x=>x.label);
-  nc.favorEarned=rewards.filter(x=>x.kind==='favor'||x.kind==='favor2').reduce((sum,x)=>sum+(x.kind==='favor2'?2:1),0);
+  nc.postBattleRewards=[];
+  nc.favorEarned=0;
   const completed=completeEncounter(nextState,playerName());
   if(!completed.regionComplete && !completed.runComplete && completed.current){
     completed.smithing = smithingData(completed);
@@ -3690,15 +3696,16 @@ async function finalizePostBattleReport(){
   }
   postBattleReport=null;
   if(!completed.regionComplete&&!completed.runComplete&&completed.current){pendingRevealId=completed.current.id;uiScreen='encounter';}
-  completed.sharedRewardReveal=rewards.length?{
+  completed.sharedRewardDraw=draws>0?{
     id:`${c.id}:${Date.now()}`,
     encounterId:c.id,
-    rewards:structuredClone(rewards),
+    count:draws,
     boss:c.target?.name||'Enemy Felled',
-    seenBy:[]
+    filedBy:playerName()
   }:null;
+  completed.sharedRewardReveal=null;
   pendingRewardReveal=null;
-  const rewardText=rewards.length?'Covenant reward draw ready.':'Post-battle report filed.';
+  const rewardText=draws>0?'Shared Covenant reward ready to draw.':'Post-battle report filed.';
   try{
     const saved=await commit(completed,{successToast:rewardText});
     if(!saved)pendingRewardReveal=null;
@@ -4699,6 +4706,8 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -4801,6 +4810,8 @@ if(!window.__tcMultiplayerRecoveryBound){
 
 
 
+
+
 /* --- Co-op dual-world clears + shared reward reveal --- */
 function tcWorldClears(encounter){
   const source=Array.isArray(encounter?.worldClears)?encounter.worldClears:[];
@@ -4834,7 +4845,7 @@ async function tcRecordWorldClear(slot){
   if(tcWorldClearBusy||pending)return;
   const state=run?.state,c=state?.current;
   if(!c||!['chase','morgan'].includes(slot))return;
-  if(tcSharedRewardUnresolved(state))return setToast('Both Tarnished must review the previous reward first.');
+  if(tcSharedRewardDrawPending(state)||tcSharedRewardUnresolved(state))return setToast('Finish the previous shared Covenant reward first.');
   const clears=tcWorldClears(c);
   if(clears.includes(slot))return;
   tcWorldClearBusy=true;
@@ -4917,8 +4928,90 @@ renderRun=function(){
 };
 /* --- End co-op dual-world clears + shared reward reveal --- */
 
+/* --- Shared first-come Covenant reward draw --- */
+function tcSharedRewardDrawPending(state){
+  const draw=state?.sharedRewardDraw;
+  return Boolean(draw?.id&&Number(draw.count||0)>0&&!state?.sharedRewardReveal);
+}
+function tcSharedRewardDeltas(before,after){
+  const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets'];
+  const out={};
+  for(const key of keys)out[key]=Number(after?.[key]||0)-Number(before?.[key]||0);
+  return out;
+}
+function tcGenerateSharedRewardPayload(state,count){
+  const scratch=smithingCopy(state);
+  const before=structuredClone(smithingData(scratch));
+  const rewards=[];
+  for(let i=0;i<Math.max(0,Number(count||0));i++)rewards.push(drawCovenantReward(scratch));
+  return {rewards,deltas:tcSharedRewardDeltas(before,smithingData(scratch))};
+}
+function tcBuildClaimedSharedReward(latest,draw,rewards,deltas,drawer){
+  const pendingDraw=latest?.sharedRewardDraw;
+  if(!pendingDraw||pendingDraw.id!==draw.id||latest?.sharedRewardReveal)return null;
+  const next=smithingCopy(latest),sm=smithingData(next);
+  for(const [key,delta] of Object.entries(deltas||{}))sm[key]=Number(sm[key]||0)+Number(delta||0);
+  const labels=(rewards||[]).map(x=>x.label);
+  const favorEarned=Math.max(0,Number(deltas?.favor||0));
+  if(Array.isArray(next.history)&&next.history.length){
+    next.history[0].rewards=structuredClone(labels);
+    next.history[0].favorEarned=favorEarned;
+    next.history[0].rewardDrawnBy=drawer;
+  }
+  next.sharedRewardDraw=null;
+  next.sharedRewardReveal={
+    id:draw.id,
+    encounterId:draw.encounterId,
+    rewards:structuredClone(rewards||[]),
+    boss:draw.boss||'Enemy Felled',
+    drawnBy:drawer,
+    seenBy:[]
+  };
+  if(!next.regionComplete&&!next.runComplete&&next.current){
+    const affordable=availableBellBearings(next).filter(b=>sm.favor>=smithingContractCost(b));
+    if(!sm.activeContract&&affordable.length)sm.pendingCorporateForEncounterId=next.current.id;
+  }
+  next.lastAction=`${drawer} drew the shared Covenant reward.`;
+  next.updatedAt=new Date().toISOString();
+  return next;
+}
+function renderSharedRewardDraw(){
+  const draw=run?.state?.sharedRewardDraw;
+  if(!tcSharedRewardDrawPending(run?.state))return renderRun();
+  const count=Math.max(1,Number(draw.count||1));
+  app.innerHTML=`<section class="tc-shared-draw-screen"><div class="tc-shared-draw-card"><div class="tc-shared-draw-glyph">✦</div><div class="tc-kicker gold">Shared Covenant Reward</div><h1>One Payout. One Draw.</h1><div class="tc-shared-draw-boss">${h(draw.boss||'Enemy Felled')}</div><div class="tc-shared-draw-count">${count} ${count===1?'reward':'rewards'} waiting</div><div class="tc-shared-draw-copy">Either Tarnished may draw this payout. The first draw is final and immediately becomes the shared result on both phones.</div><button id="tcDrawSharedReward" type="button" class="btn gold">Draw Shared Reward${count===1?'':'s'}</button></div></section>${typeof navMarkup==='function'?navMarkup('encounter'):''}`;
+  if(typeof bindNav==='function')bindNav();
+  document.querySelector('#tcDrawSharedReward')?.addEventListener('click',tcClaimSharedRewardDraw);
+}
+let tcSharedRewardDrawBusy=false;
+async function tcClaimSharedRewardDraw(){
+  if(tcSharedRewardDrawBusy||pending)return;
+  const draw=structuredClone(run?.state?.sharedRewardDraw);
+  if(!draw?.id||!tcSharedRewardDrawPending(run?.state))return renderRun();
+  const btn=document.querySelector('#tcDrawSharedReward');if(btn){btn.disabled=true;btn.textContent='Drawing…';}
+  const drawer=playerName();
+  const payload=tcGenerateSharedRewardPayload(run.state,draw.count);
+  const staged=tcBuildClaimedSharedReward(run.state,draw,payload.rewards,payload.deltas,drawer);
+  if(!staged)return renderRun();
+  tcSharedRewardDrawBusy=true;
+  try{
+    const saved=await commit(staged,{
+      successToast:`${drawer} drew the shared Covenant reward.`,
+      retryBuilder:(latest)=>tcBuildClaimedSharedReward(latest,draw,payload.rewards,payload.deltas,drawer)
+    });
+    if(!saved&&tcSharedRewardDrawPending(run?.state))renderSharedRewardDraw();
+  }finally{tcSharedRewardDrawBusy=false;}
+}
+const tcRenderRunBeforeSharedRewardDraw=renderRun;
+renderRun=function(){
+  if(tcSharedRewardDrawPending(run?.state))return renderSharedRewardDraw();
+  return tcRenderRunBeforeSharedRewardDraw();
+};
+/* --- End shared first-come Covenant reward draw --- */
+
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260908043804';
+const TC_BUILD_ID='20260908044935';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
