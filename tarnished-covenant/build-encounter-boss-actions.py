@@ -14,8 +14,8 @@ if old_panel in s:
 elif new_panel not in s:
     raise SystemExit('Encounter Boss panel creation target missing')
 
-old_mount = "hint.after(bar);tcWirePanelTrack(track,tabs,4,"
-new_mount = "bossPanel.appendChild(bar);tcWirePanelTrack(track,tabs,4,"
+old_mount = 'hint.after(bar);'
+new_mount = 'bossPanel.appendChild(bar);'
 if old_mount in s:
     s = s.replace(old_mount, new_mount, 1)
 elif new_mount not in s:
@@ -31,7 +31,7 @@ for needle in required:
     if needle not in s:
         raise SystemExit('Boss-only Encounter action invariant missing: ' + needle)
 
-if 'hint.after(bar);tcWirePanelTrack(track,tabs,4,' in s:
+if 'hint.after(bar);' in s:
     raise SystemExit('Encounter action bar still lives outside the swipe panels')
 
 p.write_text(s)
