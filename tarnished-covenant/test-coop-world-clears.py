@@ -44,7 +44,7 @@ if render_pos < 0 or mount_pos <= render_pos:
 require("const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);")
 require('track.append(bossPanel,')
 require('bossPanel.appendChild(bar);')
-forbid('hint.after(bar);tcWirePanelTrack(track,tabs,4,')
+forbid('hint.after(bar);')
 
 # The post-battle report becomes eligible only after both world slots are present.
 require('if(tcBothWorldsCleared(c)){')
