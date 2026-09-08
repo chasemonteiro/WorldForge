@@ -3,6 +3,8 @@ import re
 import runpy
 from datetime import datetime, timezone
 
+app_path=Path('tarnished-covenant/index.html')
+
 # This is the final production build step. Ensure late UI/stability layers cannot
 # leave an outer Covenant-boon busy wrapper around the real refresh handler.
 runpy.run_path('tarnished-covenant/build-refresh-handler-final.py')
@@ -14,13 +16,21 @@ runpy.run_path('tarnished-covenant/build-refresh-handler-final.py')
 runpy.run_path('tarnished-covenant/build-region-locked-contracts.py')
 runpy.run_path('tarnished-covenant/test-region-locked-contracts.py')
 
-# Co-op bosses are one Covenant encounter across two host worlds. Both world
-# clears must be recorded before the one payout is rolled, and that same reward
-# reveal must be available on both phones.
-runpy.run_path('tarnished-covenant/build-coop-world-clears.py')
-runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
+# Co-op bosses are one Covenant encounter across two host worlds. Avoid rerunning
+# the co-op source patch after the later shared-draw patch has already rewritten
+# post-battle reward generation; only apply it when the co-op layer is absent.
+if 'function tcWorldClears(encounter)' not in app_path.read_text():
+    runpy.run_path('tarnished-covenant/build-coop-world-clears.py')
 
-p=Path('tarnished-covenant/index.html')
+# The earned payout is shared: either phone may initiate the one draw, but the
+# first successful revision/CAS save consumes it and both phones receive that
+# exact result. Apply this after the co-op layer and assert the combined state.
+if 'function tcSharedRewardDrawPending(state)' not in app_path.read_text():
+    runpy.run_path('tarnished-covenant/build-shared-reward-draw.py')
+runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
+runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
+
+p=app_path
 s=p.read_text()
 
 # Keep the custom Safari / iOS Home Screen icon present on every full rebuild.
@@ -48,6 +58,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png']:
-    if needle not in s: raise SystemExit('freshness/icon invariant missing: '+needle)
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)']:
+    if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
