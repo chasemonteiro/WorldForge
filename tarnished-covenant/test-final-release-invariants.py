@@ -82,4 +82,5 @@ if html.count('startApp().catch(') != 1:
 
 print('Tarnished Covenant final release invariants: PASS')
 runpy.run_path('tarnished-covenant/test-region-locked-contracts.py')
+runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-multiplayer-invariants.py')
