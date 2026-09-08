@@ -3612,7 +3612,7 @@ function renderEncounter() {
   bindNav();
   document.querySelector('#triggerChaos')?.addEventListener('click',()=>commit(triggerChaos(state,playerName())));
   document.querySelector('#appealOpen')?.addEventListener('click',showAppealMenu);
-  tcBindCoopWorldClearControls(state,c);
+  /* Co-op victory controls mount after Encounter panel enhancement. */
 }
 
 
@@ -4698,6 +4698,7 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -4793,6 +4794,8 @@ if(!window.__tcMultiplayerRecoveryBound){
   },30000);
 }
 /* --- End multiplayer synchronization hardening --- */
+
+
 
 
 
@@ -4906,12 +4909,16 @@ renderRun=function(){
       postBattleReport=null;
     }
   }
-  return tcRenderRunBeforeCoopWorlds();
+  const rendered=tcRenderRunBeforeCoopWorlds();
+  /* The modern Encounter enhancer has now finished and #complete has been moved
+     into its final action area. Replace it only now, never before enhancement. */
+  if(!postBattleReport&&!pendingRewardReveal)tcBindCoopWorldClearControls(run?.state,run?.state?.current);
+  return rendered;
 };
 /* --- End co-op dual-world clears + shared reward reveal --- */
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260908042117';
+const TC_BUILD_ID='20260908043804';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
