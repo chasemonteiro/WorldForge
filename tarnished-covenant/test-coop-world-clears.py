@@ -42,11 +42,15 @@ if render_pos < 0 or mount_pos <= render_pos:
 require('if(tcBothWorldsCleared(c)){')
 require("postBattleReport={encounterId:c.id,rite:null,chaos:null};")
 
-# Reward reveal payload must be persisted in shared state so the non-initiating
-# phone can hydrate the exact same reward results.
+# Final behavior is one shared pending payout. Either phone may claim it, after
+# which both phones hydrate the exact same persisted reveal.
 for needle in [
-    'completed.sharedRewardReveal=rewards.length?',
-    'rewards:structuredClone(rewards)',
+    'completed.sharedRewardDraw=draws>0?',
+    'function tcSharedRewardDrawPending(state)',
+    'function tcClaimSharedRewardDraw()',
+    'next.sharedRewardReveal={',
+    'rewards:structuredClone(rewards||[])',
+    'drawnBy:drawer,',
     'seenBy:[]',
     'function tcHydrateSharedRewardReveal(state)',
     'pendingRewardReveal={',
@@ -59,10 +63,10 @@ for needle in [
     require(needle)
 
 forbid("pendingRewardReveal=rewards.length?{rewards:structuredClone(rewards),boss:c.target?.name||'Enemy Felled',index:0,spinning:true}:null;")
+forbid('for(let i=0;i<draws;i++) rewards.push(drawCovenantReward(nextState));')
 
-# A previous shared reveal cannot be overwritten by another victory.
-require("if(tcSharedRewardUnresolved(state))return setToast('Both Tarnished must review the previous reward first.');")
-require('Both Tarnished must review the previous Covenant reward before another victory can be recorded.')
+# A previous payout cannot be overwritten by another victory.
+require("if(tcSharedRewardDrawPending(state)||tcSharedRewardUnresolved(state))return setToast('Finish the previous shared Covenant reward first.');")
 
 # Basic model checks for the intended state machine.
 def clears(values):
@@ -79,4 +83,4 @@ assert not all(x in seen for x in ('Chase','Morgan'))
 seen = list(dict.fromkeys(seen + ['Morgan']))
 assert all(x in seen for x in ('Chase','Morgan'))
 
-print('Tarnished Covenant co-op + modern Encounter UI invariants: PASS')
+print('Tarnished Covenant co-op + modern Encounter + shared payout invariants: PASS')
