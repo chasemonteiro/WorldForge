@@ -38,6 +38,14 @@ mount_pos = html.find('tcBindCoopWorldClearControls(run?.state,run?.state?.curre
 if render_pos < 0 or mount_pos <= render_pos:
     raise SystemExit('co-op world-clear controls do not mount after the modern Encounter render')
 
+# Encounter completion / co-op world clears / Weapon Appeal belong only to the
+# Boss swipe panel. The action bar must never sit outside the panel track, where
+# it would crowd Weapons, Chaos, and Rite.
+require("const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);")
+require('track.append(bossPanel,')
+require('bossPanel.appendChild(bar);')
+forbid('hint.after(bar);tcWirePanelTrack(track,tabs,4,')
+
 # The post-battle report becomes eligible only after both world slots are present.
 require('if(tcBothWorldsCleared(c)){')
 require("postBattleReport={encounterId:c.id,rite:null,chaos:null};")
@@ -83,4 +91,4 @@ assert not all(x in seen for x in ('Chase','Morgan'))
 seen = list(dict.fromkeys(seen + ['Morgan']))
 assert all(x in seen for x in ('Chase','Morgan'))
 
-print('Tarnished Covenant co-op + modern Encounter + shared payout invariants: PASS')
+print('Tarnished Covenant co-op + Boss-only Encounter actions + shared payout invariants: PASS')
