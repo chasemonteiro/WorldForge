@@ -1211,6 +1211,10 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -2459,7 +2463,7 @@ function makePenance(targetName) {
   };
 }
 
-function changeWeapons(state, actor, which) {
+function changeWeapons(state, actor, which, useWaiver = false) {
   const next = structuredClone(state);
   const current = next.current;
   if (which === 'chase') {
@@ -2471,7 +2475,7 @@ function changeWeapons(state, actor, which) {
     current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name], next);
   }
   const sm = smithingData(next);
-  const waived = sm.appealWaivers > 0;
+  const waived = Boolean(useWaiver && sm.appealWaivers > 0);
   if (waived) { next.smithing = sm; next.smithing.appealWaivers -= 1; }
   else current.penances.push(makePenance(current.target.name));
   const names = Array.isArray(next.playerNames) && next.playerNames.length >= 2 ? next.playerNames : ['Tarnished One','Tarnished Two'];
@@ -3720,11 +3724,11 @@ async function finalizePostBattleReport(){
   let draws=0,guaranteedFavor=0;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(postBattleReport.rite===true && !nc.riteForfeited && riteDraws>0 && !nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;
   }
   nextState.smithing=smithingData(nextState);
   nextState.smithing.favor+=guaranteedFavor;
@@ -3788,7 +3792,7 @@ function renderRewardMachine(){
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const finish=()=>{
     reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
-    result.hidden=false;result.classList.add('revealed');data.spinning=false;if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
+    result.hidden=false;result.classList.add('revealed');data.spinning=false;if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
   };
   if(reduced){finish();}
   else{
@@ -3807,7 +3811,7 @@ function renderRewardMachine(){
   btn.addEventListener('touchend',advanceReward,{passive:false});
 }
 
-function showAppealMenu(){
+function tcLegacyShowAppealMenu(){
   const c=run.state.current;
   document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">${smithingData(run.state).appealWaivers>0?`Appeal Waiver available · this appeal is penalty-free and will consume 1 waiver.`:`Changing an assigned weapon creates a severe random penalty.`}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',run.state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',run.state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',run.state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',run.state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
   document.querySelector('#closeAppeal').addEventListener('click',()=>document.querySelector('#tcAppealOverlay')?.remove());
@@ -4760,6 +4764,7 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5097,6 +5102,17 @@ renderRun=function(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 function tcSharedRewardIndex(shared){
   const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
@@ -5392,6 +5408,52 @@ if(!window.__tcFreeBossKillBound){
 /* --- End Sanctioned Boss Kill reward --- */
 
 
+/* --- Explicit Appeal Waiver choice --- */
+function tcCloseAppealOverlay(){document.querySelector('#tcAppealOverlay')?.remove();}
+async function tcResolveWeaponAppeal(which,useWaiver){
+  const sm=smithingData(run?.state||{});
+  if(useWaiver&&Number(sm.appealWaivers||0)<1)return setToast('No Appeal Waiver remains.');
+  tcCloseAppealOverlay();
+  const staged=changeWeapons(run.state,playerName(),which,Boolean(useWaiver));
+  await commit(staged,{
+    successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':'Weapon appeal granted. Penalty accepted.'
+  });
+}
+function tcShowAppealWaiverChoice(which){
+  const overlay=document.querySelector('#tcAppealOverlay');
+  if(!overlay)return;
+  const sm=smithingData(run.state),count=Number(sm.appealWaivers||0);
+  const names=covenantNames(run.state);
+  const label=which==='both'?'both assigned weapons':`${which==='chase'?names[0]:names[1]}’s assigned weapon`;
+  const sheet=overlay.querySelector('.tc-sheet');
+  if(!sheet)return;
+  sheet.innerHTML=`<div class="tc-kicker red">armament appeal</div>
+    <div class="tc-value" style="margin:6px 0 4px">Appeal ${h(label)}?</div>
+    <div class="tc-muted">You have <strong>${count}</strong> Appeal Waiver${count===1?'':'s'}. A waiver prevents the severe random penalty, but spending it is optional.</div>
+    <div class="tc-panel soft" style="margin-top:14px"><div class="tc-kicker gold">Choose the price</div><div class="tc-muted" style="margin-top:6px">One waiver covers this entire appeal${which==='both'?', including both weapons':''}.</div></div>
+    <div class="tc-stack" style="margin-top:14px;display:grid;gap:8px">
+      <button id="tcSpendAppealWaiver" class="btn gold">Spend 1 Appeal Waiver · ${Math.max(0,count-1)} left</button>
+      <button id="tcTakeAppealPenalty" class="btn curse">Keep Waiver · Take Penalty</button>
+    </div>
+    <button id="closeAppeal" class="btn text-btn">Back</button>`;
+  sheet.querySelector('#tcSpendAppealWaiver')?.addEventListener('click',()=>tcResolveWeaponAppeal(which,true));
+  sheet.querySelector('#tcTakeAppealPenalty')?.addEventListener('click',()=>tcResolveWeaponAppeal(which,false));
+  sheet.querySelector('#closeAppeal')?.addEventListener('click',showAppealMenu);
+}
+function showAppealMenu(){
+  tcCloseAppealOverlay();
+  const state=run.state,c=state.current,sm=smithingData(state),waivers=Number(sm.appealWaivers||0);
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing an assigned weapon normally creates a severe random penalty.${waivers>0?` You have ${waivers} Appeal Waiver${waivers===1?'':'s'} and may choose whether to spend one after selecting the appeal.`:''}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
+  document.querySelector('#closeAppeal')?.addEventListener('click',tcCloseAppealOverlay);
+  document.querySelectorAll('[data-overlay-appeal]').forEach(btn=>btn.addEventListener('click',()=>{
+    const which=btn.dataset.overlayAppeal;
+    if(waivers>0)tcShowAppealWaiverChoice(which);
+    else void tcResolveWeaponAppeal(which,false);
+  }));
+}
+/* --- End Explicit Appeal Waiver choice --- */
+
+
 /* --- Boss prerequisite dependency graph --- */
 function tcBossKey(name){
   let key=String(name||'').normalize('NFKD').replace(/[’‘]/g,"'").toLowerCase();
@@ -5609,7 +5671,7 @@ capstoneBlock=function(state){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260912195528';
+const TC_BUILD_ID='20260912201936';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
