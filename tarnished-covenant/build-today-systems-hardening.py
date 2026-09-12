@@ -40,9 +40,9 @@ tcResolveWeaponAppeal=async function(which,useWaiver){
   return tcResolveWeaponAppealBeforeAudit(which,useWaiver);
 };
 
-// Rite/Chaos amendment and forfeit controls mutate encounter terms too. Avoid
-// the retired tcUseCovenantBoonBefore* prefix: release tests reserve it for the
-// old broken busy-flag wrappers.
+// Rite/Chaos amendment and forfeit controls mutate encounter terms too. This
+// wrapper uses a distinct audit name so it cannot be confused with retired
+// busy-flag stabilization code.
 const tcAuditUseCovenantBoonCore=useCovenantBoon;
 useCovenantBoon=async function(kind){
   if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
