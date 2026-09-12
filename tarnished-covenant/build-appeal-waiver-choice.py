@@ -60,7 +60,7 @@ function tcShowAppealWaiverChoice(which){
   if(!overlay)return;
   const sm=smithingData(run.state),count=Number(sm.appealWaivers||0);
   const names=covenantNames(run.state);
-  const label=which==='both'?'both assigned weapons':`${which==='chase'?names.chase:names.morgan}’s assigned weapon`;
+  const label=which==='both'?'both assigned weapons':`${which==='chase'?names[0]:names[1]}’s assigned weapon`;
   const sheet=overlay.querySelector('.tc-sheet');
   if(!sheet)return;
   sheet.innerHTML=`<div class="tc-kicker red">armament appeal</div>
