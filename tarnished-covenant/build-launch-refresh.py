@@ -41,6 +41,11 @@ runpy.run_path('tarnished-covenant/build-free-boss-kill.py')
 # Final reward tuning: Covenant Tax is 5%; Sanctioned Boss Kill is 10%.
 runpy.run_path('tarnished-covenant/build-reward-odds-swap.py')
 
+# Physical progression uses a dependency graph. Required gate bosses are forced
+# before blocked capstones/downstream bosses, conditional routes are respected,
+# and cross-region gates can send the Covenant backward to the correct area.
+runpy.run_path('tarnished-covenant/build-boss-prerequisites.py')
+
 # Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
 # action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
 # and uncluttered.
@@ -49,6 +54,7 @@ runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
 runpy.run_path('tarnished-covenant/test-free-boss-kill.py')
+runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
 
 p=app_path
 s=p.read_text()
@@ -78,6 +84,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'"]:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
