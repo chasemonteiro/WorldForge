@@ -1,5 +1,5 @@
 name: Deploy Appeal Waiver Choice
-# retry after ordering-safe appeal patch
+# retry after test fix
 
 on:
   push:
