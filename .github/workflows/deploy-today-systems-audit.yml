@@ -1,6 +1,6 @@
 name: Deploy Today Systems Audit
 
-# Audit retry 4: generated cross-system wrappers are stripped before each rebuild.
+# Audit retry 5: release-safe encounter freeze wrapper naming.
 on:
   push:
     branches: [main]
