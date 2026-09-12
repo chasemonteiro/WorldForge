@@ -1,6 +1,6 @@
 name: Deploy Today Systems Audit
 
-# Audit retry 2: active reward catch-up patch is now scoped and idempotent.
+# Audit retry 3: reward hydration and active renderer are patched separately.
 on:
   push:
     branches: [main]
@@ -18,13 +18,10 @@ jobs:
         with:
           ref: tarnished-covenant-assets
           fetch-depth: 0
-
       - name: Production build pass 1
         run: python tarnished-covenant/build-launch-refresh.py
-
       - name: Production build pass 2 idempotence
         run: python tarnished-covenant/build-launch-refresh.py
-
       - name: Assert today systems audit
         run: python tarnished-covenant/test-today-systems-audit.py
       - name: Assert Favor rebalance
@@ -57,7 +54,6 @@ jobs:
         run: python tarnished-covenant/test-regression-invariants.py
       - name: Assert final release invariants
         run: python tarnished-covenant/test-final-release-invariants.py
-
       - name: Validate JavaScript syntax
         run: |
           python - <<'PY'
@@ -65,12 +61,10 @@ jobs:
           import re
           html=Path('tarnished-covenant/index.html').read_text()
           scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
-          if not scripts:
-              raise SystemExit('No inline script found')
+          if not scripts: raise SystemExit('No inline script found')
           Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
           PY
           node --check /tmp/tarnished-covenant.js
-
       - name: Commit audited production build
         run: |
           git config user.name 'github-actions[bot]'
