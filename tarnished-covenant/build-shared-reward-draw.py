@@ -121,7 +121,7 @@ function tcGenerateSharedRewardPayload(state,count){
 function tcBuildClaimedSharedReward(latest,draw,rewards,deltas,drawer){
   const pendingDraw=latest?.sharedRewardDraw;
   if(!pendingDraw||pendingDraw.id!==draw.id||latest?.sharedRewardReveal)return null;
-  const next=smithingCopy(latest),sm=smithingData(next);
+  const next=smithingCopy(latest),sm=next.smithing;
   for(const [key,delta] of Object.entries(deltas||{}))sm[key]=Number(sm[key]||0)+Number(delta||0);
   const labels=(rewards||[]).map(x=>x.label);
   const favorEarned=Math.max(0,Number(deltas?.favor||0));
@@ -137,6 +137,7 @@ function tcBuildClaimedSharedReward(latest,draw,rewards,deltas,drawer){
     rewards:structuredClone(rewards||[]),
     boss:draw.boss||'Enemy Felled',
     drawnBy:drawer,
+    revealIndex:0,
     seenBy:[]
   };
   if(!next.regionComplete&&!next.runComplete&&next.current){
@@ -195,8 +196,10 @@ required = [
     'function tcGenerateSharedRewardPayload(state,count)',
     'function tcBuildClaimedSharedReward(latest,draw,rewards,deltas,drawer)',
     'if(!pendingDraw||pendingDraw.id!==draw.id||latest?.sharedRewardReveal)return null;',
+    'const next=smithingCopy(latest),sm=next.smithing;',
     'next.sharedRewardDraw=null;',
     'drawnBy:drawer,',
+    'revealIndex:0,',
     'seenBy:[]',
     'function renderSharedRewardDraw()',
     'Either Tarnished may draw this payout.',
@@ -213,4 +216,4 @@ if 'for(let i=0;i<draws;i++) rewards.push(drawCovenantReward(nextState));' in s:
     raise SystemExit('post-battle report still rolls rewards before either player chooses to draw')
 
 p.write_text(s)
-print('One shared first-come Covenant reward draw applied.')
+print('One shared first-come Covenant reward draw applied with persisted economy state.')
