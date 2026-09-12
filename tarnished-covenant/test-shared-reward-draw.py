@@ -52,24 +52,35 @@ for needle in [
     'rewardDrawnBy=drawer;',
 ]: require(needle)
 
-# Reveal progression is shared. Only the drawing identity can advance to the
-# next reward; the partner mirrors the new index automatically through sync.
+# During a live draw, reveal progression is shared. Only the drawing identity can
+# advance the authoritative shared index; the partner mirrors it automatically.
 for needle in [
     'function tcSharedRewardIndex(shared)',
     'function tcBuildSharedRewardAdvance(latest,rewardId,expectedIndex,identity)',
     'if(!shared||shared.id!==rewardId||shared.drawnBy!==identity)return null;',
     'next.sharedRewardReveal={...structuredClone(shared),revealIndex:currentIndex+1};',
     'tcHydrateSharedRewardReveal=function(state)',
-    'sharedIndex,',
     'renderRewardMachine=function()',
     'const isDrawer=shared.drawnBy===me;',
     'Your screen will advance automatically.',
-    'if(hasNext){void tcAdvanceSharedRewardReveal(data);return;}',
+    'void tcAdvanceSharedRewardReveal(data);return;',
 ]: require(needle)
 
-# The partner never gets a local independent next-reward advancement path. The
-# final Continue remains per-phone acknowledgement so the reveal cannot vanish
-# before both devices have reached the final reward.
+# If the drawer already completed while the partner was offline/backgrounded,
+# the missing viewer gets a local replay of the EXISTING reward array. This path
+# must never reroll rewards or change shared revealIndex.
+for needle in [
+    'function tcSharedRewardDrawerFinished(shared)',
+    'function tcSharedRewardNeedsCatchup(shared,identity=playerName())',
+    'tcSharedRewardDrawerFinished(shared)&&!tcSharedRewardSeenList(shared).includes(identity)',
+    'catchUp:true,',
+    "catchUp?'Review Next Reward'",
+    'already finished this payout. You are reviewing the same rewards now',
+    'if(catchUp){data.index=displayIndex+1;data.spinning=true;renderRewardMachine();return;}',
+]: require(needle)
+
+# Final Continue remains a per-phone acknowledgement so the reveal cannot vanish
+# before both identities have reviewed it.
 require('void tcAcknowledgeSharedRewardReveal(data);')
 require("['Chase','Morgan'].every(name=>seen.includes(name))")
 
@@ -81,7 +92,7 @@ for needle in [
     'if(tcSharedRewardDrawPending(run?.state))return renderSharedRewardDraw();',
 ]: require(needle)
 
-# Tiny model checks for one claim and monotonic shared reveal advancement.
+# Tiny model checks for one claim, monotonic live advancement, and offline catch-up.
 def claim(latest_id,draw_id,reveal=False):
     return latest_id==draw_id and not reveal
 assert claim('A','A')
@@ -96,4 +107,10 @@ assert not advance(1,0,3)
 assert not advance(2,2,3)
 assert not advance(0,0,3,False)
 
-print('Tarnished Covenant shared reward persistence + synchronized reveal invariants: PASS')
+def catchup(drawn_by,seen_by,viewer):
+    return bool(drawn_by and drawn_by in seen_by and viewer not in seen_by)
+assert catchup('Morgan',['Morgan'],'Chase')
+assert not catchup('Morgan',[],'Chase')
+assert not catchup('Morgan',['Morgan','Chase'],'Chase')
+
+print('Tarnished Covenant shared reward persistence + live sync + offline catch-up invariants: PASS')
