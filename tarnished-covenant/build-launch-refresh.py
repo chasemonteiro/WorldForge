@@ -50,6 +50,10 @@ runpy.run_path('tarnished-covenant/build-reward-odds-swap.py')
 # Covenant draws. Random Favor results remain extra rather than the only source.
 runpy.run_path('tarnished-covenant/build-favor-rebalance.py')
 
+# Appeal Waivers are saved inventory unless the player explicitly chooses to
+# spend one during a weapon appeal. Owning a waiver no longer auto-consumes it.
+runpy.run_path('tarnished-covenant/build-appeal-waiver-choice.py')
+
 # Physical progression uses a dependency graph. Required gate bosses are forced
 # before blocked capstones/downstream bosses, conditional routes are respected,
 # and cross-region gates can send the Covenant backward to the correct area.
@@ -70,6 +74,7 @@ runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
 runpy.run_path('tarnished-covenant/test-live-reward-watch.py')
 runpy.run_path('tarnished-covenant/test-free-boss-kill.py')
 runpy.run_path('tarnished-covenant/test-favor-rebalance.py')
+runpy.run_path('tarnished-covenant/test-appeal-waiver-choice.py')
 runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
 runpy.run_path('tarnished-covenant/test-capstone-prerequisite-priority.py')
 
@@ -101,6 +106,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared)','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared)','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
