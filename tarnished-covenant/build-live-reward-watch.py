@@ -47,21 +47,26 @@ s=s.replace(
 if "&&!tcSharedRewardObservedAll(shared,identity))" not in s:
     raise SystemExit('shared reward catch-up predicate target missing')
 
-# Patch the LAST renderRewardMachine assignment: that is the synchronized active
-# implementation. Never patch the older function declaration retained above it.
-active_start=s.rfind('renderRewardMachine=function(){')
-active_end=s.find('/* --- End synchronized shared reward reveal --- */',active_start)
-if active_start<0 or active_end<0:
-    raise SystemExit('active synchronized reward machine missing')
-active=s[active_start:active_end]
+# Work only inside the LAST synchronized JS layer. Hydration lives before the
+# active reward renderer, so patch those scopes separately.
+sync_start=s.rfind('/* --- Synchronized shared reward reveal --- */')
+sync_end=s.find('/* --- End synchronized shared reward reveal --- */',sync_start)
+if sync_start<0 or sync_end<0:
+    raise SystemExit('synchronized reward layer missing')
+sync=s[sync_start:sync_end]
 
 # Catch-up begins at the first missing result instead of replaying an already-seen
-# prefix. Scope this to the catch-up object rather than depending on whitespace.
-catch_start=active.find('if(catchUp){')
-catch_end=active.find('    return;',catch_start)
+# prefix. Scope to tcHydrateSharedRewardReveal's catch-up object.
+hydrate_start=sync.find('tcHydrateSharedRewardReveal=function(state){')
+hydrate_end=sync.find('\n};',hydrate_start)
+if hydrate_start<0 or hydrate_end<0:
+    raise SystemExit('shared reward hydration function missing')
+hydrate=sync[hydrate_start:hydrate_end]
+catch_start=hydrate.find('if(catchUp){')
+catch_end=hydrate.find('    return;',catch_start)
 if catch_start<0 or catch_end<0:
     raise SystemExit('catch-up hydration block missing')
-catch_block=active[catch_start:catch_end]
+catch_block=hydrate[catch_start:catch_end]
 catch_block,n=re.subn(
     r"(?m)^(\s*)index\s*:\s*(?:0|tcSharedRewardFirstMissingIndex\(shared,me\))\s*,",
     r"\1index:tcSharedRewardFirstMissingIndex(shared,me),",
@@ -70,7 +75,14 @@ catch_block,n=re.subn(
 )
 if n!=1:
     raise SystemExit('catch-up resume index target missing')
-active=active[:catch_start]+catch_block+active[catch_end:]
+hydrate=hydrate[:catch_start]+catch_block+hydrate[catch_end:]
+sync=sync[:hydrate_start]+hydrate+sync[hydrate_end:]
+
+# Patch the active renderer inside this same synchronized layer.
+active_start=sync.rfind('renderRewardMachine=function(){')
+if active_start<0:
+    raise SystemExit('active synchronized reward machine missing')
+active=sync[active_start:]
 
 # Mark an observation only when the result node is still on-screen and the shared
 # authoritative index still matches. This prevents a stale spin timeout from
@@ -93,8 +105,8 @@ if 'if(reduced){finish();}' in active:
     active=active.replace('if(reduced){finish();}','if(reduced||data.spinning===false){finish();}',1)
 elif 'if(reduced||data.spinning===false){finish();}' not in active:
     raise SystemExit('reward no-respin target missing')
-
-s=s[:active_start]+active+s[active_end:]
+sync=sync[:active_start]+active
+s=s[:sync_start]+sync+s[sync_end:]
 
 js=r'''
 /* --- Live shared reward watch tracking --- */
@@ -158,13 +170,14 @@ required=[
 for needle in required:
     if needle not in s: raise SystemExit('live reward watch invariant missing: '+needle)
 
-# Exactly one observation hook, and it must be after the active synchronized
-# override starts. This guards against patching the dead legacy machine again.
+# Exactly one observation hook, and it must be in the last synchronized renderer,
+# not the retained legacy reward function.
 if s.count('tcRememberSharedRewardObserved(shared,displayIndex,me);') != 1:
     raise SystemExit('active reward observation hook is duplicated')
+final_active=s.rfind('renderRewardMachine=function(){')
 hook=s.find('tcRememberSharedRewardObserved(shared,displayIndex,me);')
-if hook<active_start:
-    raise SystemExit('reward observation hook landed in legacy reward machine')
+if final_active<0 or hook<final_active:
+    raise SystemExit('reward observation hook landed outside active reward machine')
 
 p.write_text(s)
-print('Live shared reward tracking fixed idempotently: active machine only, persistent observation, first-missed catch-up, and no stale/repeated reveal.')
+print('Live shared reward tracking fixed idempotently: hydration resumes first missed reward; active renderer records only truly observed results.')
