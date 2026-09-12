@@ -39,6 +39,7 @@ css=r'''
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
+.tc-reward-catchup-note{margin:10px auto 0;max-width:460px;text-align:center;color:#c9b98f;font:800 9px/1.5 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 /* --- End synchronized shared reward reveal --- */
 '''
 if '/* --- Synchronized shared reward reveal --- */' not in s:
@@ -50,6 +51,15 @@ js=r'''
 function tcSharedRewardIndex(shared){
   const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
   return Math.max(0,Math.min(Math.max(0,total-1),Number(shared?.revealIndex||0)));
+}
+function tcSharedRewardSeenList(shared){
+  return Array.isArray(shared?.seenBy)?shared.seenBy:[];
+}
+function tcSharedRewardDrawerFinished(shared){
+  return Boolean(shared?.drawnBy&&tcSharedRewardSeenList(shared).includes(shared.drawnBy));
+}
+function tcSharedRewardNeedsCatchup(shared,identity=playerName()){
+  return Boolean(shared?.id&&tcSharedRewardDrawerFinished(shared)&&!tcSharedRewardSeenList(shared).includes(identity));
 }
 function tcSharedRewardDrawerLabel(state){
   const who=String(state?.sharedRewardReveal?.drawnBy||'');
@@ -85,8 +95,11 @@ async function tcAdvanceSharedRewardReveal(data){
   }finally{tcSharedRewardAdvanceBusy=false;}
 }
 
-// The reveal position is authoritative shared state. The drawing phone controls
-// advancement; the partner phone simply mirrors each new reward automatically.
+// During a live draw, the reveal position is authoritative shared state and the
+// drawing phone controls advancement. If the drawer has already finished while
+// the other phone was closed/backgrounded, that remaining phone enters a LOCAL
+// catch-up replay of the already-decided rewards. Catch-up never rerolls or
+// changes reward economy; it only lets the missing viewer see every result.
 tcHydrateSharedRewardReveal=function(state){
   const shared=state?.sharedRewardReveal;
   if(!tcSharedRewardUnresolved(state)){
@@ -99,13 +112,29 @@ tcHydrateSharedRewardReveal=function(state){
     return;
   }
   const sharedIndex=tcSharedRewardIndex(shared);
-  if(!pendingRewardReveal||pendingRewardReveal.sharedId!==shared.id||pendingRewardReveal.sharedIndex!==sharedIndex){
+  const catchUp=tcSharedRewardNeedsCatchup(shared,me);
+  if(catchUp){
+    if(!pendingRewardReveal||pendingRewardReveal.sharedId!==shared.id||!pendingRewardReveal.catchUp){
+      pendingRewardReveal={
+        sharedId:shared.id,
+        sharedIndex,
+        rewards:structuredClone(shared.rewards),
+        boss:shared.boss||'Enemy Felled',
+        index:0,
+        catchUp:true,
+        spinning:true
+      };
+    }
+    return;
+  }
+  if(!pendingRewardReveal||pendingRewardReveal.sharedId!==shared.id||pendingRewardReveal.catchUp||pendingRewardReveal.sharedIndex!==sharedIndex){
     pendingRewardReveal={
       sharedId:shared.id,
       sharedIndex,
       rewards:structuredClone(shared.rewards),
       boss:shared.boss||'Enemy Felled',
       index:sharedIndex,
+      catchUp:false,
       spinning:true
     };
   }
@@ -115,22 +144,24 @@ renderRewardMachine=function(){
   const data=pendingRewardReveal;
   const shared=run?.state?.sharedRewardReveal;
   if(!data?.rewards?.length||!shared||shared.id!==data.sharedId){pendingRewardReveal=null;return renderRun();}
+  const me=playerName();
+  const catchUp=Boolean(data.catchUp&&tcSharedRewardNeedsCatchup(shared,me));
   const sharedIndex=tcSharedRewardIndex(shared);
-  if(data.index!==sharedIndex||data.sharedIndex!==sharedIndex){
-    pendingRewardReveal={...data,index:sharedIndex,sharedIndex,spinning:true};
+  if(!catchUp&&(data.index!==sharedIndex||data.sharedIndex!==sharedIndex)){
+    pendingRewardReveal={...data,index:sharedIndex,sharedIndex,catchUp:false,spinning:true};
     return renderRewardMachine();
   }
-  const current=data.rewards[sharedIndex]||data.rewards[0];
+  const displayIndex=catchUp?Math.max(0,Math.min(data.rewards.length-1,Number(data.index||0))):sharedIndex;
+  const current=data.rewards[displayIndex]||data.rewards[0];
   const total=data.rewards.length;
-  const hasNext=sharedIndex+1<total;
-  const me=playerName();
+  const hasNext=displayIndex+1<total;
   const isDrawer=shared.drawnBy===me;
   const drawerLabel=tcSharedRewardDrawerLabel(run.state);
   const symbols=['✦','◉','✧','⚖','☠','◇','✦','✧','◉'];
-  const buttonLabel=hasNext?(isDrawer?'Draw Next Reward':`${drawerLabel} Is Drawing…`):'Continue';
+  const buttonLabel=hasNext?(catchUp?'Review Next Reward':isDrawer?'Draw Next Reward':`${drawerLabel} Is Drawing…`):'Continue';
   app.innerHTML=`<section class="tc-reward-machine">
     <div class="tc-reward-kicker">Covenant Treasury</div>
-    <div class="tc-reward-title">DRAW ${sharedIndex+1} <span>OF ${total}</span></div>
+    <div class="tc-reward-title">DRAW ${displayIndex+1} <span>OF ${total}</span></div>
     <div class="tc-reward-boss">Victory over ${h(data.boss||'the enemy')}</div>
     <div class="tc-slot-frame" aria-live="polite">
       <div class="tc-slot-reel" data-reel="0">${symbols.map(x=>`<span>${x}</span>`).join('')}</div>
@@ -144,7 +175,7 @@ renderRewardMachine=function(){
       <div class="tc-reward-detail">${h(current.detail||'The Covenant has spoken.')}</div>
     </div>
     <button id="tcRewardContinue" type="button" class="btn gold" disabled aria-disabled="true">${h(buttonLabel)}</button>
-    ${hasNext&&!isDrawer?`<div class="tc-reward-sync-note"><strong>${h(drawerLabel)}</strong> controls this shared draw. Your screen will advance automatically.</div>`:''}
+    ${catchUp?`<div class="tc-reward-catchup-note"><strong>${h(drawerLabel)}</strong> already finished this payout. You are reviewing the same rewards now — nothing is being drawn again.</div>`:hasNext&&!isDrawer?`<div class="tc-reward-sync-note"><strong>${h(drawerLabel)}</strong> controls this shared draw. Your screen will advance automatically.</div>`:''}
     <div class="tc-reward-quip">${current.kind==='tax'?'The Covenant giveth. The Covenant also has purchasing requirements.':'Honor has been converted into administratively approved loot.'}</div>
   </section>`;
   const reels=[...document.querySelectorAll('.tc-slot-reel')];
@@ -154,7 +185,7 @@ renderRewardMachine=function(){
   const finish=()=>{
     reels.forEach(reel=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
     result.hidden=false;result.classList.add('revealed');data.spinning=false;
-    const mayAct=!hasNext||isDrawer;
+    const mayAct=catchUp||!hasNext||isDrawer;
     btn.disabled=!mayAct;btn.setAttribute('aria-disabled',mayAct?'false':'true');btn.dataset.ready=mayAct?'1':'0';
   };
   if(reduced){finish();}
@@ -166,7 +197,10 @@ renderRewardMachine=function(){
     if(event)event.preventDefault();
     if(btn.dataset.ready!=='1'||btn.disabled)return;
     btn.dataset.ready='0';btn.disabled=true;btn.setAttribute('aria-disabled','true');data.spinning=false;
-    if(hasNext){void tcAdvanceSharedRewardReveal(data);return;}
+    if(hasNext){
+      if(catchUp){data.index=displayIndex+1;data.spinning=true;renderRewardMachine();return;}
+      void tcAdvanceSharedRewardReveal(data);return;
+    }
     void tcAcknowledgeSharedRewardReveal(data);
   };
   btn.addEventListener('click',advanceReward);
@@ -183,14 +217,16 @@ required=[
     'const next=smithingCopy(latest),sm=next.smithing;',
     'revealIndex:0,',
     'function tcSharedRewardIndex(shared)',
+    'function tcSharedRewardDrawerFinished(shared)',
+    'function tcSharedRewardNeedsCatchup(shared,identity=playerName())',
     'function tcBuildSharedRewardAdvance(latest,rewardId,expectedIndex,identity)',
     'next.sharedRewardReveal={...structuredClone(shared),revealIndex:currentIndex+1};',
     'tcHydrateSharedRewardReveal=function(state)',
-    'pendingRewardReveal={',
-    'sharedIndex,',
+    'catchUp:true,',
     'renderRewardMachine=function()',
-    'const isDrawer=shared.drawnBy===me;',
-    'Your screen will advance automatically.',
+    "catchUp?'Review Next Reward'",
+    'already finished this payout. You are reviewing the same rewards now',
+    'if(catchUp){data.index=displayIndex+1;data.spinning=true;renderRewardMachine();return;}',
     'if(hasNext){void tcAdvanceSharedRewardReveal(data);return;}',
     'void tcAcknowledgeSharedRewardReveal(data);',
 ]
@@ -198,4 +234,4 @@ for needle in required:
     if needle not in s: raise SystemExit('shared reveal sync invariant missing: '+needle)
 
 p.write_text(s)
-print('Shared reward reveal progression synchronized across both phones.')
+print('Shared reward reveal synchronized with offline catch-up replay.')
