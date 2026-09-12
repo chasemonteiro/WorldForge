@@ -72,8 +72,13 @@ runpy.run_path('tarnished-covenant/build-expanded-reward-pool.py')
 
 # Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
 # action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
-# and uncluttered.
+# and uncluttered. This finalizer also owns the two-penalty normal Both appeal.
 runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
+
+# Final cross-system ownership: after one host-world victory, encounter terms are
+# frozen until 2/2; strategic Veto replacements are optional-only and validated
+# against latest shared state. Apply after all appeal/reward layers.
+runpy.run_path('tarnished-covenant/build-today-systems-hardening.py')
 
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
@@ -84,6 +89,7 @@ runpy.run_path('tarnished-covenant/test-appeal-waiver-choice.py')
 runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
 runpy.run_path('tarnished-covenant/test-capstone-prerequisite-priority.py')
 runpy.run_path('tarnished-covenant/test-expanded-reward-pool.py')
+runpy.run_path('tarnished-covenant/test-today-systems-audit.py')
 
 p=app_path
 s=p.read_text()
@@ -113,6 +119,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared)','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
