@@ -25,10 +25,6 @@ s=re.sub(
 # reward machine and could duplicate itself on every production rebuild.
 s=s.replace('if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);','')
 s=s.replace('if(!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex,me);','')
-
-# Remove the full active observation guard from a previous pass before adding it
-# back. Removing only the inner call would leave an empty if{} that prevents the
-# exact active finish block from matching on a second production build.
 s=re.sub(
     r"\n\s*if\(!isDrawer&&result\.isConnected&&run\?\.state\?\.sharedRewardReveal\?\.id===shared\.id&&tcSharedRewardIndex\(run\.state\.sharedRewardReveal\)===displayIndex\)\{\s*"
     r"tcRememberSharedRewardObserved\(shared,displayIndex,me\);\s*\}",
@@ -60,14 +56,21 @@ if active_start<0 or active_end<0:
 active=s[active_start:active_end]
 
 # Catch-up begins at the first missing result instead of replaying an already-seen
-# prefix from reward #1 every time the app resumes.
-active=active.replace(
-    'index:0,\n        catchUp:true,',
-    'index:tcSharedRewardFirstMissingIndex(shared,me),\n        catchUp:true,',
-    1,
+# prefix. Scope this to the catch-up object rather than depending on whitespace.
+catch_start=active.find('if(catchUp){')
+catch_end=active.find('    return;',catch_start)
+if catch_start<0 or catch_end<0:
+    raise SystemExit('catch-up hydration block missing')
+catch_block=active[catch_start:catch_end]
+catch_block,n=re.subn(
+    r"(?m)^(\s*)index\s*:\s*(?:0|tcSharedRewardFirstMissingIndex\(shared,me\))\s*,",
+    r"\1index:tcSharedRewardFirstMissingIndex(shared,me),",
+    catch_block,
+    count=1,
 )
-if 'index:tcSharedRewardFirstMissingIndex(shared,me),' not in active:
+if n!=1:
     raise SystemExit('catch-up resume index target missing')
+active=active[:catch_start]+catch_block+active[catch_end:]
 
 # Mark an observation only when the result node is still on-screen and the shared
 # authoritative index still matches. This prevents a stale spin timeout from
