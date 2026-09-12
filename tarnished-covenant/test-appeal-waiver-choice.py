@@ -13,7 +13,7 @@ required=[
     'changeWeapons(run.state,playerName(),which,Boolean(useWaiver))',
     'if(waivers>0)tcShowAppealWaiverChoice(which)',
     "else void tcResolveWeaponAppeal(which,false);",
-    "successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':'Weapon appeal granted. Penalty accepted.'",
+    "successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':which==='both'?'Weapon appeal granted. Two penalties accepted.':'Weapon appeal granted. Penalty accepted.'",
 ]
 for needle in required:
     if needle not in s:
