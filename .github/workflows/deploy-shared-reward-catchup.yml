@@ -54,3 +54,4 @@ jobs:
             git commit -m 'Allow offline partner to review shared rewards'
             git push origin HEAD:tarnished-covenant-assets
           fi
+# retry after catch-up invariant repair
