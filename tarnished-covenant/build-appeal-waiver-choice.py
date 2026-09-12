@@ -32,16 +32,13 @@ if 'function changeWeapons(state, actor, which, useWaiver = false) {' not in s:
 if 'const waived = Boolean(useWaiver && sm.appealWaivers > 0);' not in s:
     raise SystemExit('explicit waiver guard target missing')
 
-# Remove the old one-step appeal menu if present. We insert the new two-step flow
-# immediately before postBattleChoice so later render bindings still resolve the
-# same showAppealMenu function name.
-start=s.find('function showAppealMenu(){')
-marker='\nfunction postBattleChoice(kind,value){'
-end=s.find(marker,start if start>=0 else 0)
-if end<0:
-    raise SystemExit('postBattleChoice marker missing')
-if start>=0 and start<end:
-    s=s[:start]+s[end+1:]
+# Keep the old assembled function only as a dead compatibility fallback. Rename
+# it once, then append the real showAppealMenu override at the very end of the
+# script. This is resilient to the many late build layers that reorder helpers.
+if 'function tcLegacyShowAppealMenu(){' not in s:
+    if 'function showAppealMenu(){' not in s:
+        raise SystemExit('legacy showAppealMenu target missing')
+    s=s.replace('function showAppealMenu(){','function tcLegacyShowAppealMenu(){',1)
 
 ui=r'''
 /* --- Explicit Appeal Waiver choice --- */
@@ -89,14 +86,14 @@ function showAppealMenu(){
 }
 /* --- End Explicit Appeal Waiver choice --- */
 '''
-insert='function postBattleChoice(kind,value){'
-if insert not in s:
-    raise SystemExit('postBattleChoice insertion target missing')
-s=s.replace(insert,ui+'\n'+insert,1)
+idx=s.rfind('</script>')
+if idx<0: raise SystemExit('script end marker missing')
+s=s[:idx]+ui+'\n'+s[idx:]
 
 required=[
     'function changeWeapons(state, actor, which, useWaiver = false)',
     'Boolean(useWaiver && sm.appealWaivers > 0)',
+    'function tcLegacyShowAppealMenu()',
     'function tcShowAppealWaiverChoice(which)',
     'Spend 1 Appeal Waiver',
     'Keep Waiver · Take Penalty',
@@ -106,7 +103,7 @@ required=[
 for needle in required:
     if needle not in s: raise SystemExit('appeal waiver choice invariant missing: '+needle)
 if 'const waived = sm.appealWaivers > 0;' in s:
-    raise SystemExit('automatic Appeal Waiver consumption remains')
+    raise SystemExit('automatic Appeal Waiver consumption remains in changeWeapons')
 
 p.write_text(s)
 print('Appeal Waivers now require an explicit spend-or-save choice.')
