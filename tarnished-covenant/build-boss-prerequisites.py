@@ -10,8 +10,8 @@ s=p.read_text()
 # The Covenant's random encounter system must respect bosses that physically gate
 # later bosses/areas. Optional fights remain random, but an inaccessible target is
 # never rolled early. When a capstone is selected with an unmet prerequisite, the
-# next unmet prerequisite is substituted first. Route-dependent exceptions are
-# modeled explicitly (Radahn festival / Rykard Volcano Manor route).
+# next unmet same-route prerequisite is substituted first. Cross-region/location
+# access constraints are filtered until the route has actually been opened.
 # -----------------------------------------------------------------------------
 
 s=re.sub(
@@ -22,16 +22,20 @@ s=re.sub(
     flags=re.S,
 )
 
-# Sanctioned Boss Kill is for optional off-assignment loot only. Progression gates
-# must still be fought as Covenant encounters and cannot be removed from the pool.
+# Sanctioned Boss Kill is for genuinely optional, currently reachable loot bosses.
+# It must not permanently remove a progression gate or a required Remembrance
+# from the draw pool, because sanctioned kills deliberately do not count as normal
+# Covenant history/progression.
 freeboss_old="""      if(region===activeRegion&&name===activeName)continue;
       out.push({region,name});"""
 freeboss_new="""      if(region===activeRegion&&name===activeName)continue;
       if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(name))continue;
+      if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,name))continue;
+      if(typeof tcBossRandomAccessible==='function'&&!tcBossRandomAccessible(state,name))continue;
       out.push({region,name});"""
 if freeboss_old in s:
     s=s.replace(freeboss_old,freeboss_new,1)
-elif "tcIsProgressionGateBoss(name))continue;" not in s:
+elif "tcIsRequiredRemembranceBoss(state,name))continue;" not in s:
     raise SystemExit('Sanctioned Boss Kill eligibility target missing')
 
 js=r'''
@@ -55,9 +59,15 @@ function tcRegionEverVisited(state,region){
 }
 function tcPoolBossName(regionName,wanted){
   const wantedKey=tcBossKey(wanted);
+  const pool=typeof SHEET_BOSS_POOLS!=='undefined'?(SHEET_BOSS_POOLS?.[regionName]||[]):[];
   const region=regions?.[regionName];
-  const names=[...(region?.bosses||[]),region?.exit].filter(Boolean);
+  const names=[...pool,...(region?.bosses||[]),region?.exit].filter(Boolean);
   return names.find(name=>tcBossKey(name)===wantedKey)||wanted;
+}
+function tcIsRequiredRemembranceBoss(state,name){
+  if(typeof requiredRemembrances!=='function')return false;
+  const key=tcBossKey(name);
+  return requiredRemembrances(state).some(x=>tcBossKey(x)===key);
 }
 
 // Direct physical ordering. These are deliberately boss-to-boss requirements,
@@ -81,8 +91,35 @@ const TC_BOSS_PREREQUISITES={
   'jagged peak drake':'Ancient Dragon-Man',
   'ancient dragon senessax':'Ancient Dragon-Man',
   'bayle the dread':'Ancient Dragon-Man',
+  'count ymir mother of fingers':'Metyr, Mother of Fingers',
   'promised consort radahn':'Leda and Allies'
 };
+
+// The app groups the Consecrated Snowfield into Mountaintops. These encounters
+// are physically behind the Haligtree Secret Medallion route, whose left half is
+// behind Commander Niall. Do not let the broad regional pool sequence-break it.
+const TC_CONSECRATED_SNOWFIELD_BOSSES=[
+  'Stray Mimic Tear','Great Wyrm Theodorix','Night\'s Cavalry (Duo)',
+  'Putrid Avatar','Putrid Grave Warden Duelist','Misbegotten Crusader',
+  'Astel, Stars of Darkness'
+];
+function tcIsConsecratedSnowfieldBoss(state,name){
+  if(state?.region!=='Mountaintops of the Giants')return false;
+  const key=tcBossKey(name);
+  return TC_CONSECRATED_SNOWFIELD_BOSSES.some(x=>tcBossKey(x)===key);
+}
+
+// Alecto and the killable Adula encounter are on Moonlight Altar. That plateau is
+// not reachable merely by entering Liurnia: the route requires access through
+// Ranni's side of Caria Manor and Astel's Lake-of-Rot route.
+function tcIsMoonlightAltarBoss(name){
+  const key=tcBossKey(name);
+  return key===tcBossKey('Alecto, Black Knife Ringleader')||key===tcBossKey('Glintstone Dragon Adula');
+}
+function tcMoonlightAltarAccessible(state){
+  return tcBossActuallyDefeated(state,'Royal Knight Loretta')&&tcBossActuallyDefeated(state,'Astel, Naturalborn of the Void');
+}
+
 function tcDirectBossPrerequisite(state,targetName){
   const key=tcBossKey(targetName);
   // Redmane Castle's duo is only necessary before the festival has been activated
@@ -94,6 +131,9 @@ function tcDirectBossPrerequisite(state,targetName){
   // via Tanith after the Mountaintops contract route becomes possible.
   if(key==='rykard lord of blasphemy'){
     return tcRegionEverVisited(state,'Mountaintops of the Giants')?null:'Godskin Noble';
+  }
+  if(tcIsConsecratedSnowfieldBoss(state,targetName)){
+    return tcBossActuallyDefeated(state,'Commander Niall')?null:'Commander Niall';
   }
   return TC_BOSS_PREREQUISITES[key]||null;
 }
@@ -107,6 +147,7 @@ function tcNextUnmetPrerequisite(state,targetName,seen=new Set()){
   return nested||tcPoolBossName(state?.region,direct);
 }
 function tcBossRandomAccessible(state,name){
+  if(tcIsMoonlightAltarBoss(name)&&!tcMoonlightAltarAccessible(state))return false;
   const direct=tcDirectBossPrerequisite(state,name);
   return !direct||tcBossActuallyDefeated(state,direct);
 }
@@ -187,13 +228,13 @@ const tcChooseTargetBeforeBossPrereqs=chooseTarget;
 chooseTarget=function(state){
   // A deliberate return trip for an access gate always resolves that gate first.
   const routeGate=tcOutstandingRouteGateForCurrentRegion(state);
-  if(routeGate)return {name:routeGate,exit:false,prerequisiteFor:'region access'};
+  if(routeGate)return {name:routeGate,exit:false,required:true,prerequisiteFor:'region access'};
 
   const proposed=tcChooseTargetBeforeBossPrereqs(state);
   if(!proposed?.name)return proposed;
   const prerequisite=tcNextUnmetPrerequisite(state,proposed.name);
   if(prerequisite){
-    return {name:tcPoolBossName(state.region,prerequisite),exit:false,prerequisiteFor:proposed.name};
+    return {name:tcPoolBossName(state.region,prerequisite),exit:false,required:true,prerequisiteFor:proposed.name};
   }
   return proposed;
 };
@@ -202,12 +243,13 @@ const TC_PROGRESSION_GATE_BOSSES=[
   'Margit, The Fell Omen','Red Wolf of Radagon','Crucible Knight and Misbegotten Warrior',
   'Mimic Tear','Valiant Gargoyle & Valiant Gargoyle (Twinblade)','Godskin Noble',
   'Draconic Tree Sentinel','Godfrey, First Elden Lord',"Fia's champions",'Commander Niall',
-  'Loretta, Knight of the Haligtree','Godskin Duo','Sir Gideon Ofnir, the All-Knowing',
-  'Ancient Dragon-Man','Jori, Elder Inquisitor','Leda and Allies'
+  'Royal Knight Loretta','Loretta, Knight of the Haligtree','Godskin Duo','Sir Gideon Ofnir, the All-Knowing',
+  'Ancient Dragon-Man','Jori, Elder Inquisitor','Metyr, Mother of Fingers','Leda and Allies'
 ];
 function tcIsProgressionGateBoss(name){
   const key=tcBossKey(name);
-  return TC_PROGRESSION_GATE_BOSSES.some(x=>tcBossKey(x)===key);
+  if(TC_PROGRESSION_GATE_BOSSES.some(x=>tcBossKey(x)===key))return true;
+  return Object.values(TC_BOSS_PREREQUISITES).some(x=>tcBossKey(x)===key);
 }
 /* --- End boss prerequisite dependency graph --- */
 '''
@@ -230,7 +272,12 @@ required=[
     "'malenia blade of miquella':'Loretta, Knight of the Haligtree'",
     "'lichdragon fortissax':\"Fia's champions\"",
     "'bayle the dread':'Ancient Dragon-Man'",
+    "'count ymir mother of fingers':'Metyr, Mother of Fingers'",
     "'promised consort radahn':'Leda and Allies'",
+    'const TC_CONSECRATED_SNOWFIELD_BOSSES=',
+    "return tcBossActuallyDefeated(state,'Commander Niall')?null:'Commander Niall';",
+    'function tcMoonlightAltarAccessible(state)',
+    "tcBossActuallyDefeated(state,'Royal Knight Loretta')&&tcBossActuallyDefeated(state,'Astel, Naturalborn of the Void')",
     "'Miquella’s Haligtree':[",
     "{boss:'Commander Niall',region:'Mountaintops of the Giants'}",
     "'Abyssal Woods · DLC':[",
@@ -238,10 +285,12 @@ required=[
     'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())',
     'function tcOutstandingRouteGateForCurrentRegion(state)',
     'function tcIsProgressionGateBoss(name)',
-    "tcIsProgressionGateBoss(name))continue;",
+    'function tcIsRequiredRemembranceBoss(state,name)',
+    "tcIsRequiredRemembranceBoss(state,name))continue;",
+    "!tcBossRandomAccessible(state,name))continue;",
 ]
 for needle in required:
     if needle not in s: raise SystemExit('boss prerequisite invariant missing: '+needle)
 
 p.write_text(s)
-print('Boss prerequisite dependency graph applied with conditional routes and backward access gates.')
+print('Boss prerequisite graph hardened: physical gates, Snowfield/Moonlight access, Ymir/Metyr ordering, and safe optional-kill filtering.')
