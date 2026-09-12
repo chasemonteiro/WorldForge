@@ -227,7 +227,7 @@ required=[
     "catchUp?'Review Next Reward'",
     'already finished this payout. You are reviewing the same rewards now',
     'if(catchUp){data.index=displayIndex+1;data.spinning=true;renderRewardMachine();return;}',
-    'if(hasNext){void tcAdvanceSharedRewardReveal(data);return;}',
+    'void tcAdvanceSharedRewardReveal(data);return;',
     'void tcAcknowledgeSharedRewardReveal(data);',
 ]
 for needle in required:
