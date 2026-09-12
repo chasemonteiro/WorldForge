@@ -1,6 +1,6 @@
 name: Deploy Today Systems Audit
 
-# Audit retry 5: release-safe encounter freeze wrapper naming.
+# Audit retry 6: no retired wrapper identifier remains in generated output.
 on:
   push:
     branches: [main]
