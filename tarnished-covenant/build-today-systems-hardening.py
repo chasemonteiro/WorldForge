@@ -40,11 +40,13 @@ tcResolveWeaponAppeal=async function(which,useWaiver){
   return tcResolveWeaponAppealBeforeAudit(which,useWaiver);
 };
 
-// Rite/Chaos amendment and forfeit controls mutate encounter terms too.
-const tcUseCovenantBoonBeforeAudit=useCovenantBoon;
+// Rite/Chaos amendment and forfeit controls mutate encounter terms too. Avoid
+// the retired tcUseCovenantBoonBefore* prefix: release tests reserve it for the
+// old broken busy-flag wrappers.
+const tcAuditUseCovenantBoonCore=useCovenantBoon;
 useCovenantBoon=async function(kind){
   if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
-  return tcUseCovenantBoonBeforeAudit(kind);
+  return tcAuditUseCovenantBoonCore(kind);
 };
 const tcForfeitBoonBeforeAudit=tcForfeitBoon;
 tcForfeitBoon=async function(kind){
@@ -137,7 +139,7 @@ required=[
     'Encounter terms lock after the first host-world victory.',
     'const tcShowAppealMenuBeforeAudit=showAppealMenu;',
     'const tcResolveWeaponAppealBeforeAudit=tcResolveWeaponAppeal;',
-    'const tcUseCovenantBoonBeforeAudit=useCovenantBoon;',
+    'const tcAuditUseCovenantBoonCore=useCovenantBoon;',
     'const tcForfeitBoonBeforeAudit=tcForfeitBoon;',
     'const tcBuildClemencyBeforeAudit=tcBuildClemency;',
     'const tcBuildJointAppealBeforeAudit=tcBuildJointAppeal;',
