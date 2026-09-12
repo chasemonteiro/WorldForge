@@ -5,9 +5,6 @@ html=Path('tarnished-covenant/index.html').read_text()
 def require(needle,msg=None):
     if needle not in html: raise SystemExit(msg or f'missing boss prerequisite invariant: {needle}')
 
-def forbid(needle,msg=None):
-    if needle in html: raise SystemExit(msg or f'forbidden boss prerequisite behavior: {needle}')
-
 # Core prerequisite resolver and canonical history-only boss completion.
 for needle in [
     'function tcBossKey(name)',
@@ -17,7 +14,7 @@ for needle in [
     'const TC_BOSS_PREREQUISITES=',
     'const tcChooseTargetBeforeBossPrereqs=chooseTarget;',
     'chooseTarget=function(state){',
-    "return {name:tcPoolBossName(state.region,prerequisite),exit:false,prerequisiteFor:proposed.name};",
+    "return {name:tcPoolBossName(state.region,prerequisite),exit:false,required:true,prerequisiteFor:proposed.name};",
 ]: require(needle)
 
 # User-requested main-game chains.
@@ -31,7 +28,7 @@ for needle in [
     "'godfrey first elden lord hoarah loux':'Sir Gideon Ofnir, the All-Knowing'",
 ]: require(needle)
 
-# Additional physical progression gates found in the audit.
+# Additional physical progression gates.
 for needle in [
     "'regal ancestor spirit':'Mimic Tear'",
     "'valiant gargoyles':'Mimic Tear'",
@@ -41,11 +38,33 @@ for needle in [
     "'jagged peak drake':'Ancient Dragon-Man'",
     "'ancient dragon senessax':'Ancient Dragon-Man'",
     "'bayle the dread':'Ancient Dragon-Man'",
+    "'count ymir mother of fingers':'Metyr, Mother of Fingers'",
     "'promised consort radahn':'Leda and Allies'",
 ]: require(needle)
 
 # Rykard retains the Volcano Manor alternative after Mountaintops is reached.
 require("tcRegionEverVisited(state,'Mountaintops of the Giants')?null:'Godskin Noble'")
+
+# The broad Mountaintops pool includes Consecrated Snowfield fights; those cannot
+# appear before Commander Niall opens the secret-medallion route.
+for needle in [
+    'const TC_CONSECRATED_SNOWFIELD_BOSSES=[',
+    "'Stray Mimic Tear','Great Wyrm Theodorix','Night\\'s Cavalry (Duo)'",
+    "'Putrid Avatar','Putrid Grave Warden Duelist','Misbegotten Crusader'",
+    "'Astel, Stars of Darkness'",
+    "if(tcIsConsecratedSnowfieldBoss(state,targetName))",
+    "return tcBossActuallyDefeated(state,'Commander Niall')?null:'Commander Niall';",
+]: require(needle)
+
+# Moonlight Altar bosses are filtered until both the Caria/Ranni side and Astel's
+# Lake-of-Rot route have been cleared. They must not be spawned in ordinary early
+# Liurnia just because the spreadsheet groups them into that region.
+for needle in [
+    'function tcIsMoonlightAltarBoss(name)',
+    'function tcMoonlightAltarAccessible(state)',
+    "tcBossActuallyDefeated(state,'Royal Knight Loretta')&&tcBossActuallyDefeated(state,'Astel, Naturalborn of the Void')",
+    'if(tcIsMoonlightAltarBoss(name)&&!tcMoonlightAltarAccessible(state))return false;',
+]: require(needle)
 
 # Cross-region access gates send the run backward instead of spawning a boss in
 # the wrong region.
@@ -59,7 +78,7 @@ for needle in [
     "'Abyssal Woods · DLC':[",
     "{boss:'Jori, Elder Inquisitor',region:'Scadu Altus + Shadow Keep · DLC'}",
     'function tcOutstandingRouteGateForCurrentRegion(state)',
-    'if(routeGate)return {name:routeGate,exit:false,prerequisiteFor:\'region access\'};',
+    "if(routeGate)return {name:routeGate,exit:false,required:true,prerequisiteFor:'region access'};",
 ]: require(needle)
 
 # Random pools exclude physically inaccessible downstream bosses until their
@@ -67,18 +86,21 @@ for needle in [
 require('tcAvailableRegionalBossesBeforePrereqs(state).filter(name=>tcBossRandomAccessible(state,name))')
 require('return !direct||tcBossActuallyDefeated(state,direct);')
 
-# Sanctioned Boss Kill cannot remove a required gate, and prerequisite completion
-# is based on normal encounter history rather than sanctioned pool exclusions.
+# Sanctioned Boss Kill is genuinely optional-only. It cannot remove route gates,
+# required Remembrances, or bosses that are not physically reachable yet.
 for needle in [
     'const TC_PROGRESSION_GATE_BOSSES=[',
     'function tcIsProgressionGateBoss(name)',
+    'function tcIsRequiredRemembranceBoss(state,name)',
     "if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(name))continue;",
+    "if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,name))continue;",
+    "if(typeof tcBossRandomAccessible==='function'&&!tcBossRandomAccessible(state,name))continue;",
 ]: require(needle)
+
 start=html.find('function tcBossActuallyDefeated(state,name)')
 end=html.find('function tcRegionEverVisited',start)
 if start<0 or end<0: raise SystemExit('history boss completion helper missing')
 completion=html[start:end]
-forbid('defeatedBossNames(state)', 'Prerequisite completion must not trust sanctioned boss exclusions.') if False else None
 if 'defeatedBossNames' in completion or 'sanctionedBossKills' in completion:
     raise SystemExit('Prerequisite completion incorrectly trusts sanctioned boss kills.')
 
@@ -98,21 +120,27 @@ base={
     key('Morgott, the Omen King'):'Godfrey, First Elden Lord',
     key('Maliketh, the Black Blade'):'Godskin Duo',
     key('Godfrey, First Elden Lord / Hoarah Loux'):'Sir Gideon Ofnir, the All-Knowing',
+    key('Count Ymir, Mother of Fingers'):'Metyr, Mother of Fingers',
 }
-def direct(target,history=(),visited=()):
+
+def direct(target,history=(),visited=(),region=''):
     k=key(target)
+    defeated={key(x) for x in history}
     if k==key('Starscourge Radahn'):
         return None if 'Altus Plateau + Leyndell' in visited else 'Crucible Knight and Misbegotten Warrior'
+    snow={key(x) for x in ['Stray Mimic Tear','Great Wyrm Theodorix',"Night's Cavalry (Duo)",'Putrid Avatar','Putrid Grave Warden Duelist','Misbegotten Crusader','Astel, Stars of Darkness']}
+    if region=='Mountaintops of the Giants' and k in snow:
+        return None if key('Commander Niall') in defeated else 'Commander Niall'
     return base.get(k)
 
-def next_req(target,history=(),visited=()):
+def next_req(target,history=(),visited=(),region=''):
     defeated={key(x) for x in history}
     seen=set()
     def walk(t):
         k=key(t)
         if k in seen:return None
         seen.add(k)
-        p=direct(t,history,visited)
+        p=direct(t,history,visited,region)
         if not p or key(p) in defeated:return None
         return walk(p) or p
     return walk(target)
@@ -126,5 +154,8 @@ assert key(next_req('Starscourge Radahn'))==key('Crucible Knight and Misbegotten
 assert next_req('Starscourge Radahn',visited=['Altus Plateau + Leyndell']) is None
 assert key(next_req('Maliketh, the Black Blade'))==key('Godskin Duo')
 assert key(next_req('Godfrey, First Elden Lord / Hoarah Loux'))==key('Sir Gideon Ofnir, the All-Knowing')
+assert key(next_req('Count Ymir, Mother of Fingers'))==key('Metyr, Mother of Fingers')
+assert key(next_req('Astel, Stars of Darkness',region='Mountaintops of the Giants'))==key('Commander Niall')
+assert next_req('Astel, Stars of Darkness',['Commander Niall'],region='Mountaintops of the Giants') is None
 
-print('Tarnished Covenant physical boss prerequisite graph: PASS')
+print('Tarnished Covenant physical boss prerequisite graph: PASS — core chains, Snowfield/Moonlight access, and optional-kill safety.')
