@@ -28,6 +28,11 @@ if 'function tcWorldClears(encounter)' not in app_path.read_text():
 if 'function tcSharedRewardDrawPending(state)' not in app_path.read_text():
     runpy.run_path('tarnished-covenant/build-shared-reward-draw.py')
 
+# Reward reveal progression itself is shared too. The drawing phone advances the
+# sequence; the partner phone mirrors each reveal automatically. This also
+# repairs the old detached-smithing-object bug so reward counters persist.
+runpy.run_path('tarnished-covenant/build-shared-reward-reveal-sync.py')
+
 # Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
 # action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
 # and uncluttered.
@@ -64,6 +69,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','bossPanel.appendChild(bar);']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
