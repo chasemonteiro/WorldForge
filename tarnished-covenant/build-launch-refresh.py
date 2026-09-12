@@ -33,6 +33,10 @@ if 'function tcSharedRewardDrawPending(state)' not in app_path.read_text():
 # repairs the old detached-smithing-object bug so reward counters persist.
 runpy.run_path('tarnished-covenant/build-shared-reward-reveal-sync.py')
 
+# A partner who watched every reward live should not be mistaken for a device
+# that missed the payout and forced through the offline catch-up replay again.
+runpy.run_path('tarnished-covenant/build-live-reward-watch.py')
+
 # A rare shared boon can authorize one optional off-assignment boss kill. It is
 # restricted to the current or previously reached regions, removes that boss
 # from future regional draws, and never grants encounter/capstone progress.
@@ -40,6 +44,11 @@ runpy.run_path('tarnished-covenant/build-free-boss-kill.py')
 
 # Final reward tuning: Covenant Tax is 5%; Sanctioned Boss Kill is 10%.
 runpy.run_path('tarnished-covenant/build-reward-odds-swap.py')
+
+# Smithing Favor is reliable earned currency again: honoring Rite/Chaos awards
+# its Favor value directly, while the same points still produce random bonus
+# Covenant draws. Random Favor results remain extra rather than the only source.
+runpy.run_path('tarnished-covenant/build-favor-rebalance.py')
 
 # Physical progression uses a dependency graph. Required gate bosses are forced
 # before blocked capstones/downstream bosses, conditional routes are respected,
@@ -58,7 +67,9 @@ runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
 
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
+runpy.run_path('tarnished-covenant/test-live-reward-watch.py')
 runpy.run_path('tarnished-covenant/test-free-boss-kill.py')
+runpy.run_path('tarnished-covenant/test-favor-rebalance.py')
 runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
 runpy.run_path('tarnished-covenant/test-capstone-prerequisite-priority.py')
 
@@ -90,6 +101,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared)','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
