@@ -1207,6 +1207,10 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -3504,7 +3508,7 @@ async function tcForfeitBoon(kind){
 
 function smithingFavorMarkup(state){
   const sm=smithingData(state);
-  return `<div class="tc-forge-favor"><span class="tc-forge-mark">✦</span><div><div class="tc-kicker ember">smithing favor</div><strong>${sm.favor}</strong></div><div class="tc-muted">one possible reward from honoring rites and enduring Chaos</div></div>`;
+  return `<div class="tc-forge-favor"><span class="tc-forge-mark">✦</span><div><div class="tc-kicker ember">smithing favor</div><strong>${sm.favor}</strong></div><div class="tc-muted">earned directly by honoring Rites and enduring Chaos · bonus draws can add more</div></div>`;
 }
 function smithingContractCost(bearing){
   const tier=Math.max(1,Math.min(4,Number(String(bearing?.id||'').match(/(\d+)$/)?.[1]||1)));
@@ -3697,9 +3701,9 @@ function renderPostBattleReport(){
     <div class="tc-report-rule"></div>
     ${postBattleChoiceMarkup('rite','Odd Rite',`${h(c.weirdness?.name||'No Rite')} · ${h(c.weirdness?.text||'')}`,riteDraws,true)}
     ${postBattleChoiceMarkup('chaos','Chaos',chaosAvailable?`${h(chaosEventName(c.chaosConsequence||''))} · ${h(personalizePlayers(c.chaosConsequence||'',state))}`:'The Chaos seal never broke during this encounter.',chaosDraws,chaosAvailable)}
-    <div class="tc-report-total"><span>Covenant reward draws</span><strong>${draws}</strong></div>
+    <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+${draws}</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>
     <button id="finishBattleReport" class="btn gold" ${riteReady&&chaosReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
-    <div class="tc-report-note">${riteReady&&chaosReady?'Each earned draw can become Smithing Favor, a Refresh, or a rare Appeal Waiver.':'Answer the eligible honor-system checks first.'}</div>
+    <div class="tc-report-note">${riteReady&&chaosReady?'Honor pays Smithing Favor immediately. Each Favor point earned here also grants one bonus Covenant reward draw.':'Answer the eligible honor-system checks first.'}</div>
   </section>`;
   document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
@@ -3713,17 +3717,19 @@ async function finalizePostBattleReport(){
   if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
   const nextState=smithingCopy(state);
   const nc=nextState.current;
-  let draws=0;
+  let draws=0,guaranteedFavor=0;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(postBattleReport.rite===true && !nc.riteForfeited && riteDraws>0 && !nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;
   }
+  nextState.smithing=smithingData(nextState);
+  nextState.smithing.favor+=guaranteedFavor;
   nc.postBattleRewards=[];
-  nc.favorEarned=0;
+  nc.favorEarned=guaranteedFavor;
   const completed=completeEncounter(nextState,playerName());
   if(!completed.regionComplete && !completed.runComplete && completed.current){
     completed.smithing = smithingData(completed);
@@ -3782,7 +3788,7 @@ function renderRewardMachine(){
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const finish=()=>{
     reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
-    result.hidden=false;result.classList.add('revealed');data.spinning=false;btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
+    result.hidden=false;result.classList.add('revealed');data.spinning=false;if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
   };
   if(reduced){finish();}
   else{
@@ -4753,6 +4759,7 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5000,7 +5007,7 @@ function tcBuildClaimedSharedReward(latest,draw,rewards,deltas,drawer){
   const favorEarned=Math.max(0,Number(deltas?.favor||0));
   if(Array.isArray(next.history)&&next.history.length){
     next.history[0].rewards=structuredClone(labels);
-    next.history[0].favorEarned=favorEarned;
+    next.history[0].favorEarned=Math.max(0,Number(next.history[0].favorEarned||0))+favorEarned;
     next.history[0].rewardDrawnBy=drawer;
   }
   next.sharedRewardDraw=null;
@@ -5081,6 +5088,15 @@ renderRun=function(){
 
 
 
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 function tcSharedRewardIndex(shared){
   const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
@@ -5093,7 +5109,7 @@ function tcSharedRewardDrawerFinished(shared){
   return Boolean(shared?.drawnBy&&tcSharedRewardSeenList(shared).includes(shared.drawnBy));
 }
 function tcSharedRewardNeedsCatchup(shared,identity=playerName()){
-  return Boolean(shared?.id&&tcSharedRewardDrawerFinished(shared)&&!tcSharedRewardSeenList(shared).includes(identity));
+  return Boolean(shared?.id&&tcSharedRewardDrawerFinished(shared)&&!tcSharedRewardSeenList(shared).includes(identity)&&!tcSharedRewardObservedAll(shared));
 }
 function tcSharedRewardDrawerLabel(state){
   const who=String(state?.sharedRewardReveal?.drawnBy||'');
@@ -5242,6 +5258,39 @@ renderRewardMachine=function(){
   btn.addEventListener('touchend',advanceReward,{passive:false});
 };
 /* --- End synchronized shared reward reveal --- */
+
+
+/* --- Live shared reward watch tracking --- */
+const TC_REWARD_OBSERVED_PREFIX='tc-shared-reward-observed:';
+function tcSharedRewardObservationKey(shared){
+  return shared?.id?`${TC_REWARD_OBSERVED_PREFIX}${shared.id}`:'';
+}
+function tcSharedRewardObservedIndices(shared){
+  const key=tcSharedRewardObservationKey(shared);
+  if(!key)return [];
+  try{
+    const raw=sessionStorage.getItem(key);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.from(new Set((Array.isArray(parsed)?parsed:[]).map(Number).filter(Number.isInteger))).sort((a,b)=>a-b);
+  }catch{return [];}
+}
+function tcRememberSharedRewardObserved(shared,index){
+  const key=tcSharedRewardObservationKey(shared),value=Number(index);
+  if(!key||!Number.isInteger(value)||value<0)return;
+  try{
+    const seen=tcSharedRewardObservedIndices(shared);
+    if(!seen.includes(value))seen.push(value);
+    sessionStorage.setItem(key,JSON.stringify(seen));
+  }catch{}
+}
+function tcSharedRewardObservedAll(shared){
+  const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+  if(total<1)return false;
+  const seen=new Set(tcSharedRewardObservedIndices(shared));
+  for(let i=0;i<total;i++)if(!seen.has(i))return false;
+  return true;
+}
+/* --- End live shared reward watch tracking --- */
 
 
 /* --- Sanctioned Boss Kill reward --- */
@@ -5560,7 +5609,7 @@ capstoneBlock=function(state){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260912162055';
+const TC_BUILD_ID='20260912195528';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
