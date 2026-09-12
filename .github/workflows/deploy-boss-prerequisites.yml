@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: tarnished-covenant-assets
+          fetch-depth: 0
       - name: Apply final production patches
         run: python tarnished-covenant/build-launch-refresh.py
       - name: Assert boss prerequisite invariants
@@ -56,5 +57,7 @@ jobs:
             echo 'No app changes to commit.'
           else
             git commit -m 'Enforce physical boss prerequisites'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
             git push origin HEAD:tarnished-covenant-assets
           fi
