@@ -45,11 +45,13 @@ for needle in [
     'Encounter terms lock after the first host-world victory.',
     'const tcShowAppealMenuBeforeAudit=showAppealMenu;',
     'const tcResolveWeaponAppealBeforeAudit=tcResolveWeaponAppeal;',
-    'const tcUseCovenantBoonBeforeAudit=useCovenantBoon;',
+    'const tcAuditUseCovenantBoonCore=useCovenantBoon;',
     'const tcForfeitBoonBeforeAudit=tcForfeitBoon;',
     'const tcBuildClemencyBeforeAudit=tcBuildClemency;',
     'const tcBuildJointAppealBeforeAudit=tcBuildJointAppeal;',
 ]: require(needle)
+if 'tcUseCovenantBoonBefore' in html:
+    raise SystemExit('audit: retired refresh-wrapper naming has returned')
 
 # Veto is optional-only and stale-state safe.
 for needle in [
