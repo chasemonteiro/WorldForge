@@ -12,26 +12,40 @@ def forbid(needle, message=None):
     if needle in html:
         raise SystemExit(message or f'forbidden final release residue: {needle}')
 
-# Reward probabilities remain owned by the challenge-first table.
+# Reward probabilities remain owned by one exact expanded 100% table.
 reward_start = html.find('function drawCovenantReward(state){')
 reward_end = html.find('\n}', reward_start)
 if reward_start < 0 or reward_end < 0:
     raise SystemExit('drawCovenantReward missing')
 reward = html[reward_start:reward_end+2]
 for needle in [
-    'roll<0.20', 'roll<0.23', 'roll<0.47', 'roll<0.71', 'roll<0.79', 'roll<0.90',
-    "kind:'aviary'", 'Dynasty Frequent Flier'
+    'roll<0.12', 'roll<0.16', 'roll<0.31', 'roll<0.46', 'roll<0.53',
+    'roll<0.59', 'roll<0.64', 'roll<0.74', 'roll<0.78', 'roll<0.83',
+    'roll<0.88', 'roll<0.93', 'roll<0.97',
+    "kind:'aviary'", 'Dynasty Frequent Flier',
+    "kind:'veto'", 'Covenant Veto',
+    "kind:'clemency'", 'Letter of Clemency',
+    "kind:'discount'", 'Union Discount Voucher',
+    "kind:'blank'", 'Blank Amendment',
+    "kind:'joint'", 'Joint Appeal',
+    "kind:'windfall'", 'Treasury Windfall',
 ]:
     if needle not in reward:
         raise SystemExit('challenge reward table drift: '+needle)
 if html.count('function drawCovenantReward(state){') != 1:
     raise SystemExit('reward probability function has multiple owners')
 
-# Every reward kind must survive smithingData normalization and render correctly.
+# Every durable reward kind survives smithingData normalization and shared payout deltas.
 for needle in [
     'aviaryTickets: Number(raw.aviaryTickets || 0)',
-    "aviary:'✈'",
-    "kind==='aviary'?'aviary'",
+    'freeBossKills: Number(raw.freeBossKills || 0)',
+    'bossVetoes: Number(raw.bossVetoes || 0)',
+    'clemencies: Number(raw.clemencies || 0)',
+    'unionDiscounts: Number(raw.unionDiscounts || 0)',
+    'blankAmendments: Number(raw.blankAmendments || 0)',
+    'jointAppeals: Number(raw.jointAppeals || 0)',
+    "aviary:'✈'", "freeboss:'⚔'", "veto:'↺'", "joint:'⚔⚔'",
+    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];",
     'Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.',
     'Final release reward durability'
 ]:
