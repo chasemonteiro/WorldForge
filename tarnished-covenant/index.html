@@ -1219,6 +1219,12 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -3751,11 +3757,11 @@ async function finalizePostBattleReport(){
   let draws=0,guaranteedFavor=0;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(postBattleReport.rite===true && !nc.riteForfeited && riteDraws>0 && !nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;
   }
   nextState.smithing=smithingData(nextState);
   nextState.smithing.favor+=guaranteedFavor;
@@ -3819,7 +3825,7 @@ function renderRewardMachine(){
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const finish=()=>{
     reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
-    result.hidden=false;result.classList.add('revealed');data.spinning=false;if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
+    result.hidden=false;result.classList.add('revealed');data.spinning=false;if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
   };
   if(reduced){finish();}
   else{
@@ -4793,6 +4799,7 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5094,6 +5101,21 @@ renderRun=function(){
   return tcRenderRunBeforeSharedRewardDraw();
 };
 /* --- End shared first-come Covenant reward draw --- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5457,7 +5479,7 @@ async function tcResolveWeaponAppeal(which,useWaiver){
   tcCloseAppealOverlay();
   const staged=changeWeapons(run.state,playerName(),which,Boolean(useWaiver));
   await commit(staged,{
-    successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':'Weapon appeal granted. Penalty accepted.'
+    successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':which==='both'?'Weapon appeal granted. Two penalties accepted.':'Weapon appeal granted. Penalty accepted.'
   });
 }
 function tcShowAppealWaiverChoice(which){
@@ -5484,7 +5506,7 @@ function tcShowAppealWaiverChoice(which){
 function showAppealMenu(){
   tcCloseAppealOverlay();
   const state=run.state,c=state.current,sm=smithingData(state),waivers=Number(sm.appealWaivers||0);
-  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing an assigned weapon normally creates a severe random penalty.${waivers>0?` You have ${waivers} Appeal Waiver${waivers===1?'':'s'} and may choose whether to spend one after selecting the appeal.`:''}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing one assigned weapon creates one severe random penalty. Appealing both at once creates two penalties.${waivers>0?` You have ${waivers} Appeal Waiver${waivers===1?'':'s'} and may choose whether to spend one after selecting the appeal.`:''}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
   document.querySelector('#closeAppeal')?.addEventListener('click',tcCloseAppealOverlay);
   document.querySelectorAll('[data-overlay-appeal]').forEach(btn=>btn.addEventListener('click',()=>{
     const which=btn.dataset.overlayAppeal;
@@ -5846,8 +5868,25 @@ if(!window.__tcExpandedRewardBound){window.__tcExpandedRewardBound=true;document
 /* --- End Expanded Covenant reward economy --- */
 
 
+/* --- Double penalty for dual weapon appeal --- */
+const tcChangeWeaponsBeforeDoubleAppealPenalty=changeWeapons;
+changeWeapons=function(state,actor,which,useWaiver=false){
+  // One voluntarily spent waiver still covers the whole appeal, exactly as the
+  // explicit waiver-choice screen promises. Without a waiver, appealing both
+  // weapons is resolved as two individual appeals: one reroll + one penalty each.
+  if(which!=='both'||useWaiver){
+    return tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,which,useWaiver);
+  }
+  let next=tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,'chase',false);
+  next=tcChangeWeaponsBeforeDoubleAppealPenalty(next,actor,'morgan',false);
+  next.lastAction=`${actor} appealed both assigned weapons. Two penalties were added.`;
+  return next;
+};
+/* --- End double penalty for dual weapon appeal --- */
+
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260912203030';
+const TC_BUILD_ID='20260912203437';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
