@@ -1225,6 +1225,18 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -3757,11 +3769,11 @@ async function finalizePostBattleReport(){
   let draws=0,guaranteedFavor=0;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(postBattleReport.rite===true && !nc.riteForfeited && riteDraws>0 && !nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;
   }
   nextState.smithing=smithingData(nextState);
   nextState.smithing.favor+=guaranteedFavor;
@@ -3825,7 +3837,7 @@ function renderRewardMachine(){
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const finish=()=>{
     reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
-    result.hidden=false;result.classList.add('revealed');data.spinning=false;if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
+    result.hidden=false;result.classList.add('revealed');data.spinning=false;btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
   };
   if(reduced){finish();}
   else{
@@ -4800,6 +4812,8 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5176,6 +5190,42 @@ renderRun=function(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 function tcSharedRewardIndex(shared){
   const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
@@ -5188,7 +5238,7 @@ function tcSharedRewardDrawerFinished(shared){
   return Boolean(shared?.drawnBy&&tcSharedRewardSeenList(shared).includes(shared.drawnBy));
 }
 function tcSharedRewardNeedsCatchup(shared,identity=playerName()){
-  return Boolean(shared?.id&&tcSharedRewardDrawerFinished(shared)&&!tcSharedRewardSeenList(shared).includes(identity)&&!tcSharedRewardObservedAll(shared));
+  return Boolean(shared?.id&&tcSharedRewardDrawerFinished(shared)&&!tcSharedRewardSeenList(shared).includes(identity)&&!tcSharedRewardObservedAll(shared,identity));
 }
 function tcSharedRewardDrawerLabel(state){
   const who=String(state?.sharedRewardReveal?.drawnBy||'');
@@ -5249,7 +5299,7 @@ tcHydrateSharedRewardReveal=function(state){
         sharedIndex,
         rewards:structuredClone(shared.rewards),
         boss:shared.boss||'Enemy Felled',
-        index:0,
+        index:tcSharedRewardFirstMissingIndex(shared,me),
         catchUp:true,
         spinning:true
       };
@@ -5314,10 +5364,13 @@ renderRewardMachine=function(){
   const finish=()=>{
     reels.forEach(reel=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
     result.hidden=false;result.classList.add('revealed');data.spinning=false;
+    if(!isDrawer&&result.isConnected&&run?.state?.sharedRewardReveal?.id===shared.id&&tcSharedRewardIndex(run.state.sharedRewardReveal)===displayIndex){
+      tcRememberSharedRewardObserved(shared,displayIndex,me);
+    }
     const mayAct=catchUp||!hasNext||isDrawer;
     btn.disabled=!mayAct;btn.setAttribute('aria-disabled',mayAct?'false':'true');btn.dataset.ready=mayAct?'1':'0';
   };
-  if(reduced){finish();}
+  if(reduced||data.spinning===false){finish();}
   else{
     reels.forEach((reel,i)=>{reel.classList.add('spinning');reel.style.setProperty('--tc-spin-delay',`${i*110}ms`);});
     window.setTimeout(finish,1250);
@@ -5341,33 +5394,41 @@ renderRewardMachine=function(){
 
 /* --- Live shared reward watch tracking --- */
 const TC_REWARD_OBSERVED_PREFIX='tc-shared-reward-observed:';
-function tcSharedRewardObservationKey(shared){
-  return shared?.id?`${TC_REWARD_OBSERVED_PREFIX}${shared.id}`:'';
+function tcSharedRewardObservationKey(shared,identity=playerName()){
+  return shared?.id&&identity?`${TC_REWARD_OBSERVED_PREFIX}${shared.id}:${identity}`:'';
 }
-function tcSharedRewardObservedIndices(shared){
-  const key=tcSharedRewardObservationKey(shared);
+function tcSharedRewardObservedIndices(shared,identity=playerName()){
+  const key=tcSharedRewardObservationKey(shared,identity);
   if(!key)return [];
   try{
-    const raw=sessionStorage.getItem(key);
+    const raw=localStorage.getItem(key);
     const parsed=raw?JSON.parse(raw):[];
-    return Array.from(new Set((Array.isArray(parsed)?parsed:[]).map(Number).filter(Number.isInteger))).sort((a,b)=>a-b);
+    const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+    return Array.from(new Set((Array.isArray(parsed)?parsed:[]).map(Number).filter(x=>Number.isInteger(x)&&x>=0&&x<total))).sort((a,b)=>a-b);
   }catch{return [];}
 }
-function tcRememberSharedRewardObserved(shared,index){
-  const key=tcSharedRewardObservationKey(shared),value=Number(index);
-  if(!key||!Number.isInteger(value)||value<0)return;
+function tcRememberSharedRewardObserved(shared,index,identity=playerName()){
+  const key=tcSharedRewardObservationKey(shared,identity),value=Number(index);
+  const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+  if(!key||!Number.isInteger(value)||value<0||value>=total)return;
   try{
-    const seen=tcSharedRewardObservedIndices(shared);
+    const seen=tcSharedRewardObservedIndices(shared,identity);
     if(!seen.includes(value))seen.push(value);
-    sessionStorage.setItem(key,JSON.stringify(seen));
+    localStorage.setItem(key,JSON.stringify(seen));
   }catch{}
 }
-function tcSharedRewardObservedAll(shared){
+function tcSharedRewardObservedAll(shared,identity=playerName()){
   const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
   if(total<1)return false;
-  const seen=new Set(tcSharedRewardObservedIndices(shared));
+  const seen=new Set(tcSharedRewardObservedIndices(shared,identity));
   for(let i=0;i<total;i++)if(!seen.has(i))return false;
   return true;
+}
+function tcSharedRewardFirstMissingIndex(shared,identity=playerName()){
+  const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+  const seen=new Set(tcSharedRewardObservedIndices(shared,identity));
+  for(let i=0;i<total;i++)if(!seen.has(i))return i;
+  return Math.max(0,total-1);
 }
 /* --- End live shared reward watch tracking --- */
 
@@ -5389,6 +5450,8 @@ function tcEligibleFreeBossChoices(state){
       if(defeated.has(name))continue;
       if(region===activeRegion&&name===activeName)continue;
       if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(name))continue;
+      if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,name))continue;
+      if(typeof tcBossRandomAccessible==='function'&&!tcBossRandomAccessible(state,name))continue;
       out.push({region,name});
     }
   }
@@ -5537,9 +5600,15 @@ function tcRegionEverVisited(state,region){
 }
 function tcPoolBossName(regionName,wanted){
   const wantedKey=tcBossKey(wanted);
+  const pool=typeof SHEET_BOSS_POOLS!=='undefined'?(SHEET_BOSS_POOLS?.[regionName]||[]):[];
   const region=regions?.[regionName];
-  const names=[...(region?.bosses||[]),region?.exit].filter(Boolean);
+  const names=[...pool,...(region?.bosses||[]),region?.exit].filter(Boolean);
   return names.find(name=>tcBossKey(name)===wantedKey)||wanted;
+}
+function tcIsRequiredRemembranceBoss(state,name){
+  if(typeof requiredRemembrances!=='function')return false;
+  const key=tcBossKey(name);
+  return requiredRemembrances(state).some(x=>tcBossKey(x)===key);
 }
 
 // Direct physical ordering. These are deliberately boss-to-boss requirements,
@@ -5563,8 +5632,35 @@ const TC_BOSS_PREREQUISITES={
   'jagged peak drake':'Ancient Dragon-Man',
   'ancient dragon senessax':'Ancient Dragon-Man',
   'bayle the dread':'Ancient Dragon-Man',
+  'count ymir mother of fingers':'Metyr, Mother of Fingers',
   'promised consort radahn':'Leda and Allies'
 };
+
+// The app groups the Consecrated Snowfield into Mountaintops. These encounters
+// are physically behind the Haligtree Secret Medallion route, whose left half is
+// behind Commander Niall. Do not let the broad regional pool sequence-break it.
+const TC_CONSECRATED_SNOWFIELD_BOSSES=[
+  'Stray Mimic Tear','Great Wyrm Theodorix','Night\'s Cavalry (Duo)',
+  'Putrid Avatar','Putrid Grave Warden Duelist','Misbegotten Crusader',
+  'Astel, Stars of Darkness'
+];
+function tcIsConsecratedSnowfieldBoss(state,name){
+  if(state?.region!=='Mountaintops of the Giants')return false;
+  const key=tcBossKey(name);
+  return TC_CONSECRATED_SNOWFIELD_BOSSES.some(x=>tcBossKey(x)===key);
+}
+
+// Alecto and the killable Adula encounter are on Moonlight Altar. That plateau is
+// not reachable merely by entering Liurnia: the route requires access through
+// Ranni's side of Caria Manor and Astel's Lake-of-Rot route.
+function tcIsMoonlightAltarBoss(name){
+  const key=tcBossKey(name);
+  return key===tcBossKey('Alecto, Black Knife Ringleader')||key===tcBossKey('Glintstone Dragon Adula');
+}
+function tcMoonlightAltarAccessible(state){
+  return tcBossActuallyDefeated(state,'Royal Knight Loretta')&&tcBossActuallyDefeated(state,'Astel, Naturalborn of the Void');
+}
+
 function tcDirectBossPrerequisite(state,targetName){
   const key=tcBossKey(targetName);
   // Redmane Castle's duo is only necessary before the festival has been activated
@@ -5576,6 +5672,9 @@ function tcDirectBossPrerequisite(state,targetName){
   // via Tanith after the Mountaintops contract route becomes possible.
   if(key==='rykard lord of blasphemy'){
     return tcRegionEverVisited(state,'Mountaintops of the Giants')?null:'Godskin Noble';
+  }
+  if(tcIsConsecratedSnowfieldBoss(state,targetName)){
+    return tcBossActuallyDefeated(state,'Commander Niall')?null:'Commander Niall';
   }
   return TC_BOSS_PREREQUISITES[key]||null;
 }
@@ -5589,6 +5688,7 @@ function tcNextUnmetPrerequisite(state,targetName,seen=new Set()){
   return nested||tcPoolBossName(state?.region,direct);
 }
 function tcBossRandomAccessible(state,name){
+  if(tcIsMoonlightAltarBoss(name)&&!tcMoonlightAltarAccessible(state))return false;
   const direct=tcDirectBossPrerequisite(state,name);
   return !direct||tcBossActuallyDefeated(state,direct);
 }
@@ -5669,13 +5769,13 @@ const tcChooseTargetBeforeBossPrereqs=chooseTarget;
 chooseTarget=function(state){
   // A deliberate return trip for an access gate always resolves that gate first.
   const routeGate=tcOutstandingRouteGateForCurrentRegion(state);
-  if(routeGate)return {name:routeGate,exit:false,prerequisiteFor:'region access'};
+  if(routeGate)return {name:routeGate,exit:false,required:true,prerequisiteFor:'region access'};
 
   const proposed=tcChooseTargetBeforeBossPrereqs(state);
   if(!proposed?.name)return proposed;
   const prerequisite=tcNextUnmetPrerequisite(state,proposed.name);
   if(prerequisite){
-    return {name:tcPoolBossName(state.region,prerequisite),exit:false,prerequisiteFor:proposed.name};
+    return {name:tcPoolBossName(state.region,prerequisite),exit:false,required:true,prerequisiteFor:proposed.name};
   }
   return proposed;
 };
@@ -5684,12 +5784,13 @@ const TC_PROGRESSION_GATE_BOSSES=[
   'Margit, The Fell Omen','Red Wolf of Radagon','Crucible Knight and Misbegotten Warrior',
   'Mimic Tear','Valiant Gargoyle & Valiant Gargoyle (Twinblade)','Godskin Noble',
   'Draconic Tree Sentinel','Godfrey, First Elden Lord',"Fia's champions",'Commander Niall',
-  'Loretta, Knight of the Haligtree','Godskin Duo','Sir Gideon Ofnir, the All-Knowing',
-  'Ancient Dragon-Man','Jori, Elder Inquisitor','Leda and Allies'
+  'Royal Knight Loretta','Loretta, Knight of the Haligtree','Godskin Duo','Sir Gideon Ofnir, the All-Knowing',
+  'Ancient Dragon-Man','Jori, Elder Inquisitor','Metyr, Mother of Fingers','Leda and Allies'
 ];
 function tcIsProgressionGateBoss(name){
   const key=tcBossKey(name);
-  return TC_PROGRESSION_GATE_BOSSES.some(x=>tcBossKey(x)===key);
+  if(TC_PROGRESSION_GATE_BOSSES.some(x=>tcBossKey(x)===key))return true;
+  return Object.values(TC_BOSS_PREREQUISITES).some(x=>tcBossKey(x)===key);
 }
 /* --- End boss prerequisite dependency graph --- */
 
@@ -5885,8 +5986,120 @@ changeWeapons=function(state,actor,which,useWaiver=false){
 /* --- End double penalty for dual weapon appeal --- */
 
 
+/* --- Today systems audit hardening --- */
+function tcEncounterMutationLocked(state=run?.state){
+  const c=state?.current;if(!c)return false;
+  const clears=typeof tcWorldClears==='function'?tcWorldClears(c):(Array.isArray(c.worldClears)?c.worldClears:[]);
+  return clears.length>0;
+}
+function tcEncounterMutationLockMessage(){return 'Encounter terms lock after the first host-world victory. Finish the second world under the same decree.';}
+
+// Normal Weapon Appeals cannot change assignments after one world has already
+// been cleared. Re-check at both menu-open and final resolve time for stale UIs.
+const tcShowAppealMenuBeforeAudit=showAppealMenu;
+showAppealMenu=function(){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcShowAppealMenuBeforeAudit();
+};
+const tcResolveWeaponAppealBeforeAudit=tcResolveWeaponAppeal;
+tcResolveWeaponAppeal=async function(which,useWaiver){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcResolveWeaponAppealBeforeAudit(which,useWaiver);
+};
+
+// Rite/Chaos amendment and forfeit controls mutate encounter terms too. This
+// wrapper uses a distinct audit name so it cannot be confused with retired
+// busy-flag stabilization code.
+const tcAuditUseCovenantBoonCore=useCovenantBoon;
+useCovenantBoon=async function(kind){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcAuditUseCovenantBoonCore(kind);
+};
+const tcForfeitBoonBeforeAudit=tcForfeitBoon;
+tcForfeitBoon=async function(kind){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcForfeitBoonBeforeAudit(kind);
+};
+const tcEncounterBoonsBeforeAudit=tcEncounterBoons;
+tcEncounterBoons=function(state){
+  if(tcEncounterMutationLocked(state))return `<div class="tc-earned-refreshes"><div class="tc-kicker">encounter terms locked</div><div class="tc-muted">One host world is already cleared. Weapons, Rite, Chaos amendments, and forfeits stay fixed until the second victory.</div></div>`;
+  return tcEncounterBoonsBeforeAudit(state);
+};
+
+// Treasury actions that alter the current encounter obey the same lock. Their
+// builders also check latest shared state so a stale overlay cannot bypass it.
+const tcBuildClemencyBeforeAudit=tcBuildClemency;
+tcBuildClemency=function(latest,encounterId,key,actor){
+  if(tcEncounterMutationLocked(latest))return null;
+  return tcBuildClemencyBeforeAudit(latest,encounterId,key,actor);
+};
+const tcOpenClemencyBeforeAudit=tcOpenClemency;
+tcOpenClemency=function(){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcOpenClemencyBeforeAudit();
+};
+const tcBuildJointAppealBeforeAudit=tcBuildJointAppeal;
+tcBuildJointAppeal=function(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor){
+  if(tcEncounterMutationLocked(latest))return null;
+  return tcBuildJointAppealBeforeAudit(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor);
+};
+const tcOpenJointAppealBeforeAudit=tcOpenJointAppeal;
+tcOpenJointAppeal=function(){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcOpenJointAppealBeforeAudit();
+};
+
+// A Veto is for an optional assignment only: never a forced prerequisite, a
+// required Remembrance, a capstone, or a partially completed two-world encounter.
+const tcBossVetoEligibleBeforeAudit=tcBossVetoEligible;
+tcBossVetoEligible=function(state){
+  const c=state?.current;
+  if(!tcBossVetoEligibleBeforeAudit(state)||!c)return false;
+  if(c.target?.required||c.target?.prerequisiteFor)return false;
+  if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,c.target?.name))return false;
+  return true;
+};
+function tcBossVetoReplacementLegal(state,replacement,oldBoss){
+  if(!state?.current||!replacement?.name||replacement.exit)return false;
+  if(tcBossKey(replacement.name)===tcBossKey(oldBoss))return false;
+  if(replacement.required||replacement.prerequisiteFor)return false;
+  if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(replacement.name))return false;
+  if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,replacement.name))return false;
+  const available=availableRegionalBosses(state);
+  return available.some(name=>tcBossKey(name)===tcBossKey(replacement.name));
+}
+tcRollVetoReplacement=function(state){
+  if(!tcBossVetoEligible(state))return null;
+  const current=state.current.target.name;
+  const pool=availableRegionalBosses(state).filter(name=>{
+    if(tcBossKey(name)===tcBossKey(current))return false;
+    if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(name))return false;
+    if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,name))return false;
+    return true;
+  });
+  if(!pool.length)return null;
+  return {name:pick(pool),exit:false};
+};
+const tcBuildBossVetoBeforeAudit=tcBuildBossVeto;
+tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor){
+  if(!tcBossVetoReplacementLegal(latest,replacement,oldBoss))return null;
+  return tcBuildBossVetoBeforeAudit(latest,encounterId,oldBoss,replacement,actor);
+};
+
+// Make the Ledger accurately show which current-encounter actions are frozen.
+const tcCovenantBoonMarkupBeforeAudit=covenantBoonMarkup;
+covenantBoonMarkup=function(state){
+  let html=tcCovenantBoonMarkupBeforeAudit(state);
+  if(!tcEncounterMutationLocked(state))return html;
+  html=html.replace(/data-use-clemency(?![^>]*disabled)/g,'data-use-clemency disabled');
+  html=html.replace(/data-use-joint-appeal(?![^>]*disabled)/g,'data-use-joint-appeal disabled');
+  return html;
+};
+/* --- End today systems audit hardening --- */
+
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260912203437';
+const TC_BUILD_ID='20260912205742';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
