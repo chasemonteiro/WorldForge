@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 p=Path('tarnished-covenant/index.html')
 s=p.read_text()
@@ -7,9 +8,12 @@ s=p.read_text()
 # Smithing Favor rebalance
 #
 # Rite/Chaos completion is the reliable currency path. Honoring an eligible Rite
-# or Chaos award now grants its Favor value directly AND still earns the same
-# number of random Covenant reward draws. Random +Favor results remain bonuses.
-# Contract prices stay 6/8/10/12 so progression remains meaningful.
+# or Chaos award grants its Favor value directly AND still earns the same number
+# of random Covenant reward draws. Random +Favor results remain bonuses.
+#
+# IMPORTANT: this file is a late production patch and is run repeatedly. Normalize
+# the award statements instead of appending to a matching prefix; older versions
+# accidentally added another guaranteedFavor increment on every deployment.
 # -----------------------------------------------------------------------------
 
 old="  const nc=nextState.current;\n  let draws=0;\n  const riteDraws=Number(nc.weirdness?.favor??1);"
@@ -19,18 +23,17 @@ if old in s:
 elif new not in s:
     raise SystemExit('post-battle guaranteed Favor counter target missing')
 
-old="nc.smithingRiteFavor=true;draws+=riteDraws;"
-new="nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;"
-if old in s:
-    s=s.replace(old,new,1)
-elif new not in s:
+# Normalize any previously accumulated copies to exactly one award per source.
+rite_pat=re.compile(r"nc\.smithingRiteFavor=true;draws\+=riteDraws;(?:guaranteedFavor\+=riteDraws;)*")
+rite_new="nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;"
+s,n=rite_pat.subn(rite_new,s,count=1)
+if n!=1:
     raise SystemExit('Rite guaranteed Favor target missing')
 
-old="nc.smithingChaosFavor=true;draws+=chaosDraws;"
-new="nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;"
-if old in s:
-    s=s.replace(old,new,1)
-elif new not in s:
+chaos_pat=re.compile(r"nc\.smithingChaosFavor=true;draws\+=chaosDraws;(?:guaranteedFavor\+=chaosDraws;)*")
+chaos_new="nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;"
+s,n=chaos_pat.subn(chaos_new,s,count=1)
+if n!=1:
     raise SystemExit('Chaos guaranteed Favor target missing')
 
 old="""  nc.postBattleRewards=[];
@@ -91,5 +94,11 @@ required=[
 for needle in required:
     if needle not in s: raise SystemExit('Favor rebalance invariant missing: '+needle)
 
+# Rebuilds must never multiply a guaranteed award again.
+if s.count('guaranteedFavor+=riteDraws;') != 1:
+    raise SystemExit('Rite guaranteed Favor is duplicated')
+if s.count('guaranteedFavor+=chaosDraws;') != 1:
+    raise SystemExit('Chaos guaranteed Favor is duplicated')
+
 p.write_text(s)
-print('Smithing Favor rebalanced: honored Rite/Chaos values are guaranteed currency plus bonus reward draws.')
+print('Smithing Favor rebalanced idempotently: one guaranteed Favor award per honored Rite/Chaos point, plus bonus draws.')
