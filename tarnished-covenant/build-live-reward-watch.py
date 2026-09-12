@@ -26,6 +26,16 @@ s=re.sub(
 s=s.replace('if(!catchUp&&!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex);','')
 s=s.replace('if(!isDrawer)tcRememberSharedRewardObserved(shared,displayIndex,me);','')
 
+# Remove the full active observation guard from a previous pass before adding it
+# back. Removing only the inner call would leave an empty if{} that prevents the
+# exact active finish block from matching on a second production build.
+s=re.sub(
+    r"\n\s*if\(!isDrawer&&result\.isConnected&&run\?\.state\?\.sharedRewardReveal\?\.id===shared\.id&&tcSharedRewardIndex\(run\.state\.sharedRewardReveal\)===displayIndex\)\{\s*"
+    r"tcRememberSharedRewardObserved\(shared,displayIndex,me\);\s*\}",
+    "",
+    s,
+)
+
 # The catch-up decision is identity-specific because a device can change which
 # internal player slot it represents between sessions.
 s=s.replace(
@@ -154,4 +164,4 @@ if hook<active_start:
     raise SystemExit('reward observation hook landed in legacy reward machine')
 
 p.write_text(s)
-print('Live shared reward tracking fixed: active machine only, persistent observation, first-missed catch-up, and no stale/repeated reveal.')
+print('Live shared reward tracking fixed idempotently: active machine only, persistent observation, first-missed catch-up, and no stale/repeated reveal.')
