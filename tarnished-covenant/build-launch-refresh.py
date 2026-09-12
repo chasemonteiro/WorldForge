@@ -33,6 +33,11 @@ if 'function tcSharedRewardDrawPending(state)' not in app_path.read_text():
 # repairs the old detached-smithing-object bug so reward counters persist.
 runpy.run_path('tarnished-covenant/build-shared-reward-reveal-sync.py')
 
+# A rare shared boon can authorize one optional off-assignment boss kill. It is
+# restricted to the current or previously reached regions, removes that boss
+# from future regional draws, and never grants encounter/capstone progress.
+runpy.run_path('tarnished-covenant/build-free-boss-kill.py')
+
 # Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
 # action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
 # and uncluttered.
@@ -40,6 +45,7 @@ runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
 
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
+runpy.run_path('tarnished-covenant/test-free-boss-kill.py')
 
 p=app_path
 s=p.read_text()
@@ -69,6 +75,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
