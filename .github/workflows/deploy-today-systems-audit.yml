@@ -1,0 +1,85 @@
+name: Deploy Today Systems Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-today-systems-audit.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  audit-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Production build pass 1
+        run: python tarnished-covenant/build-launch-refresh.py
+
+      - name: Production build pass 2 idempotence
+        run: python tarnished-covenant/build-launch-refresh.py
+
+      - name: Assert today systems audit
+        run: python tarnished-covenant/test-today-systems-audit.py
+      - name: Assert Favor rebalance
+        run: python tarnished-covenant/test-favor-rebalance.py
+      - name: Assert live reward watch
+        run: python tarnished-covenant/test-live-reward-watch.py
+      - name: Assert boss prerequisites
+        run: python tarnished-covenant/test-boss-prerequisites.py
+      - name: Assert expanded reward pool
+        run: python tarnished-covenant/test-expanded-reward-pool.py
+      - name: Assert double appeal penalties
+        run: python tarnished-covenant/test-double-appeal-penalties.py
+      - name: Assert Appeal Waiver choice
+        run: python tarnished-covenant/test-appeal-waiver-choice.py
+      - name: Assert shared reward flow
+        run: python tarnished-covenant/test-shared-reward-draw.py
+      - name: Assert Sanctioned Boss Kill
+        run: python tarnished-covenant/test-free-boss-kill.py
+      - name: Assert co-op world clears
+        run: python tarnished-covenant/test-coop-world-clears.py
+      - name: Assert Bell Bearing contracts
+        run: python tarnished-covenant/test-region-locked-contracts.py
+      - name: Assert capstone prerequisite priority
+        run: python tarnished-covenant/test-capstone-prerequisite-priority.py
+      - name: Assert multiplayer invariants
+        run: python tarnished-covenant/test-multiplayer-invariants.py
+      - name: Assert multiplayer v2 invariants
+        run: python tarnished-covenant/test-multiplayer-v2-invariants.py
+      - name: Assert regression invariants
+        run: python tarnished-covenant/test-regression-invariants.py
+      - name: Assert final release invariants
+        run: python tarnished-covenant/test-final-release-invariants.py
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts:
+              raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit audited production build
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No app changes to commit.'
+          else
+            git commit -m 'Audit and harden Covenant reward and progression systems'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
+            git push origin HEAD:tarnished-covenant-assets
+          fi
