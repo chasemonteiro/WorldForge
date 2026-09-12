@@ -1,0 +1,67 @@
+name: Deploy Live Reward + Favor Fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-live-reward-favor.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Apply final production patches
+        run: python tarnished-covenant/build-launch-refresh.py
+      - name: Assert live reward watch invariants
+        run: python tarnished-covenant/test-live-reward-watch.py
+      - name: Assert Smithing Favor rebalance
+        run: python tarnished-covenant/test-favor-rebalance.py
+      - name: Assert shared reward invariants
+        run: python tarnished-covenant/test-shared-reward-draw.py
+      - name: Assert co-op invariants
+        run: python tarnished-covenant/test-coop-world-clears.py
+      - name: Assert Bell Bearing invariants
+        run: python tarnished-covenant/test-region-locked-contracts.py
+      - name: Assert boss prerequisite graph
+        run: python tarnished-covenant/test-boss-prerequisites.py
+      - name: Assert capstone prerequisite priority
+        run: python tarnished-covenant/test-capstone-prerequisite-priority.py
+      - name: Assert multiplayer invariants
+        run: python tarnished-covenant/test-multiplayer-invariants.py
+      - name: Assert multiplayer v2 invariants
+        run: python tarnished-covenant/test-multiplayer-v2-invariants.py
+      - name: Assert regression invariants
+        run: python tarnished-covenant/test-regression-invariants.py
+      - name: Assert final release invariants
+        run: python tarnished-covenant/test-final-release-invariants.py
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+      - name: Commit live reward and Favor build
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No app changes to commit.'
+          else
+            git commit -m 'Fix duplicate reward replay and boost Smithing Favor'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
+            git push origin HEAD:tarnished-covenant-assets
+          fi
