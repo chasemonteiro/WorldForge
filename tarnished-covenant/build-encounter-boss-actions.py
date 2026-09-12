@@ -1,4 +1,5 @@
 from pathlib import Path
+import runpy
 
 p = Path('tarnished-covenant/index.html')
 s = p.read_text()
@@ -36,3 +37,9 @@ if 'hint.after(bar);' in s:
 
 p.write_text(s)
 print('Encounter victory and appeal actions moved into Boss panel only.')
+
+# A normal appeal of both weapon assignments is two refusals, so it must carry
+# two penalties. Apply this after all late appeal/reward layers so Joint Appeal
+# remains the explicit zero-penalty two-weapon exception.
+runpy.run_path('tarnished-covenant/build-double-appeal-penalties.py')
+runpy.run_path('tarnished-covenant/test-double-appeal-penalties.py')
