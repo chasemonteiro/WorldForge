@@ -46,6 +46,11 @@ runpy.run_path('tarnished-covenant/build-reward-odds-swap.py')
 # and cross-region gates can send the Covenant backward to the correct area.
 runpy.run_path('tarnished-covenant/build-boss-prerequisites.py')
 
+# Preserve the existing regional exploration threshold, but once the capstone
+# would normally be eligible, force any still-unmet physical prerequisite next
+# rather than leaving it behind the capstone RNG roll.
+runpy.run_path('tarnished-covenant/build-capstone-prerequisite-priority.py')
+
 # Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
 # action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
 # and uncluttered.
@@ -55,6 +60,7 @@ runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
 runpy.run_path('tarnished-covenant/test-free-boss-kill.py')
 runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
+runpy.run_path('tarnished-covenant/test-capstone-prerequisite-priority.py')
 
 p=app_path
 s=p.read_text()
@@ -84,6 +90,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','const next=smithingCopy(latest),sm=next.smithing;','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);","sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
