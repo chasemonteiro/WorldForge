@@ -12,7 +12,6 @@ def forbid(needle,msg=None):
 for needle in [
     'freeBossKills: Number(raw.freeBossKills || 0)',
     "kind:'freeboss',label:'Sanctioned Boss Kill'",
-    "if(roll<0.90){sm.freeBossKills+=1;",
     "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills'];",
     "freeboss:'⚔'",
 ]: require(needle)
@@ -52,9 +51,12 @@ for forbidden in ['next.cleared++','completeEncounter(','next.history.unshift','
 # The current assigned boss cannot be bypassed using this boon.
 require("if(region===activeRegion&&name===activeName)continue;")
 
-# Reward probability model: 5% exactly (.85 <= roll < .90), with tax still 10%.
+# Reward probability model after the swap:
+# Frequent Flier 6% (.79-.85), Covenant Tax 5% (.85-.90),
+# Sanctioned Boss Kill 10% (.90-1.00).
 require("if(roll<0.85){sm.aviaryTickets+=1;")
-require("if(roll<0.90){sm.freeBossKills+=1;")
-require('const tax=pick(TC_COVENANT_TAXES);')
+require("if(roll<0.90){const tax=pick(TC_COVENANT_TAXES);")
+require("sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'")
+forbid("if(roll<0.90){sm.freeBossKills+=1;")
 
-print('Tarnished Covenant Sanctioned Boss Kill invariants: PASS')
+print('Tarnished Covenant Sanctioned Boss Kill invariants: PASS — boss kill 10%, tax 5%')
