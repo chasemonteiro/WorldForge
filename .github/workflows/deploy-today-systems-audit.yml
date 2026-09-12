@@ -1,6 +1,6 @@
 name: Deploy Today Systems Audit
 
-# Audit retry 3: reward hydration and active renderer are patched separately.
+# Audit retry 4: generated cross-system wrappers are stripped before each rebuild.
 on:
   push:
     branches: [main]
