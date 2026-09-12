@@ -1,4 +1,5 @@
 name: Deploy Expanded Covenant Reward Pool
+# retry after final-release reward invariant update
 
 on:
   push:
