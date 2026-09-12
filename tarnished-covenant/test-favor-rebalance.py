@@ -27,4 +27,15 @@ for needle in [
     if needle not in html:
         raise SystemExit('random Favor bonus unexpectedly missing: '+needle)
 
-print('Tarnished Covenant guaranteed Smithing Favor + bonus reward invariants: PASS')
+# This is intentionally exact. A prior late-build patch matched its own output
+# and appended another guaranteed award every deployment.
+if html.count('guaranteedFavor+=riteDraws;') != 1:
+    raise SystemExit('Rite guaranteed Favor must appear exactly once')
+if html.count('guaranteedFavor+=chaosDraws;') != 1:
+    raise SystemExit('Chaos guaranteed Favor must appear exactly once')
+if 'guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;' in html:
+    raise SystemExit('Rite guaranteed Favor multiplied by repeated rebuild')
+if 'guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;' in html:
+    raise SystemExit('Chaos guaranteed Favor multiplied by repeated rebuild')
+
+print('Tarnished Covenant guaranteed Smithing Favor + bonus reward invariants: PASS — exactly one direct Favor award per source.')
