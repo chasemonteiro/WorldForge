@@ -97,6 +97,11 @@ runpy.run_path('tarnished-covenant/build-masterwork-recall.py')
 # untouched while giving every recorded field a durable dossier treatment.
 runpy.run_path('tarnished-covenant/build-compendium-dossier.py')
 
+# Bell Bearing contracts live in shared run state. Surface a newly commissioned
+# contract once on each participating device, and surface its sanctioned
+# status once as well, without turning presentation state into shared data.
+runpy.run_path('tarnished-covenant/build-shared-smithing-contract-sync.py')
+
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
 runpy.run_path('tarnished-covenant/test-live-reward-watch.py')
@@ -111,6 +116,7 @@ runpy.run_path('tarnished-covenant/test-encounter-action-polish.py')
 runpy.run_path('tarnished-covenant/test-shared-post-battle-report.py')
 runpy.run_path('tarnished-covenant/test-masterwork-recall.py')
 runpy.run_path('tarnished-covenant/test-compendium-dossier.py')
+runpy.run_path('tarnished-covenant/test-shared-smithing-contract-sync.py')
 
 p=app_path
 s=p.read_text()
@@ -140,6 +146,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','weaponPanel.appendChild(appealBar);','tc-boss-victory-actions','ACTIVE WEAPON APPEAL','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','function tcSharedBattleReportDraft(state=run?.state)','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','PREREQUISITE NEXT']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','weaponPanel.appendChild(appealBar);','tc-boss-victory-actions','ACTIVE WEAPON APPEAL','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','function tcSharedBattleReportDraft(state=run?.state)','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','PREREQUISITE NEXT','function tcMaybeSurfaceSharedContract(state=run?.state)']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
