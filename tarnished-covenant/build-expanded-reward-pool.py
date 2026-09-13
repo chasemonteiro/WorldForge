@@ -50,8 +50,10 @@ if n!=1: raise SystemExit('drawCovenantReward target missing')
 # Shared payout deltas must include every durable counter. Favor already covers
 # both ordinary Favor results and Treasury Windfall.
 old_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills'];"
-new_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
+strategic_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
+new_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];"
 if old_keys in s:s=s.replace(old_keys,new_keys)
+elif strategic_keys in s:s=s.replace(strategic_keys,new_keys)
 elif new_keys not in s:raise SystemExit('shared reward delta key target missing')
 
 # Distinct presentation for the expanded pool.

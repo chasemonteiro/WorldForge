@@ -32,7 +32,7 @@ assert round(0.12+0.04+0.15+0.15+0.07+0.06+0.05+0.08+0.04+0.06+0.05+0.06+0.04+0.
 # Every durable strategic reward survives normalization and one shared payout CAS.
 for key in ['bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals']:
     require(f'{key}: Number(raw.{key} || 0)')
-require("const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];")
+require("const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];")
 
 # Covenant Veto is a deliberately expensive escape hatch and cannot bypass required progression.
 for needle in [

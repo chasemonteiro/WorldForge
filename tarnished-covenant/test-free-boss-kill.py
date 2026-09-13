@@ -12,7 +12,7 @@ def forbid(needle,msg=None):
 for needle in [
     'freeBossKills: Number(raw.freeBossKills || 0)',
     "kind:'freeboss',label:'Sanctioned Boss Kill'",
-    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];",
+    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];",
     "freeboss:'⚔'",
 ]: require(needle)
 

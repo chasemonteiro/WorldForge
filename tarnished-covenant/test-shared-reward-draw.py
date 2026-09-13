@@ -87,7 +87,7 @@ require("['Chase','Morgan'].every(name=>seen.includes(name))")
 # Reward economy is applied once to shared state, including every durable boon
 # counter in the expanded treasury. Treasury Windfall rides the Favor delta.
 for needle in [
-    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];",
+    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];",
     "if(tcSharedRewardDrawPending(state)||tcSharedRewardUnresolved(state))return setToast('Finish the previous shared Covenant reward first.');",
     'if(tcSharedRewardDrawPending(run?.state))return renderSharedRewardDraw();',
 ]: require(needle)

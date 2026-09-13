@@ -45,7 +45,7 @@ for needle in [
     'blankAmendments: Number(raw.blankAmendments || 0)',
     'jointAppeals: Number(raw.jointAppeals || 0)',
     "aviary:'✈'", "freeboss:'⚔'", "veto:'↺'", "joint:'⚔⚔'",
-    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];",
+    "const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];",
     'Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.',
     'Final release reward durability'
 ]:
