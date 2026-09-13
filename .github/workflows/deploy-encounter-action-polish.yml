@@ -1,0 +1,64 @@
+name: Deploy Encounter Action Polish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-encounter-action-polish.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Build production app twice
+        run: |
+          python tarnished-covenant/build-launch-refresh.py
+          python tarnished-covenant/build-launch-refresh.py
+
+      - name: Verify encounter polish and regressions
+        run: |
+          python tarnished-covenant/test-encounter-action-polish.py
+          python tarnished-covenant/test-coop-world-clears.py
+          python tarnished-covenant/test-appeal-waiver-choice.py
+          python tarnished-covenant/test-double-appeal-penalties.py
+          python tarnished-covenant/test-expanded-reward-pool.py
+          python tarnished-covenant/test-free-boss-kill.py
+          python tarnished-covenant/test-today-systems-audit.py
+          python tarnished-covenant/test-favor-rebalance.py
+          python tarnished-covenant/test-shared-post-battle-report.py
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit production build
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No generated app changes.'
+          else
+            git commit -m 'Polish encounter controls and appeal penalties'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
+            git push origin HEAD:tarnished-covenant-assets
+          fi
