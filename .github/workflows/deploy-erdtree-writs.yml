@@ -45,15 +45,21 @@ jobs:
           elif new not in s:raise SystemExit('Erdtree final invariant anchor missing')
           p.write_text(s)
 
-          # The shared payout delta list now carries current Writ inventory and
-          # lifetime issuance as durable counters. Update every regression that
-          # intentionally pins the exact shared key list.
-          old_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
-          new_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];"
+          # The expanded reward builder owns the shared payout key list on every
+          # rebuild, so teach it the two finite Writ counters directly. This is
+          # what makes the full production build idempotent after Writs exist.
+          base_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
+          writ_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];"
+          p=Path('tarnished-covenant/build-expanded-reward-pool.py')
+          t=p.read_text().replace('new_keys="'+base_keys+'"','new_keys="'+writ_keys+'"')
+          p.write_text(t)
+
+          # Update every regression that intentionally pins the exact shared key
+          # list so the new durable counters are part of the contract.
           for p in Path('tarnished-covenant').glob('test-*.py'):
               t=p.read_text()
-              if old_keys in t:
-                  p.write_text(t.replace(old_keys,new_keys))
+              if base_keys in t:
+                  p.write_text(t.replace(base_keys,writ_keys))
           PY
 
       - name: Build production app twice
@@ -91,7 +97,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/test-*.py tarnished-covenant/index.html
+          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/build-expanded-reward-pool.py tarnished-covenant/test-*.py tarnished-covenant/index.html
           if git diff --cached --quiet; then
             echo 'No generated app changes.'
           else
