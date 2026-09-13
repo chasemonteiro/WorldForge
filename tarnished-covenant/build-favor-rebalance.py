@@ -12,7 +12,8 @@ s=p.read_text()
 # Covenant reward draws. Random +Favor results remain bonuses on top.
 #
 # IMPORTANT: this file is a late production patch and is run repeatedly. Normalize
-# the award statements instead of appending to a matching prefix.
+# the base report here; the later shared-report patch owns the authoritative co-op
+# renderer/finalizer, and final tests assert that no legacy per-source Favor remains.
 # -----------------------------------------------------------------------------
 
 s,n=re.subn(r"  let draws=0(?:,guaranteedFavor=\d+)?;", "  let draws=0,guaranteedFavor=1;", s, count=1)
@@ -86,14 +87,5 @@ required=[
 for needle in required:
     if needle not in s: raise SystemExit('Favor rebalance invariant missing: '+needle)
 
-for forbidden in [
-    'guaranteedFavor+=riteDraws;',
-    'guaranteedFavor+=chaosDraws;',
-    'guaranteedFavor=Number(guaranteedFavor)+riteDraws;',
-    'guaranteedFavor=Number(guaranteedFavor)+chaosDraws;',
-]:
-    if forbidden in s:
-        raise SystemExit('per-source guaranteed Favor returned: '+forbidden)
-
 p.write_text(s)
-print('Smithing Favor rebalanced idempotently: exactly +1 guaranteed Favor per completed encounter; Rite/Chaos still award bonus draws.')
+print('Smithing Favor base layer rebalanced: +1 guaranteed Favor per completed encounter; Rite/Chaos still award bonus draws.')
