@@ -18,6 +18,7 @@ jobs:
           ref: tarnished-covenant-assets
           fetch-depth: 0
 
+      # Re-run after the early Favor patch was made build-order safe.
       - name: Update final-build documentation
         run: |
           python - <<'PY'
