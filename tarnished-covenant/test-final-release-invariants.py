@@ -20,8 +20,8 @@ if reward_start < 0 or reward_end < 0:
 reward = html[reward_start:reward_end+2]
 for needle in [
     'roll<0.12', 'roll<0.16', 'roll<0.31', 'roll<0.46', 'roll<0.53',
-    'roll<0.59', 'roll<0.64', 'roll<0.74', 'roll<0.78', 'roll<0.83',
-    'roll<0.88', 'roll<0.93', 'roll<0.97',
+    'roll<0.59', 'roll<0.64', 'roll<0.72', 'roll<0.76', 'roll<0.82',
+    'roll<0.87', 'roll<0.93', 'roll<0.97',
     "kind:'aviary'", 'Dynasty Frequent Flier',
     "kind:'veto'", 'Covenant Veto',
     "kind:'clemency'", 'Letter of Clemency',
