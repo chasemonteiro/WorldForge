@@ -1,0 +1,137 @@
+name: Deploy Weapon Appeal And Reward Tune
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-weapon-tab-reward-tune.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Wire final build and update invariants
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # Encounter finalizer must tolerate the final Weapons-panel form on the
+          # second consecutive production build.
+          p=Path('tarnished-covenant/build-encounter-boss-actions.py')
+          s=p.read_text()
+          s=s.replace("elif new_panel not in s:\n    raise SystemExit('Encounter Boss panel creation target missing')",
+                      "elif new_panel not in s and \"const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);\" not in s:\n    raise SystemExit('Encounter panel creation target missing')")
+          p.write_text(s)
+
+          # Run the final IA/reward tuning after encounter hardening.
+          p=Path('tarnished-covenant/build-launch-refresh.py')
+          s=p.read_text()
+          line="runpy.run_path('tarnished-covenant/build-weapons-appeal-reward-tune.py')"
+          if line not in s:
+              anchor="# The post-battle report is one shared co-op artifact. Both phones mirror the\n"
+              insert=("# Weapon Appeal belongs on the Weapons panel; victory stays on Boss. The same\n"
+                      "# final tune also keeps Sanctioned Boss Kill rare at 8% while preserving 100%.\n"
+                      +line+"\n\n")
+              if anchor not in s: raise SystemExit('final tuning build anchor missing')
+              s=s.replace(anchor,insert+anchor,1)
+          s=s.replace("\"if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'\"",
+                      "\"if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'\"")
+          if "'weaponPanel.appendChild(appealBar);'" not in s:
+              anchor="'bossPanel.appendChild(bar);'"
+              if anchor not in s: raise SystemExit('weapon-panel invariant anchor missing')
+              s=s.replace(anchor,anchor+",'weaponPanel.appendChild(appealBar);'",1)
+          p.write_text(s)
+
+          # Expanded-pool test: Sanction 8%, Clemency 6%, Blank 6%.
+          p=Path('tarnished-covenant/test-expanded-reward-pool.py')
+          s=p.read_text()
+          s=s.replace('12 + 4 + 15 + 15 + 7 + 6 + 5 + 10 + 4 + 5 + 5 + 5 + 4 + 3 = 100.',
+                      '12 + 4 + 15 + 15 + 7 + 6 + 5 + 8 + 4 + 6 + 5 + 6 + 4 + 3 = 100.')
+          s=s.replace('(0.74,"sm.freeBossKills+=1",\'10% Sanctioned Boss Kill\')','(0.72,"sm.freeBossKills+=1",\'8% Sanctioned Boss Kill\')')
+          s=s.replace('(0.78,"sm.bossVetoes+=1",\'4% Covenant Veto\')','(0.76,"sm.bossVetoes+=1",\'4% Covenant Veto\')')
+          s=s.replace('(0.83,"sm.clemencies+=1",\'5% Letter of Clemency\')','(0.82,"sm.clemencies+=1",\'6% Letter of Clemency\')')
+          s=s.replace('(0.88,"sm.unionDiscounts+=1",\'5% Union Discount\')','(0.87,"sm.unionDiscounts+=1",\'5% Union Discount\')')
+          s=s.replace('0.05+0.10+0.04+0.05+0.05+0.05+0.04+0.03','0.05+0.08+0.04+0.06+0.05+0.06+0.04+0.03')
+          p.write_text(s)
+
+          p=Path('tarnished-covenant/test-free-boss-kill.py')
+          s=p.read_text()
+          s=s.replace('# at 10% (.64-.74), before the newer strategic reward bands.','# at 8% (.64-.72), before the newer strategic reward bands.')
+          s=s.replace("require(\"if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'\")",
+                      "require(\"if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'\")")
+          s=s.replace('boss kill 10%, tax 5% inside expanded pool','boss kill 8%, tax 5% inside expanded pool')
+          p.write_text(s)
+
+          p=Path('tarnished-covenant/test-today-systems-audit.py')
+          s=p.read_text()
+          s=s.replace("'if(roll<0.74){sm.freeBossKills+=1;', 'if(roll<0.78){sm.bossVetoes+=1;', 'if(roll<0.83){sm.clemencies+=1;',\n    'if(roll<0.88){sm.unionDiscounts+=1;',",
+                      "'if(roll<0.72){sm.freeBossKills+=1;', 'if(roll<0.76){sm.bossVetoes+=1;', 'if(roll<0.82){sm.clemencies+=1;',\n    'if(roll<0.87){sm.unionDiscounts+=1;',")
+          p.write_text(s)
+
+          p=Path('tarnished-covenant/test-final-release-invariants.py')
+          s=p.read_text()
+          s=s.replace("'roll<0.59', 'roll<0.64', 'roll<0.74', 'roll<0.78', 'roll<0.83',\n    'roll<0.88', 'roll<0.93', 'roll<0.97',",
+                      "'roll<0.59', 'roll<0.64', 'roll<0.72', 'roll<0.76', 'roll<0.82',\n    'roll<0.87', 'roll<0.93', 'roll<0.97',")
+          p.write_text(s)
+
+          p=Path('tarnished-covenant/test-coop-world-clears.py')
+          s=p.read_text()
+          s=s.replace('# Encounter completion / co-op world clears / Weapon Appeal belong only to the\n# Boss swipe panel. The action bar must never sit outside the panel track, where\n# it would crowd Weapons, Chaos, and Rite.',
+                      '# Encounter completion / co-op world clears stay on Boss, while Weapon Appeal\n# belongs to Weapons. Both action areas remain inside their swipe panels.')
+          s=s.replace("require('track.append(bossPanel,')\nrequire('bossPanel.appendChild(bar);')",
+                      "require(\"const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);\")\nrequire('track.append(bossPanel,weaponPanel,')\nrequire('bossPanel.appendChild(bar);')\nrequire('weaponPanel.appendChild(appealBar);')")
+          p.write_text(s)
+          PY
+
+      - name: Build production app twice
+        run: |
+          python tarnished-covenant/build-launch-refresh.py
+          python tarnished-covenant/build-launch-refresh.py
+
+      - name: Verify UI and reward economy
+        run: |
+          python tarnished-covenant/test-coop-world-clears.py
+          python tarnished-covenant/test-expanded-reward-pool.py
+          python tarnished-covenant/test-free-boss-kill.py
+          python tarnished-covenant/test-today-systems-audit.py
+          python tarnished-covenant/test-favor-rebalance.py
+          python tarnished-covenant/test-shared-post-battle-report.py
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+          grep -F "weaponPanel.appendChild(appealBar);" tarnished-covenant/index.html
+          grep -F "if(roll<0.72){sm.freeBossKills+=1;" tarnished-covenant/index.html
+          ! grep -F "if(roll<0.74){sm.freeBossKills+=1;" tarnished-covenant/index.html
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit production build
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/build-encounter-boss-actions.py tarnished-covenant/build-launch-refresh.py tarnished-covenant/test-expanded-reward-pool.py tarnished-covenant/test-free-boss-kill.py tarnished-covenant/test-today-systems-audit.py tarnished-covenant/test-final-release-invariants.py tarnished-covenant/test-coop-world-clears.py tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No generated app changes.'
+          else
+            git commit -m 'Move Weapon Appeal to Weapons and tune sanctioned rewards'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
+            git push origin HEAD:tarnished-covenant-assets
+          fi
