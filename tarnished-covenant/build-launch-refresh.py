@@ -70,9 +70,8 @@ runpy.run_path('tarnished-covenant/build-capstone-prerequisite-priority.py')
 # Veto, Clemency, Union Discount, Blank Amendment, Joint Appeal, and Windfall.
 runpy.run_path('tarnished-covenant/build-expanded-reward-pool.py')
 
-# Encounter completion and Weapon Appeal belong to the Boss panel only. Keep the
-# action block inside that swipe panel so Weapons, Chaos, and Rite remain focused
-# and uncluttered. This finalizer also owns the two-penalty normal Both appeal.
+# Build the Boss-panel action shelf and preserve the two-penalty normal Both
+# appeal rule. A later information-architecture pass moves Appeal to Weapons.
 runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
 
 # Final cross-system ownership: after one host-world victory, encounter terms are
@@ -80,8 +79,9 @@ runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
 # against latest shared state. Apply after all appeal/reward layers.
 runpy.run_path('tarnished-covenant/build-today-systems-hardening.py')
 
-# Weapon Appeal belongs on the Weapons panel; victory stays on Boss. The same
-# final tune also keeps Sanctioned Boss Kill rare at 8% while preserving 100%.
+# Weapon Appeal belongs on the Weapons panel; victory stays on Boss. This final
+# presentation pass also gives both action shelves their proper full-width fit,
+# makes active Appeal penalties prominent, and keeps Sanctioned Boss Kill at 8%.
 runpy.run_path('tarnished-covenant/build-weapons-appeal-reward-tune.py')
 
 # The post-battle report is one shared co-op artifact. Both phones mirror the
@@ -107,6 +107,7 @@ runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
 runpy.run_path('tarnished-covenant/test-capstone-prerequisite-priority.py')
 runpy.run_path('tarnished-covenant/test-expanded-reward-pool.py')
 runpy.run_path('tarnished-covenant/test-today-systems-audit.py')
+runpy.run_path('tarnished-covenant/test-encounter-action-polish.py')
 runpy.run_path('tarnished-covenant/test-shared-post-battle-report.py')
 runpy.run_path('tarnished-covenant/test-masterwork-recall.py')
 runpy.run_path('tarnished-covenant/test-compendium-dossier.py')
@@ -139,6 +140,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','weaponPanel.appendChild(appealBar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','function tcSharedBattleReportDraft(state=run?.state)','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','PREREQUISITE NEXT']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','weaponPanel.appendChild(appealBar);','tc-boss-victory-actions','ACTIVE WEAPON APPEAL','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','function tcSharedBattleReportDraft(state=run?.state)','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','PREREQUISITE NEXT']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
