@@ -46,9 +46,9 @@ runpy.run_path('tarnished-covenant/build-free-boss-kill.py')
 # thresholds while preserving the durable Sanctioned Boss Kill behavior.
 runpy.run_path('tarnished-covenant/build-reward-odds-swap.py')
 
-# Smithing Favor is reliable earned currency again: honoring Rite/Chaos awards
-# its Favor value directly, while the same points still produce random bonus
-# Covenant draws. Random Favor results remain extra rather than the only source.
+# Every completed Covenant encounter pays exactly +1 guaranteed Smithing Favor.
+# Honored Rite/Chaos objectives determine bonus reward draws; random Favor
+# results remain extra rather than multiplying the guaranteed encounter payout.
 runpy.run_path('tarnished-covenant/build-favor-rebalance.py')
 
 # Appeal Waivers are saved inventory unless the player explicitly chooses to

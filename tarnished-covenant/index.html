@@ -1283,6 +1283,30 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -3639,7 +3663,7 @@ async function tcForfeitBoon(kind){
 
 function smithingFavorMarkup(state){
   const sm=smithingData(state);
-  return `<div class="tc-forge-favor"><span class="tc-forge-mark">✦</span><div><div class="tc-kicker ember">smithing favor</div><strong>${sm.favor}</strong></div><div class="tc-muted">earned directly by honoring Rites and enduring Chaos · bonus draws can add more</div></div>`;
+  return `<div class="tc-forge-favor"><span class="tc-forge-mark">✦</span><div><div class="tc-kicker ember">smithing favor</div><strong>${sm.favor}</strong></div><div class="tc-muted">1 guaranteed per completed Covenant encounter · bonus draws can add more</div></div>`;
 }
 function smithingContractCost(bearing){
   const tier=Math.max(1,Math.min(4,Number(String(bearing?.id||'').match(/(\d+)$/)?.[1]||1)));
@@ -3832,9 +3856,9 @@ function renderPostBattleReport(){
     <div class="tc-report-rule"></div>
     ${postBattleChoiceMarkup('rite','Odd Rite',`${h(c.weirdness?.name||'No Rite')} · ${h(c.weirdness?.text||'')}`,riteDraws,true)}
     ${postBattleChoiceMarkup('chaos','Chaos',chaosAvailable?`${h(chaosEventName(c.chaosConsequence||''))} · ${h(personalizePlayers(c.chaosConsequence||'',state))}`:'The Chaos seal never broke during this encounter.',chaosDraws,chaosAvailable)}
-    <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+${draws}</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>
+    <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+1</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>
     <button id="finishBattleReport" class="btn gold" ${riteReady&&chaosReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
-    <div class="tc-report-note">${riteReady&&chaosReady?'Honor pays Smithing Favor immediately. Each Favor point earned here also grants one bonus Covenant reward draw.':'Answer the eligible honor-system checks first.'}</div>
+    <div class="tc-report-note">${riteReady&&chaosReady?'Every completed Covenant encounter pays 1 guaranteed Smithing Favor. Honored Rite and Chaos objectives determine bonus Covenant reward draws.':'Answer the eligible honor-system checks first.'}</div>
   </section>`;
   document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
@@ -3848,14 +3872,14 @@ async function finalizePostBattleReport(){
   if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
   const nextState=smithingCopy(state);
   const nc=nextState.current;
-  let draws=0,guaranteedFavor=0;
+  let draws=0,guaranteedFavor=1;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(postBattleReport.rite===true && !nc.riteForfeited && riteDraws>0 && !nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;
   }
   nextState.smithing=smithingData(nextState);
   nextState.smithing.favor+=guaranteedFavor;
@@ -4901,6 +4925,8 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5202,6 +5228,56 @@ renderRun=function(){
   return tcRenderRunBeforeSharedRewardDraw();
 };
 /* --- End shared first-come Covenant reward draw --- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6320,10 +6396,10 @@ function tcSharedBattleReportReady(state,draft=tcSharedBattleReportDraft(state))
 function tcBattleReportAwardPreview(state,draft=tcSharedBattleReportDraft(state)){
   const c=state?.current;if(!c||!draft)return {guaranteedFavor:0,draws:0};
   const riteDraws=Number(c.weirdness?.favor??1),chaosDraws=Number(c.chaosFavor??1);
-  let guaranteedFavor=0;
-  if(draft.rite===true&&!c.riteForfeited&&riteDraws>0&&!c.smithingRiteFavor)guaranteedFavor=Number(guaranteedFavor)+riteDraws;
-  if(draft.chaos===true&&!c.chaosForfeited&&c.chaosTriggered&&chaosDraws>0&&!c.smithingChaosFavor)guaranteedFavor=Number(guaranteedFavor)+chaosDraws;
-  return {guaranteedFavor,draws:guaranteedFavor};
+  let draws=0;
+  if(draft.rite===true&&!c.riteForfeited&&riteDraws>0&&!c.smithingRiteFavor)draws+=riteDraws;
+  if(draft.chaos===true&&!c.chaosForfeited&&c.chaosTriggered&&chaosDraws>0&&!c.smithingChaosFavor)draws+=chaosDraws;
+  return {guaranteedFavor:1,draws};
 }
 function tcBuildSharedBattleReportChoice(latest,encounterId,kind,value,actor){
   const c=latest?.current;
@@ -6369,7 +6445,7 @@ renderPostBattleReport=function(){
   const chaosReady=!chaosAvailable||chaosDraws<=0||postBattleReport.chaos!==null;
   const reportReady=riteReady&&chaosReady;
   const preview=tcBattleReportAwardPreview(state,postBattleReport);
-  const guaranteedText=reportReady?`+${preview.guaranteedFavor}`:'—';
+  const guaranteedText='+1';
   const drawText=reportReady?String(preview.draws):'—';
   const syncLine=postBattleReport.updatedBy?`Shared report · last updated by <strong>${h(postBattleReport.updatedBy)}</strong>`:'Shared report · either Tarnished may answer';
   app.innerHTML=`<section class="tc-battle-report">
@@ -6383,7 +6459,7 @@ renderPostBattleReport=function(){
     <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>${guaranteedText}</strong></div>
     <div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${drawText}</strong></div>
     <button id="finishBattleReport" class="btn gold" ${reportReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
-    <div class="tc-report-note">${reportReady?'Honor pays Smithing Favor immediately. This exact shared total will be awarded no matter which phone files the report.':'Waiting for the shared honor-system checks. No +0 is assumed while answers are pending.'}</div>
+    <div class="tc-report-note">${reportReady?'Every completed Covenant fight pays exactly 1 guaranteed Smithing Favor. Honored Rite and Chaos objectives determine the bonus draws.':'The guaranteed +1 is fixed. Finish the shared honor-system checks to determine bonus draws.'}</div>
   </section>`;
   document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
@@ -6397,14 +6473,14 @@ function tcBuildSharedBattleReportCompletion(latest,encounterId,actor){
   const draft=tcSharedBattleReportDraft(latest);
   if(!tcSharedBattleReportReady(latest,draft))return null;
   const nextState=smithingCopy(latest),nc=nextState.current;
-  let draws=0,guaranteedFavor=0;
+  let draws=0,guaranteedFavor=1;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(draft.rite===true&&!nc.riteForfeited&&riteDraws>0&&!nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor=Number(guaranteedFavor)+riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(draft.chaos===true&&!nc.chaosForfeited&&nc.chaosTriggered&&chaosDraws>0&&!nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor=Number(guaranteedFavor)+chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;
   }
   delete nc.battleReportDraft;
   nextState.smithing=smithingData(nextState);
@@ -6443,7 +6519,7 @@ finalizePostBattleReport=async function(){
   if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
   try{
     const saved=await commit(initial.state,{
-      successToast:'Post-battle report filed. Guaranteed Favor and bonus draws are shared.',
+      successToast:'Post-battle report filed · +1 guaranteed Smithing Favor.',
       retryBuilder:(latest)=>tcBuildSharedBattleReportCompletion(latest,encounterId,actor)?.state||null
     });
     if(saved){
@@ -6627,7 +6703,7 @@ compendiumLedgerMarkup=function(state){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260913025130';
+const TC_BUILD_ID='20260913031709';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
