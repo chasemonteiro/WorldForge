@@ -1,0 +1,88 @@
+name: Deploy Masterwork Recall
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-masterwork-recall.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Wire Masterwork Recall into final build
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/build-launch-refresh.py')
+          s=p.read_text()
+          build_line="runpy.run_path('tarnished-covenant/build-masterwork-recall.py')"
+          if build_line not in s:
+              anchor="# The Compendium is an archive/case-file surface, not a spreadsheet. This late\n"
+              insert=("# Masterworked weapons become owner-bound veteran assets with one future\n"
+                      "# penalty-free Recall of the exact archived build, usable only before 1/2.\n"
+                      +build_line+"\n\n")
+              if anchor not in s: raise SystemExit('Masterwork Recall build anchor missing')
+              s=s.replace(anchor,insert+anchor,1)
+          test_line="runpy.run_path('tarnished-covenant/test-masterwork-recall.py')"
+          if test_line not in s:
+              anchor="runpy.run_path('tarnished-covenant/test-compendium-dossier.py')"
+              if anchor not in s: raise SystemExit('Masterwork Recall test anchor missing')
+              s=s.replace(anchor,test_line+'\n'+anchor,1)
+          invariant="'function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)'"
+          if invariant not in s:
+              anchor="'Office of Covenant Records','PREREQUISITE NEXT']"
+              replacement="'Office of Covenant Records','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','PREREQUISITE NEXT']"
+              if anchor not in s: raise SystemExit('Masterwork Recall invariant anchor missing')
+              s=s.replace(anchor,replacement,1)
+          p.write_text(s)
+          PY
+
+      - name: Build production app twice
+        run: |
+          python tarnished-covenant/build-launch-refresh.py
+          python tarnished-covenant/build-launch-refresh.py
+
+      - name: Verify Masterwork Recall
+        run: python tarnished-covenant/test-masterwork-recall.py
+
+      - name: Verify existing systems
+        run: |
+          python tarnished-covenant/test-today-systems-audit.py
+          python tarnished-covenant/test-compendium-dossier.py
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit production build
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No generated app changes.'
+          else
+            git commit -m 'Give Masterworked weapons one veteran Recall'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
+            git push origin HEAD:tarnished-covenant-assets
+          fi
