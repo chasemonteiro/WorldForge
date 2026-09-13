@@ -46,13 +46,14 @@ jobs:
           p.write_text(s)
 
           # The shared payout delta list now carries current Writ inventory and
-          # lifetime issuance as durable counters.
+          # lifetime issuance as durable counters. Update every regression that
+          # intentionally pins the exact shared key list.
           old_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
           new_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];"
-          for name in ['test-expanded-reward-pool.py','test-final-release-invariants.py']:
-              p=Path('tarnished-covenant')/name
-              t=p.read_text().replace(old_keys,new_keys)
-              p.write_text(t)
+          for p in Path('tarnished-covenant').glob('test-*.py'):
+              t=p.read_text()
+              if old_keys in t:
+                  p.write_text(t.replace(old_keys,new_keys))
           PY
 
       - name: Build production app twice
@@ -90,7 +91,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/test-expanded-reward-pool.py tarnished-covenant/test-final-release-invariants.py tarnished-covenant/index.html
+          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/test-*.py tarnished-covenant/index.html
           if git diff --cached --quiet; then
             echo 'No generated app changes.'
           else
