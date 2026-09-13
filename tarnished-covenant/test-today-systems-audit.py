@@ -5,11 +5,17 @@ html=Path('tarnished-covenant/index.html').read_text()
 def require(needle,msg=None):
     if needle not in html: raise SystemExit(msg or 'missing audit invariant: '+needle)
 
-# Guaranteed Favor must be idempotent across repeated late builds.
-if html.count('guaranteedFavor+=riteDraws;') != 1:
-    raise SystemExit('audit: Rite Favor award is not exactly once')
-if html.count('guaranteedFavor+=chaosDraws;') != 1:
-    raise SystemExit('audit: Chaos Favor award is not exactly once')
+# Guaranteed Favor is a flat +1 per completed Covenant encounter. Rite/Chaos
+# still determine bonus reward draws, never additional guaranteed Favor.
+require('let draws=0,guaranteedFavor=1;')
+for forbidden in [
+    'guaranteedFavor+=riteDraws;',
+    'guaranteedFavor+=chaosDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+riteDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+chaosDraws;',
+]:
+    if forbidden in html:
+        raise SystemExit('audit: per-source Favor award returned: '+forbidden)
 
 # Live reward observation must live in the active synchronized override, never the
 # retained legacy reward machine, and must survive a PWA restart.
@@ -85,4 +91,4 @@ for needle in [
     'if(roll<0.97){sm.jointAppeals+=1;', "sm.favor+=3;return {kind:'windfall'",
 ]: require(needle)
 
-print('Tarnished Covenant today-systems audit: PASS — rewards, Favor, appeals, co-op locks, Veto safety, and boss access all hardened.')
+print('Tarnished Covenant today-systems audit: PASS — rewards, flat +1 Favor, appeals, co-op locks, Veto safety, and boss access all hardened.')
