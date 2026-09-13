@@ -13,11 +13,12 @@ for needle in [
     "if(typeof tcBothWorldsCleared==='function'&&!tcBothWorldsCleared(c))return null;",
     'retryBuilder:build',
     'const draft=tcSharedBattleReportDraft(state);',
-    "const guaranteedText=reportReady?`+${preview.guaranteedFavor}`:'—';",
+    "const guaranteedText='+1';",
     "const drawText=reportReady?String(preview.draws):'—';",
-    'Waiting for the shared honor-system checks. No +0 is assumed while answers are pending.',
+    'Every completed Covenant fight pays exactly 1 guaranteed Smithing Favor.',
     'function tcBuildSharedBattleReportCompletion(latest,encounterId,actor)',
     'delete nc.battleReportDraft;',
+    'let draws=0,guaranteedFavor=1;',
     'nextState.smithing.favor+=guaranteedFavor;',
     'nc.favorEarned=guaranteedFavor;',
     'guaranteedFavor\n  }:null;',
@@ -27,16 +28,24 @@ for needle in [
 if html.count('/* --- Shared post-battle report sync --- */') != 1:
     raise SystemExit('shared report layer is duplicated')
 
-# The authoritative late renderer must not assume +0 while the partner is still
-# answering the report; unresolved state is an em dash and the total comes from
-# the shared draft only.
+# The authoritative late renderer always shows +1 guaranteed Favor. Shared
+# Rite/Chaos answers determine bonus draws only.
 start=html.rfind('renderPostBattleReport=function(){')
 end=html.find('function tcBuildSharedBattleReportCompletion',start)
 if start<0 or end<0: raise SystemExit('late shared report renderer missing')
 renderer=html[start:end]
-if '<strong>+${draws}</strong>' in renderer:
-    raise SystemExit('late renderer still uses a phone-local +draws total')
+if "const guaranteedText='+1';" not in renderer:
+    raise SystemExit('late renderer does not show flat +1 guaranteed Favor')
 if 'tcSharedBattleReportDraft(state)' not in renderer:
     raise SystemExit('late renderer is not hydrating the shared report draft')
 
-print('Shared post-battle report: PASS — report choices, guaranteed Favor preview, and finalization are authoritative across both phones.')
+for forbidden in [
+    'guaranteedFavor+=riteDraws;',
+    'guaranteedFavor+=chaosDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+riteDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+chaosDraws;',
+]:
+    if forbidden in html:
+        raise SystemExit('shared report reintroduced per-source Favor: '+forbidden)
+
+print('Shared post-battle report: PASS — both phones share answers, every completed encounter grants +1 Favor, and Rite/Chaos control bonus draws.')
