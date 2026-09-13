@@ -80,6 +80,11 @@ runpy.run_path('tarnished-covenant/build-encounter-boss-actions.py')
 # against latest shared state. Apply after all appeal/reward layers.
 runpy.run_path('tarnished-covenant/build-today-systems-hardening.py')
 
+# The Compendium is an archive/case-file surface, not a spreadsheet. This late
+# presentation layer keeps the underlying history schema and all interactions
+# untouched while giving every recorded field a durable dossier treatment.
+runpy.run_path('tarnished-covenant/build-compendium-dossier.py')
+
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
 runpy.run_path('tarnished-covenant/test-live-reward-watch.py')
@@ -90,6 +95,7 @@ runpy.run_path('tarnished-covenant/test-boss-prerequisites.py')
 runpy.run_path('tarnished-covenant/test-capstone-prerequisite-priority.py')
 runpy.run_path('tarnished-covenant/test-expanded-reward-pool.py')
 runpy.run_path('tarnished-covenant/test-today-systems-audit.py')
+runpy.run_path('tarnished-covenant/test-compendium-dossier.py')
 
 p=app_path
 s=p.read_text()
@@ -119,6 +125,6 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','PREREQUISITE NEXT']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','PREREQUISITE NEXT']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
