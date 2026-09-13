@@ -1,0 +1,88 @@
+name: Deploy Shared Bell Contract Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-shared-smithing-contract-sync.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+
+      - name: Wire shared contract sync into final build
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/build-launch-refresh.py')
+          s=p.read_text()
+          build="runpy.run_path('tarnished-covenant/build-shared-smithing-contract-sync.py')"
+          if build not in s:
+              anchor="runpy.run_path('tarnished-covenant/build-compendium-dossier.py')\n"
+              insert=("\n# Bell Bearing contracts live in shared run state. Surface a newly commissioned\n"
+                      "# contract once on each participating device, and surface its sanctioned\n"
+                      "# status once as well, without turning presentation state into shared data.\n"
+                      +build+"\n")
+              if anchor not in s: raise SystemExit('shared contract build anchor missing')
+              s=s.replace(anchor,anchor+insert,1)
+          test="runpy.run_path('tarnished-covenant/test-shared-smithing-contract-sync.py')"
+          if test not in s:
+              anchor="runpy.run_path('tarnished-covenant/test-compendium-dossier.py')\n"
+              if anchor not in s: raise SystemExit('shared contract test anchor missing')
+              s=s.replace(anchor,anchor+test+"\n",1)
+          marker="'function tcMaybeSurfaceSharedContract(state=run?.state)'"
+          if marker not in s:
+              anchor="'PREREQUISITE NEXT']"
+              if anchor not in s: raise SystemExit('final invariant list anchor missing')
+              s=s.replace(anchor,"'PREREQUISITE NEXT',"+marker+"]",1)
+          p.write_text(s)
+          PY
+
+      - name: Build production app twice
+        run: |
+          python tarnished-covenant/build-launch-refresh.py
+          python tarnished-covenant/build-launch-refresh.py
+
+      - name: Verify shared contract and regressions
+        run: |
+          python tarnished-covenant/test-shared-smithing-contract-sync.py
+          python tarnished-covenant/test-region-locked-contracts.py
+          python tarnished-covenant/test-expanded-reward-pool.py
+          python tarnished-covenant/test-masterwork-recall.py
+          python tarnished-covenant/test-coop-world-clears.py
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+
+      - name: Validate JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('tarnished-covenant/index.html').read_text()
+          scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
+          if not scripts: raise SystemExit('No inline script found')
+          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/tarnished-covenant.js
+
+      - name: Commit production build
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/index.html
+          if git diff --cached --quiet; then
+            echo 'No generated app changes.'
+          else
+            git commit -m 'Sync Bell Bearing contract presentation across phones'
+            git fetch origin tarnished-covenant-assets
+            git rebase origin/tarnished-covenant-assets
+            git push origin HEAD:tarnished-covenant-assets
+          fi
