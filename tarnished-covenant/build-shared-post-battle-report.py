@@ -64,8 +64,8 @@ function tcBattleReportAwardPreview(state,draft=tcSharedBattleReportDraft(state)
   const c=state?.current;if(!c||!draft)return {guaranteedFavor:0,draws:0};
   const riteDraws=Number(c.weirdness?.favor??1),chaosDraws=Number(c.chaosFavor??1);
   let guaranteedFavor=0;
-  if(draft.rite===true&&!c.riteForfeited&&riteDraws>0&&!c.smithingRiteFavor)guaranteedFavor+=riteDraws;
-  if(draft.chaos===true&&!c.chaosForfeited&&c.chaosTriggered&&chaosDraws>0&&!c.smithingChaosFavor)guaranteedFavor+=chaosDraws;
+  if(draft.rite===true&&!c.riteForfeited&&riteDraws>0&&!c.smithingRiteFavor)guaranteedFavor=Number(guaranteedFavor)+riteDraws;
+  if(draft.chaos===true&&!c.chaosForfeited&&c.chaosTriggered&&chaosDraws>0&&!c.smithingChaosFavor)guaranteedFavor=Number(guaranteedFavor)+chaosDraws;
   return {guaranteedFavor,draws:guaranteedFavor};
 }
 function tcBuildSharedBattleReportChoice(latest,encounterId,kind,value,actor){
@@ -143,11 +143,11 @@ function tcBuildSharedBattleReportCompletion(latest,encounterId,actor){
   let draws=0,guaranteedFavor=0;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(draft.rite===true&&!nc.riteForfeited&&riteDraws>0&&!nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor=Number(guaranteedFavor)+riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(draft.chaos===true&&!nc.chaosForfeited&&nc.chaosTriggered&&chaosDraws>0&&!nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor=Number(guaranteedFavor)+chaosDraws;
   }
   delete nc.battleReportDraft;
   nextState.smithing=smithingData(nextState);
