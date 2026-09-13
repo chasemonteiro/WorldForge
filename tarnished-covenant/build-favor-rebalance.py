@@ -7,34 +7,27 @@ s=p.read_text()
 # -----------------------------------------------------------------------------
 # Smithing Favor rebalance
 #
-# Rite/Chaos completion is the reliable currency path. Honoring an eligible Rite
-# or Chaos award grants its Favor value directly AND still earns the same number
-# of random Covenant reward draws. Random +Favor results remain bonuses.
+# Every completed Covenant encounter now pays exactly ONE guaranteed Smithing
+# Favor. Honored Rite/Chaos objectives still determine the number of bonus random
+# Covenant reward draws. Random +Favor results remain bonuses on top.
 #
 # IMPORTANT: this file is a late production patch and is run repeatedly. Normalize
-# the award statements instead of appending to a matching prefix; older versions
-# accidentally added another guaranteedFavor increment on every deployment.
+# the award statements instead of appending to a matching prefix.
 # -----------------------------------------------------------------------------
 
-old="  const nc=nextState.current;\n  let draws=0;\n  const riteDraws=Number(nc.weirdness?.favor??1);"
-new="  const nc=nextState.current;\n  let draws=0,guaranteedFavor=0;\n  const riteDraws=Number(nc.weirdness?.favor??1);"
-if old in s:
-    s=s.replace(old,new,1)
-elif new not in s:
+s,n=re.subn(r"  let draws=0(?:,guaranteedFavor=\d+)?;", "  let draws=0,guaranteedFavor=1;", s, count=1)
+if n!=1:
     raise SystemExit('post-battle guaranteed Favor counter target missing')
 
-# Normalize any previously accumulated copies to exactly one award per source.
-rite_pat=re.compile(r"nc\.smithingRiteFavor=true;draws\+=riteDraws;(?:guaranteedFavor\+=riteDraws;)*")
-rite_new="nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor+=riteDraws;"
-s,n=rite_pat.subn(rite_new,s,count=1)
+rite_pat=re.compile(r"nc\.smithingRiteFavor=true;draws\+=riteDraws;(?:guaranteedFavor\+=riteDraws;|guaranteedFavor=Number\(guaranteedFavor\)\+riteDraws;)*")
+s,n=rite_pat.subn("nc.smithingRiteFavor=true;draws+=riteDraws;",s,count=1)
 if n!=1:
-    raise SystemExit('Rite guaranteed Favor target missing')
+    raise SystemExit('Rite bonus-draw target missing')
 
-chaos_pat=re.compile(r"nc\.smithingChaosFavor=true;draws\+=chaosDraws;(?:guaranteedFavor\+=chaosDraws;)*")
-chaos_new="nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor+=chaosDraws;"
-s,n=chaos_pat.subn(chaos_new,s,count=1)
+chaos_pat=re.compile(r"nc\.smithingChaosFavor=true;draws\+=chaosDraws;(?:guaranteedFavor\+=chaosDraws;|guaranteedFavor=Number\(guaranteedFavor\)\+chaosDraws;)*")
+s,n=chaos_pat.subn("nc.smithingChaosFavor=true;draws+=chaosDraws;",s,count=1)
 if n!=1:
-    raise SystemExit('Chaos guaranteed Favor target missing')
+    raise SystemExit('Chaos bonus-draw target missing')
 
 old="""  nc.postBattleRewards=[];
   nc.favorEarned=0;
@@ -49,8 +42,6 @@ if old in s:
 elif new not in s:
     raise SystemExit('guaranteed Favor persistence target missing')
 
-# Random Favor from the later shared draw is a bonus on top of the guaranteed
-# amount already written to the completed encounter history.
 old="next.history[0].favorEarned=favorEarned;"
 new="next.history[0].favorEarned=Math.max(0,Number(next.history[0].favorEarned||0))+favorEarned;"
 if old in s:
@@ -58,47 +49,51 @@ if old in s:
 elif new not in s:
     raise SystemExit('history Favor accumulation target missing')
 
-old='<div class="tc-report-total"><span>Covenant reward draws</span><strong>${draws}</strong></div>'
-new='<div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+${draws}</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>'
+old='<div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+${draws}</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>'
+new='<div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+1</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>'
 if old in s:
     s=s.replace(old,new,1)
 elif new not in s:
     raise SystemExit('battle-report Favor summary target missing')
 
-old="Each earned draw can become Smithing Favor, a Refresh, or a rare Appeal Waiver."
-new="Honor pays Smithing Favor immediately. Each Favor point earned here also grants one bonus Covenant reward draw."
+old="Honor pays Smithing Favor immediately. Each Favor point earned here also grants one bonus Covenant reward draw."
+new="Every completed Covenant encounter pays 1 guaranteed Smithing Favor. Honored Rite and Chaos objectives determine bonus Covenant reward draws."
 if old in s:
     s=s.replace(old,new,1)
 elif new not in s:
     raise SystemExit('battle-report Favor explanation target missing')
 
-old='one possible reward from honoring rites and enduring Chaos'
-new='earned directly by honoring Rites and enduring Chaos · bonus draws can add more'
-if old in s:
-    s=s.replace(old,new,1)
-elif new not in s:
-    raise SystemExit('Smithing Favor ledger explanation target missing')
+for old_copy in [
+    'earned directly by honoring Rites and enduring Chaos · bonus draws can add more',
+    'earned directly by honoring Rites and enduring Chaos · bonus Favor can still drop from Covenant rewards',
+]:
+    if old_copy in s:
+        s=s.replace(old_copy,'1 guaranteed per completed Covenant encounter · bonus draws can add more',1)
 
 required=[
-    'let draws=0,guaranteedFavor=0;',
-    'guaranteedFavor+=riteDraws;',
-    'guaranteedFavor+=chaosDraws;',
+    'let draws=0,guaranteedFavor=1;',
+    'nc.smithingRiteFavor=true;draws+=riteDraws;',
+    'nc.smithingChaosFavor=true;draws+=chaosDraws;',
     'nextState.smithing.favor+=guaranteedFavor;',
     'nc.favorEarned=guaranteedFavor;',
     'next.history[0].favorEarned=Math.max(0,Number(next.history[0].favorEarned||0))+favorEarned;',
     'Guaranteed Smithing Favor',
+    '<strong>+1</strong>',
     'Bonus Covenant reward draws',
-    'Honor pays Smithing Favor immediately.',
-    'earned directly by honoring Rites and enduring Chaos',
+    'Every completed Covenant encounter pays 1 guaranteed Smithing Favor.',
+    '1 guaranteed per completed Covenant encounter',
 ]
 for needle in required:
     if needle not in s: raise SystemExit('Favor rebalance invariant missing: '+needle)
 
-# Rebuilds must never multiply a guaranteed award again.
-if s.count('guaranteedFavor+=riteDraws;') != 1:
-    raise SystemExit('Rite guaranteed Favor is duplicated')
-if s.count('guaranteedFavor+=chaosDraws;') != 1:
-    raise SystemExit('Chaos guaranteed Favor is duplicated')
+for forbidden in [
+    'guaranteedFavor+=riteDraws;',
+    'guaranteedFavor+=chaosDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+riteDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+chaosDraws;',
+]:
+    if forbidden in s:
+        raise SystemExit('per-source guaranteed Favor returned: '+forbidden)
 
 p.write_text(s)
-print('Smithing Favor rebalanced idempotently: one guaranteed Favor award per honored Rite/Chaos point, plus bonus draws.')
+print('Smithing Favor rebalanced idempotently: exactly +1 guaranteed Favor per completed encounter; Rite/Chaos still award bonus draws.')
