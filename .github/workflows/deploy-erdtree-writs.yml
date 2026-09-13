@@ -45,21 +45,30 @@ jobs:
           elif new not in s:raise SystemExit('Erdtree final invariant anchor missing')
           p.write_text(s)
 
-          # The expanded reward builder owns the shared payout key list on every
-          # rebuild, so teach it the two finite Writ counters directly. This is
-          # what makes the full production build idempotent after Writs exist.
-          base_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
+          # The expanded reward builder sees three generations of the shared
+          # payout list: the original six counters, the current strategic list,
+          # and the new strategic+Writ list. Normalize either older form to the
+          # Writ-aware form so both the migration build and every later rebuild
+          # are safe.
+          legacy_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills'];"
+          strategic_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals'];"
           writ_keys="const keys=['favor','chaosRefreshes','riteRefreshes','appealWaivers','aviaryTickets','freeBossKills','bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals','erdtreeWrits','erdtreeWritsAwarded'];"
           p=Path('tarnished-covenant/build-expanded-reward-pool.py')
-          t=p.read_text().replace('new_keys="'+base_keys+'"','new_keys="'+writ_keys+'"')
+          t=p.read_text()
+          old_line='old_keys="'+legacy_keys+'"\nnew_keys="'+strategic_keys+'"\nif old_keys in s:s=s.replace(old_keys,new_keys)\nelif new_keys not in s:raise SystemExit(\'shared reward delta key target missing\')'
+          new_line='old_keys="'+legacy_keys+'"\nstrategic_keys="'+strategic_keys+'"\nnew_keys="'+writ_keys+'"\nif old_keys in s:s=s.replace(old_keys,new_keys)\nelif strategic_keys in s:s=s.replace(strategic_keys,new_keys)\nelif new_keys not in s:raise SystemExit(\'shared reward delta key target missing\')'
+          if old_line in t:
+              t=t.replace(old_line,new_line,1)
+          elif new_line not in t:
+              raise SystemExit('expanded reward shared-key migration block missing')
           p.write_text(t)
 
-          # Update every regression that intentionally pins the exact shared key
-          # list so the new durable counters are part of the contract.
+          # Update every regression that intentionally pins the exact strategic
+          # shared key list so the finite Writ counters are part of the contract.
           for p in Path('tarnished-covenant').glob('test-*.py'):
               t=p.read_text()
-              if base_keys in t:
-                  p.write_text(t.replace(base_keys,writ_keys))
+              if strategic_keys in t:
+                  p.write_text(t.replace(strategic_keys,writ_keys))
           PY
 
       - name: Build production app twice
