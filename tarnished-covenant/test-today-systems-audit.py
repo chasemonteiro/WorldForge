@@ -80,14 +80,15 @@ for needle in [
     'Both weapons were reassigned with no penalty.',
 ]: require(needle)
 
-# Expanded random table remains the exact agreed 100% distribution.
+# Expanded random table remains the exact agreed 100% distribution. Sanctioned
+# Boss Kill is intentionally rarer at 8%; Clemency and Blank each absorb 1%.
 for needle in [
     'if(roll<0.12){sm.favor+=1;', 'if(roll<0.16){sm.favor+=2;',
     'if(roll<0.31){sm.chaosRefreshes+=1;', 'if(roll<0.46){sm.riteRefreshes+=1;',
     'if(roll<0.53){sm.appealWaivers+=1;', 'if(roll<0.59){sm.aviaryTickets+=1;',
-    'if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);', 'if(roll<0.74){sm.freeBossKills+=1;',
-    'if(roll<0.78){sm.bossVetoes+=1;', 'if(roll<0.83){sm.clemencies+=1;',
-    'if(roll<0.88){sm.unionDiscounts+=1;', 'if(roll<0.93){sm.blankAmendments+=1;',
+    'if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);', 'if(roll<0.72){sm.freeBossKills+=1;',
+    'if(roll<0.76){sm.bossVetoes+=1;', 'if(roll<0.82){sm.clemencies+=1;',
+    'if(roll<0.87){sm.unionDiscounts+=1;', 'if(roll<0.93){sm.blankAmendments+=1;',
     'if(roll<0.97){sm.jointAppeals+=1;', "sm.favor+=3;return {kind:'windfall'",
 ]: require(needle)
 
