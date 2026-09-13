@@ -7,11 +7,9 @@ s=p.read_text()
 # -----------------------------------------------------------------------------
 # Shared post-battle report
 #
-# The old co-op report choices lived only in the submitting phone's local
-# `postBattleReport` object. That meant the partner phone rendered an untouched
-# local report and misleadingly showed Guaranteed Smithing Favor as +0 while the
-# other player was filing the victory. Make the report draft authoritative in
-# shared run state, mirror it on both phones, and finalize from that shared draft.
+# The report draft is authoritative in shared run state so both phones mirror the
+# same Rite/Chaos answers. Every completed encounter pays exactly +1 guaranteed
+# Smithing Favor; Rite/Chaos answers determine bonus reward draws only.
 # -----------------------------------------------------------------------------
 
 s=re.sub(
@@ -63,10 +61,10 @@ function tcSharedBattleReportReady(state,draft=tcSharedBattleReportDraft(state))
 function tcBattleReportAwardPreview(state,draft=tcSharedBattleReportDraft(state)){
   const c=state?.current;if(!c||!draft)return {guaranteedFavor:0,draws:0};
   const riteDraws=Number(c.weirdness?.favor??1),chaosDraws=Number(c.chaosFavor??1);
-  let guaranteedFavor=0;
-  if(draft.rite===true&&!c.riteForfeited&&riteDraws>0&&!c.smithingRiteFavor)guaranteedFavor=Number(guaranteedFavor)+riteDraws;
-  if(draft.chaos===true&&!c.chaosForfeited&&c.chaosTriggered&&chaosDraws>0&&!c.smithingChaosFavor)guaranteedFavor=Number(guaranteedFavor)+chaosDraws;
-  return {guaranteedFavor,draws:guaranteedFavor};
+  let draws=0;
+  if(draft.rite===true&&!c.riteForfeited&&riteDraws>0&&!c.smithingRiteFavor)draws+=riteDraws;
+  if(draft.chaos===true&&!c.chaosForfeited&&c.chaosTriggered&&chaosDraws>0&&!c.smithingChaosFavor)draws+=chaosDraws;
+  return {guaranteedFavor:1,draws};
 }
 function tcBuildSharedBattleReportChoice(latest,encounterId,kind,value,actor){
   const c=latest?.current;
@@ -112,7 +110,7 @@ renderPostBattleReport=function(){
   const chaosReady=!chaosAvailable||chaosDraws<=0||postBattleReport.chaos!==null;
   const reportReady=riteReady&&chaosReady;
   const preview=tcBattleReportAwardPreview(state,postBattleReport);
-  const guaranteedText=reportReady?`+${preview.guaranteedFavor}`:'—';
+  const guaranteedText='+1';
   const drawText=reportReady?String(preview.draws):'—';
   const syncLine=postBattleReport.updatedBy?`Shared report · last updated by <strong>${h(postBattleReport.updatedBy)}</strong>`:'Shared report · either Tarnished may answer';
   app.innerHTML=`<section class="tc-battle-report">
@@ -126,7 +124,7 @@ renderPostBattleReport=function(){
     <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>${guaranteedText}</strong></div>
     <div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${drawText}</strong></div>
     <button id="finishBattleReport" class="btn gold" ${reportReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
-    <div class="tc-report-note">${reportReady?'Honor pays Smithing Favor immediately. This exact shared total will be awarded no matter which phone files the report.':'Waiting for the shared honor-system checks. No +0 is assumed while answers are pending.'}</div>
+    <div class="tc-report-note">${reportReady?'Every completed Covenant fight pays exactly 1 guaranteed Smithing Favor. Honored Rite and Chaos objectives determine the bonus draws.':'The guaranteed +1 is fixed. Finish the shared honor-system checks to determine bonus draws.'}</div>
   </section>`;
   document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
@@ -140,14 +138,14 @@ function tcBuildSharedBattleReportCompletion(latest,encounterId,actor){
   const draft=tcSharedBattleReportDraft(latest);
   if(!tcSharedBattleReportReady(latest,draft))return null;
   const nextState=smithingCopy(latest),nc=nextState.current;
-  let draws=0,guaranteedFavor=0;
+  let draws=0,guaranteedFavor=1;
   const riteDraws=Number(nc.weirdness?.favor??1);
   if(draft.rite===true&&!nc.riteForfeited&&riteDraws>0&&!nc.smithingRiteFavor){
-    nc.smithingRiteFavor=true;draws+=riteDraws;guaranteedFavor=Number(guaranteedFavor)+riteDraws;
+    nc.smithingRiteFavor=true;draws+=riteDraws;
   }
   const chaosDraws=Number(nc.chaosFavor??1);
   if(draft.chaos===true&&!nc.chaosForfeited&&nc.chaosTriggered&&chaosDraws>0&&!nc.smithingChaosFavor){
-    nc.smithingChaosFavor=true;draws+=chaosDraws;guaranteedFavor=Number(guaranteedFavor)+chaosDraws;
+    nc.smithingChaosFavor=true;draws+=chaosDraws;
   }
   delete nc.battleReportDraft;
   nextState.smithing=smithingData(nextState);
@@ -186,7 +184,7 @@ finalizePostBattleReport=async function(){
   if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
   try{
     const saved=await commit(initial.state,{
-      successToast:'Post-battle report filed. Guaranteed Favor and bonus draws are shared.',
+      successToast:'Post-battle report filed · +1 guaranteed Smithing Favor.',
       retryBuilder:(latest)=>tcBuildSharedBattleReportCompletion(latest,encounterId,actor)?.state||null
     });
     if(saved){
@@ -209,9 +207,10 @@ required=[
     'function tcBuildSharedBattleReportChoice(latest,encounterId,kind,value,actor)',
     'retryBuilder:build',
     'const draft=tcSharedBattleReportDraft(state);',
-    "const guaranteedText=reportReady?`+${preview.guaranteedFavor}`:'—';",
-    'This exact shared total will be awarded no matter which phone files the report.',
+    "const guaranteedText='+1';",
+    'Every completed Covenant fight pays exactly 1 guaranteed Smithing Favor.',
     'function tcBuildSharedBattleReportCompletion(latest,encounterId,actor)',
+    'let draws=0,guaranteedFavor=1;',
     'nextState.smithing.favor+=guaranteedFavor;',
     'nc.favorEarned=guaranteedFavor;',
     'guaranteedFavor\n  }:null;',
@@ -220,8 +219,16 @@ required=[
 for needle in required:
     if needle not in s: raise SystemExit('shared post-battle report invariant missing: '+needle)
 
+for forbidden in [
+    'guaranteedFavor+=riteDraws;',
+    'guaranteedFavor+=chaosDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+riteDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+chaosDraws;',
+]:
+    if forbidden in s: raise SystemExit('shared report still has per-source guaranteed Favor: '+forbidden)
+
 if s.count('/* --- Shared post-battle report sync --- */')!=1:
     raise SystemExit('shared post-battle report layer duplicated')
 
 p.write_text(s)
-print('Shared post-battle report applied: both phones mirror choices and the same guaranteed Favor total.')
+print('Shared post-battle report applied: +1 guaranteed Favor per completed encounter; shared Rite/Chaos answers control bonus draws.')
