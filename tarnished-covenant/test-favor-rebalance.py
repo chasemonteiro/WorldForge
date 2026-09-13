@@ -3,16 +3,16 @@ from pathlib import Path
 html=Path('tarnished-covenant/index.html').read_text()
 
 required=[
-    'let draws=0,guaranteedFavor=0;',
-    'guaranteedFavor+=riteDraws;',
-    'guaranteedFavor+=chaosDraws;',
+    'let draws=0,guaranteedFavor=1;',
+    'nc.smithingRiteFavor=true;draws+=riteDraws;',
+    'nc.smithingChaosFavor=true;draws+=chaosDraws;',
     'nextState.smithing.favor+=guaranteedFavor;',
     'nc.favorEarned=guaranteedFavor;',
     'next.history[0].favorEarned=Math.max(0,Number(next.history[0].favorEarned||0))+favorEarned;',
     'Guaranteed Smithing Favor',
     'Bonus Covenant reward draws',
-    'Honor pays Smithing Favor immediately.',
-    'earned directly by honoring Rites and enduring Chaos',
+    'Every completed Covenant encounter pays 1 guaranteed Smithing Favor.',
+    '1 guaranteed per completed Covenant encounter',
     'return 4 + tier*2;',
 ]
 for needle in required:
@@ -27,15 +27,18 @@ for needle in [
     if needle not in html:
         raise SystemExit('random Favor bonus unexpectedly missing: '+needle)
 
-# This is intentionally exact. A prior late-build patch matched its own output
-# and appended another guaranteed award every deployment.
-if html.count('guaranteedFavor+=riteDraws;') != 1:
-    raise SystemExit('Rite guaranteed Favor must appear exactly once')
-if html.count('guaranteedFavor+=chaosDraws;') != 1:
-    raise SystemExit('Chaos guaranteed Favor must appear exactly once')
-if 'guaranteedFavor+=riteDraws;guaranteedFavor+=riteDraws;' in html:
-    raise SystemExit('Rite guaranteed Favor multiplied by repeated rebuild')
-if 'guaranteedFavor+=chaosDraws;guaranteedFavor+=chaosDraws;' in html:
-    raise SystemExit('Chaos guaranteed Favor multiplied by repeated rebuild')
+# Rite and Chaos must only control bonus draws. Guaranteed Favor is a flat +1 per
+# completed encounter and must never creep back into per-source accumulation.
+for forbidden in [
+    'guaranteedFavor+=riteDraws;',
+    'guaranteedFavor+=chaosDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+riteDraws;',
+    'guaranteedFavor=Number(guaranteedFavor)+chaosDraws;',
+]:
+    if forbidden in html:
+        raise SystemExit('per-source guaranteed Favor returned: '+forbidden)
 
-print('Tarnished Covenant guaranteed Smithing Favor + bonus reward invariants: PASS — exactly one direct Favor award per source.')
+if html.count('let draws=0,guaranteedFavor=1;') < 1:
+    raise SystemExit('flat +1 guaranteed Favor initialization missing')
+
+print('Tarnished Covenant Smithing Favor invariants: PASS — exactly +1 guaranteed Favor per completed encounter; Rite/Chaos still control bonus draws.')
