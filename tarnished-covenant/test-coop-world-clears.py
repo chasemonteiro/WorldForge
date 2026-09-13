@@ -38,12 +38,13 @@ mount_pos = html.find('tcBindCoopWorldClearControls(run?.state,run?.state?.curre
 if render_pos < 0 or mount_pos <= render_pos:
     raise SystemExit('co-op world-clear controls do not mount after the modern Encounter render')
 
-# Encounter completion / co-op world clears / Weapon Appeal belong only to the
-# Boss swipe panel. The action bar must never sit outside the panel track, where
-# it would crowd Weapons, Chaos, and Rite.
+# Encounter completion / co-op world clears stay on Boss, while Weapon Appeal
+# belongs to Weapons. Both action areas remain inside their swipe panels.
 require("const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);")
-require('track.append(bossPanel,')
+require("const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);")
+require('track.append(bossPanel,weaponPanel,')
 require('bossPanel.appendChild(bar);')
+require('weaponPanel.appendChild(appealBar);')
 forbid('hint.after(bar);')
 
 # The post-battle report becomes eligible only after both world slots are present.

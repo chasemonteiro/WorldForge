@@ -8,7 +8,7 @@ def require(needle,msg=None):
 def forbid(needle,msg=None):
     if needle in html: raise SystemExit(msg or 'forbidden expanded reward behavior: '+needle)
 
-# Exact proposed reward table: 12 + 4 + 15 + 15 + 7 + 6 + 5 + 10 + 4 + 5 + 5 + 5 + 4 + 3 = 100.
+# Exact proposed reward table: 12 + 4 + 15 + 15 + 7 + 6 + 5 + 8 + 4 + 6 + 5 + 6 + 4 + 3 = 100.
 thresholds=[
     (0.12,"sm.favor+=1",'12% +1 Favor'),
     (0.16,"sm.favor+=2",'4% +2 Favor'),
@@ -17,17 +17,17 @@ thresholds=[
     (0.53,"sm.appealWaivers+=1",'7% Appeal Waiver'),
     (0.59,"sm.aviaryTickets+=1",'6% Frequent Flier'),
     (0.64,"const tax=pick(TC_COVENANT_TAXES)",'5% Covenant Tax'),
-    (0.74,"sm.freeBossKills+=1",'10% Sanctioned Boss Kill'),
-    (0.78,"sm.bossVetoes+=1",'4% Covenant Veto'),
-    (0.83,"sm.clemencies+=1",'5% Letter of Clemency'),
-    (0.88,"sm.unionDiscounts+=1",'5% Union Discount'),
+    (0.72,"sm.freeBossKills+=1",'8% Sanctioned Boss Kill'),
+    (0.76,"sm.bossVetoes+=1",'4% Covenant Veto'),
+    (0.82,"sm.clemencies+=1",'6% Letter of Clemency'),
+    (0.87,"sm.unionDiscounts+=1",'5% Union Discount'),
     (0.93,"sm.blankAmendments+=1",'5% Blank Amendment'),
     (0.97,"sm.jointAppeals+=1",'4% Joint Appeal'),
 ]
 for value,body,label in thresholds:
     require(f"if(roll<{value:.2f}){{{body};",f'missing threshold for {label}')
 require("sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",'missing 3% Treasury Windfall tail')
-assert round(0.12+0.04+0.15+0.15+0.07+0.06+0.05+0.10+0.04+0.05+0.05+0.05+0.04+0.03,10)==1.0
+assert round(0.12+0.04+0.15+0.15+0.07+0.06+0.05+0.08+0.04+0.06+0.05+0.06+0.04+0.03,10)==1.0
 
 # Every durable strategic reward survives normalization and one shared payout CAS.
 for key in ['bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals']:

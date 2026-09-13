@@ -52,10 +52,10 @@ for forbidden in ['next.cleared++','completeEncounter(','next.history.unshift','
 require("if(region===activeRegion&&name===activeName)continue;")
 
 # Expanded reward model keeps Tax at 5% (.59-.64) and Sanctioned Boss Kill
-# at 10% (.64-.74), before the newer strategic reward bands.
+# at 8% (.64-.72), before the newer strategic reward bands.
 require("if(roll<0.59){sm.aviaryTickets+=1;")
 require("if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);")
-require("if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'")
+require("if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'")
 forbid("if(roll<0.90){sm.freeBossKills+=1;")
 
-print('Tarnished Covenant Sanctioned Boss Kill invariants: PASS — boss kill 10%, tax 5% inside expanded pool')
+print('Tarnished Covenant Sanctioned Boss Kill invariants: PASS — boss kill 8%, tax 5% inside expanded pool')

@@ -1307,6 +1307,30 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -3486,10 +3510,10 @@ function drawCovenantReward(state){
   if(roll<0.53){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'May be spent to make a Weapon Appeal penalty-free. Spending it is your choice.'};}
   if(roll<0.59){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the Mohgwyn bird. The bird remains a valued member of the economy.'};}
   if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);return {kind:'tax',label:tax.label,detail:tax.detail};}
-  if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
-  if(roll<0.78){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor, 1 Chaos Refresh, 1 Rite Refresh, and 1 Appeal Waiver.'};}
-  if(roll<0.83){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
-  if(roll<0.88){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
+  if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
+  if(roll<0.76){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor, 1 Chaos Refresh, 1 Rite Refresh, and 1 Appeal Waiver.'};}
+  if(roll<0.82){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
+  if(roll<0.87){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
   if(roll<0.93){sm.blankAmendments+=1;return {kind:'blank',label:'Blank Amendment',detail:'Convert this document into either one Chaos Refresh or one Rite Refresh whenever you choose.'};}
   if(roll<0.97){sm.jointAppeals+=1;return {kind:'joint',label:'Joint Appeal',detail:'Reroll both assigned weapons once without adding an Appeal penalty.'};}
   sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall',detail:'+3 Smithing Favor. Someone in Accounts Payable has made a spectacular mistake.'};
@@ -4305,9 +4329,10 @@ function tcEnhanceEncounterPanels(){
   const tabs=document.createElement('div');tabs.className='tc-encounter-tabs';['Boss','Weapons','Chaos','Rite'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcEncounterPanelIndex)b.classList.add('active');tabs.appendChild(b);});sticky.after(tabs);
   const track=document.createElement('div');track.className='tc-encounter-track';const overviewNodes=[brief,art,defer,debt],weaponNodes=[weaponsHeading,loadouts,penalties],chaosNodes=[chaos],riteNodes=[rite,earned];
   const claimed=new Set([top,sticky,tabs,brief,art,defer,debt,weaponsHeading,loadouts,penalties,chaos,rite,earned,complete,actions3,appealConfirm].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)riteNodes.push(node);});
-  const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);track.append(bossPanel,tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes),tcMakePanel('tc-encounter-panel','Chaos Decree','chaos',chaosNodes),tcMakePanel('tc-encounter-panel','Rite & Amendments','rite',riteNodes));tabs.after(track);
+  const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);track.append(bossPanel,weaponPanel,tcMakePanel('tc-encounter-panel','Chaos Decree','chaos',chaosNodes),tcMakePanel('tc-encounter-panel','Rite & Amendments','rite',riteNodes));tabs.after(track);
   const hint=document.createElement('div');hint.className='tc-encounter-hint';hint.textContent='Swipe between briefing panels';track.after(hint);
-  const bar=document.createElement('div');bar.className='tc-encounter-actions';bar.appendChild(complete);if(actions3)bar.appendChild(actions3);if(appealConfirm)bar.appendChild(appealConfirm);bossPanel.appendChild(bar);
+  const bar=document.createElement('div');bar.className='tc-encounter-actions';bar.appendChild(complete);bossPanel.appendChild(bar);
+  const appealBar=document.createElement('div');appealBar.className='tc-encounter-actions tc-weapon-appeal-actions';if(actions3)appealBar.appendChild(actions3);if(appealConfirm)appealBar.appendChild(appealConfirm);if(actions3||appealConfirm)weaponPanel.appendChild(appealBar);
   tcWirePanelTrack(track,tabs,4,()=>tcEncounterPanelIndex,i=>{tcEncounterPanelIndex=i;});
 }
 const tcRenderEncounterBeforeIA=renderEncounter;renderEncounter=function(){tcRenderEncounterBeforeIA();tcEnhanceEncounterPanels();};
@@ -4927,6 +4952,8 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5228,6 +5255,56 @@ renderRun=function(){
   return tcRenderRunBeforeSharedRewardDraw();
 };
 /* --- End shared first-come Covenant reward draw --- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6703,7 +6780,7 @@ compendiumLedgerMarkup=function(state){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260913031709';
+const TC_BUILD_ID='20260913034726';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

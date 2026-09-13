@@ -12,8 +12,8 @@ old_panel = "track.append(tcMakePanel('tc-encounter-panel','Target','boss',overv
 new_panel = "const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);track.append(bossPanel,"
 if old_panel in s:
     s = s.replace(old_panel, new_panel, 1)
-elif new_panel not in s:
-    raise SystemExit('Encounter Boss panel creation target missing')
+elif new_panel not in s and "const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);" not in s:
+    raise SystemExit('Encounter panel creation target missing')
 
 old_mount = 'hint.after(bar);'
 new_mount = 'bossPanel.appendChild(bar);'
