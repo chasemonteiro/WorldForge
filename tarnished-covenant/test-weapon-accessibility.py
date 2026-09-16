@@ -20,7 +20,6 @@ for needle in [
     "\"Ruins Greatsword\":[{name:'Crucible Knight and Misbegotten Warrior',region:'Caelid'}]",
 ]: require(needle)
 
-# Sanctioned and Appeal-extra-boss kills are real kills for acquisition gates.
 for needle in [
     'function tcRecordedBossDefeated(state,requirement)',
     '(state?.history||[]).some(matches)',
@@ -29,7 +28,6 @@ for needle in [
     'gates.every(req=>tcRecordedBossDefeated(state,req))',
 ]: require(needle)
 
-# Greatsword returns to the Caelid deck and all actual draws use legal pools.
 for needle in [
     "pool.some(w=>w?.name==='Greatsword')",
     "sheetWeapon('Greatsword')",
@@ -42,8 +40,20 @@ for needle in [
     'makeBuild=function(regionName,target,avoidNames=[],state=null)',
 ]: require(needle)
 
-# Appeals remember rejected weapons for this encounter and legal fallback reaches
-# earlier visited regions instead of reopening a locked boss-drop pool.
+# bestPairFromPool returns raw candidates. The accessibility layer must convert
+# them back into the complete {chase,morgan} build shape expected by newEncounter.
+for needle in [
+    'function tcBuildWeaponPairFromCandidate(pair)',
+    'if(!pair?.chaseWeapon||!pair?.morganWeapon)return null;',
+    'return {chase:buildFromWeapon(pair.chaseWeapon),morgan:buildFromWeapon(pair.morganWeapon)};',
+    'const built=tcBuildWeaponPairFromCandidate(pair);',
+    'if(built)return built;',
+    'const tcNewEncounterBeforeWeaponAccessGuard=newEncounter;',
+    'if(!encounter?.chase?.name||!encounter?.morgan?.name)',
+    'Covenant refused to save an encounter without two valid weapon assignments.',
+]: require(needle)
+forbid('  return pair;','raw bestPairFromPool candidate may not be returned from chooseWeaponPair')
+
 for needle in [
     'function tcAppealSeenWeapons(state)',
     'state?.current?.appealedWeaponNames',
@@ -55,8 +65,6 @@ for needle in [
     'const tcBuildJointAppealBeforeWeaponAccess=tcBuildJointAppeal;',
 ]: require(needle)
 
-# The late layer must not deliberately fall back to the old inaccessible makeBuild
-# when state exists.
 forbid("if(!pool.length) pool = eligibleWeapons(regionName, target);",'legacy inaccessible appeal fallback survived late accessibility layer')
 
-print('Tarnished Covenant weapon accessibility: PASS — Caelid boss drops unlock only after recorded kills, Greatsword is restored, and Appeals do not recycle rejected weapons.')
+print('Tarnished Covenant weapon accessibility: PASS — legal pair selection returns complete encounter builds, malformed encounters are blocked, Caelid gates remain enforced, and Appeals do not recycle rejected weapons.')
