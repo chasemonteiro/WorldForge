@@ -65,6 +65,10 @@ function tcLegalAccumulatedWeaponPool(state,target){
 function tcAppealSeenWeapons(state){
   return new Set(Array.isArray(state?.current?.appealedWeaponNames)?state.current.appealedWeaponNames:[]);
 }
+function tcBuildWeaponPairFromCandidate(pair){
+  if(!pair?.chaseWeapon||!pair?.morganWeapon)return null;
+  return {chase:buildFromWeapon(pair.chaseWeapon),morgan:buildFromWeapon(pair.morganWeapon)};
+}
 
 // Make every downstream accumulated-pool caller acquisition-aware.
 const tcAccumulatedWeaponPoolBeforeAccess=accumulatedWeaponPool;
@@ -75,6 +79,8 @@ accumulatedWeaponPool=function(state,target){
 
 // New encounters burn through fresh, obtainable weapons in the present region
 // first, then fall back to obtainable weapons from regions already reached.
+// IMPORTANT: bestPairFromPool returns raw weapon candidates; newEncounter expects
+// fully built {chase,morgan} assignments. Never leak the raw pair shape.
 const tcChooseWeaponPairBeforeAccess=chooseWeaponPair;
 chooseWeaponPair=function(state,target){
   const currentPool=tcLegalRegionWeapons(state,state.region,target),used=usedWeaponNames(state),unusedCurrent=currentPool.filter(w=>!used.has(w.name));
@@ -90,15 +96,28 @@ chooseWeaponPair=function(state,target){
     const pool=unused.length>=2?unused:all;
     if(pool.length>=2)pair=bestPairFromPool(state,pool,pool);
   }
-  if(!pair){
-    // Do not silently reintroduce an inaccessible boss-drop weapon. This should
-    // only be reachable if a future region is configured with fewer than two
-    // obtainable weapons across the entire visited armory.
-    console.warn('Covenant armory has fewer than two legally obtainable weapons; retaining legacy pair fallback.');
-    const legacy=tcChooseWeaponPairBeforeAccess(state,target);
-    if(legacy&&tcWeaponAcquisitionUnlocked(state,legacy.chaseWeapon)&&tcWeaponAcquisitionUnlocked(state,legacy.morganWeapon))return legacy;
+  const built=tcBuildWeaponPairFromCandidate(pair);
+  if(built)return built;
+
+  // A legacy result is acceptable only if it already contains two complete
+  // builds and both named weapons are legal under the acquisition gate model.
+  const legacy=tcChooseWeaponPairBeforeAccess(state,target);
+  if(legacy?.chase?.name&&legacy?.morgan?.name){
+    const legalNames=new Set(tcLegalAccumulatedWeaponPool(state,target).map(w=>w.name));
+    if(legalNames.has(legacy.chase.name)&&legalNames.has(legacy.morgan.name))return legacy;
   }
-  return pair;
+  throw new Error('Covenant armory could not produce two legally obtainable weapon assignments. Encounter creation was stopped before saving malformed state.');
+};
+
+// Defense in depth: a future armory patch must never be able to serialize an
+// encounter that the Encounter tab cannot render.
+const tcNewEncounterBeforeWeaponAccessGuard=newEncounter;
+newEncounter=function(state){
+  const encounter=tcNewEncounterBeforeWeaponAccessGuard(state);
+  if(!encounter?.chase?.name||!encounter?.morgan?.name){
+    throw new Error('Covenant refused to save an encounter without two valid weapon assignments.');
+  }
+  return encounter;
 };
 
 // Appeals remember every weapon rejected during the current encounter. They
@@ -169,6 +188,11 @@ for needle in [
     'state?.appealPenaltyBossKills',
     'function tcLegalRegionWeapons(state,regionName,target)',
     'function tcLegalAccumulatedWeaponPool(state,target)',
+    'function tcBuildWeaponPairFromCandidate(pair)',
+    'return {chase:buildFromWeapon(pair.chaseWeapon),morgan:buildFromWeapon(pair.morganWeapon)};',
+    'const tcNewEncounterBeforeWeaponAccessGuard=newEncounter;',
+    'encounter?.chase?.name',
+    'encounter?.morgan?.name',
     'appealedWeaponNames',
     'const tcChangeWeaponsBeforeAccess=changeWeapons;',
     'const tcBuildJointAppealBeforeWeaponAccess=tcBuildJointAppeal;'
