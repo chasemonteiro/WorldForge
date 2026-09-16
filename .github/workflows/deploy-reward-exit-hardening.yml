@@ -1,0 +1,64 @@
+name: Deploy Reward Exit Hardening
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/deploy-reward-exit-hardening.yml']
+permissions:
+  contents: write
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tarnished-covenant-assets
+          fetch-depth: 0
+      - name: Wire final build
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tarnished-covenant/build-launch-refresh.py');s=p.read_text()
+          b="runpy.run_path('tarnished-covenant/build-reward-reveal-exit-hardening.py')"
+          if b not in s:
+              a="runpy.run_path('tarnished-covenant/build-weapon-accessibility.py')\n"
+              if a not in s: raise SystemExit('build anchor missing')
+              s=s.replace(a,a+"\n# Final shared reward acknowledgement must never strand a phone on a stale reel.\n"+b+"\n",1)
+          t="runpy.run_path('tarnished-covenant/test-reward-reveal-exit-hardening.py')"
+          if t not in s:
+              a="runpy.run_path('tarnished-covenant/test-weapon-accessibility.py')\n"
+              if a not in s: raise SystemExit('test anchor missing')
+              s=s.replace(a,a+t+"\n",1)
+          old="'const TC_WEAPON_ACQUISITION_GATES=']"
+          new="'const TC_WEAPON_ACQUISITION_GATES=','const tcRewardExitDismissedIds=new Set();']"
+          if old in s:s=s.replace(old,new,1)
+          elif new not in s: raise SystemExit('final invariant anchor missing')
+          p.write_text(s)
+          PY
+      - name: Build twice
+        run: |
+          python tarnished-covenant/build-launch-refresh.py
+          python tarnished-covenant/build-launch-refresh.py
+      - name: Test
+        run: |
+          python tarnished-covenant/test-reward-reveal-exit-hardening.py
+          python tarnished-covenant/test-shared-reward-draw.py
+          python tarnished-covenant/test-live-reward-watch.py
+          python tarnished-covenant/test-coop-world-clears.py
+          python tarnished-covenant/test-shared-post-battle-report.py
+          python tarnished-covenant/test-weapon-accessibility.py
+          python tarnished-covenant/test-regression-invariants.py
+          python tarnished-covenant/test-final-release-invariants.py
+      - name: JS syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          h=Path('tarnished-covenant/index.html').read_text();Path('/tmp/tc.js').write_text('\n'.join(re.findall(r'<script(?:[^>]*)>(.*?)</script>',h,flags=re.S)))
+          PY
+          node --check /tmp/tc.js
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tarnished-covenant/build-launch-refresh.py tarnished-covenant/index.html
+          if git diff --cached --quiet; then echo 'No generated changes'; else git commit -m 'Prevent shared reward reveal deadlocks'; git fetch origin tarnished-covenant-assets; git rebase origin/tarnished-covenant-assets; git push origin HEAD:tarnished-covenant-assets; fi
