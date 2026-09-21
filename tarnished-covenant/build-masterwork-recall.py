@@ -103,6 +103,38 @@ function tcMasterworkArsenalMarkup(state){
 }
 
 
+
+function tcWeaponRecallChoices(state,slot){
+  return (smithingData(state).masterworkRecalls||[]).filter(record=>record.owner===slot&&!record.used&&record.weapon!==state.current?.[slot]?.name);
+}
+function tcMountWeaponRecall(weaponPanel){
+  if(weaponPanel.querySelector('[data-open-weapon-recall]'))return;
+  const state=run?.state,slot=tcMasterworkSlotForIdentity();if(!state?.current||!slot)return;
+  const count=tcWeaponRecallChoices(state,slot).length,locked=tcEncounterMutationLocked(state);
+  const button=document.createElement('button');button.type='button';button.className='btn ghost small';button.dataset.openWeaponRecall='1';
+  button.textContent=`Masterwork Recall · ${count}`;
+  button.style.cssText='min-height:44px;margin-top:8px;width:100%;white-space:normal';
+  button.addEventListener('click',tcOpenWeaponRecall);
+  (weaponPanel.querySelector('.tc-weapon-appeal-actions')||weaponPanel).appendChild(button);
+  if(locked){const note=document.createElement('div');note.className='tc-muted';note.textContent='Recall locked after a world clear';button.after(note);}
+}
+function tcOpenWeaponRecall(){
+  const state=run?.state,c=state?.current,slot=tcMasterworkSlotForIdentity();if(!c||!slot)return;
+  const items=tcWeaponRecallChoices(state,slot),locked=tcEncounterMutationLocked(state),encounterId=c.id,expected=String(c[slot]?.name||'');
+  const el=tcStrategicOverlay('Masterwork Recall',`<p>Replace <strong>${h(playerLabel(slot,state))}’s ${h(expected)}</strong> with one of your Masterworks. No Appeal penalty or Masterwork credit cost. Each Recall can be used once.</p>${locked?`<p>${h(tcEncounterMutationLockMessage())}</p>`:''}<div class="tc-strategy-list">${items.length?items.map((record,i)=>`<div class="tc-panel soft"><strong>${h(record.weapon)}</strong><button type="button" class="btn ghost" data-weapon-recall-choice="${i}" ${locked?'disabled':''}>Swap to this weapon · Use Recall</button></div>`).join(''):'<p>No available Masterwork Recalls for your weapon. Masterwork a weapon from the victory report or Hewg’s Workbench to add one.</p>'}</div>`);
+  let busy=false;
+  el.querySelectorAll('[data-weapon-recall-choice]').forEach(button=>button.addEventListener('click',async()=>{
+    if(busy||pending)return;
+    const record=items[Number(button.dataset.weaponRecallChoice)],actor=playerName();
+    if(tcMasterworkSlotForIdentity(actor)!==slot)return;
+    const build=latest=>tcBuildMasterworkRecall(latest,encounterId,record.id,expected,slot,actor),next=build(run.state);
+    if(!next){el.remove();tcOpenWeaponRecall();return setToast('The encounter or Recall changed. Please check again.');}
+    busy=true;button.disabled=true;
+    try{const saved=await commit(next,{successToast:`${record.weapon} recalled. No Appeal penalty.`,retryBuilder:build});if(saved){el.remove();uiScreen='encounter';renderRun();}}
+    finally{busy=false;if(button.isConnected)button.disabled=false;}
+  }));
+}
+
 function tcPastMasterworkWeapons(state,slot){
   if(!['chase','morgan'].includes(slot))return [];
   const seen=new Set(),items=[];
@@ -177,6 +209,12 @@ for needle in [
   "retryBuilder:build",
 ]:
   if needle not in s:raise SystemExit('masterwork recall invariant missing: '+needle)
+
+# Mount beside Weapon Appeal; guard keeps repeated builds idempotent.
+mount="if(actions3||appealConfirm)weaponPanel.appendChild(appealBar);"
+if "tcMountWeaponRecall(weaponPanel);" not in s:
+    if mount not in s:raise SystemExit('weapon recall mount missing')
+    s=s.replace(mount,mount+"tcMountWeaponRecall(weaponPanel);",1)
 
 p.write_text(s)
 print('Masterwork Recall applied: exact owner-bound build, one use, no penalty, locked after first host-world clear.')
