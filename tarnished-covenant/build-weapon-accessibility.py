@@ -6,6 +6,12 @@ s=p.read_text()
 
 s=re.sub(r"\n?/\* --- Weapon accessibility and Appeal deck memory --- \*/.*?/\* --- End weapon accessibility and Appeal deck memory --- \*/\n?","\n",s,flags=re.S)
 
+# Repair the historical spreadsheet typo in generated pool data as well as the
+# durable source file. The runtime migration below remains as compatibility for
+# older cached pages/runs that may still carry the misspelled display name.
+s=s.replace('"Malekith\'s Black Blade"','"Maliketh\'s Black Blade"')
+s=s.replace('"malekith\'s black blade":','"maliketh\'s black blade":')
+
 js=r'''
 /* --- Weapon accessibility and Appeal deck memory --- */
 // Weapons whose normal acquisition route requires defeating a boss remain out
@@ -71,7 +77,7 @@ const TC_WEAPON_ACQUISITION_GATES={
   "Star Lined Sword":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}],
   "Dragon-Hunter's Great Katana":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}],
   "Flowerstone Gavel":[{name:'Bayle the Dread',region:'Dragon’s Pit + Jagged Peak · DLC'}],
-  "Red Bear's Claw":[{name:'Red Bear'}],
+  "Red Bear's Claw":[{name:'Rugalea the Great Red Bear',region:'Ancient Ruins of Rauh · DLC'}],
   "Death Knight's Longhaft Axe":[{name:'Death Knight',region:'Ancient Ruins of Rauh · DLC'}],
   "Leda's Sword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
   "Dane's Footwork":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
@@ -91,6 +97,17 @@ for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
   if(!Array.isArray(pool))continue;
   for(const boss of bosses)if(!pool.some(name=>tcWeaponBossKey(name)===tcWeaponBossKey(boss)))pool.push(boss);
 }
+
+// The spreadsheet once shipped Maliketh's weapon as "Malekith's Black Blade".
+// Canonicalize that legacy spelling so older source data cannot bypass the
+// acquisition gate while the corrected regional pool propagates everywhere.
+(function tcCanonicalizeMalikethWeapon(){
+  for(const region of Object.values(regions||{})){
+    for(const weapon of (region?.weapons||[])){
+      if(tcWeaponNameKey(weapon?.name)===tcWeaponNameKey("Malekith's Black Blade"))weapon.name="Maliketh's Black Blade";
+    }
+  }
+})();
 
 // Greatsword is ordinary carriage loot in Caelid and was present in the app's
 // original regional data before the spreadsheet pool accidentally displaced it.

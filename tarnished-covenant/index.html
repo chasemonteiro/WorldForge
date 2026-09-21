@@ -1575,6 +1575,54 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -1947,7 +1995,7 @@ regions['The Erdtree'] = {
   weapons: regions['Altus Plateau + Leyndell'].weapons
 };
 
-const SHEET_WEAPON_POOLS={"Limgrave + Stormveil":["Arbalest","Banished Knight's Halberd","Bloodhound's Fang","Brick Hammer","Broadsword","Caestus","Dragon Communion Seal","Erdtree Greatbow","Erdsteel Dagger","Flail","Godslayer's Seal","Golden Halberd","Greataxe","Great Épée","Halberd","Hand Axe","Highland Axe","Hookclaws","Large Club","Lance","Lordsworn's Greatsword","Misericorde","Parrying Dagger","Pike","Reduvia","Shamshir","Shortbow","Short Sword","Torch","Twinblade","Uchigatana","Club","Crescent Moon Axe","Dagger","Dismounter","Falchion","Forked Greatsword","Forked Hatchet","Golem Greatbow","Golem's Halberd","Glintstone Staff","Grave Scythe","Grossmesser","Heavy Crossbow","Knight's Greatsword","Lordsworn's Straight Sword","Noble's Estoc","Noble's Slender Sword","Omen Cleaver","Partisan","Pickaxe","Scimitar","Short Spear","Soldier's Crossbow","Spiked Club","Spear","Torchpole","Warhawk's Talon","Warpick","Weathered Straight Sword"],"Weeping Peninsula":["Banished Knight's Halberd (+8)","Claymore","Demi-Human Queen's Staff","Grafted Blade Greatsword","Hand Ballista","Iron Cleaver","Lordsworn's Straight Sword","Morning Star","Nightrider Flail","Rusted Anchor","Spiked Spear","Steel-Wire Torch","Whip","Winged Scythe","Zweihander"],"Liurnia of the Lakes":["Academy Glintstone Staff","Astrologer's Staff","Azur's Glintstone Staff","Banished Knight's Halberd","Carian Glintblade Staff","Carian Glintstone Staff","Carian Knight's Sword","Composite Bow","Crystal Knife","Crystal Staff","Crystal Sword","Dark Moon Greatsword","Estoc","Frozen Needle","Full Moon Crossbow","Glintstone Kris","Great Mace","Hoslow's Petal Whip","Icerind Hatchet","Iron Ball","Ivory Sickle","Lucerne","Magma Wyrm's Scalesword","Nightrider Glaive","Ornamental Straight Sword","Ripple Blade","Rosus' Axe","Royal Greatsword","Scythe","Serpent-God's Curved Sword","Sword of Night and Flame","Treespear","Troll Knight's Sword","Stormhawk Axe","Urumi","Vyke's War Spear","Watchdog's Staff","Chainlink Flail","Curved Club","Curved Great Club","Digger's Staff","Executioner's Greataxe","Forked Greatsword","Forked Hatchet","Glaive","Glintstone Staff","Grave Scythe","Great Knife","Heavy Crossbow","Knight's Greatsword","Lazuli Glintstone Sword","Monk's Flamemace","Noble's Estoc","Noble's Slender Sword","Partisan","Ripple Crescent Halberd","Spiked Spear","Stone Club","Warped Axe","Weathered Straight Sword"],"Caelid":["Cross-Naginata","Flamberge","Gargoyle's Blackblade","Gargoyle's Black Halberd","Godslayer's Greatsword","Katar","Lusat's Glintstone Staff","Meteoric Ore Blade","Meteorite Staff","Moonveil","Nox Flowing Sword","Regalia of Eochaid","Ruins Greatsword","Sword of St. Trina","Partisan","Serpent Bow","Staff of Loss","Venomous Fang","Wakizashi"],"Siofra River + Nokron":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Lake of Rot + Grand Cloister":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Deeproot Depths":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Altus Plateau + Leyndell":["Black Knife","Bloody Helice","Celebrant's Cleaver","Celebrant's Rib Rake","Celebrant's Sickle","Celebrant's Skull","Eleonora's Poleblade","Falchion","Godskin Peeler","Great Club","Marais Executioner's Sword","Nagakiba","Onyx Lord's Greatsword","Twinned Knight Swords","Giant Crusher"],"Mt. Gelmir":["Bloodhound Claws","Butchering Knife","Coil Shield","Jar Cannon","Mantis Blade","Noble Presence","Pulley Crossbow","Ringed Finger","Scavenger's Curved Sword","Serpentbone Blade","Serpent-Hunter","Great Omenkiller Cleaver","Spiked Club","Troll's Hammer","Family Heads","Ghiza's Wheel","Godskin Stitcher","Great Club","Hoslow's Petal Whip","Inquisitor's Girandole","Blasphemous Blade"],"Mountaintops of the Giants":["Cranial Vessel Candlestand","Eclipse Shotel","Giant's Seal","Rivers of Blood","Veteran's Prosthesis","Zamor Curved Sword"],"Mohgwyn Palace":["Varre's Bouqet"],"Miquella’s Haligtree":["Loretta's War Sickle","MIquellan Knight's Sword","Rotten Crystal Spear","Rotten Crystal Sword","Rotten Staff"],"Crumbling Farum Azula":["Malekith's Black Blade","Dragon King's Cragblade","Devourer's Scepter"],"Gravesite Plain · DLC":["Beast Claw","Black Steel Greathammer","Backhand Blade","Greatsword of Solitude","Bone Bow","Curseblade's Cirque","Bloodfiend's Arm","Great Katana","Pata","Firespark Perfume Bottle","Milady","Moonrithyll's Knight Sword","Spread Crossbow","Smithscript Dagger","Anvil Hammer","Messmer Soldier's Spear","Swift Spear","Death Knight's Twin-Axes","Poisoned Hand","Horned Warrior's Sword","Deadly Poison Perfume Bottle"],"Scadu Altus + Shadow Keep · DLC":["Carian Sorcery Sword","Smithscript Spear","Smithscript Cirque","Ancient Meteoric Ore Greatsword","Repeating Crossbow","Serpent Flail","Black Steel Twinblade","Dryleaf Arts","Messmer Soldier's Axe","Main-gauche","Fire Knight's Greatsword","Fire Knight's Shortsword","Stone-Sheathed Sword","Sword of Light","Sword of Darkness","Ansbach's Longbow","Bonny Butchering Knife","Tooth Whip","Rabbath's Cannon","Claws of Night","Maternal Staff","Sword of Night","Queelign's Greatsword","Fire Knight's Seal","Lightning Perfume Bottle","Dryleaf Seal","Rakshasa's Great Katana","Forked-Tongue Hatchet","Lizard Greatsword","Barbed Staff-Spear"],"Cerulean Coast · DLC":["Spirit Glaive","Dancing Blade of Rannah","Spirit Sword","Star Lined Sword","Chilling Perfume Bottle","Lamenting Visage","Velvet Sword of St. Trina"],"Dragon’s Pit + Jagged Peak · DLC":["Igon's Greatbow","Dragon-Hunter's Great Katana","Flowerstone Gavel"],"Abyssal Woods · DLC":["Madding Hand","Frenzyflame Perfume Bottle","Nanaya's Torch"],"Ancient Ruins of Rauh · DLC":["Bloodfiend's Fork","Bloodfiend's Sacred Spear","Smithscript Axe","Smithscript Greathammer","Golem Fist","Red Bear's Claw","Spiraltree Seal","Death Knight's Longhaft Axe","Devonia's Hammer","Euporia","Horned Warrior's Greatsword","Leda's Sword","Freyja's Greatsword","Falx","Dane's Footwork","Obsidian Lamina","Thiollier's Hidden Needle"],"Enir-Ilim · DLC":["Bloodfiend's Fork","Bloodfiend's Sacred Spear","Smithscript Axe","Smithscript Greathammer","Golem Fist","Red Bear's Claw","Spiraltree Seal","Death Knight's Longhaft Axe","Devonia's Hammer","Euporia","Horned Warrior's Greatsword","Leda's Sword","Freyja's Greatsword","Falx","Dane's Footwork","Obsidian Lamina","Thiollier's Hidden Needle"]};
+const SHEET_WEAPON_POOLS={"Limgrave + Stormveil":["Arbalest","Banished Knight's Halberd","Bloodhound's Fang","Brick Hammer","Broadsword","Caestus","Dragon Communion Seal","Erdtree Greatbow","Erdsteel Dagger","Flail","Godslayer's Seal","Golden Halberd","Greataxe","Great Épée","Halberd","Hand Axe","Highland Axe","Hookclaws","Large Club","Lance","Lordsworn's Greatsword","Misericorde","Parrying Dagger","Pike","Reduvia","Shamshir","Shortbow","Short Sword","Torch","Twinblade","Uchigatana","Club","Crescent Moon Axe","Dagger","Dismounter","Falchion","Forked Greatsword","Forked Hatchet","Golem Greatbow","Golem's Halberd","Glintstone Staff","Grave Scythe","Grossmesser","Heavy Crossbow","Knight's Greatsword","Lordsworn's Straight Sword","Noble's Estoc","Noble's Slender Sword","Omen Cleaver","Partisan","Pickaxe","Scimitar","Short Spear","Soldier's Crossbow","Spiked Club","Spear","Torchpole","Warhawk's Talon","Warpick","Weathered Straight Sword"],"Weeping Peninsula":["Banished Knight's Halberd (+8)","Claymore","Demi-Human Queen's Staff","Grafted Blade Greatsword","Hand Ballista","Iron Cleaver","Lordsworn's Straight Sword","Morning Star","Nightrider Flail","Rusted Anchor","Spiked Spear","Steel-Wire Torch","Whip","Winged Scythe","Zweihander"],"Liurnia of the Lakes":["Academy Glintstone Staff","Astrologer's Staff","Azur's Glintstone Staff","Banished Knight's Halberd","Carian Glintblade Staff","Carian Glintstone Staff","Carian Knight's Sword","Composite Bow","Crystal Knife","Crystal Staff","Crystal Sword","Dark Moon Greatsword","Estoc","Frozen Needle","Full Moon Crossbow","Glintstone Kris","Great Mace","Hoslow's Petal Whip","Icerind Hatchet","Iron Ball","Ivory Sickle","Lucerne","Magma Wyrm's Scalesword","Nightrider Glaive","Ornamental Straight Sword","Ripple Blade","Rosus' Axe","Royal Greatsword","Scythe","Serpent-God's Curved Sword","Sword of Night and Flame","Treespear","Troll Knight's Sword","Stormhawk Axe","Urumi","Vyke's War Spear","Watchdog's Staff","Chainlink Flail","Curved Club","Curved Great Club","Digger's Staff","Executioner's Greataxe","Forked Greatsword","Forked Hatchet","Glaive","Glintstone Staff","Grave Scythe","Great Knife","Heavy Crossbow","Knight's Greatsword","Lazuli Glintstone Sword","Monk's Flamemace","Noble's Estoc","Noble's Slender Sword","Partisan","Ripple Crescent Halberd","Spiked Spear","Stone Club","Warped Axe","Weathered Straight Sword"],"Caelid":["Cross-Naginata","Flamberge","Gargoyle's Blackblade","Gargoyle's Black Halberd","Godslayer's Greatsword","Katar","Lusat's Glintstone Staff","Meteoric Ore Blade","Meteorite Staff","Moonveil","Nox Flowing Sword","Regalia of Eochaid","Ruins Greatsword","Sword of St. Trina","Partisan","Serpent Bow","Staff of Loss","Venomous Fang","Wakizashi"],"Siofra River + Nokron":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Lake of Rot + Grand Cloister":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Deeproot Depths":["Ghostflame Torch","Iron Spear","Nox Flowing Hammer","Horn Bow","Greathorn Hammer","Shotel","Dragon Halberd","Gargoyle's Twinblade","Gargoyle's Greatsword","Alabaster Lord's Sword","Clayman's Harpoon"],"Altus Plateau + Leyndell":["Black Knife","Bloody Helice","Celebrant's Cleaver","Celebrant's Rib Rake","Celebrant's Sickle","Celebrant's Skull","Eleonora's Poleblade","Falchion","Godskin Peeler","Great Club","Marais Executioner's Sword","Nagakiba","Onyx Lord's Greatsword","Twinned Knight Swords","Giant Crusher"],"Mt. Gelmir":["Bloodhound Claws","Butchering Knife","Coil Shield","Jar Cannon","Mantis Blade","Noble Presence","Pulley Crossbow","Ringed Finger","Scavenger's Curved Sword","Serpentbone Blade","Serpent-Hunter","Great Omenkiller Cleaver","Spiked Club","Troll's Hammer","Family Heads","Ghiza's Wheel","Godskin Stitcher","Great Club","Hoslow's Petal Whip","Inquisitor's Girandole","Blasphemous Blade"],"Mountaintops of the Giants":["Cranial Vessel Candlestand","Eclipse Shotel","Giant's Seal","Rivers of Blood","Veteran's Prosthesis","Zamor Curved Sword"],"Mohgwyn Palace":["Varre's Bouqet"],"Miquella’s Haligtree":["Loretta's War Sickle","MIquellan Knight's Sword","Rotten Crystal Spear","Rotten Crystal Sword","Rotten Staff"],"Crumbling Farum Azula":["Maliketh's Black Blade","Dragon King's Cragblade","Devourer's Scepter"],"Gravesite Plain · DLC":["Beast Claw","Black Steel Greathammer","Backhand Blade","Greatsword of Solitude","Bone Bow","Curseblade's Cirque","Bloodfiend's Arm","Great Katana","Pata","Firespark Perfume Bottle","Milady","Moonrithyll's Knight Sword","Spread Crossbow","Smithscript Dagger","Anvil Hammer","Messmer Soldier's Spear","Swift Spear","Death Knight's Twin-Axes","Poisoned Hand","Horned Warrior's Sword","Deadly Poison Perfume Bottle"],"Scadu Altus + Shadow Keep · DLC":["Carian Sorcery Sword","Smithscript Spear","Smithscript Cirque","Ancient Meteoric Ore Greatsword","Repeating Crossbow","Serpent Flail","Black Steel Twinblade","Dryleaf Arts","Messmer Soldier's Axe","Main-gauche","Fire Knight's Greatsword","Fire Knight's Shortsword","Stone-Sheathed Sword","Sword of Light","Sword of Darkness","Ansbach's Longbow","Bonny Butchering Knife","Tooth Whip","Rabbath's Cannon","Claws of Night","Maternal Staff","Sword of Night","Queelign's Greatsword","Fire Knight's Seal","Lightning Perfume Bottle","Dryleaf Seal","Rakshasa's Great Katana","Forked-Tongue Hatchet","Lizard Greatsword","Barbed Staff-Spear"],"Cerulean Coast · DLC":["Spirit Glaive","Dancing Blade of Rannah","Spirit Sword","Star Lined Sword","Chilling Perfume Bottle","Lamenting Visage","Velvet Sword of St. Trina"],"Dragon’s Pit + Jagged Peak · DLC":["Igon's Greatbow","Dragon-Hunter's Great Katana","Flowerstone Gavel"],"Abyssal Woods · DLC":["Madding Hand","Frenzyflame Perfume Bottle","Nanaya's Torch"],"Ancient Ruins of Rauh · DLC":["Bloodfiend's Fork","Bloodfiend's Sacred Spear","Smithscript Axe","Smithscript Greathammer","Golem Fist","Red Bear's Claw","Spiraltree Seal","Death Knight's Longhaft Axe","Devonia's Hammer","Euporia","Horned Warrior's Greatsword","Leda's Sword","Freyja's Greatsword","Falx","Dane's Footwork","Obsidian Lamina","Thiollier's Hidden Needle"],"Enir-Ilim · DLC":["Bloodfiend's Fork","Bloodfiend's Sacred Spear","Smithscript Axe","Smithscript Greathammer","Golem Fist","Red Bear's Claw","Spiraltree Seal","Death Knight's Longhaft Axe","Devonia's Hammer","Euporia","Horned Warrior's Greatsword","Leda's Sword","Freyja's Greatsword","Falx","Dane's Footwork","Obsidian Lamina","Thiollier's Hidden Needle"]};
 const SHEET_BOSS_POOLS={"Limgrave + Stormveil":["Beastman of Farum Azula","Bell Bearing Hunter","Black Knife Assassin","Bloodhound Knight Darriwil","Crucible Knight","Deathbird","Demi-Human Chief","Erdtree Burial Watchdog (Stormfoot Catacombs)","Flying Dragon Agheel","Grafted Scion","Grave Warden Duelist","Guardian Golem","Mad Pumpkin Head","Margit, The Fell Omen","Night's Cavalry","Patches","Soldier of Godrick","Stonedigger Troll","Tibia Mariner","Tree Sentinel","Ulcerated Tree Spirit"],"Weeping Peninsula":["Ancient Hero of Zamor","Cemetery Shade","Deathbird","Erdtree Avatar","Erdtree Burial Watchdog (Impaler's Catacombs)","Miranda the Blighted Bloom","Night's Cavalry","Runebear","Scaly Misbegotten"],"Liurnia of the Lakes":["Adan, Thief of Fire","Alecto, Black Knife Ringleader","Bell Bearing Hunter","Black Knife Assassin","Bloodhound Knight","Bols, Carian Knight","Cemetery Shade","Cleanrot Knight","Crystalian","Crystalian Spear & Crystalian Staff (Duo)","Death Rite Bird","Deathbird","Erdtree Avatar (Liurnia Northeast)","Erdtree Avatar(Liurnia Southwest)","Erdtree Burial Watchdog","Glintstone Dragon Adula","Glintstone Dragon Smarag","Magma Wyrm Makar","Night's Cavalry (Liurnia North)","Night's Cavalry (Liurnia South)","Omenkiller","Onyx Lord","Red Wolf of Radagon","Royal Knight Loretta","Royal Revenant","Spirit-Caller Snail","Tibia Mariner"],"Caelid":["Cemetery Shade","Commander O'Neil","Crucible Knight and Misbegotten Warrior","Death Rite Bird","Decaying Ekzykes","Erdtree Burial Watchdog (Duo)","Fallingstar Beast","Frenzied Duelist","Mad Pumpkin Heads","Magma Wyrm","Night's Cavalry (Caelid)","Nox Swordstress & Nox Monk","Putrid Avatar","Battlemage Hugues","Beastman of Farum Azula (Duo)","Bell Bearing Hunter","Black Blade Kindred","Cleanrot Knight (Duo)","Flying Dragon Greyll","Godskin Apostle","Night's Cavalry (Dragonbarrow)","Putrid Crystalian Trio","Putrid Tree Spirit"],"Altus Plateau + Leyndell":["Ancient Dragon Lansseax","Ancient Hero of Zamor","Black Knife Assassin (Sage's Cave)","Black Knife Assassin (Sainted Hero's Grave)","Crystalian Spear & Crystalian Ringblade","Demi-Human Queen Gilika","Elemer of the Briar","Erdtree Burial Watchdog","Fallingstar Beast","Godefroy the Grafted","Godskin Apostle","Necromancer Garris","Night's Cavalry","Omenkiller & Miranda the Blighted Bloom","Perfumer Tricia and Misbegotten Warrior","Sanguine Noble","Stonedigger Troll","Tibia Mariner","Tree Sentinel (Duo)","Wormface","Bell Bearing Hunter","Crucible Knight & Crucible Knight Ordovis","Deathbird","Draconic Tree Sentinel","Fell Twins","Grave Warden Duelist","Onyx Lord","Esgar, Priest of Blood","Godfrey, First Elden Lord","Mohg, the Omen"],"Mt. Gelmir":["Abductor Virgins (Duo)","Demi-Human Queen Maggie","Demi-Human Queen Margot","Full-Grown Fallingstar Beast","Godskin Noble","Kindred of Rot (Duo)","Magma Wyrm (Fort Laiedd)","Red Wolf of the Champion","Ulcerated Tree Spirit"],"Mountaintops of the Giants":["Ancient Hero of Zamor","Borealis the Freezing Fog","Commander Niall","Death Rite Bird","Erdtree Avatar","Godskin Apostle and Godskin Noble (Spiritcaller Snail)","Ulcerated Tree Spirit","Vyke, Knight of the Roundtable","Black Blade Kindred","Night's Cavalry","Stray Mimic Tear","Astel, Stars of Darkness","Great Wyrm Theodorix","Misbegotten Crusader","Night's Cavalry (Duo)","Putrid Avatar","Putrid Grave Warden Duelist"],"Mohgwyn Palace":[],"Miquella’s Haligtree":["Loretta, Knight of the Haligtree"],"Crumbling Farum Azula":["Dragonlord Placidusax","Godskin Duo"],"Leyndell, Ashen Capital":["Sir Gideon Ofnir, the All-Knowing"],"Gravesite Plain · DLC":["Blackgaol Knight","Chief Bloodfiend","Demi-Human Swordmaster Onze","Divine Beast Dancing Lion","Ghostflame Dragon","Red Bear"],"Scadu Altus + Shadow Keep · DLC":["Black Knight Edredd","Black Knight Garrew","Count Ymir, Mother of Fingers","Curseblade Labirith","Death Knight","Dryleaf Dane","Ghostflame Dragon","Golden Hippopotamus","Metyr, Mother of Fingers","Rakshasa","Jori, Elder Inquisitor","Ralva the Great Red Bear","Fallingstar Beast","Scadutree Avatar","Commander Gaius","Tree Sentinel"],"Cerulean Coast · DLC":["Dancer of Ranah","Demi-Human Queen Marigga","Ghostflame Dragon","Death Rite Bird","Lamenter","Tibia Mariner"],"Dragon’s Pit + Jagged Peak · DLC":["Ancient Dragon-Man","Ancient Dragon Senessax","Jagged Peak Drake"],"Abyssal Woods · DLC":[],"Siofra River + Nokron":["Ancestor Spirit","Dragonkin Soldier","Mimic Tear","Valiant Gargoyle & Valiant Gargoyle (Twinblade)"],"Lake of Rot + Grand Cloister":["Dragonkin Soldier","Dragonkin Soldier of Nokstella"],"Deeproot Depths":["Crucible Knight Siluria","Fia's champions"],"Ancient Ruins of Rauh · DLC":["Death Knight","Rugalea the Great Red Bear","Divine Beast Dancing Lion"],"Enir-Ilim · DLC":["Leda and Allies"]};
 
 // Spreadsheet-backed regional pools.
@@ -1982,7 +2030,7 @@ const WEAPON_TARGET_BLOCKS = {
   "godslayer's greatsword": 'godskin apostle',
   'blasphemous blade': 'rykard',
   "loretta's war sickle": 'loretta, knight of the haligtree',
-  "malekith's black blade": 'maliketh',
+  "maliketh's black blade": 'maliketh',
   "dragon king's cragblade": 'placidusax',
   "dragon-hunter's great katana": 'ancient dragon-man',
   "leda's sword": 'leda and allies',
@@ -5252,6 +5300,9 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -6314,256 +6365,96 @@ renderRun=function(){
 
 
 
-/* --- Weapon accessibility and Appeal deck memory --- */
-// Weapons whose normal acquisition route requires defeating a boss remain out
-// of the Covenant armory until that concrete boss kill is recorded. The gate
-// model is intentionally data-driven so later regions can add acquisition rules
-// without rewriting the draw engine.
-const TC_WEAPON_ACQUISITION_GATES={
-  "Bloodhound's Fang":[{name:'Bloodhound Knight Darriwil',region:'Limgrave + Stormveil'}],
-  "Golden Halberd":[{name:'Tree Sentinel',region:'Limgrave + Stormveil'}],
-  "Grafted Blade Greatsword":[{name:'Leonine Misbegotten',region:'Weeping Peninsula'}],
-  "Nightrider Flail":[{name:"Night's Cavalry",region:'Weeping Peninsula'}],
-  "Magma Wyrm's Scalesword":[{name:'Magma Wyrm Makar',region:'Liurnia of the Lakes'}],
-  "Nightrider Glaive":[{name:"Night's Cavalry (Liurnia North)",region:'Liurnia of the Lakes'}],
-  "Ornamental Straight Sword":[{name:'Grafted Scion',region:'Limgrave + Stormveil'}],
-  "Dark Moon Greatsword":[{name:'Astel, Naturalborn of the Void',region:'Lake of Rot + Grand Cloister'}],
 
-  "Gargoyle's Blackblade":[{name:'Black Blade Kindred',region:'Caelid'}],
-  "Gargoyle's Black Halberd":[{name:'Black Blade Kindred',region:'Caelid'}],
-  "Godslayer's Greatsword":[{name:'Godskin Apostle',region:'Caelid'}],
-  "Lusat's Glintstone Staff":[{name:'Nox Swordstress & Nox Monk',region:'Caelid'}],
-  "Moonveil":[{name:'Magma Wyrm',region:'Caelid'}],
-  "Nox Flowing Sword":[{name:'Nox Swordstress & Nox Monk',region:'Caelid'}],
-  "Regalia of Eochaid":[{name:'Frenzied Duelist',region:'Caelid'}],
-  "Ruins Greatsword":[{name:'Crucible Knight and Misbegotten Warrior',region:'Caelid'}],
 
-  "Dragon Halberd":[{name:'Dragonkin Soldier',region:'Siofra River + Nokron'}],
-  "Gargoyle's Twinblade":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}],
-  "Gargoyle's Greatsword":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}],
-  "Alabaster Lord's Sword":[{name:'Alabaster Lord',region:'Lake of Rot + Grand Cloister'}],
 
-  "Black Knife":[{name:"Black Knife Assassin (Sainted Hero's Grave)",region:'Altus Plateau + Leyndell'}],
-  "Bloody Helice":[{name:'Sanguine Noble',region:'Altus Plateau + Leyndell'}],
-  "Godskin Peeler":[{name:'Godskin Apostle',region:'Altus Plateau + Leyndell'}],
-  "Great Club":[{name:'Stonedigger Troll',region:'Altus Plateau + Leyndell'}],
-  "Marais Executioner's Sword":[{name:'Elemer of the Briar',region:'Altus Plateau + Leyndell'}],
-  "Onyx Lord's Greatsword":[{name:'Onyx Lord',region:'Altus Plateau + Leyndell'}],
-  "Family Heads":[{name:'Necromancer Garris',region:'Altus Plateau + Leyndell'}],
-  "Jar Cannon":[{name:'Demi-Human Queen Margot',region:'Mt. Gelmir'}],
-  "Godskin Stitcher":[{name:'Godskin Noble',region:'Mt. Gelmir'}],
-  "Inquisitor's Girandole":[{name:'Abductor Virgins (Duo)',region:'Mt. Gelmir'}],
-  "Blasphemous Blade":[{name:'Rykard, Lord of Blasphemy',region:'Mt. Gelmir'}],
 
-  "Veteran's Prosthesis":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
-  "Zamor Curved Sword":[{name:'Ancient Hero of Zamor',region:'Mountaintops of the Giants'}],
-  "Loretta's War Sickle":[{name:'Loretta, Knight of the Haligtree',region:'Miquella’s Haligtree'}],
-  "Maliketh's Black Blade":[{name:'Maliketh, the Black Blade',region:'Crumbling Farum Azula'}],
-  "Dragon King's Cragblade":[{name:'Dragonlord Placidusax',region:'Crumbling Farum Azula'}],
 
-  "Greatsword of Solitude":[{name:'Blackgaol Knight',region:'Gravesite Plain · DLC'}],
-  "Death Knight's Twin-Axes":[{name:'Death Knight',region:'Gravesite Plain · DLC'}],
-  "Dryleaf Arts":[{name:'Dryleaf Dane',region:'Scadu Altus + Shadow Keep · DLC'}],
-  "Rakshasa's Great Katana":[{name:'Rakshasa',region:'Scadu Altus + Shadow Keep · DLC'}],
-  "Barbed Staff-Spear":[{name:'Jori, Elder Inquisitor',region:'Scadu Altus + Shadow Keep · DLC'}],
-  "Maternal Staff":[
-    {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
-    {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
-  ],
-  "Sword of Night":[
-    {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
-    {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
-  ],
-  "Dancing Blade of Rannah":[{name:'Dancer of Ranah',region:'Cerulean Coast · DLC'}],
-  "Star Lined Sword":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}],
-  "Dragon-Hunter's Great Katana":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}],
-  "Flowerstone Gavel":[{name:'Bayle the Dread',region:'Dragon’s Pit + Jagged Peak · DLC'}],
-  "Red Bear's Claw":[{name:'Red Bear'}],
-  "Death Knight's Longhaft Axe":[{name:'Death Knight',region:'Ancient Ruins of Rauh · DLC'}],
-  "Leda's Sword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
-  "Dane's Footwork":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
-  "Freyja's Greatsword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
-  "Obsidian Lamina":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}],
-  "Thiollier's Hidden Needle":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}]
-};
 
-// Two spreadsheet imports had weapon rewards without their acquisition boss in
-// the active boss pool. Restore those bosses so the gate can actually be earned.
-const TC_ACQUISITION_BOSS_RESTORES={
-  'Lake of Rot + Grand Cloister':['Alabaster Lord'],
-  'Gravesite Plain · DLC':['Death Knight']
-};
-for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
-  const pool=regions?.[regionName]?.bosses;
-  if(!Array.isArray(pool))continue;
-  for(const boss of bosses)if(!pool.some(name=>tcWeaponBossKey(name)===tcWeaponBossKey(boss)))pool.push(boss);
-}
 
-// Greatsword is ordinary carriage loot in Caelid and was present in the app's
-// original regional data before the spreadsheet pool accidentally displaced it.
-(function tcRestoreCaelidGreatsword(){
-  const pool=regions?.['Caelid']?.weapons;
-  if(!Array.isArray(pool)||pool.some(w=>w?.name==='Greatsword'))return;
-  const restored=typeof sheetWeapon==='function'?sheetWeapon('Greatsword'):W('Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)');
-  pool.push(restored);
-})();
 
-function tcWeaponBossKey(name){
-  if(typeof tcBossKey==='function')return tcBossKey(name);
-  return String(name||'').toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9]+/g,' ').trim();
-}
-function tcWeaponNameKey(name){
-  return String(name||'')
-    .replace(/\s*\(\+\d+\)\s*$/,'')
-    .toLowerCase()
-    .replace(/[’‘]/g,"'")
-    .replace(/[‐‑‒–—-]/g,' ')
-    .replace(/[^a-z0-9']+/g,' ')
-    .replace(/\s+/g,' ')
-    .trim();
-}
-const TC_WEAPON_ACQUISITION_GATE_INDEX=new Map(
-  Object.entries(TC_WEAPON_ACQUISITION_GATES).map(([name,requirements])=>[tcWeaponNameKey(name),requirements])
-);
-function tcWeaponAcquisitionRequirements(weapon){
-  const requirements=[...(TC_WEAPON_ACQUISITION_GATE_INDEX.get(tcWeaponNameKey(weapon?.name))||[])];
-  const inline=String(weapon?.requires||'').trim();
-  if(inline&&!requirements.some(req=>tcWeaponBossKey(req?.name)===tcWeaponBossKey(inline)))requirements.push({name:inline});
-  return requirements;
-}
-function tcRecordedBossDefeated(state,requirement){
-  const wanted=[requirement?.name,...(Array.isArray(requirement?.aliases)?requirement.aliases:[])].filter(Boolean).map(tcWeaponBossKey);
-  const region=requirement?.region||'';
-  if(!wanted.length)return true;
-  const matches=entry=>entry&&wanted.includes(tcWeaponBossKey(entry.name))&&(!region||entry.region===region);
-  if((state?.history||[]).some(matches))return true;
-  if((state?.sanctionedBossKills||[]).some(matches))return true;
-  if((state?.appealPenaltyBossKills||[]).some(matches))return true;
-  return false;
-}
-function tcWeaponAcquisitionUnlocked(state,weapon){
-  const gates=tcWeaponAcquisitionRequirements(weapon);
-  return !gates.length||gates.every(req=>tcRecordedBossDefeated(state,req));
-}
-function tcLegalRegionWeapons(state,regionName,target){
-  const region=regions?.[regionName];
-  if(!region)return [];
-  return (region.weapons||[]).filter(w=>!weaponBlockedByTarget(w,target)&&tcWeaponAcquisitionUnlocked(state,w));
-}
-function tcLegalAccumulatedWeaponPool(state,target){
-  const regionNames=Array.from(new Set([...(state?.clearedRegions||[]),state?.region].filter(Boolean)));
-  const byName=new Map();
-  for(const regionName of regionNames){
-    for(const weapon of tcLegalRegionWeapons(state,regionName,target))if(!byName.has(weapon.name))byName.set(weapon.name,weapon);
-  }
-  return [...byName.values()];
-}
-function tcAppealSeenWeapons(state){
-  return new Set(Array.isArray(state?.current?.appealedWeaponNames)?state.current.appealedWeaponNames:[]);
-}
-function tcBuildWeaponPairFromCandidate(pair){
-  if(!pair?.chaseWeapon||!pair?.morganWeapon)return null;
-  return {chase:buildFromWeapon(pair.chaseWeapon),morgan:buildFromWeapon(pair.morganWeapon)};
-}
 
-// Make every downstream accumulated-pool caller acquisition-aware.
-const tcAccumulatedWeaponPoolBeforeAccess=accumulatedWeaponPool;
-accumulatedWeaponPool=function(state,target){
-  const legal=tcLegalAccumulatedWeaponPool(state,target);
-  return legal.length?legal:tcAccumulatedWeaponPoolBeforeAccess(state,target).filter(w=>tcWeaponAcquisitionUnlocked(state,w));
-};
 
-// New encounters burn through fresh, obtainable weapons in the present region
-// first, then fall back to obtainable weapons from regions already reached.
-// IMPORTANT: bestPairFromPool returns raw weapon candidates; newEncounter expects
-// fully built {chase,morgan} assignments. Never leak the raw pair shape.
-const tcChooseWeaponPairBeforeAccess=chooseWeaponPair;
-chooseWeaponPair=function(state,target){
-  const currentPool=tcLegalRegionWeapons(state,state.region,target),used=usedWeaponNames(state),unusedCurrent=currentPool.filter(w=>!used.has(w.name));
-  let pair=null;
-  if(unusedCurrent.length>=2)pair=bestPairFromPool(state,unusedCurrent,unusedCurrent);
-  else if(unusedCurrent.length===1){
-    const fallback=tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name&&!used.has(w.name));
-    const broad=fallback.length?fallback:tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name);
-    if(broad.length)pair=Math.random()<0.5?bestPairFromPool(state,unusedCurrent,broad):bestPairFromPool(state,broad,unusedCurrent);
-  }
-  if(!pair){
-    const all=tcLegalAccumulatedWeaponPool(state,target),unused=all.filter(w=>!used.has(w.name));
-    const pool=unused.length>=2?unused:all;
-    if(pool.length>=2)pair=bestPairFromPool(state,pool,pool);
-  }
-  const built=tcBuildWeaponPairFromCandidate(pair);
-  if(built)return built;
 
-  // A legacy result is acceptable only if it already contains two complete
-  // builds and both named weapons are legal under the acquisition gate model.
-  const legacy=tcChooseWeaponPairBeforeAccess(state,target);
-  if(legacy?.chase?.name&&legacy?.morgan?.name){
-    const legalNames=new Set(tcLegalAccumulatedWeaponPool(state,target).map(w=>w.name));
-    if(legalNames.has(legacy.chase.name)&&legalNames.has(legacy.morgan.name))return legacy;
-  }
-  throw new Error('Covenant armory could not produce two legally obtainable weapon assignments. Encounter creation was stopped before saving malformed state.');
-};
 
-// Defense in depth: a future armory patch must never be able to serialize an
-// encounter that the Encounter tab cannot render.
-const tcNewEncounterBeforeWeaponAccessGuard=newEncounter;
-newEncounter=function(state){
-  const encounter=tcNewEncounterBeforeWeaponAccessGuard(state);
-  if(!encounter?.chase?.name||!encounter?.morgan?.name){
-    throw new Error('Covenant refused to save an encounter without two valid weapon assignments.');
-  }
-  return encounter;
-};
 
-// Appeals remember every weapon rejected during the current encounter. They
-// keep drawing forward through the legal deck instead of circling back to a
-// weapon that was already appealed away.
-const tcMakeBuildBeforeAccess=makeBuild;
-makeBuild=function(regionName,target,avoidNames=[],state=null){
-  if(!state)return tcMakeBuildBeforeAccess(regionName,target,avoidNames,state);
-  const avoided=new Set(Array.isArray(avoidNames)?avoidNames:[avoidNames]);
-  for(const name of tcAppealSeenWeapons(state))avoided.add(name);
-  let pool=tcLegalRegionWeapons(state,regionName,target).filter(w=>!avoided.has(w.name));
-  const unused=pool.filter(w=>!usedWeaponNames(state).has(w.name));
-  if(unused.length)pool=unused;
-  else{
-    const accumulated=tcLegalAccumulatedWeaponPool(state,target).filter(w=>!avoided.has(w.name));
-    const accumulatedUnused=accumulated.filter(w=>!usedWeaponNames(state).has(w.name));
-    pool=accumulatedUnused.length?accumulatedUnused:accumulated;
-  }
-  if(!pool.length){
-    const legal=tcLegalAccumulatedWeaponPool(state,target).filter(w=>!new Set(Array.isArray(avoidNames)?avoidNames:[avoidNames]).has(w.name));
-    if(legal.length)pool=legal;
-  }
-  if(!pool.length)throw new Error('No legally obtainable Covenant weapon is available for this appeal.');
-  return buildFromWeapon(pick(pool));
-};
 
-const tcChangeWeaponsBeforeAccess=changeWeapons;
-changeWeapons=function(state,actor,which,useWaiver=false){
-  const prepared=structuredClone(state),c=prepared?.current;
-  if(c){
-    const seen=new Set(Array.isArray(c.appealedWeaponNames)?c.appealedWeaponNames:[]);
-    if((which==='chase'||which==='both')&&c.chase?.name)seen.add(c.chase.name);
-    if((which==='morgan'||which==='both')&&c.morgan?.name)seen.add(c.morgan.name);
-    c.appealedWeaponNames=[...seen];
-  }
-  return tcChangeWeaponsBeforeAccess(prepared,actor,which,useWaiver);
-};
 
-// Joint Appeal uses the same legal draw engine and should also retire the two
-// rejected assignments from the encounter's Appeal deck.
-const tcBuildJointAppealBeforeWeaponAccess=tcBuildJointAppeal;
-tcBuildJointAppeal=function(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor){
-  const next=tcBuildJointAppealBeforeWeaponAccess(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor);
-  if(next?.current){
-    const seen=new Set(Array.isArray(next.current.appealedWeaponNames)?next.current.appealedWeaponNames:[]);
-    if(oldChase)seen.add(oldChase);if(oldMorgan)seen.add(oldMorgan);next.current.appealedWeaponNames=[...seen];
-  }
-  return next;
-};
-/* --- End weapon accessibility and Appeal deck memory --- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* --- Shared reward reveal exit hardening --- */
@@ -8079,8 +7970,271 @@ function tcOpenAppealBossPicker(penanceId){
 penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.state;return `<section class="curse-section"><div class="section-kicker redtext">armament penalties</div><div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>${c.penances.map((p,i)=>{const needs=tcPenanceNeedsBossRecord(p),rec=tcPenanceBossRecord(state,p);return `<div class="penance-item"><div class="scope">${h(personalizePlayers(p.scope,state))} · penalty ${i+1}</div><div class="penance-name">${h(p.name)}</div><div class="penance-text">${h(personalizePlayers(p.text,state))}</div>${needs?`<div class="tc-penalty-boss-record">${rec?`<strong>Extra boss recorded</strong><span>${h(rec.name)} · ${h(rec.region)}</span>`:`<strong>Extra boss still unrecorded</strong><span>Once you kill the required extra boss, put the specific kill on file.</span><button type="button" class="btn ghost small" data-record-appeal-boss="${h(p.id)}">Record Extra Boss Kill</button>`}</div>`:''}</div>`}).join('')}<div class="subtext">Penalties stack until the current target is defeated.</div></section>`;};
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
+
+/* --- Weapon accessibility and Appeal deck memory --- */
+// Weapons whose normal acquisition route requires defeating a boss remain out
+// of the Covenant armory until that concrete boss kill is recorded. The gate
+// model is intentionally data-driven so later regions can add acquisition rules
+// without rewriting the draw engine.
+const TC_WEAPON_ACQUISITION_GATES={
+  "Bloodhound's Fang":[{name:'Bloodhound Knight Darriwil',region:'Limgrave + Stormveil'}],
+  "Golden Halberd":[{name:'Tree Sentinel',region:'Limgrave + Stormveil'}],
+  "Grafted Blade Greatsword":[{name:'Leonine Misbegotten',region:'Weeping Peninsula'}],
+  "Nightrider Flail":[{name:"Night's Cavalry",region:'Weeping Peninsula'}],
+  "Magma Wyrm's Scalesword":[{name:'Magma Wyrm Makar',region:'Liurnia of the Lakes'}],
+  "Nightrider Glaive":[{name:"Night's Cavalry (Liurnia North)",region:'Liurnia of the Lakes'}],
+  "Ornamental Straight Sword":[{name:'Grafted Scion',region:'Limgrave + Stormveil'}],
+  "Dark Moon Greatsword":[{name:'Astel, Naturalborn of the Void',region:'Lake of Rot + Grand Cloister'}],
+
+  "Gargoyle's Blackblade":[{name:'Black Blade Kindred',region:'Caelid'}],
+  "Gargoyle's Black Halberd":[{name:'Black Blade Kindred',region:'Caelid'}],
+  "Godslayer's Greatsword":[{name:'Godskin Apostle',region:'Caelid'}],
+  "Lusat's Glintstone Staff":[{name:'Nox Swordstress & Nox Monk',region:'Caelid'}],
+  "Moonveil":[{name:'Magma Wyrm',region:'Caelid'}],
+  "Nox Flowing Sword":[{name:'Nox Swordstress & Nox Monk',region:'Caelid'}],
+  "Regalia of Eochaid":[{name:'Frenzied Duelist',region:'Caelid'}],
+  "Ruins Greatsword":[{name:'Crucible Knight and Misbegotten Warrior',region:'Caelid'}],
+
+  "Dragon Halberd":[{name:'Dragonkin Soldier',region:'Siofra River + Nokron'}],
+  "Gargoyle's Twinblade":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}],
+  "Gargoyle's Greatsword":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}],
+  "Alabaster Lord's Sword":[{name:'Alabaster Lord',region:'Lake of Rot + Grand Cloister'}],
+
+  "Black Knife":[{name:"Black Knife Assassin (Sainted Hero's Grave)",region:'Altus Plateau + Leyndell'}],
+  "Bloody Helice":[{name:'Sanguine Noble',region:'Altus Plateau + Leyndell'}],
+  "Godskin Peeler":[{name:'Godskin Apostle',region:'Altus Plateau + Leyndell'}],
+  "Great Club":[{name:'Stonedigger Troll',region:'Altus Plateau + Leyndell'}],
+  "Marais Executioner's Sword":[{name:'Elemer of the Briar',region:'Altus Plateau + Leyndell'}],
+  "Onyx Lord's Greatsword":[{name:'Onyx Lord',region:'Altus Plateau + Leyndell'}],
+  "Family Heads":[{name:'Necromancer Garris',region:'Altus Plateau + Leyndell'}],
+  "Jar Cannon":[{name:'Demi-Human Queen Margot',region:'Mt. Gelmir'}],
+  "Godskin Stitcher":[{name:'Godskin Noble',region:'Mt. Gelmir'}],
+  "Inquisitor's Girandole":[{name:'Abductor Virgins (Duo)',region:'Mt. Gelmir'}],
+  "Blasphemous Blade":[{name:'Rykard, Lord of Blasphemy',region:'Mt. Gelmir'}],
+
+  "Veteran's Prosthesis":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
+  "Zamor Curved Sword":[{name:'Ancient Hero of Zamor',region:'Mountaintops of the Giants'}],
+  "Loretta's War Sickle":[{name:'Loretta, Knight of the Haligtree',region:'Miquella’s Haligtree'}],
+  "Maliketh's Black Blade":[{name:'Maliketh, the Black Blade',region:'Crumbling Farum Azula'}],
+  "Dragon King's Cragblade":[{name:'Dragonlord Placidusax',region:'Crumbling Farum Azula'}],
+
+  "Greatsword of Solitude":[{name:'Blackgaol Knight',region:'Gravesite Plain · DLC'}],
+  "Death Knight's Twin-Axes":[{name:'Death Knight',region:'Gravesite Plain · DLC'}],
+  "Dryleaf Arts":[{name:'Dryleaf Dane',region:'Scadu Altus + Shadow Keep · DLC'}],
+  "Rakshasa's Great Katana":[{name:'Rakshasa',region:'Scadu Altus + Shadow Keep · DLC'}],
+  "Barbed Staff-Spear":[{name:'Jori, Elder Inquisitor',region:'Scadu Altus + Shadow Keep · DLC'}],
+  "Maternal Staff":[
+    {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
+    {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
+  ],
+  "Sword of Night":[
+    {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
+    {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
+  ],
+  "Dancing Blade of Rannah":[{name:'Dancer of Ranah',region:'Cerulean Coast · DLC'}],
+  "Star Lined Sword":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}],
+  "Dragon-Hunter's Great Katana":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}],
+  "Flowerstone Gavel":[{name:'Bayle the Dread',region:'Dragon’s Pit + Jagged Peak · DLC'}],
+  "Red Bear's Claw":[{name:'Rugalea the Great Red Bear',region:'Ancient Ruins of Rauh · DLC'}],
+  "Death Knight's Longhaft Axe":[{name:'Death Knight',region:'Ancient Ruins of Rauh · DLC'}],
+  "Leda's Sword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
+  "Dane's Footwork":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
+  "Freyja's Greatsword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
+  "Obsidian Lamina":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}],
+  "Thiollier's Hidden Needle":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}]
+};
+
+// Two spreadsheet imports had weapon rewards without their acquisition boss in
+// the active boss pool. Restore those bosses so the gate can actually be earned.
+const TC_ACQUISITION_BOSS_RESTORES={
+  'Lake of Rot + Grand Cloister':['Alabaster Lord'],
+  'Gravesite Plain · DLC':['Death Knight']
+};
+for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
+  const pool=regions?.[regionName]?.bosses;
+  if(!Array.isArray(pool))continue;
+  for(const boss of bosses)if(!pool.some(name=>tcWeaponBossKey(name)===tcWeaponBossKey(boss)))pool.push(boss);
+}
+
+// The spreadsheet once shipped Maliketh's weapon as "Malekith's Black Blade".
+// Canonicalize that legacy spelling so older source data cannot bypass the
+// acquisition gate while the corrected regional pool propagates everywhere.
+(function tcCanonicalizeMalikethWeapon(){
+  for(const region of Object.values(regions||{})){
+    for(const weapon of (region?.weapons||[])){
+      if(tcWeaponNameKey(weapon?.name)===tcWeaponNameKey("Malekith's Black Blade"))weapon.name="Maliketh's Black Blade";
+    }
+  }
+})();
+
+// Greatsword is ordinary carriage loot in Caelid and was present in the app's
+// original regional data before the spreadsheet pool accidentally displaced it.
+(function tcRestoreCaelidGreatsword(){
+  const pool=regions?.['Caelid']?.weapons;
+  if(!Array.isArray(pool)||pool.some(w=>w?.name==='Greatsword'))return;
+  const restored=typeof sheetWeapon==='function'?sheetWeapon('Greatsword'):W('Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)');
+  pool.push(restored);
+})();
+
+function tcWeaponBossKey(name){
+  if(typeof tcBossKey==='function')return tcBossKey(name);
+  return String(name||'').toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9]+/g,' ').trim();
+}
+function tcWeaponNameKey(name){
+  return String(name||'')
+    .replace(/\s*\(\+\d+\)\s*$/,'')
+    .toLowerCase()
+    .replace(/[’‘]/g,"'")
+    .replace(/[‐‑‒–—-]/g,' ')
+    .replace(/[^a-z0-9']+/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+const TC_WEAPON_ACQUISITION_GATE_INDEX=new Map(
+  Object.entries(TC_WEAPON_ACQUISITION_GATES).map(([name,requirements])=>[tcWeaponNameKey(name),requirements])
+);
+function tcWeaponAcquisitionRequirements(weapon){
+  const requirements=[...(TC_WEAPON_ACQUISITION_GATE_INDEX.get(tcWeaponNameKey(weapon?.name))||[])];
+  const inline=String(weapon?.requires||'').trim();
+  if(inline&&!requirements.some(req=>tcWeaponBossKey(req?.name)===tcWeaponBossKey(inline)))requirements.push({name:inline});
+  return requirements;
+}
+function tcRecordedBossDefeated(state,requirement){
+  const wanted=[requirement?.name,...(Array.isArray(requirement?.aliases)?requirement.aliases:[])].filter(Boolean).map(tcWeaponBossKey);
+  const region=requirement?.region||'';
+  if(!wanted.length)return true;
+  const matches=entry=>entry&&wanted.includes(tcWeaponBossKey(entry.name))&&(!region||entry.region===region);
+  if((state?.history||[]).some(matches))return true;
+  if((state?.sanctionedBossKills||[]).some(matches))return true;
+  if((state?.appealPenaltyBossKills||[]).some(matches))return true;
+  return false;
+}
+function tcWeaponAcquisitionUnlocked(state,weapon){
+  const gates=tcWeaponAcquisitionRequirements(weapon);
+  return !gates.length||gates.every(req=>tcRecordedBossDefeated(state,req));
+}
+function tcLegalRegionWeapons(state,regionName,target){
+  const region=regions?.[regionName];
+  if(!region)return [];
+  return (region.weapons||[]).filter(w=>!weaponBlockedByTarget(w,target)&&tcWeaponAcquisitionUnlocked(state,w));
+}
+function tcLegalAccumulatedWeaponPool(state,target){
+  const regionNames=Array.from(new Set([...(state?.clearedRegions||[]),state?.region].filter(Boolean)));
+  const byName=new Map();
+  for(const regionName of regionNames){
+    for(const weapon of tcLegalRegionWeapons(state,regionName,target))if(!byName.has(weapon.name))byName.set(weapon.name,weapon);
+  }
+  return [...byName.values()];
+}
+function tcAppealSeenWeapons(state){
+  return new Set(Array.isArray(state?.current?.appealedWeaponNames)?state.current.appealedWeaponNames:[]);
+}
+function tcBuildWeaponPairFromCandidate(pair){
+  if(!pair?.chaseWeapon||!pair?.morganWeapon)return null;
+  return {chase:buildFromWeapon(pair.chaseWeapon),morgan:buildFromWeapon(pair.morganWeapon)};
+}
+
+// Make every downstream accumulated-pool caller acquisition-aware.
+const tcAccumulatedWeaponPoolBeforeAccess=accumulatedWeaponPool;
+accumulatedWeaponPool=function(state,target){
+  const legal=tcLegalAccumulatedWeaponPool(state,target);
+  return legal.length?legal:tcAccumulatedWeaponPoolBeforeAccess(state,target).filter(w=>tcWeaponAcquisitionUnlocked(state,w));
+};
+
+// New encounters burn through fresh, obtainable weapons in the present region
+// first, then fall back to obtainable weapons from regions already reached.
+// IMPORTANT: bestPairFromPool returns raw weapon candidates; newEncounter expects
+// fully built {chase,morgan} assignments. Never leak the raw pair shape.
+const tcChooseWeaponPairBeforeAccess=chooseWeaponPair;
+chooseWeaponPair=function(state,target){
+  const currentPool=tcLegalRegionWeapons(state,state.region,target),used=usedWeaponNames(state),unusedCurrent=currentPool.filter(w=>!used.has(w.name));
+  let pair=null;
+  if(unusedCurrent.length>=2)pair=bestPairFromPool(state,unusedCurrent,unusedCurrent);
+  else if(unusedCurrent.length===1){
+    const fallback=tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name&&!used.has(w.name));
+    const broad=fallback.length?fallback:tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name);
+    if(broad.length)pair=Math.random()<0.5?bestPairFromPool(state,unusedCurrent,broad):bestPairFromPool(state,broad,unusedCurrent);
+  }
+  if(!pair){
+    const all=tcLegalAccumulatedWeaponPool(state,target),unused=all.filter(w=>!used.has(w.name));
+    const pool=unused.length>=2?unused:all;
+    if(pool.length>=2)pair=bestPairFromPool(state,pool,pool);
+  }
+  const built=tcBuildWeaponPairFromCandidate(pair);
+  if(built)return built;
+
+  // A legacy result is acceptable only if it already contains two complete
+  // builds and both named weapons are legal under the acquisition gate model.
+  const legacy=tcChooseWeaponPairBeforeAccess(state,target);
+  if(legacy?.chase?.name&&legacy?.morgan?.name){
+    const legalNames=new Set(tcLegalAccumulatedWeaponPool(state,target).map(w=>w.name));
+    if(legalNames.has(legacy.chase.name)&&legalNames.has(legacy.morgan.name))return legacy;
+  }
+  throw new Error('Covenant armory could not produce two legally obtainable weapon assignments. Encounter creation was stopped before saving malformed state.');
+};
+
+// Defense in depth: a future armory patch must never be able to serialize an
+// encounter that the Encounter tab cannot render.
+const tcNewEncounterBeforeWeaponAccessGuard=newEncounter;
+newEncounter=function(state){
+  const encounter=tcNewEncounterBeforeWeaponAccessGuard(state);
+  if(!encounter?.chase?.name||!encounter?.morgan?.name){
+    throw new Error('Covenant refused to save an encounter without two valid weapon assignments.');
+  }
+  return encounter;
+};
+
+// Appeals remember every weapon rejected during the current encounter. They
+// keep drawing forward through the legal deck instead of circling back to a
+// weapon that was already appealed away.
+const tcMakeBuildBeforeAccess=makeBuild;
+makeBuild=function(regionName,target,avoidNames=[],state=null){
+  if(!state)return tcMakeBuildBeforeAccess(regionName,target,avoidNames,state);
+  const avoided=new Set(Array.isArray(avoidNames)?avoidNames:[avoidNames]);
+  for(const name of tcAppealSeenWeapons(state))avoided.add(name);
+  let pool=tcLegalRegionWeapons(state,regionName,target).filter(w=>!avoided.has(w.name));
+  const unused=pool.filter(w=>!usedWeaponNames(state).has(w.name));
+  if(unused.length)pool=unused;
+  else{
+    const accumulated=tcLegalAccumulatedWeaponPool(state,target).filter(w=>!avoided.has(w.name));
+    const accumulatedUnused=accumulated.filter(w=>!usedWeaponNames(state).has(w.name));
+    pool=accumulatedUnused.length?accumulatedUnused:accumulated;
+  }
+  if(!pool.length){
+    const legal=tcLegalAccumulatedWeaponPool(state,target).filter(w=>!new Set(Array.isArray(avoidNames)?avoidNames:[avoidNames]).has(w.name));
+    if(legal.length)pool=legal;
+  }
+  if(!pool.length)throw new Error('No legally obtainable Covenant weapon is available for this appeal.');
+  return buildFromWeapon(pick(pool));
+};
+
+const tcChangeWeaponsBeforeAccess=changeWeapons;
+changeWeapons=function(state,actor,which,useWaiver=false){
+  const prepared=structuredClone(state),c=prepared?.current;
+  if(c){
+    const seen=new Set(Array.isArray(c.appealedWeaponNames)?c.appealedWeaponNames:[]);
+    if((which==='chase'||which==='both')&&c.chase?.name)seen.add(c.chase.name);
+    if((which==='morgan'||which==='both')&&c.morgan?.name)seen.add(c.morgan.name);
+    c.appealedWeaponNames=[...seen];
+  }
+  return tcChangeWeaponsBeforeAccess(prepared,actor,which,useWaiver);
+};
+
+// Joint Appeal uses the same legal draw engine and should also retire the two
+// rejected assignments from the encounter's Appeal deck.
+const tcBuildJointAppealBeforeWeaponAccess=tcBuildJointAppeal;
+tcBuildJointAppeal=function(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor){
+  const next=tcBuildJointAppealBeforeWeaponAccess(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor);
+  if(next?.current){
+    const seen=new Set(Array.isArray(next.current.appealedWeaponNames)?next.current.appealedWeaponNames:[]);
+    if(oldChase)seen.add(oldChase);if(oldMorgan)seen.add(oldMorgan);next.current.appealedWeaponNames=[...seen];
+  }
+  return next;
+};
+/* --- End weapon accessibility and Appeal deck memory --- */
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260921035523';
+const TC_BUILD_ID='20260921042504';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

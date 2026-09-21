@@ -1,7 +1,10 @@
 from pathlib import Path
 import re
+import subprocess
+import textwrap
 
 html=Path('tarnished-covenant/index.html').read_text()
+regional_source=Path('tarnished-covenant/regional-pools.js').read_text()
 
 def require(needle,msg=None):
     if needle not in html: raise SystemExit(msg or 'missing weapon accessibility invariant: '+needle)
@@ -40,10 +43,57 @@ for needle in [
     "\"Rakshasa's Great Katana\":[{name:'Rakshasa',region:'Scadu Altus + Shadow Keep · DLC'}]",
     "\"Star Lined Sword\":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}]",
     "\"Dragon-Hunter's Great Katana\":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}]",
+    "\"Red Bear's Claw\":[{name:'Rugalea the Great Red Bear',region:'Ancient Ruins of Rauh · DLC'}]",
     "\"Death Knight's Longhaft Axe\":[{name:'Death Knight',region:'Ancient Ruins of Rauh · DLC'}]",
     "\"Leda's Sword\":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}]",
     "\"Obsidian Lamina\":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}]",
 ]: require(needle)
+
+# Canonical source spelling and the runtime migration both keep Maliketh's
+# weapon inside the gate table, including rebuilds from older cached data.
+for needle in [
+    'function tcCanonicalizeMalikethWeapon()',
+    'weapon.name="Maliketh\'s Black Blade";',
+]: require(needle)
+if "Malekith's Black Blade" in regional_source:
+    raise SystemExit('regional weapon source still contains the gate-bypassing Malekith misspelling')
+if "Maliketh's Black Blade" not in regional_source:
+    raise SystemExit('canonical Maliketh weapon is missing from the regional source pool')
+
+# Cross-check the generated acquisition table against the spreadsheet-backed
+# armory. Every gated weapon must exist in a pool, and every region-specific
+# requirement must be a boss, capstone, or explicit restored acquisition boss.
+node_audit=textwrap.dedent(r'''
+const fs=require('fs'),vm=require('vm');
+const html=fs.readFileSync('tarnished-covenant/index.html','utf8');
+const data=fs.readFileSync('tarnished-covenant/regional-pools.js','utf8');
+const gateMatch=html.match(/const TC_WEAPON_ACQUISITION_GATES=(\{[\s\S]*?\n\});\n\n\/\/ Two spreadsheet/);
+const restoreMatch=html.match(/const TC_ACQUISITION_BOSS_RESTORES=(\{[\s\S]*?\n\});/);
+if(!gateMatch||!restoreMatch)throw new Error('weapon gate or restore table missing');
+const ctx={};vm.createContext(ctx);
+vm.runInContext(data+';this.weaponPools=SHEET_WEAPON_POOLS;this.bossPools=SHEET_BOSS_POOLS;',ctx);
+vm.runInContext('this.gates='+gateMatch[1]+';this.restores='+restoreMatch[1],ctx);
+function weaponKey(name){return String(name||'').replace(/\s*\(\+\d+\)\s*$/,'').toLowerCase().replace(/[’‘]/g,"'").replace(/[‐‑‒–—-]/g,' ').replace(/[^a-z0-9']+/g,' ').replace(/\s+/g,' ').trim();}
+function bossKey(name){let key=String(name||'').normalize('NFKD').replace(/[’‘]/g,"'").toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');if(/^valiant gargoyle/.test(key)||key==='valiant gargoyles')return 'valiant gargoyles';if(key.includes('crucible knight')&&key.includes('misbegotten warrior'))return 'crucible misbegotten duo';return key;}
+const exits={};
+for(const match of html.matchAll(/\n\s*'([^']+)'\s*:\s*\{\s*\n\s*exit:\s*'([^']+)'/g))exits[match[1]]=match[2];
+for(const match of html.matchAll(/regions\['([^']+)'\]\s*=\s*\{\s*\n\s*exit:\s*'([^']+)'/g))exits[match[1]]=match[2];
+const poolWeapons=new Set(Object.values(ctx.weaponPools).flat().map(weaponKey));
+const errors=[];
+for(const [weapon,requirements] of Object.entries(ctx.gates)){
+  if(!poolWeapons.has(weaponKey(weapon)))errors.push(`gated weapon missing from source pools: ${weapon}`);
+  for(const requirement of requirements){
+    if(!requirement.region)continue;
+    const available=[...(ctx.bossPools[requirement.region]||[]),...(ctx.restores[requirement.region]||[]),exits[requirement.region]].filter(Boolean).map(bossKey);
+    const accepted=[requirement.name,...(requirement.aliases||[])].map(bossKey);
+    if(!accepted.some(name=>available.includes(name)))errors.push(`unsatisfiable acquisition gate: ${weapon} <- ${requirement.name} @ ${requirement.region}`);
+  }
+}
+if(errors.length)throw new Error(errors.join('\n'));
+''')
+audit=subprocess.run(['node','-e',node_audit],text=True,capture_output=True)
+if audit.returncode:
+    raise SystemExit('weapon acquisition data audit failed:\n'+(audit.stderr or audit.stdout))
 
 # Multi-stage quest rewards are not legal until every modeled boss requirement is met.
 for needle in [

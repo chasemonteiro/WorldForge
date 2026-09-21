@@ -43,7 +43,7 @@ const WEAPON_TARGET_BLOCKS = {
   "godslayer's greatsword": 'godskin apostle',
   'blasphemous blade': 'rykard',
   "loretta's war sickle": 'loretta, knight of the haligtree',
-  "malekith's black blade": 'maliketh',
+  "maliketh's black blade": 'maliketh',
   "dragon king's cragblade": 'placidusax',
   "dragon-hunter's great katana": 'ancient dragon-man',
   "leda's sword": 'leda and allies',
