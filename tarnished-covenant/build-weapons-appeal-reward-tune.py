@@ -24,6 +24,22 @@ else:
     if "const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);" not in s:
         raise SystemExit('weapon-panel appeal mount target missing')
 
+
+# Keep the weapon view focused on playable information.
+s=re.sub(r"function compactLoadout\(label,b\)\{.*?\n", """function compactLoadout(label,b){return `<div class="tc-loadout"><div class="tc-kicker">${h(label)}</div><div class="tc-loadout-name">${h(b.name)}</div><div class="tc-mini-stat tc-weapon-job"><b>job</b><span>${h(b.role||'awaiting an unreasonable assignment')}</span></div></div>`}
+""",s,count=1)
+s=s.replace("weaponNodes=[weaponsHeading,loadouts,penalties]","weaponNodes=[loadouts,penalties]")
+s=s.replace("tabs.after(track);","tabs.after(track);weaponsHeading?.remove();",1) if "weaponsHeading?.remove();" not in s else s
+
+extra_roles=['panic-roll coordinator','flask break supervisor','unpaid boss inspector','hitbox dispute specialist','part-time floor ornament','emergency aggro recipient','stamina budget analyst','certified ankle menace','fog gate enthusiast','camera angle victim','one-more-hit optimist','rolling safety officer','poise research volunteer','rune recovery intern','overqualified distraction','heavy attack accountant','boss morale problem','dodge timing consultant','accidental tank','scheduled maintenance hazard']
+role_match=re.search(r"const roles = \[([\s\S]*?)\];",s)
+if role_match:
+    additions=[repr(role) for role in extra_roles if repr(role) not in role_match.group(1)]
+    if additions:
+        body=role_match.group(1).rstrip().rstrip(',')
+        s=s[:role_match.start()]+ "const roles = ["+body+",\n  "+','.join(additions)+"\n];"+s[role_match.end():]
+
+
 # Make current Appeal penalties impossible to miss while preserving the ability
 # to collapse them after the player has read them. New renders open the warning.
 s=s.replace(
@@ -55,6 +71,21 @@ css=r'''
 .tc-penalty-summary .curse-head{font-size:12px;margin:5px 0 8px}.tc-penalty-summary .penance-item{margin-top:7px;padding:11px 10px;border:1px solid rgba(201,102,90,.22);border-left:2px solid rgba(201,102,90,.58);background:rgba(24,9,8,.32)}.tc-penalty-summary .penance-item+.penance-item{margin-top:8px}.tc-penalty-summary .penance-name{font-size:18px;color:#f0dfd3;margin:5px 0}.tc-penalty-summary .penance-text{font-size:12px;line-height:1.45;color:#d7c4b6}.tc-penalty-summary .scope{color:#e77e72}
 @media(max-width:430px){.tc-boss-victory-actions .tc-world-clear-grid{grid-template-columns:1fr 1fr}.tc-boss-victory-actions .tc-world-clear-btn{font-size:7.5px;padding-left:5px;padding-right:5px}.tc-penalty-summary summary{padding-right:72px}}
 @media(max-width:350px){.tc-boss-victory-actions .tc-world-clear-grid{grid-template-columns:1fr}.tc-penalty-summary summary{padding-right:12px}.tc-penalty-summary summary:after{display:none}}
+
+/* Compact weapons: leave room for both actions above the fixed navigation. */
+.tc-encounter-panel[data-panel="weapons"] .tc-panel-heading{padding:5px 0!important;margin:0 0 7px!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-loadouts{grid-template-columns:1fr!important;margin:0 0 7px!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-loadout{padding:10px 12px!important;min-height:0!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-loadout+.tc-loadout{border-left:0;border-top:1px solid var(--line)}
+.tc-encounter-panel[data-panel="weapons"] .tc-loadout-name{font-size:24px!important;line-height:1.08!important;margin:5px 0!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-loadout .tc-kicker{margin:0!important;font-size:9px!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-wiki-link{display:inline-block!important;margin:3px 0 5px!important;padding:6px 0!important;min-height:24px!important;font-size:9px!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-weapon-job{font-size:12px!important;line-height:1.3;grid-template-columns:30px 1fr;margin:3px 0!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-penalty-summary{margin:6px 0!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-penalty-summary summary{min-height:44px;box-sizing:border-box;padding-top:12px!important;padding-bottom:12px!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-weapon-appeal-actions{padding:6px 0!important;margin-top:4px!important;gap:6px!important}
+.tc-encounter-panel[data-panel="weapons"] .tc-weapon-appeal-actions .btn{min-height:44px!important;margin:0!important;padding:10px!important;font-size:10px!important;line-height:1.2!important}
+
 /* --- End Encounter action fit + penalty visibility --- */
 '''
 if '</style>' not in s: raise SystemExit('encounter polish style marker missing')
