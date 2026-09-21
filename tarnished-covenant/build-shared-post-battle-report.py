@@ -100,6 +100,7 @@ postBattleChoice=async function(kind,value){
 
 function tcPostBattleMasterworkMarkup(state){
   const sm=smithingData(state),c=state.current,credits=Number(sm.masterworkCredits||0);
+  if(credits<1)return '';
   const available=['chase','morgan'].filter(slot=>c?.[slot]?.name&&!sm.masterworks.includes(c[slot].name));
   return `<div class="tc-panel soft" style="border:1px solid var(--gold,#c8a85b);margin:20px 0;padding:18px"><div class="tc-kicker gold">Hewg’s Workbench · ${credits} Masterwork credit${credits===1?'':'s'}</div><h2>Worth keeping?</h2><p>Masterwork a weapon from this victory to save its exact build for one future, penalty-free Recall by its owner. Each weapon costs 1 credit.</p><div class="tc-strategy-actions">${['chase','morgan'].map(slot=>`<button type="button" class="btn ghost" data-report-masterwork="${slot}" ${credits<1||!available.includes(slot)?'disabled':''}>Masterwork ${h(playerLabel(slot,state))}’s ${h(c?.[slot]?.name||'weapon')}${available.includes(slot)?' · 1 credit':' · Already Masterworked'}</button>`).join('')}${available.length===2&&c.chase.name!==c.morgan.name?`<button type="button" class="btn gold" data-report-masterwork="both" ${credits<2?'disabled':''}>Masterwork Both · 2 credits</button>`:''}</div><p class="tc-muted">${credits<1?'No credits available. Claim a Bell Bearing to earn a Masterwork credit.':'Not this time? Continue below to keep your credits.'}</p></div>`;
 }

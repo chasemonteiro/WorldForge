@@ -1691,6 +1691,22 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* --- Synchronized shared reward reveal --- */
 .tc-reward-sync-note{margin:10px auto 0;max-width:440px;text-align:center;color:var(--ash);font:800 9px/1.45 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.07em}
 .tc-reward-sync-note strong{color:var(--gold-bright)}
@@ -5376,6 +5392,7 @@ function tcClearStaleSharedTransients(previousState,nextState){
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
+  if(tcPendingRegionContractEncounterId && tcPendingRegionContractEncounterId!==nextId)tcPendingRegionContractEncounterId=null;
   if(previousId&&nextId&&previousId!==nextId){try{acknowledgedChaos.clear();}catch{}}
 }
 
@@ -5677,6 +5694,36 @@ renderRun=function(){
   return tcRenderRunBeforeSharedRewardDraw();
 };
 /* --- End shared first-come Covenant reward draw --- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7956,6 +8003,7 @@ postBattleChoice=async function(kind,value){
 
 function tcPostBattleMasterworkMarkup(state){
   const sm=smithingData(state),c=state.current,credits=Number(sm.masterworkCredits||0);
+  if(credits<1)return '';
   const available=['chase','morgan'].filter(slot=>c?.[slot]?.name&&!sm.masterworks.includes(c[slot].name));
   return `<div class="tc-panel soft" style="border:1px solid var(--gold,#c8a85b);margin:20px 0;padding:18px"><div class="tc-kicker gold">Hewg’s Workbench · ${credits} Masterwork credit${credits===1?'':'s'}</div><h2>Worth keeping?</h2><p>Masterwork a weapon from this victory to save its exact build for one future, penalty-free Recall by its owner. Each weapon costs 1 credit.</p><div class="tc-strategy-actions">${['chase','morgan'].map(slot=>`<button type="button" class="btn ghost" data-report-masterwork="${slot}" ${credits<1||!available.includes(slot)?'disabled':''}>Masterwork ${h(playerLabel(slot,state))}’s ${h(c?.[slot]?.name||'weapon')}${available.includes(slot)?' · 1 credit':' · Already Masterworked'}</button>`).join('')}${available.length===2&&c.chase.name!==c.morgan.name?`<button type="button" class="btn gold" data-report-masterwork="both" ${credits<2?'disabled':''}>Masterwork Both · 2 credits</button>`:''}</div><p class="tc-muted">${credits<1?'No credits available. Claim a Bell Bearing to earn a Masterwork credit.':'Not this time? Continue below to keep your credits.'}</p></div>`;
 }
@@ -8467,7 +8515,7 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260921230938';
+const TC_BUILD_ID='20260921231236';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
