@@ -22,26 +22,26 @@ if 'bossVetoes: Number(raw.bossVetoes || 0)' not in s:
     s=s.replace(old,new,1)
 
 # Exact 100% reward table after guaranteed Favor became the primary currency:
-# +1 Favor 12, +2 Favor 4, Chaos 15, Rite 15, Waiver 7, Aviary 6,
-# Tax 5, Sanctioned Kill 10, Veto 4, Clemency 5, Discount 5,
-# Blank Amendment 5, Joint Appeal 4, Treasury Windfall 3.
+# +1 Favor 12, +2 Favor 4, Chaos 13, Rite 13, Waiver 7, Aviary 4,
+# Tax 5, Sanctioned Kill 10, Veto 4, Clemency 6, Discount 5,
+# Blank Amendment 10, Joint Appeal 3, Treasury Windfall 4.
 pat=re.compile(r"function drawCovenantReward\(state\)\{.*?\n\}",re.S)
 reward=r'''function drawCovenantReward(state){
   const sm=state.smithing || (state.smithing=smithingData(state));
   const roll=Math.random();
   if(roll<0.12){sm.favor+=1;return {kind:'favor',label:'+1 Smithing Favor',detail:'One additional mark of Smithing Favor. Hewg has reluctantly updated the ledger.'};}
   if(roll<0.16){sm.favor+=2;return {kind:'favor2',label:'+2 Smithing Favor',detail:'Two extra marks. Administrative generosity has not been ruled out.'};}
-  if(roll<0.31){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Amend one Chaos decree. Repeated amendments still get expensive.'};}
-  if(roll<0.46){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Amend one Odd Rite. The Covenant keeps a fee schedule.'};}
-  if(roll<0.53){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'May be spent to make a Weapon Appeal penalty-free. Spending it is your choice.'};}
-  if(roll<0.59){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the Mohgwyn bird. The bird remains a valued member of the economy.'};}
-  if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);return {kind:'tax',label:tax.label,detail:tax.detail};}
-  if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
-  if(roll<0.78){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor, 1 Chaos Refresh, 1 Rite Refresh, and 1 Appeal Waiver.'};}
-  if(roll<0.83){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
-  if(roll<0.88){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
+  if(roll<0.29){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Amend one Chaos decree. Repeated amendments still get expensive.'};}
+  if(roll<0.42){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Amend one Odd Rite. The Covenant keeps a fee schedule.'};}
+  if(roll<0.49){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'May be spent to make a Weapon Appeal penalty-free. Spending it is your choice.'};}
+  if(roll<0.53){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the Mohgwyn bird. The bird remains a valued member of the economy.'};}
+  if(roll<0.58){const tax=pick(TC_COVENANT_TAXES);return {kind:'tax',label:tax.label,detail:tax.detail};}
+  if(roll<0.68){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
+  if(roll<0.72){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor and your choice of 1 Chaos or Rite Refresh.'};}
+  if(roll<0.78){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
+  if(roll<0.83){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
   if(roll<0.93){sm.blankAmendments+=1;return {kind:'blank',label:'Blank Amendment',detail:'Convert this document into either one Chaos Refresh or one Rite Refresh whenever you choose.'};}
-  if(roll<0.97){sm.jointAppeals+=1;return {kind:'joint',label:'Joint Appeal',detail:'Reroll both assigned weapons once without adding an Appeal penalty.'};}
+  if(roll<0.96){sm.jointAppeals+=1;return {kind:'joint',label:'Joint Appeal',detail:'Reroll both assigned weapons once without adding an Appeal penalty.'};}
   sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall',detail:'+3 Smithing Favor. Someone in Accounts Payable has made a spectacular mistake.'};
 }'''
 s,n=pat.subn(reward,s,count=1)
@@ -178,20 +178,21 @@ function tcBossVetoEligible(state){
   if(Array.isArray(c.worldClears)&&c.worldClears.length)return false;
   return true;
 }
-function tcBossVetoAffordable(state){const sm=smithingData(state||{});return Number(sm.bossVetoes||0)>0&&Number(sm.favor||0)>=2&&Number(sm.chaosRefreshes||0)>=1&&Number(sm.riteRefreshes||0)>=1&&Number(sm.appealWaivers||0)>=1;}
+function tcBossVetoAffordable(state){const sm=smithingData(state||{});return Number(sm.bossVetoes||0)>0&&Number(sm.favor||0)>=2&&(Number(sm.chaosRefreshes||0)>=1||Number(sm.riteRefreshes||0)>=1);}
 function tcRollVetoReplacement(state){
   if(!tcBossVetoEligible(state))return null;const current=state.current.target.name,temp=structuredClone(state);temp.sanctionedBossKills=[...(temp.sanctionedBossKills||[]),{region:state.region,name:current,temporary:true}];
   for(let i=0;i<60;i++){const target=chooseTarget(temp);if(!target?.name||target.name===current||target.exit)continue;if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(target.name))continue;return structuredClone(target);}return null;
 }
-function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor){
+function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor,refreshKind){
+  const refreshKey=refreshKind==='chaos'?'chaosRefreshes':refreshKind==='rite'?'riteRefreshes':null;if(!refreshKey||Number(smithingData(latest||{})[refreshKey]||0)<1)return null;
   if(!tcBossVetoEligible(latest)||!tcBossVetoAffordable(latest))return null;const c=latest.current;if(c.id!==encounterId||c.target.name!==oldBoss)return null;
-  const next=smithingCopy(latest);next.smithing.bossVetoes-=1;next.smithing.favor-=2;next.smithing.chaosRefreshes-=1;next.smithing.riteRefreshes-=1;next.smithing.appealWaivers-=1;next.current.target=structuredClone(replacement);next.current.worldClears=[];next.lastAction=`${actor} invoked a Covenant Veto. ${oldBoss} was reassigned to ${replacement.name}.`;next.updatedAt=new Date().toISOString();return next;
+  const next=smithingCopy(latest);next.smithing.bossVetoes-=1;next.smithing.favor-=2;next.smithing[refreshKey]-=1;next.current.target=structuredClone(replacement);next.current.worldClears=[];next.lastAction=`${actor} invoked a Covenant Veto. ${oldBoss} was reassigned to ${replacement.name}.`;next.updatedAt=new Date().toISOString();return next;
 }
 function tcOpenBossVeto(){
   const state=run?.state,sm=smithingData(state||{}),c=state?.current;if(Number(sm.bossVetoes||0)<1)return setToast('No Covenant Veto available.');
   if(!tcBossVetoEligible(state))return setToast('Required bosses, capstones, and partially cleared encounters cannot be vetoed.');
-  const ready=tcBossVetoAffordable(state),el=tcStrategicOverlay('Covenant Veto',`<p>Reject <strong>${h(c.target.name)}</strong> and draw a different non-required boss from this region. Your current weapons, Rite, Chaos decree, and existing penalties stay in force.</p><div class="tc-panel soft"><div class="tc-kicker gold">Invocation cost</div><div class="tc-boon-recipe">1 Covenant Veto · 2 Smithing Favor · 1 Chaos Refresh · 1 Rite Refresh · 1 Appeal Waiver</div><div class="tc-muted" style="margin-top:8px">On file: ${sm.favor} Favor · ${sm.chaosRefreshes} Chaos · ${sm.riteRefreshes} Rite · ${sm.appealWaivers} Waiver</div></div>`,`<div class="tc-strategy-actions"><button type="button" id="tcConfirmVeto" class="btn gold" ${ready?'':'disabled'}>Reject Boss · Pay Cost</button><button type="button" class="btn ghost" data-close-strategy>Keep Boss</button></div>`);
-  el.querySelector('#tcConfirmVeto')?.addEventListener('click',async e=>{const replacement=tcRollVetoReplacement(run.state);if(!replacement)return setToast('No legal alternate boss is currently available.');const actor=playerName(),encounterId=c.id,oldBoss=c.target.name,build=latest=>tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor),staged=build(run.state);if(!staged)return setToast('The Veto cost or encounter changed on the other phone.');e.currentTarget.disabled=true;const saved=await commit(staged,{successToast:`Covenant Veto accepted · new target: ${replacement.name}.`,retryBuilder:build});if(saved)el.remove();});
+  const ready=tcBossVetoAffordable(state),el=tcStrategicOverlay('Covenant Veto',`<p>Reject <strong>${h(c.target.name)}</strong> and draw a different non-required boss from this region. Your current weapons, Rite, Chaos decree, and existing penalties stay in force.</p><div class="tc-panel soft"><div class="tc-kicker gold">Invocation cost</div><div class="tc-boon-recipe">1 Covenant Veto · 2 Smithing Favor · 1 Chaos OR Rite Refresh</div><div class="tc-muted" style="margin-top:8px">On file: ${sm.favor} Favor · ${sm.chaosRefreshes} Chaos · ${sm.riteRefreshes} Rite</div><label for="tcVetoRefresh">Refresh to spend</label><select id="tcVetoRefresh">${Number(sm.chaosRefreshes||0)>0?'<option value="chaos">Chaos Refresh</option>':''}${Number(sm.riteRefreshes||0)>0?'<option value="rite">Rite Refresh</option>':''}</select></div>`,`<div class="tc-strategy-actions"><button type="button" id="tcConfirmVeto" class="btn gold" ${ready?'':'disabled'}>Reject Boss · Pay Cost</button><button type="button" class="btn ghost" data-close-strategy>Keep Boss</button></div>`);
+  el.querySelector('#tcConfirmVeto')?.addEventListener('click',async e=>{const replacement=tcRollVetoReplacement(run.state);if(!replacement)return setToast('No legal alternate boss is currently available.');const refreshKind=el.querySelector('#tcVetoRefresh').value,actor=playerName(),encounterId=c.id,oldBoss=c.target.name,build=latest=>tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor,refreshKind),staged=build(run.state);if(!staged)return setToast('The Veto cost or encounter changed on the other phone.');e.currentTarget.disabled=true;const saved=await commit(staged,{successToast:`Covenant Veto accepted · new target: ${replacement.name}.`,retryBuilder:build});if(saved)el.remove();});
 }
 
 // The expanded treasury stays in the Ledger rather than crowding every Encounter panel.
@@ -228,26 +229,26 @@ required=[
   'jointAppeals: Number(raw.jointAppeals || 0)',
   "if(roll<0.12){sm.favor+=1;",
   "if(roll<0.16){sm.favor+=2;",
-  "if(roll<0.31){sm.chaosRefreshes+=1;",
-  "if(roll<0.46){sm.riteRefreshes+=1;",
-  "if(roll<0.53){sm.appealWaivers+=1;",
-  "if(roll<0.59){sm.aviaryTickets+=1;",
-  "if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);",
-  "if(roll<0.74){sm.freeBossKills+=1;",
-  "if(roll<0.78){sm.bossVetoes+=1;",
-  "if(roll<0.83){sm.clemencies+=1;",
-  "if(roll<0.88){sm.unionDiscounts+=1;",
+  "if(roll<0.29){sm.chaosRefreshes+=1;",
+  "if(roll<0.42){sm.riteRefreshes+=1;",
+  "if(roll<0.49){sm.appealWaivers+=1;",
+  "if(roll<0.53){sm.aviaryTickets+=1;",
+  "if(roll<0.58){const tax=pick(TC_COVENANT_TAXES);",
+  "if(roll<0.68){sm.freeBossKills+=1;",
+  "if(roll<0.72){sm.bossVetoes+=1;",
+  "if(roll<0.78){sm.clemencies+=1;",
+  "if(roll<0.83){sm.unionDiscounts+=1;",
   "if(roll<0.93){sm.blankAmendments+=1;",
-  "if(roll<0.97){sm.jointAppeals+=1;",
+  "if(roll<0.96){sm.jointAppeals+=1;",
   "sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",
   new_keys,
   'function tcEffectiveSmithingContractCost(state,bearing)',
   'function tcBuildClemency(latest,encounterId,key,actor)',
   'function tcBuildBlankConversion(latest,kind,actor)',
   'function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)',
-  'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor)',
+  'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor,refreshKind)',
   'Required bosses, capstones, and partially cleared encounters cannot be vetoed.',
-  'Covenant Veto · 2 Smithing Favor · 1 Chaos Refresh · 1 Rite Refresh · 1 Appeal Waiver',
+  'Covenant Veto · 2 Smithing Favor · 1 Chaos OR Rite Refresh',
 ]
 for needle in required:
   if needle not in s:raise SystemExit('expanded reward invariant missing: '+needle)

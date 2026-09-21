@@ -8,26 +8,26 @@ def require(needle,msg=None):
 def forbid(needle,msg=None):
     if needle in html: raise SystemExit(msg or 'forbidden expanded reward behavior: '+needle)
 
-# Exact proposed reward table: 12 + 4 + 15 + 15 + 7 + 6 + 5 + 8 + 4 + 6 + 5 + 6 + 4 + 3 = 100.
+# Base reward table totals 100%; Erdtree Writs use a separate draw.
 thresholds=[
     (0.12,"sm.favor+=1",'12% +1 Favor'),
     (0.16,"sm.favor+=2",'4% +2 Favor'),
-    (0.31,"sm.chaosRefreshes+=1",'15% Chaos Refresh'),
-    (0.46,"sm.riteRefreshes+=1",'15% Rite Refresh'),
-    (0.53,"sm.appealWaivers+=1",'7% Appeal Waiver'),
-    (0.59,"sm.aviaryTickets+=1",'6% Frequent Flier'),
-    (0.64,"const tax=pick(TC_COVENANT_TAXES)",'5% Covenant Tax'),
-    (0.72,"sm.freeBossKills+=1",'8% Sanctioned Boss Kill'),
-    (0.76,"sm.bossVetoes+=1",'4% Covenant Veto'),
-    (0.82,"sm.clemencies+=1",'6% Letter of Clemency'),
-    (0.87,"sm.unionDiscounts+=1",'5% Union Discount'),
-    (0.93,"sm.blankAmendments+=1",'5% Blank Amendment'),
-    (0.97,"sm.jointAppeals+=1",'4% Joint Appeal'),
+    (0.29,"sm.chaosRefreshes+=1",'13% Chaos Refresh'),
+    (0.42,"sm.riteRefreshes+=1",'13% Rite Refresh'),
+    (0.49,"sm.appealWaivers+=1",'7% Appeal Waiver'),
+    (0.53,"sm.aviaryTickets+=1",'4% Frequent Flier'),
+    (0.58,"const tax=pick(TC_COVENANT_TAXES)",'5% Covenant Tax'),
+    (0.68,"sm.freeBossKills+=1",'10% Sanctioned Boss Kill'),
+    (0.72,"sm.bossVetoes+=1",'4% Covenant Veto'),
+    (0.78,"sm.clemencies+=1",'6% Letter of Clemency'),
+    (0.83,"sm.unionDiscounts+=1",'5% Union Discount'),
+    (0.93,"sm.blankAmendments+=1",'10% Blank Amendment'),
+    (0.96,"sm.jointAppeals+=1",'3% Joint Appeal'),
 ]
 for value,body,label in thresholds:
     require(f"if(roll<{value:.2f}){{{body};",f'missing threshold for {label}')
-require("sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",'missing 3% Treasury Windfall tail')
-assert round(0.12+0.04+0.15+0.15+0.07+0.06+0.05+0.08+0.04+0.06+0.05+0.06+0.04+0.03,10)==1.0
+require("sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",'missing 4% Treasury Windfall tail')
+assert round(sum([.12,.04,.13,.13,.07,.04,.05,.10,.04,.06,.05,.10,.03,.04]),10)==1.0
 
 # Every durable strategic reward survives normalization and one shared payout CAS.
 for key in ['bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals']:
@@ -42,12 +42,10 @@ for needle in [
     'Number(sm.favor||0)>=2',
     'Number(sm.chaosRefreshes||0)>=1',
     'Number(sm.riteRefreshes||0)>=1',
-    'Number(sm.appealWaivers||0)>=1',
     'next.smithing.bossVetoes-=1;',
     'next.smithing.favor-=2;',
-    'next.smithing.chaosRefreshes-=1;',
-    'next.smithing.riteRefreshes-=1;',
-    'next.smithing.appealWaivers-=1;',
+    'next.smithing[refreshKey]-=1;',
+    'id="tcVetoRefresh"',
     'next.current.target=structuredClone(replacement);',
     'Your current weapons, Rite, Chaos decree, and existing penalties stay in force.',
 ]: require(needle)

@@ -65,7 +65,7 @@ for needle in [
     'tcIsRequiredRemembranceBoss(state,c.target?.name)',
     'function tcBossVetoReplacementLegal(state,replacement,oldBoss)',
     'const available=availableRegionalBosses(state);',
-    'tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor)',
+    'tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor,refreshKind)',
     'if(!tcBossVetoReplacementLegal(latest,replacement,oldBoss))return null;',
 ]: require(needle)
 
@@ -81,15 +81,15 @@ for needle in [
 ]: require(needle)
 
 # Expanded random table remains the exact agreed 100% distribution. Sanctioned
-# Boss Kill is intentionally rarer at 8%; Clemency and Blank each absorb 1%.
+# Approved rebalance favors flexible amendments and optional boss kills.
 for needle in [
     'if(roll<0.12){sm.favor+=1;', 'if(roll<0.16){sm.favor+=2;',
-    'if(roll<0.31){sm.chaosRefreshes+=1;', 'if(roll<0.46){sm.riteRefreshes+=1;',
-    'if(roll<0.53){sm.appealWaivers+=1;', 'if(roll<0.59){sm.aviaryTickets+=1;',
-    'if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);', 'if(roll<0.72){sm.freeBossKills+=1;',
-    'if(roll<0.76){sm.bossVetoes+=1;', 'if(roll<0.82){sm.clemencies+=1;',
-    'if(roll<0.87){sm.unionDiscounts+=1;', 'if(roll<0.93){sm.blankAmendments+=1;',
-    'if(roll<0.97){sm.jointAppeals+=1;', "sm.favor+=3;return {kind:'windfall'",
+    'if(roll<0.29){sm.chaosRefreshes+=1;', 'if(roll<0.42){sm.riteRefreshes+=1;',
+    'if(roll<0.49){sm.appealWaivers+=1;', 'if(roll<0.53){sm.aviaryTickets+=1;',
+    'if(roll<0.58){const tax=pick(TC_COVENANT_TAXES);', 'if(roll<0.68){sm.freeBossKills+=1;',
+    'if(roll<0.72){sm.bossVetoes+=1;', 'if(roll<0.78){sm.clemencies+=1;',
+    'if(roll<0.83){sm.unionDiscounts+=1;', 'if(roll<0.93){sm.blankAmendments+=1;',
+    'if(roll<0.96){sm.jointAppeals+=1;', "sm.favor+=3;return {kind:'windfall'",
 ]: require(needle)
 
 print('Tarnished Covenant today-systems audit: PASS — rewards, flat +1 Favor, appeals, co-op locks, Veto safety, and boss access all hardened.')

@@ -60,21 +60,7 @@ css=r'''
 if '</style>' not in s: raise SystemExit('encounter polish style marker missing')
 s=s.replace('</style>',css+'\n</style>',1)
 
-# Sanctioned Boss Kill drops from 10% to 8%. The freed 2 points go to two lighter
-# tactical rewards rather than more Favor: Clemency +1%, Blank Amendment +1%.
-# Resulting table remains exactly 100%:
-# 12 / 4 / 15 / 15 / 7 / 6 / 5 / 8 / 4 / 6 / 5 / 6 / 4 / 3.
-replacements={
-    "if(roll<0.74){sm.freeBossKills+=1;":"if(roll<0.72){sm.freeBossKills+=1;",
-    "if(roll<0.78){sm.bossVetoes+=1;":"if(roll<0.76){sm.bossVetoes+=1;",
-    "if(roll<0.83){sm.clemencies+=1;":"if(roll<0.82){sm.clemencies+=1;",
-    "if(roll<0.88){sm.unionDiscounts+=1;":"if(roll<0.87){sm.unionDiscounts+=1;",
-}
-for old_t,new_t in replacements.items():
-    if old_t in s:
-        s=s.replace(old_t,new_t,1)
-    elif new_t not in s:
-        raise SystemExit('reward threshold target missing: '+old_t)
+# Reward odds are owned by build-expanded-reward-pool.py.
 
 required=[
     "const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);",
@@ -86,15 +72,15 @@ required=[
     '.tc-weapon-appeal-actions{grid-template-columns:1fr;',
     '.tc-penalty-summary[open] summary:after{content:\'COLLAPSE\'}',
     'ACTIVE WEAPON APPEAL',
-    "if(roll<0.72){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",
-    "if(roll<0.76){sm.bossVetoes+=1;",
-    "if(roll<0.82){sm.clemencies+=1;",
-    "if(roll<0.87){sm.unionDiscounts+=1;",
+    "if(roll<0.68){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",
+    "if(roll<0.72){sm.bossVetoes+=1;",
+    "if(roll<0.78){sm.clemencies+=1;",
+    "if(roll<0.83){sm.unionDiscounts+=1;",
     "if(roll<0.93){sm.blankAmendments+=1;",
-    "if(roll<0.97){sm.jointAppeals+=1;",
+    "if(roll<0.96){sm.jointAppeals+=1;",
 ]
 for needle in required:
     if needle not in s: raise SystemExit('weapons/reward tune invariant missing: '+needle)
 
 p.write_text(s)
-print('Encounter action shelves polished; Appeal penalties emphasized; Sanctioned Boss Kill remains 8%.')
+print('Encounter action shelves polished; Appeal penalties emphasized; Sanctioned Boss Kill is 10%.')

@@ -114,9 +114,9 @@ tcRollVetoReplacement=function(state){
   return {name:pick(pool),exit:false};
 };
 const tcBuildBossVetoBeforeAudit=tcBuildBossVeto;
-tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor){
+tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor,refreshKind){
   if(!tcBossVetoReplacementLegal(latest,replacement,oldBoss))return null;
-  return tcBuildBossVetoBeforeAudit(latest,encounterId,oldBoss,replacement,actor);
+  return tcBuildBossVetoBeforeAudit(latest,encounterId,oldBoss,replacement,actor,refreshKind);
 };
 
 // Make the Ledger accurately show which current-encounter actions are frozen.
@@ -147,7 +147,7 @@ required=[
     'tcIsRequiredRemembranceBoss(state,c.target?.name)',
     'function tcBossVetoReplacementLegal(state,replacement,oldBoss)',
     'const available=availableRegionalBosses(state);',
-    'tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor)',
+    'tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor,refreshKind)',
 ]
 for needle in required:
     if needle not in s:raise SystemExit('today-systems hardening invariant missing: '+needle)
