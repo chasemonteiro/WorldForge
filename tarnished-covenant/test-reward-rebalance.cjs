@@ -56,3 +56,18 @@ const poor=structuredClone(mw);poor.smithing.masterworkCredits=1;
 assert.equal(ctx.tcBuildPostBattleMasterwork(poor,'victory',['chase','morgan'],['Sword','Spear']),null);
 assert.ok(ctx.tcBuildPostBattleMasterwork(poor,'victory',['morgan'],['Spear']));
 console.log('PASS: post-battle Masterwork single/both, exact builds, atomic credit spend and stale retries.');
+for(const name of ['tcMasterworkSlotForIdentity','tcPastMasterworkWeapons','tcBuildPastMasterwork']){
+ vm.runInContext(html.match(new RegExp('function '+name+'\\([^]*?\\n\\}'))[0],ctx);
+}
+const past={smithing:{masterworkCredits:1,masterworks:[],masterworkRecalls:[]},history:[{name:'Boss',chaseWeapon:'Sword',morganWeapon:'Spear'},{name:'Earlier',chaseWeapon:'Sword'}]};
+assert.equal(ctx.tcPastMasterworkWeapons(past,'chase').length,1);
+const archived=ctx.tcBuildPastMasterwork(past,'chase','Sword','Chase');
+assert.equal(archived.smithing.masterworkCredits,0);
+assert.equal(archived.smithing.masterworkRecalls[0].build.name,'Sword');
+assert.equal(Object.keys(archived.smithing.masterworkRecalls[0].build).length,1);
+assert.equal(past.smithing.masterworkCredits,1);
+assert.equal(ctx.tcBuildPastMasterwork(archived,'chase','Sword','Chase'),null);
+assert.equal(ctx.tcBuildPastMasterwork(past,'morgan','Spear','Chase'),null);
+assert.equal(ctx.tcBuildPastMasterwork(past,'chase','Spear','Chase'),null);
+assert.equal(ctx.tcBuildPastMasterwork(past,'chase','Unused','Chase'),null);
+console.log('PASS: past Masterworks enforce ownership, completed history, one credit, deduplication and stale-spend rejection.');

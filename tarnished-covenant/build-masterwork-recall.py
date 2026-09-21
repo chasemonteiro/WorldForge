@@ -102,10 +102,50 @@ function tcMasterworkArsenalMarkup(state){
   return `<div class="tc-master-list tc-veteran-arsenal">${cards.length?cards.join(''):'<span class="tc-muted">No veteran weapons yet.</span>'}</div>`;
 }
 
+
+function tcPastMasterworkWeapons(state,slot){
+  if(!['chase','morgan'].includes(slot))return [];
+  const seen=new Set(),items=[];
+  for(const entry of state.history||[]){
+    const weapon=entry[slot+'Weapon'];
+    if(typeof weapon!=='string'||!weapon.trim()||seen.has(weapon))continue;
+    seen.add(weapon);items.push({weapon,boss:entry.name||'Completed encounter'});
+  }
+  return items;
+}
+function tcBuildPastMasterwork(latest,slot,weapon,actor){
+  if(slot!==tcMasterworkSlotForIdentity(actor))return null;
+  const sm=smithingData(latest);
+  if(Number(sm.masterworkCredits||0)<1||sm.masterworks.includes(weapon)||!tcPastMasterworkWeapons(latest,slot).some(item=>item.weapon===weapon))return null;
+  const next=smithingCopy(latest);
+  next.smithing.masterworkCredits-=1;
+  next.smithing.masterworks.push(weapon);
+  next.smithing.masterworkRecalls.push({id:tcMasterworkRecallId(),weapon,owner:slot,build:{name:weapon},used:false,masterworkedAt:new Date().toISOString(),recalledAt:null,recalledEncounterId:null});
+  next.lastAction=`${actor} Masterworked ${weapon} from a past encounter. One penalty-free Recall is available.`;
+  next.updatedAt=new Date().toISOString();
+  return next;
+}
+function tcOpenPastMasterwork(){
+  const state=run?.state,slot=tcMasterworkSlotForIdentity();if(!state||!slot)return;
+  const sm=smithingData(state),items=tcPastMasterworkWeapons(state,slot);
+  const el=tcStrategicOverlay('Masterwork a Past Weapon',`<p>Choose a weapon you used in a completed encounter. Costs 1 Masterwork credit and grants you one future penalty-free Recall.</p><p><strong>${Number(sm.masterworkCredits||0)} credits available</strong></p><div class="tc-strategy-list">${items.length?items.map((item,i)=>`<div class="tc-panel soft"><strong>${h(item.weapon)}</strong><div class="tc-muted">Used against ${h(item.boss)}</div><button type="button" class="btn ghost" data-past-masterwork="${i}" ${sm.masterworkCredits<1||sm.masterworks.includes(item.weapon)?'disabled':''}>${sm.masterworks.includes(item.weapon)?'Already Masterworked':sm.masterworkCredits<1?'No credits available':'Masterwork · 1 credit'}</button></div>`).join(''):'<p>Your weapons will appear here after you complete an encounter.</p>'}</div>`);
+  let busy=false;
+  el.querySelectorAll('[data-past-masterwork]').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(busy||pending)return;
+    const weapon=items[Number(btn.dataset.pastMasterwork)]?.weapon,actor=playerName();
+    const build=latest=>tcBuildPastMasterwork(latest,slot,weapon,actor),next=build(run.state);
+    if(!next){el.remove();tcOpenPastMasterwork();return setToast('Credits or weapon availability changed.');}
+    busy=true;btn.disabled=true;
+    try{const saved=await commit(next,{successToast:`${weapon} Masterworked.`,retryBuilder:build});if(saved){el.remove();ledgerView='smithing';uiScreen='ledger';renderRun();}}
+    finally{busy=false;if(btn.isConnected)btn.disabled=false;}
+  }));
+}
+document.addEventListener('click',event=>{if(event.target.closest('[data-open-past-masterwork]'))tcOpenPastMasterwork();});
+
 const tcSmithingLedgerBeforeMasterworkRecall=smithingLedgerMarkup;
 smithingLedgerMarkup=function(state){
   const html=tcSmithingLedgerBeforeMasterworkRecall(state);
-  return html.replace(/<div class="tc-master-list">[\s\S]*?<\/div>/,tcMasterworkArsenalMarkup(state));
+  return html.replace(/<div class="tc-master-list">[\s\S]*?<\/div>/,tcMasterworkArsenalMarkup(state)+`<button type="button" class="btn gold" data-open-past-masterwork>Masterwork a Past Weapon · 1 credit</button>`);
 };
 
 document.addEventListener('click',async event=>{
