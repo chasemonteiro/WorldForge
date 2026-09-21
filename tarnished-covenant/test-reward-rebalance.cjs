@@ -16,7 +16,7 @@ for(let i=0;i<10000;i++){
  const state={smithing:Object.fromEntries(keys.map(k=>[k,0]))};
  const kind=ctx.drawCovenantReward(state).kind; counts[kind]=(counts[kind]||0)+1;
 }
-assert.deepEqual(counts,{favor:1200,favor2:400,chaos:1300,rite:1300,appeal:700,aviary:400,tax:500,freeboss:1000,veto:400,clemency:600,discount:500,blank:1000,joint:300,windfall:400});
+assert.deepEqual(counts,{favor:1200,favor2:400,chaos:1300,rite:1300,appeal:700,aviary:1000,tax:500,freeboss:1000,veto:400,clemency:600,discount:100,blank:1000,joint:300,windfall:200});
 assert.ok(html.includes('const TC_ERDTREE_WRIT_CHANCE=0.07;'));
 const state={smithing:{bossVetoes:1,favor:2,chaosRefreshes:1,riteRefreshes:1,appealWaivers:0},current:{id:'e',target:{name:'Old'},worldClears:[]}};
 const spend=(s,kind)=>ctx.tcBuildBossVeto(s,'e','Old',{name:'New'},'Player',kind);

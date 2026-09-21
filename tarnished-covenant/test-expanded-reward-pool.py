@@ -15,19 +15,19 @@ thresholds=[
     (0.29,"sm.chaosRefreshes+=1",'13% Chaos Refresh'),
     (0.42,"sm.riteRefreshes+=1",'13% Rite Refresh'),
     (0.49,"sm.appealWaivers+=1",'7% Appeal Waiver'),
-    (0.53,"sm.aviaryTickets+=1",'4% Frequent Flier'),
-    (0.58,"const tax=pick(TC_COVENANT_TAXES)",'5% Covenant Tax'),
-    (0.68,"sm.freeBossKills+=1",'10% Sanctioned Boss Kill'),
-    (0.72,"sm.bossVetoes+=1",'4% Covenant Veto'),
-    (0.78,"sm.clemencies+=1",'6% Letter of Clemency'),
-    (0.83,"sm.unionDiscounts+=1",'5% Union Discount'),
-    (0.93,"sm.blankAmendments+=1",'10% Blank Amendment'),
-    (0.96,"sm.jointAppeals+=1",'3% Joint Appeal'),
+    (0.59,"sm.aviaryTickets+=1",'10% Frequent Flier'),
+    (0.64,"const tax=pick(TC_COVENANT_TAXES)",'5% Covenant Tax'),
+    (0.74,"sm.freeBossKills+=1",'10% Sanctioned Boss Kill'),
+    (0.78,"sm.bossVetoes+=1",'4% Covenant Veto'),
+    (0.84,"sm.clemencies+=1",'6% Letter of Clemency'),
+    (0.85,"sm.unionDiscounts+=1",'1% Union Discount'),
+    (0.95,"sm.blankAmendments+=1",'10% Blank Amendment'),
+    (0.98,"sm.jointAppeals+=1",'3% Joint Appeal'),
 ]
 for value,body,label in thresholds:
     require(f"if(roll<{value:.2f}){{{body};",f'missing threshold for {label}')
-require("sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",'missing 4% Treasury Windfall tail')
-assert round(sum([.12,.04,.13,.13,.07,.04,.05,.10,.04,.06,.05,.10,.03,.04]),10)==1.0
+require("sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",'missing 2% Treasury Windfall tail')
+assert round(sum([.12,.04,.13,.13,.07,.10,.05,.10,.04,.06,.01,.10,.03,.02]),10)==1.0
 
 # Every durable strategic reward survives normalization and one shared payout CAS.
 for key in ['bossVetoes','clemencies','unionDiscounts','blankAmendments','jointAppeals']:

@@ -72,12 +72,12 @@ required=[
     '.tc-weapon-appeal-actions{grid-template-columns:1fr;',
     '.tc-penalty-summary[open] summary:after{content:\'COLLAPSE\'}',
     'ACTIVE WEAPON APPEAL',
-    "if(roll<0.68){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",
-    "if(roll<0.72){sm.bossVetoes+=1;",
-    "if(roll<0.78){sm.clemencies+=1;",
-    "if(roll<0.83){sm.unionDiscounts+=1;",
-    "if(roll<0.93){sm.blankAmendments+=1;",
-    "if(roll<0.96){sm.jointAppeals+=1;",
+    "if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",
+    "if(roll<0.78){sm.bossVetoes+=1;",
+    "if(roll<0.84){sm.clemencies+=1;",
+    "if(roll<0.85){sm.unionDiscounts+=1;",
+    "if(roll<0.95){sm.blankAmendments+=1;",
+    "if(roll<0.98){sm.jointAppeals+=1;",
 ]
 for needle in required:
     if needle not in s: raise SystemExit('weapons/reward tune invariant missing: '+needle)

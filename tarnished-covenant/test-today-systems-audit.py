@@ -85,11 +85,11 @@ for needle in [
 for needle in [
     'if(roll<0.12){sm.favor+=1;', 'if(roll<0.16){sm.favor+=2;',
     'if(roll<0.29){sm.chaosRefreshes+=1;', 'if(roll<0.42){sm.riteRefreshes+=1;',
-    'if(roll<0.49){sm.appealWaivers+=1;', 'if(roll<0.53){sm.aviaryTickets+=1;',
-    'if(roll<0.58){const tax=pick(TC_COVENANT_TAXES);', 'if(roll<0.68){sm.freeBossKills+=1;',
-    'if(roll<0.72){sm.bossVetoes+=1;', 'if(roll<0.78){sm.clemencies+=1;',
-    'if(roll<0.83){sm.unionDiscounts+=1;', 'if(roll<0.93){sm.blankAmendments+=1;',
-    'if(roll<0.96){sm.jointAppeals+=1;', "sm.favor+=3;return {kind:'windfall'",
+    'if(roll<0.49){sm.appealWaivers+=1;', 'if(roll<0.59){sm.aviaryTickets+=1;',
+    'if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);', 'if(roll<0.74){sm.freeBossKills+=1;',
+    'if(roll<0.78){sm.bossVetoes+=1;', 'if(roll<0.84){sm.clemencies+=1;',
+    'if(roll<0.85){sm.unionDiscounts+=1;', 'if(roll<0.95){sm.blankAmendments+=1;',
+    'if(roll<0.98){sm.jointAppeals+=1;', "sm.favor+=3;return {kind:'windfall'",
 ]: require(needle)
 
 print('Tarnished Covenant today-systems audit: PASS — rewards, flat +1 Favor, appeals, co-op locks, Veto safety, and boss access all hardened.')

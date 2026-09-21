@@ -22,9 +22,9 @@ if 'bossVetoes: Number(raw.bossVetoes || 0)' not in s:
     s=s.replace(old,new,1)
 
 # Exact 100% reward table after guaranteed Favor became the primary currency:
-# +1 Favor 12, +2 Favor 4, Chaos 13, Rite 13, Waiver 7, Aviary 4,
-# Tax 5, Sanctioned Kill 10, Veto 4, Clemency 6, Discount 5,
-# Blank Amendment 10, Joint Appeal 3, Treasury Windfall 4.
+# +1 Favor 12, +2 Favor 4, Chaos 13, Rite 13, Waiver 7, Aviary 10,
+# Tax 5, Sanctioned Kill 10, Veto 4, Clemency 6, Discount 1,
+# Blank Amendment 10, Joint Appeal 3, Treasury Windfall 2.
 pat=re.compile(r"function drawCovenantReward\(state\)\{.*?\n\}",re.S)
 reward=r'''function drawCovenantReward(state){
   const sm=state.smithing || (state.smithing=smithingData(state));
@@ -34,14 +34,14 @@ reward=r'''function drawCovenantReward(state){
   if(roll<0.29){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Amend one Chaos decree. Repeated amendments still get expensive.'};}
   if(roll<0.42){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Amend one Odd Rite. The Covenant keeps a fee schedule.'};}
   if(roll<0.49){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'May be spent to make a Weapon Appeal penalty-free. Spending it is your choice.'};}
-  if(roll<0.53){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the Mohgwyn bird. The bird remains a valued member of the economy.'};}
-  if(roll<0.58){const tax=pick(TC_COVENANT_TAXES);return {kind:'tax',label:tax.label,detail:tax.detail};}
-  if(roll<0.68){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
-  if(roll<0.72){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor and your choice of 1 Chaos or Rite Refresh.'};}
-  if(roll<0.78){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
-  if(roll<0.83){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
-  if(roll<0.93){sm.blankAmendments+=1;return {kind:'blank',label:'Blank Amendment',detail:'Convert this document into either one Chaos Refresh or one Rite Refresh whenever you choose.'};}
-  if(roll<0.96){sm.jointAppeals+=1;return {kind:'joint',label:'Joint Appeal',detail:'Reroll both assigned weapons once without adding an Appeal penalty.'};}
+  if(roll<0.59){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the Mohgwyn bird. The bird remains a valued member of the economy.'};}
+  if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);return {kind:'tax',label:tax.label,detail:tax.detail};}
+  if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
+  if(roll<0.78){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor and your choice of 1 Chaos or Rite Refresh.'};}
+  if(roll<0.84){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
+  if(roll<0.85){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
+  if(roll<0.95){sm.blankAmendments+=1;return {kind:'blank',label:'Blank Amendment',detail:'Convert this document into either one Chaos Refresh or one Rite Refresh whenever you choose.'};}
+  if(roll<0.98){sm.jointAppeals+=1;return {kind:'joint',label:'Joint Appeal',detail:'Reroll both assigned weapons once without adding an Appeal penalty.'};}
   sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall',detail:'+3 Smithing Favor. Someone in Accounts Payable has made a spectacular mistake.'};
 }'''
 s,n=pat.subn(reward,s,count=1)
@@ -232,14 +232,14 @@ required=[
   "if(roll<0.29){sm.chaosRefreshes+=1;",
   "if(roll<0.42){sm.riteRefreshes+=1;",
   "if(roll<0.49){sm.appealWaivers+=1;",
-  "if(roll<0.53){sm.aviaryTickets+=1;",
-  "if(roll<0.58){const tax=pick(TC_COVENANT_TAXES);",
-  "if(roll<0.68){sm.freeBossKills+=1;",
-  "if(roll<0.72){sm.bossVetoes+=1;",
-  "if(roll<0.78){sm.clemencies+=1;",
-  "if(roll<0.83){sm.unionDiscounts+=1;",
-  "if(roll<0.93){sm.blankAmendments+=1;",
-  "if(roll<0.96){sm.jointAppeals+=1;",
+  "if(roll<0.59){sm.aviaryTickets+=1;",
+  "if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);",
+  "if(roll<0.74){sm.freeBossKills+=1;",
+  "if(roll<0.78){sm.bossVetoes+=1;",
+  "if(roll<0.84){sm.clemencies+=1;",
+  "if(roll<0.85){sm.unionDiscounts+=1;",
+  "if(roll<0.95){sm.blankAmendments+=1;",
+  "if(roll<0.98){sm.jointAppeals+=1;",
   "sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall'",
   new_keys,
   'function tcEffectiveSmithingContractCost(state,bearing)',
