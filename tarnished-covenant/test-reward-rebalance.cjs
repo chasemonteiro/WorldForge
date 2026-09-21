@@ -39,3 +39,20 @@ for(const script of html.matchAll(/<script(?:\\s[^>]*)?>([^]*?)<\/script>/g)){
  if(script[1].trim()) new vm.Script(script[1]);
 }
 console.log('PASS: exact reward frequencies, selected-refresh spending, stale-state rejection, progression locks, and inline JavaScript syntax.');
+vm.runInContext(html.match(/masterworkCurrent=function\(state,slot\)\{[^]*?\n\};/)[0],ctx);
+ctx.tcMasterworkRecallId=()=>String(Math.random());
+ctx.playerLabel=s=>s;ctx.setToast=()=>{};ctx.tcBothWorldsCleared=c=>c.worldClears.length===2;
+vm.runInContext(html.match(/function tcBuildPostBattleMasterwork\([^]*?\n\}/)[0],ctx);
+const mw={smithing:{masterworkCredits:2,masterworks:[],masterworkRecalls:[]},current:{id:'victory',worldClears:['chase','morgan'],chase:{name:'Sword',affinity:'Heavy'},morgan:{name:'Spear'}}};
+const original=JSON.stringify(mw);
+const both=ctx.tcBuildPostBattleMasterwork(mw,'victory',['chase','morgan'],['Sword','Spear']);
+assert.equal(both.smithing.masterworkCredits,0);assert.equal(both.smithing.masterworkRecalls.length,2);
+assert.equal(both.smithing.masterworkRecalls[0].build.affinity,'Heavy');
+assert.equal(JSON.stringify(mw),original);
+assert.equal(ctx.tcBuildPostBattleMasterwork(both,'victory',['chase','morgan'],['Sword','Spear']),null);
+assert.equal(ctx.tcBuildPostBattleMasterwork(mw,'next',['chase'],['Sword']),null);
+assert.equal(ctx.tcBuildPostBattleMasterwork(mw,'victory',['chase'],['Other']),null);
+const poor=structuredClone(mw);poor.smithing.masterworkCredits=1;
+assert.equal(ctx.tcBuildPostBattleMasterwork(poor,'victory',['chase','morgan'],['Sword','Spear']),null);
+assert.ok(ctx.tcBuildPostBattleMasterwork(poor,'victory',['morgan'],['Spear']));
+console.log('PASS: post-battle Masterwork single/both, exact builds, atomic credit spend and stale retries.');

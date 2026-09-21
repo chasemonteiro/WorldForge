@@ -98,6 +98,31 @@ postBattleChoice=async function(kind,value){
   }finally{tcSharedBattleReportChoiceBusy=false;}
 };
 
+function tcPostBattleMasterworkMarkup(state){
+  const sm=smithingData(state),c=state.current,credits=Number(sm.masterworkCredits||0);
+  const available=['chase','morgan'].filter(slot=>c?.[slot]?.name&&!sm.masterworks.includes(c[slot].name));
+  return `<div class="tc-panel soft" style="border:1px solid var(--gold,#c8a85b);margin:20px 0;padding:18px"><div class="tc-kicker gold">Hewg’s Workbench · ${credits} Masterwork credit${credits===1?'':'s'}</div><h2>Worth keeping?</h2><p>Masterwork a weapon from this victory to save its exact build for one future, penalty-free Recall by its owner. Each weapon costs 1 credit.</p><div class="tc-strategy-actions">${['chase','morgan'].map(slot=>`<button type="button" class="btn ghost" data-report-masterwork="${slot}" ${credits<1||!available.includes(slot)?'disabled':''}>Masterwork ${h(playerLabel(slot,state))}’s ${h(c?.[slot]?.name||'weapon')}${available.includes(slot)?' · 1 credit':' · Already Masterworked'}</button>`).join('')}${available.length===2&&c.chase.name!==c.morgan.name?`<button type="button" class="btn gold" data-report-masterwork="both" ${credits<2?'disabled':''}>Masterwork Both · 2 credits</button>`:''}</div><p class="tc-muted">${credits<1?'No credits available. Claim a Bell Bearing to earn a Masterwork credit.':'Not this time? Continue below to keep your credits.'}</p></div>`;
+}
+function tcBuildPostBattleMasterwork(latest,encounterId,slots,names){
+  if(!latest?.current||latest.current.id!==encounterId||!tcBothWorldsCleared(latest.current)||latest.sharedRewardDraw||latest.sharedRewardReveal)return null;
+  if(!slots.length||new Set(slots).size!==slots.length||slots.some((slot,i)=>!['chase','morgan'].includes(slot)||latest.current[slot]?.name!==names[i]))return null;
+  if(Number(smithingData(latest).masterworkCredits||0)<slots.length)return null;
+  let next=latest;
+  for(const slot of slots){next=masterworkCurrent(next,slot);if(!next)return null;}
+  return next;
+}
+let tcPostBattleMasterworkBusy=false;
+async function tcPostBattleMasterwork(choice){
+  if(tcPostBattleMasterworkBusy||pending)return;
+  const c=run?.state?.current;if(!c)return;
+  const slots=choice==='both'?['chase','morgan']:[choice],names=slots.map(slot=>c[slot]?.name),encounterId=c.id;
+  const build=latest=>tcBuildPostBattleMasterwork(latest,encounterId,slots,names),next=build(run.state);
+  if(!next)return setToast('The encounter, credits, or Masterworks changed. Please check again.');
+  tcPostBattleMasterworkBusy=true;
+  try{const saved=await commit(next,{successToast:slots.length===2?'Both weapons Masterworked.':'Weapon Masterworked.',retryBuilder:build});if(saved&&run.state.current?.id===encounterId)renderPostBattleReport();}
+  finally{tcPostBattleMasterworkBusy=false;}
+}
+
 renderPostBattleReport=function(){
   const state=run.state,c=state.current;
   if(!c){postBattleReport=null;return renderRun();}
@@ -123,10 +148,12 @@ renderPostBattleReport=function(){
     ${postBattleChoiceMarkup('chaos','Chaos',chaosAvailable?`${h(chaosEventName(c.chaosConsequence||''))} · ${h(personalizePlayers(c.chaosConsequence||'',state))}`:'The Chaos seal never broke during this encounter.',chaosDraws,chaosAvailable)}
     <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>${guaranteedText}</strong></div>
     <div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${drawText}</strong></div>
+    ${tcPostBattleMasterworkMarkup(state)}
     <button id="finishBattleReport" class="btn gold" ${reportReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
     <div class="tc-report-note">${reportReady?'Every completed Covenant fight pays exactly 1 guaranteed Smithing Favor. Honored Rite and Chaos objectives determine the bonus draws.':'The guaranteed +1 is fixed. Finish the shared honor-system checks to determine bonus draws.'}</div>
   </section>`;
   document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
+  document.querySelectorAll('[data-report-masterwork]').forEach(btn=>btn.addEventListener('click',()=>tcPostBattleMasterwork(btn.dataset.reportMasterwork)));
   document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
 };
 
