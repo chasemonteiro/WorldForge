@@ -13,6 +13,15 @@ js=r'''
 // model is intentionally data-driven so later regions can add acquisition rules
 // without rewriting the draw engine.
 const TC_WEAPON_ACQUISITION_GATES={
+  "Bloodhound's Fang":[{name:'Bloodhound Knight Darriwil',region:'Limgrave + Stormveil'}],
+  "Golden Halberd":[{name:'Tree Sentinel',region:'Limgrave + Stormveil'}],
+  "Grafted Blade Greatsword":[{name:'Leonine Misbegotten',region:'Weeping Peninsula'}],
+  "Nightrider Flail":[{name:"Night's Cavalry",region:'Weeping Peninsula'}],
+  "Magma Wyrm's Scalesword":[{name:'Magma Wyrm Makar',region:'Liurnia of the Lakes'}],
+  "Nightrider Glaive":[{name:"Night's Cavalry (Liurnia North)",region:'Liurnia of the Lakes'}],
+  "Ornamental Straight Sword":[{name:'Grafted Scion',region:'Limgrave + Stormveil'}],
+  "Dark Moon Greatsword":[{name:'Astel, Naturalborn of the Void',region:'Lake of Rot + Grand Cloister'}],
+
   "Gargoyle's Blackblade":[{name:'Black Blade Kindred',region:'Caelid'}],
   "Gargoyle's Black Halberd":[{name:'Black Blade Kindred',region:'Caelid'}],
   "Godslayer's Greatsword":[{name:'Godskin Apostle',region:'Caelid'}],
@@ -20,8 +29,68 @@ const TC_WEAPON_ACQUISITION_GATES={
   "Moonveil":[{name:'Magma Wyrm',region:'Caelid'}],
   "Nox Flowing Sword":[{name:'Nox Swordstress & Nox Monk',region:'Caelid'}],
   "Regalia of Eochaid":[{name:'Frenzied Duelist',region:'Caelid'}],
-  "Ruins Greatsword":[{name:'Crucible Knight and Misbegotten Warrior',region:'Caelid'}]
+  "Ruins Greatsword":[{name:'Crucible Knight and Misbegotten Warrior',region:'Caelid'}],
+
+  "Dragon Halberd":[{name:'Dragonkin Soldier',region:'Siofra River + Nokron'}],
+  "Gargoyle's Twinblade":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}],
+  "Gargoyle's Greatsword":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}],
+  "Alabaster Lord's Sword":[{name:'Alabaster Lord',region:'Lake of Rot + Grand Cloister'}],
+
+  "Black Knife":[{name:"Black Knife Assassin (Sainted Hero's Grave)",region:'Altus Plateau + Leyndell'}],
+  "Bloody Helice":[{name:'Sanguine Noble',region:'Altus Plateau + Leyndell'}],
+  "Godskin Peeler":[{name:'Godskin Apostle',region:'Altus Plateau + Leyndell'}],
+  "Great Club":[{name:'Stonedigger Troll',region:'Altus Plateau + Leyndell'}],
+  "Marais Executioner's Sword":[{name:'Elemer of the Briar',region:'Altus Plateau + Leyndell'}],
+  "Onyx Lord's Greatsword":[{name:'Onyx Lord',region:'Altus Plateau + Leyndell'}],
+  "Family Heads":[{name:'Necromancer Garris',region:'Altus Plateau + Leyndell'}],
+  "Jar Cannon":[{name:'Demi-Human Queen Margot',region:'Mt. Gelmir'}],
+  "Godskin Stitcher":[{name:'Godskin Noble',region:'Mt. Gelmir'}],
+  "Inquisitor's Girandole":[{name:'Abductor Virgins (Duo)',region:'Mt. Gelmir'}],
+  "Blasphemous Blade":[{name:'Rykard, Lord of Blasphemy',region:'Mt. Gelmir'}],
+
+  "Veteran's Prosthesis":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
+  "Zamor Curved Sword":[{name:'Ancient Hero of Zamor',region:'Mountaintops of the Giants'}],
+  "Loretta's War Sickle":[{name:'Loretta, Knight of the Haligtree',region:'Miquella’s Haligtree'}],
+  "Maliketh's Black Blade":[{name:'Maliketh, the Black Blade',region:'Crumbling Farum Azula'}],
+  "Dragon King's Cragblade":[{name:'Dragonlord Placidusax',region:'Crumbling Farum Azula'}],
+
+  "Greatsword of Solitude":[{name:'Blackgaol Knight',region:'Gravesite Plain · DLC'}],
+  "Death Knight's Twin-Axes":[{name:'Death Knight',region:'Gravesite Plain · DLC'}],
+  "Dryleaf Arts":[{name:'Dryleaf Dane',region:'Scadu Altus + Shadow Keep · DLC'}],
+  "Rakshasa's Great Katana":[{name:'Rakshasa',region:'Scadu Altus + Shadow Keep · DLC'}],
+  "Barbed Staff-Spear":[{name:'Jori, Elder Inquisitor',region:'Scadu Altus + Shadow Keep · DLC'}],
+  "Maternal Staff":[
+    {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
+    {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
+  ],
+  "Sword of Night":[
+    {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
+    {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
+  ],
+  "Dancing Blade of Rannah":[{name:'Dancer of Ranah',region:'Cerulean Coast · DLC'}],
+  "Star Lined Sword":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}],
+  "Dragon-Hunter's Great Katana":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}],
+  "Flowerstone Gavel":[{name:'Bayle the Dread',region:'Dragon’s Pit + Jagged Peak · DLC'}],
+  "Red Bear's Claw":[{name:'Red Bear'}],
+  "Death Knight's Longhaft Axe":[{name:'Death Knight',region:'Ancient Ruins of Rauh · DLC'}],
+  "Leda's Sword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
+  "Dane's Footwork":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
+  "Freyja's Greatsword":[{name:'Leda and Allies',region:'Enir-Ilim · DLC'}],
+  "Obsidian Lamina":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}],
+  "Thiollier's Hidden Needle":[{name:'Promised Consort Radahn',region:'Enir-Ilim · DLC'}]
 };
+
+// Two spreadsheet imports had weapon rewards without their acquisition boss in
+// the active boss pool. Restore those bosses so the gate can actually be earned.
+const TC_ACQUISITION_BOSS_RESTORES={
+  'Lake of Rot + Grand Cloister':['Alabaster Lord'],
+  'Gravesite Plain · DLC':['Death Knight']
+};
+for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
+  const pool=regions?.[regionName]?.bosses;
+  if(!Array.isArray(pool))continue;
+  for(const boss of bosses)if(!pool.some(name=>tcWeaponBossKey(name)===tcWeaponBossKey(boss)))pool.push(boss);
+}
 
 // Greatsword is ordinary carriage loot in Caelid and was present in the app's
 // original regional data before the spreadsheet pool accidentally displaced it.
@@ -34,20 +103,40 @@ const TC_WEAPON_ACQUISITION_GATES={
 
 function tcWeaponBossKey(name){
   if(typeof tcBossKey==='function')return tcBossKey(name);
-  return String(name||'').toLowerCase().replace(/[’]/g,"'").replace(/[^a-z0-9]+/g,' ').trim();
+  return String(name||'').toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9]+/g,' ').trim();
+}
+function tcWeaponNameKey(name){
+  return String(name||'')
+    .replace(/\s*\(\+\d+\)\s*$/,'')
+    .toLowerCase()
+    .replace(/[’‘]/g,"'")
+    .replace(/[‐‑‒–—-]/g,' ')
+    .replace(/[^a-z0-9']+/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+const TC_WEAPON_ACQUISITION_GATE_INDEX=new Map(
+  Object.entries(TC_WEAPON_ACQUISITION_GATES).map(([name,requirements])=>[tcWeaponNameKey(name),requirements])
+);
+function tcWeaponAcquisitionRequirements(weapon){
+  const requirements=[...(TC_WEAPON_ACQUISITION_GATE_INDEX.get(tcWeaponNameKey(weapon?.name))||[])];
+  const inline=String(weapon?.requires||'').trim();
+  if(inline&&!requirements.some(req=>tcWeaponBossKey(req?.name)===tcWeaponBossKey(inline)))requirements.push({name:inline});
+  return requirements;
 }
 function tcRecordedBossDefeated(state,requirement){
-  const wanted=tcWeaponBossKey(requirement?.name),region=requirement?.region||'';
-  if(!wanted)return true;
-  const matches=entry=>entry&&tcWeaponBossKey(entry.name)===wanted&&(!region||entry.region===region);
+  const wanted=[requirement?.name,...(Array.isArray(requirement?.aliases)?requirement.aliases:[])].filter(Boolean).map(tcWeaponBossKey);
+  const region=requirement?.region||'';
+  if(!wanted.length)return true;
+  const matches=entry=>entry&&wanted.includes(tcWeaponBossKey(entry.name))&&(!region||entry.region===region);
   if((state?.history||[]).some(matches))return true;
   if((state?.sanctionedBossKills||[]).some(matches))return true;
   if((state?.appealPenaltyBossKills||[]).some(matches))return true;
   return false;
 }
 function tcWeaponAcquisitionUnlocked(state,weapon){
-  const gates=TC_WEAPON_ACQUISITION_GATES[String(weapon?.name||'')];
-  return !gates||gates.every(req=>tcRecordedBossDefeated(state,req));
+  const gates=tcWeaponAcquisitionRequirements(weapon);
+  return !gates.length||gates.every(req=>tcRecordedBossDefeated(state,req));
 }
 function tcLegalRegionWeapons(state,regionName,target){
   const region=regions?.[regionName];
@@ -178,6 +267,9 @@ s=s[:idx]+js+'\n'+s[idx:]
 
 for needle in [
     'const TC_WEAPON_ACQUISITION_GATES=',
+    'const TC_WEAPON_ACQUISITION_GATE_INDEX=new Map(',
+    'function tcWeaponAcquisitionRequirements(weapon)',
+    'const TC_ACQUISITION_BOSS_RESTORES=',
     "\"Gargoyle's Black Halberd\":[{name:'Black Blade Kindred',region:'Caelid'}]",
     "\"Nox Flowing Sword\":[{name:'Nox Swordstress & Nox Monk',region:'Caelid'}]",
     "\"Moonveil\":[{name:'Magma Wyrm',region:'Caelid'}]",
