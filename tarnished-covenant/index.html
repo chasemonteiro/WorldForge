@@ -718,7 +718,7 @@ body:has(.tc-encounter-shell) .app-shell,body:has(.tc-sanctuary-shell) .app-shel
 }
 .tc-encounter-sticky strong{font:400 clamp(19px,5.5vw,25px)/1.05 Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc-encounter-sticky span{color:#d9877b;font:800 9px/1.25 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tc-encounter-tabs,.tc-sanctuary-tabs{flex:0 0 auto;display:grid;gap:4px;margin-bottom:6px}
+.tc-encounter-tabs,.tc-sanctuary-tabs{position:relative;z-index:40;pointer-events:auto;touch-action:manipulation;flex:0 0 auto;display:grid;gap:4px;margin-bottom:6px}
 .tc-encounter-tabs{grid-template-columns:repeat(4,1fr)}.tc-sanctuary-tabs{grid-template-columns:repeat(3,1fr)}
 .tc-encounter-tabs button,.tc-sanctuary-tabs button{min-height:37px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ash);font:850 9.5px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em}
 .tc-encounter-tabs button.active,.tc-sanctuary-tabs button.active{color:var(--gold-bright);border-bottom-color:var(--gold-bright)}
@@ -5369,7 +5369,8 @@ function tcEnsureIdleGrace(){
     btn.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
   }
   if(btn)btn.classList.toggle('tc-paid',tcGraceFavorPaidForCurrentEncounter());
-  if(cap)cap.textContent=tcGraceIdleCaption();
+  const nextCaption=tcGraceIdleCaption();
+  if(cap&&cap.textContent!==nextCaption)cap.textContent=nextCaption;
 }
 let tcIdleGraceQueued=false;
 function tcQueueIdleGrace(){if(tcIdleGraceQueued)return;tcIdleGraceQueued=true;requestAnimationFrame(()=>{tcIdleGraceQueued=false;tcEnsureIdleGrace();});}
@@ -8806,7 +8807,7 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260922152457';
+const TC_BUILD_ID='20260922174400';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

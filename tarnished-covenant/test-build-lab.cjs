@@ -21,4 +21,5 @@ assert(js.includes('Choosing a class fills its starting level and attributes'),'
 assert(js.includes('data-step-field'),'Mobile-friendly stat steppers are present');
 assert(js.includes('<select id="tcTalisman'),'Talismans use a native scrolling selector');
 assert(js.includes('Talisman of All Crucibles')&&js.includes('Spelldrake Talisman +3'),'Base-game and expansion talismans are present');
+assert(html.includes("cap&&cap.textContent!==nextCaption"),'Site of Grace observer does not create an endless render loop');
 console.log('Build lab invariants passed');
