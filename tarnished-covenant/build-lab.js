@@ -7,6 +7,20 @@
   const AFFINITIES={[-1]:'Unique',0:'Standard',1:'Heavy',2:'Keen',3:'Quality',4:'Fire',5:'Flame Art',6:'Lightning',7:'Sacred',8:'Magic',9:'Cold',10:'Poison',11:'Blood',12:'Occult'};
   const BOW_TYPES=new Set([50,51,53,56]);
   const SCADU=[1,1.10,1.20,1.25,1.30,1.35,1.42,1.50,1.55,1.60,1.65,1.75,1.85,1.875,1.90,1.925,1.95,1.975,2.00,2.025,2.05];
+  const STARTING_CLASSES={
+    vagabond:{label:'Vagabond',level:9,vig:15,mind:10,end:11,str:14,dex:13,int:9,fai:9,arc:7},
+    warrior:{label:'Warrior',level:8,vig:11,mind:12,end:11,str:10,dex:16,int:10,fai:8,arc:9},
+    hero:{label:'Hero',level:7,vig:14,mind:9,end:12,str:16,dex:9,int:7,fai:8,arc:11},
+    bandit:{label:'Bandit',level:5,vig:10,mind:11,end:10,str:9,dex:13,int:9,fai:8,arc:14},
+    astrologer:{label:'Astrologer',level:6,vig:9,mind:15,end:9,str:8,dex:12,int:16,fai:7,arc:9},
+    prophet:{label:'Prophet',level:7,vig:10,mind:14,end:8,str:11,dex:10,int:7,fai:16,arc:10},
+    samurai:{label:'Samurai',level:9,vig:12,mind:11,end:13,str:12,dex:15,int:9,fai:8,arc:8},
+    prisoner:{label:'Prisoner',level:9,vig:11,mind:12,end:11,str:11,dex:14,int:14,fai:6,arc:9},
+    confessor:{label:'Confessor',level:10,vig:10,mind:13,end:10,str:12,dex:12,int:9,fai:14,arc:9},
+    wretch:{label:'Wretch',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10},
+    idusKnight:{label:'Idus Knight · Tarnished Edition',level:7,vig:10,mind:12,end:11,str:13,dex:15,int:8,fai:11,arc:6},
+    heavyKnight:{label:'Heavy Knight · Tarnished Edition',level:10,vig:14,mind:8,end:17,str:15,dex:11,int:7,fai:8,arc:9}
+  };
   const TALISMAN_NAMES=[
     'Starscourge Heirloom','Prosthesis-Wearer Heirloom','Stargazer Heirloom','Two Fingers Heirloom','Outer God Heirloom',
     "Radagon's Scarseal","Radagon's Soreseal","Marika's Scarseal","Marika's Soreseal",'Two-Handed Sword Talisman',
@@ -43,9 +57,10 @@
   let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false;
   const graphCache=new Map();
 
-  function blankBuild(){return {level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
+  function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
   function normalizeBuild(value){
     const base=blankBuild(),src=value&&typeof value==='object'?value:{};
+    base.startingClass=STARTING_CLASSES[src.startingClass]?src.startingClass:'';
     for(const key of ['level','vig','mind','end','str','dex','int','fai','arc'])base[key]=Math.max(1,Math.min(713,Number(src[key]??base[key])||base[key]));
     for(const key of ['vig','mind','end','str','dex','int','fai','arc'])base[key]=Math.min(99,base[key]);
     base.scadu=Math.max(0,Math.min(20,Number(src.scadu)||0));
@@ -75,6 +90,7 @@
   function effectiveAttrs(build){const d=talismanDeltas(build),out={};for(const key of ATTRS)out[key]=Math.min(99,Math.max(1,Number(build[key])||1)+d[key]);return out;}
   function currentDraft(){
     const base=buildFor();
+    base.startingClass=document.querySelector('#tcBuildClass')?.value||'';
     document.querySelectorAll('[data-build-field]').forEach(el=>{const key=el.dataset.buildField;base[key]=Math.max(Number(el.min)||0,Math.min(Number(el.max)||999,Number(el.value)||0));});
     base.talismans=Array.from(document.querySelectorAll('[data-talisman]')).map(el=>el.value.trim()).slice(0,4);
     const weaponName=document.querySelector('#tcBuildWeaponName')?.value.trim()||'';
@@ -161,7 +177,9 @@
     app.innerHTML=`<section class="tc-screen tc-build-screen">${screenTop('Tarnished Build')}
       <div class="tc-build-hero"><div class="tc-kicker gold">living character sheet</div><h1>Build</h1><p>Keep both Tarnished current, test every weapon, and stop leaving damage on the table.</p></div>
       <div class="tc-build-player-tabs"><button type="button" data-build-slot="chase" class="${slot==='chase'?'active':''}">${h(names[0])}</button><button type="button" data-build-slot="morgan" class="${slot==='morgan'?'active':''}">${h(names[1])}</button></div>
-      <div class="tc-build-section"><div class="tc-build-section-head"><h2>Attributes</h2><span>Current in-game values</span></div><div class="tc-build-stats">
+      <div class="tc-build-section"><div class="tc-build-section-head"><h2>Attributes</h2><span>Current in-game values</span></div>
+        <div class="tc-build-origin tc-build-field"><label for="tcBuildClass">Starting class</label><select id="tcBuildClass"><option value="">Custom / keep current stats</option>${Object.entries(STARTING_CLASSES).map(([key,value])=>`<option value="${key}" ${build.startingClass===key?'selected':''}>${h(value.label)}</option>`).join('')}</select><small>Choosing a class fills its starting level and attributes. Keep editing these values as you level.</small></div>
+        <div class="tc-build-stats">
         ${[['level','Level',713],['vig','Vigor',99],['mind','Mind',99],['end','Endurance',99],['str','Strength',99],['dex','Dexterity',99],['int','Intelligence',99],['fai','Faith',99],['arc','Arcane',99],['scadu','Scadutree',20]].map(([key,label,max])=>`<div class="tc-build-field"><label for="tcBuild-${key}">${label}</label><input id="tcBuild-${key}" data-build-field="${key}" type="number" inputmode="numeric" min="${key==='scadu'?0:1}" max="${max}" value="${build[key]}"></div>`).join('')}
       </div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Talismans</h2><span>Stat bonuses affect AR automatically</span></div><div class="tc-build-talismans">${build.talismans.map((value,i)=>`<div class="tc-build-field"><label for="tcTalisman${i}">Slot ${i+1}</label><input id="tcTalisman${i}" data-talisman="${i}" list="tcTalismanNames" value="${h(value)}" placeholder="Choose or type a talisman"></div>`).join('')}</div><datalist id="tcTalismanNames">${TALISMAN_NAMES.map(x=>`<option value="${h(x)}"></option>`).join('')}</datalist></div>
@@ -194,7 +212,7 @@
     const slot=event.target.closest('[data-build-slot]');if(slot){tcBuildSlot=slot.dataset.buildSlot;tcBuildDirty=false;renderBuild();return;}
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
     const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;markDirty();refreshResults();}return;}
-  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],[data-talisman],#tcBuildUpgrade')){markDirty();refreshResults();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName,#tcBuildAffinity')){markDirty();refreshResults();}});}
+  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],[data-talisman],#tcBuildUpgrade')){markDirty();refreshResults();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}markDirty();refreshResults();return;}if(event.target.matches('#tcBuildWeaponName,#tcBuildAffinity')){markDirty();refreshResults();}});}
   queueMicrotask(()=>{if(run&&!tcTransitionIsLocked())renderRun();});
 })();
 /* --- End persistent Tarnished build lab --- */

@@ -4,8 +4,8 @@ const path=require('path');
 const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'.';
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
-assert(html.includes('./build-lab.css?v=2'),'Build lab stylesheet is linked');
-assert(html.includes('./build-lab.js?v=2'),'Build lab script is linked');
+assert(html.includes('./build-lab.css?v=3'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.js?v=3'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
 assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
@@ -15,4 +15,7 @@ assert(js.includes('one-handed AR')&&js.includes('two-handed AR'),'Both wielding
 assert(js.includes('Best affinities for these stats'),'Affinity ranking is present');
 assert(js.includes('Scadutree Blessing'),'Shadow Realm calculation is present');
 assert(js.includes('Conditional buffs are listed separately'),'Conditional damage is not presented as base AR');
+assert(js.includes("idusKnight:{label:'Idus Knight · Tarnished Edition',level:7,vig:10,mind:12,end:11,str:13,dex:15,int:8,fai:11,arc:6}"),'Idus Knight starting stats are present');
+assert(js.includes("heavyKnight:{label:'Heavy Knight · Tarnished Edition',level:10,vig:14,mind:8,end:17,str:15,dex:11,int:7,fai:8,arc:9}"),'Heavy Knight starting stats are present');
+assert(js.includes('Choosing a class fills its starting level and attributes'),'Class preset guidance is present');
 console.log('Build lab invariants passed');

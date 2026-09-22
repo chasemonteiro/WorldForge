@@ -12,6 +12,8 @@
 .tc-build-section-head h2{font:400 24px/1 Georgia,serif;margin:0;color:var(--ink)}
 .tc-build-section-head span{font:800 8px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:var(--ash);text-align:right}
 .tc-build-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.tc-build-origin{margin-bottom:11px}
+.tc-build-origin small{color:var(--ash);font-size:10px;line-height:1.35}
 .tc-build-field{display:grid;gap:5px;min-width:0}
 .tc-build-field label{font:800 8.5px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.075em;color:var(--ash)}
 .tc-build-field input,.tc-build-field select{width:100%;min-width:0;height:44px;border:1px solid var(--line);border-radius:0;background:#090806;color:var(--ink);padding:7px 9px;font:400 16px/1.2 Georgia,serif}
