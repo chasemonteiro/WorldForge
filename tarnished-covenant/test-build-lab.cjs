@@ -1,0 +1,18 @@
+const fs=require('fs');
+const assert=require('assert');
+const path=require('path');
+const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'.';
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
+assert(html.includes('./build-lab.css?v=1'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.js?v=1'),'Build lab script is linked');
+assert(js.includes("uiScreen==='build'"),'Build screen is routed');
+assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
+assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
+assert(js.includes("DecompressionStream('gzip')"),'Compressed regulation data is decoded in-browser');
+assert(js.includes('retryBuilder:buildState'),'Shared-save conflict retry is present');
+assert(js.includes('one-handed AR')&&js.includes('two-handed AR'),'Both wielding modes are displayed');
+assert(js.includes('Best affinities for these stats'),'Affinity ranking is present');
+assert(js.includes('Scadutree Blessing'),'Shadow Realm calculation is present');
+assert(js.includes('Conditional buffs are listed separately'),'Conditional damage is not presented as base AR');
+console.log('Build lab invariants passed');
