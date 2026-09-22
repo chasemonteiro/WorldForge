@@ -18,6 +18,13 @@
 .tc-build-field label{font:800 8.5px/1.2 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.075em;color:var(--ash)}
 .tc-build-field input,.tc-build-field select{width:100%;min-width:0;height:44px;border:1px solid var(--line);border-radius:0;background:#090806;color:var(--ink);padding:7px 9px;font:400 16px/1.2 Georgia,serif}
 .tc-build-field input:focus,.tc-build-field select:focus{border-color:var(--gold)}
+.tc-number-stepper{display:grid;grid-template-columns:30px minmax(0,1fr) 30px;height:44px;border:1px solid var(--line);background:#090806}
+.tc-number-stepper input{height:42px;border:0!important;padding:5px 2px;text-align:center;-moz-appearance:textfield}
+.tc-number-stepper input::-webkit-inner-spin-button,.tc-number-stepper input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.tc-number-stepper button{border:0;background:rgba(198,161,90,.08);color:var(--gold-bright);font:400 23px/1 Georgia,serif;padding:0;touch-action:manipulation}
+.tc-number-stepper button:first-child{border-right:1px solid var(--line-soft)}
+.tc-number-stepper button:last-child{border-left:1px solid var(--line-soft)}
+.tc-number-stepper button:active{background:rgba(198,161,90,.22)}
 .tc-build-field.wide{grid-column:span 2}
 .tc-build-talismans{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tc-build-save-row{position:sticky;bottom:72px;z-index:6;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin:14px 0;padding:9px;background:rgba(7,6,4,.94);border:1px solid var(--line);backdrop-filter:blur(9px)}
