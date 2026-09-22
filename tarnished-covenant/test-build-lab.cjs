@@ -4,8 +4,8 @@ const path=require('path');
 const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'.';
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
-assert(html.includes('./build-lab.css?v=4'),'Build lab stylesheet is linked');
-assert(html.includes('./build-lab.js?v=4'),'Build lab script is linked');
+assert(html.includes('./build-lab.css?v=5'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.js?v=5'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
 assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
@@ -22,4 +22,7 @@ assert(js.includes('data-step-field'),'Mobile-friendly stat steppers are present
 assert(js.includes('<select id="tcTalisman'),'Talismans use a native scrolling selector');
 assert(js.includes('Talisman of All Crucibles')&&js.includes('Spelldrake Talisman +3'),'Base-game and expansion talismans are present');
 assert(html.includes("cap&&cap.textContent!==nextCaption"),'Site of Grace observer does not create an endless render loop');
+assert(js.includes('data-physick')&&js.includes('physickTears'),'Two persistent Physick slots are present');
+assert(js.includes("'strength-knot crystal tear':{str:10}")&&js.includes("'faith-knot crystal tear':{fai:10}"),'Physick stat-knot bonuses feed weapon calculations');
+assert(js.includes('Deflecting Hardtear')&&js.includes('Bloodsucking Cracked Tear'),'Base-game and expansion Crystal Tears are present');
 console.log('Build lab invariants passed');

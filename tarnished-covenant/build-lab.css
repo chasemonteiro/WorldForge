@@ -27,6 +27,7 @@
 .tc-number-stepper button:active{background:rgba(198,161,90,.22)}
 .tc-build-field.wide{grid-column:span 2}
 .tc-build-talismans{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tc-build-helper{margin-top:8px;color:var(--ash);font-size:10px;line-height:1.4}
 .tc-build-save-row{position:sticky;bottom:72px;z-index:6;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin:14px 0;padding:9px;background:rgba(7,6,4,.94);border:1px solid var(--line);backdrop-filter:blur(9px)}
 .tc-build-save-row .btn{margin:0;min-width:150px}
 .tc-build-save-state{font-size:12px;line-height:1.3;color:var(--ash);font-style:italic}

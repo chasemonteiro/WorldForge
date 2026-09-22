@@ -22,10 +22,26 @@
     heavyKnight:{label:'Heavy Knight · Tarnished Edition',level:10,vig:14,mind:8,end:17,str:15,dex:11,int:7,fai:8,arc:9}
   };
   const TALISMAN_NAMES=`Aged One's Exultation|Ailment Talisman|Ancestral Spirit's Horn|Arrow's Reach Talisman|Arrow's Soaring Sting Talisman|Arrow's Sting Talisman|Arsenal Charm|Arsenal Charm +1|Assassin's Cerulean Dagger|Assassin's Crimson Dagger|Axe Talisman|Beloved Stardust|Blade of Mercy|Blessed Blue Dew Talisman|Blessed Dew Talisman|Blue Dancer Charm|Blue-Feathered Branchsword|Boltdrake Talisman|Boltdrake Talisman +1|Boltdrake Talisman +2|Boltdrake Talisman +3|Bull-Goat's Talisman|Carian Filigreed Crest|Cerulean Amber Medallion|Cerulean Amber Medallion +1|Cerulean Amber Medallion +2|Cerulean Amber Medallion +3|Cerulean Seed Talisman|Cerulean Seed Talisman +1|Clarifying Horn Charm|Clarifying Horn Charm +1|Clarifying Horn Charm +2|Claw Talisman|Companion Jar|Concealing Veil|Crepus's Vial|Crimson Amber Medallion|Crimson Amber Medallion +1|Crimson Amber Medallion +2|Crimson Amber Medallion +3|Crimson Seed Talisman|Crimson Seed Talisman +1|Crucible Feather Talisman|Crucible Knot Talisman|Crucible Scale Talisman|Crusade Insignia|Curved Sword Talisman|Daedicar's Woe|Dagger Talisman|Dragoncrest Greatshield Talisman|Dragoncrest Shield Talisman|Dragoncrest Shield Talisman +1|Dragoncrest Shield Talisman +2|Dried Bouquet|Enraged Divine Beast|Erdtree's Favor|Erdtree's Favor +1|Erdtree's Favor +2|Faithful's Canvas Talisman|Fine Crucible Feather Talisman|Fire Scorpion Charm|Flamedrake Talisman|Flamedrake Talisman +1|Flamedrake Talisman +2|Flamedrake Talisman +3|Flock's Canvas Talisman|Furled Finger's Trick-Mirror|Godfrey Icon|Godskin Swaddling Cloth|Gold Scarab|Golden Braid|Graven-Mass Talisman|Graven-School Talisman|Great-Jar's Arsenal|Greatshield Talisman|Green Turtle Talisman|Haligdrake Talisman|Haligdrake Talisman +1|Haligdrake Talisman +2|Hammer Talisman|Host's Trick-Mirror|Immunizing Horn Charm|Immunizing Horn Charm +1|Immunizing Horn Charm +2|Kindred of Rot's Exultation|Lacerating Crossed-Tree|Lance Talisman|Lightning Scorpion Charm|Longtail Cat Talisman|Lord of Blood's Exultation|Magic Scorpion Charm|Marika's Scarseal|Marika's Soreseal|Millicent's Prosthesis|Moon of Nokstella|Mottled Necklace|Mottled Necklace +1|Mottled Necklace +2|Old Lord's Talisman|Outer God Heirloom|Pearl Shield Talisman|Pearldrake Talisman|Pearldrake Talisman +1|Pearldrake Talisman +2|Pearldrake Talisman +3|Perfumer's Talisman|Primal Glintstone Blade|Prince of Death's Cyst|Prince of Death's Pustule|Prosthesis-Wearer Heirloom|Radagon Icon|Radagon's Scarseal|Radagon's Soreseal|Red-Feathered Branchsword|Rellana's Cameo|Retaliatory Crossed-Tree|Ritual Shield Talisman|Ritual Sword Talisman|Roar Medallion|Rotten Winged Sword Insignia|Sacred Scorpion Charm|Sacrificial Twig|Shabriri's Woe|Shard of Alexander|Sharpshot Talisman|Shattered Stone Talisman|Silver Scarab|Smithing Talisman|Spear Talisman|Spelldrake Talisman|Spelldrake Talisman +1|Spelldrake Talisman +2|Spelldrake Talisman +3|St. Trina's Smile|Stalwart Horn Charm|Stalwart Horn Charm +1|Stalwart Horn Charm +2|Stargazer Heirloom|Starscourge Heirloom|Taker's Cameo|Talisman of All Crucibles|Talisman of Lord's Bestowal|Talisman of the Dread|Twinblade Talisman|Two Fingers Heirloom|Two-Handed Sword Talisman|Two-Headed Turtle Talisman|Verdigris Discus|Viridian Amber Medallion|Viridian Amber Medallion +1|Viridian Amber Medallion +2|Viridian Amber Medallion +3|Warrior Jar Shard|Winged Sword Insignia`.split('|');
+  const PHYSICK_NAMES=`Bloodsucking Cracked Tear|Cerulean Crystal Tear|Cerulean Hidden Tear|Cerulean-Sapping Cracked Tear|Crimson Bubbletear|Crimson Crystal Tear|Crimson-Sapping Cracked Tear|Crimsonburst Crystal Tear|Crimsonburst Dried Tear|Crimsonspill Crystal Tear|Crimsonwhorl Bubbletear|Deflecting Hardtear|Dexterity-knot Crystal Tear|Faith-knot Crystal Tear|Flame-Shrouding Cracked Tear|Glovewort Crystal Tear|Greenburst Crystal Tear|Greenspill Crystal Tear|Holy-Shrouding Cracked Tear|Intelligence-knot Crystal Tear|Leaden Hardtear|Lightning-Shrouding Cracked Tear|Magic-Shrouding Cracked Tear|Oil-Soaked Tear|Opaline Bubbletear|Opaline Hardtear|Purifying Crystal Tear|Ruptured Crystal Tear|Speckled Hardtear|Spiked Cracked Tear|Stonebarb Cracked Tear|Strength-knot Crystal Tear|Thorny Cracked Tear|Twiggy Cracked Tear|Viridian Hidden Tear|Windy Crystal Tear|Winged Crystal Tear`.split('|');
   const STAT_TALISMANS={
     'starscourge heirloom':{str:5},'prosthesis-wearer heirloom':{dex:5},'stargazer heirloom':{int:5},'two fingers heirloom':{fai:5},'outer god heirloom':{arc:5},
     "radagon's scarseal":{str:3,dex:3},"radagon's soreseal":{str:5,dex:5},"marika's scarseal":{int:3,fai:3,arc:3},"marika's soreseal":{int:5,fai:5,arc:5},
     'millicent’s prosthesis':{dex:5},"millicent's prosthesis":{dex:5}
+  };
+  const STAT_PHYSICK={
+    'strength-knot crystal tear':{str:10},'dexterity-knot crystal tear':{dex:10},
+    'intelligence-knot crystal tear':{int:10},'faith-knot crystal tear':{fai:10}
+  };
+  const PHYSICK_NOTES={
+    'bloodsucking cracked tear':'Physick active: boosts all damage by 20% while continuously draining HP; this conditional boost is not folded into menu AR.',
+    'flame-shrouding cracked tear':'Physick active: boosts fire damage by 20% for 3 minutes.',
+    'holy-shrouding cracked tear':'Physick active: boosts holy damage by 20% for 3 minutes.',
+    'lightning-shrouding cracked tear':'Physick active: boosts lightning damage by 20% for 3 minutes.',
+    'magic-shrouding cracked tear':'Physick active: boosts magic damage by 20% for 3 minutes.',
+    'spiked cracked tear':'Physick active: charged attacks deal more damage; this conditional boost is not menu AR.',
+    'thorny cracked tear':'Physick active: successive attacks build a damage bonus; this conditional boost is not menu AR.',
+    'stonebarb cracked tear':'Physick active: attacks deal more stance damage; weapon AR is unchanged.',
+    'oil-soaked tear':'Physick active: nearby enemies become more vulnerable to fire; weapon AR is unchanged.'
   };
   const CONDITIONAL_TALISMANS={
     'two-handed sword talisman':'Two-handed attacks deal 15% more damage; this is conditional damage, not menu AR.',
@@ -51,7 +67,7 @@
   let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false;
   const graphCache=new Map();
 
-  function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
+  function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],physickTears:['',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
   function normalizeBuild(value){
     const base=blankBuild(),src=value&&typeof value==='object'?value:{};
     base.startingClass=STARTING_CLASSES[src.startingClass]?src.startingClass:'';
@@ -59,6 +75,7 @@
     for(const key of ['vig','mind','end','str','dex','int','fai','arc'])base[key]=Math.min(99,base[key]);
     base.scadu=Math.max(0,Math.min(20,Number(src.scadu)||0));
     base.talismans=Array.from({length:4},(_,i)=>String(Array.isArray(src.talismans)?src.talismans[i]||'':''));
+    base.physickTears=Array.from({length:2},(_,i)=>String(Array.isArray(src.physickTears)?src.physickTears[i]||'':''));
     base.weapon={...base.weapon,...(src.weapon&&typeof src.weapon==='object'?src.weapon:{})};
     base.weapon.weaponName=String(base.weapon.weaponName||'');base.weapon.variantName=String(base.weapon.variantName||'');base.weapon.upgrade=Math.max(0,Number(base.weapon.upgrade)||0);
     return base;
@@ -81,12 +98,14 @@
     for(const raw of build.talismans){const delta=STAT_TALISMANS[String(raw||'').trim().toLowerCase()];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}
     return out;
   }
-  function effectiveAttrs(build){const d=talismanDeltas(build),out={};for(const key of ATTRS)out[key]=Math.min(99,Math.max(1,Number(build[key])||1)+d[key]);return out;}
+  function physickDeltas(build){const out={str:0,dex:0,int:0,fai:0,arc:0};for(const raw of build.physickTears){const delta=STAT_PHYSICK[String(raw||'').trim().toLowerCase()];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}return out;}
+  function effectiveAttrs(build){const t=talismanDeltas(build),p=physickDeltas(build),out={};for(const key of ATTRS)out[key]=Math.min(99,Math.max(1,Number(build[key])||1)+t[key]+p[key]);return out;}
   function currentDraft(){
     const base=buildFor();
     base.startingClass=document.querySelector('#tcBuildClass')?.value||'';
     document.querySelectorAll('[data-build-field]').forEach(el=>{const key=el.dataset.buildField;base[key]=Math.max(Number(el.min)||0,Math.min(Number(el.max)||999,Number(el.value)||0));});
     base.talismans=Array.from(document.querySelectorAll('[data-talisman]')).map(el=>el.value.trim()).slice(0,4);
+    base.physickTears=Array.from(document.querySelectorAll('[data-physick]')).map(el=>el.value.trim()).slice(0,2);
     const weaponName=document.querySelector('#tcBuildWeaponName')?.value.trim()||'';
     const variantName=document.querySelector('#tcBuildAffinity')?.value||'';
     const upgrade=Math.max(0,Number(document.querySelector('#tcBuildUpgrade')?.value)||0);
@@ -133,15 +152,15 @@
   function affinityLabel(raw){return AFFINITIES[raw.affinityId]||raw.name.replace(raw.weaponName,'').trim()||'Standard';}
   function round(value){return Math.floor(Number(value||0)+1e-9);}
   function scalingLabel(weapon,level,attr){const value=weapon.attributeScaling[level][attr];return value?weapon.scalingTiers.find(([minimum])=>value>=minimum)?.[1]||'—':'—';}
-  function conditionalNotes(build){return [...new Set(build.talismans.map(x=>CONDITIONAL_TALISMANS[String(x||'').trim().toLowerCase()]).filter(Boolean))];}
+  function conditionalNotes(build){return [...new Set([...build.talismans.map(x=>CONDITIONAL_TALISMANS[String(x||'').trim().toLowerCase()]),...build.physickTears.map(x=>PHYSICK_NOTES[String(x||'').trim().toLowerCase()])].filter(Boolean))];}
   function resultMarkup(build,raw){
     if(!raw)return `<div class="tc-weapon-empty">Choose a weapon to calculate its attack rating with this build.</div>`;
-    const one=calculate(raw,build,false),two=calculate(raw,build,true),scadu=SCADU[build.scadu]||1,deltas=talismanDeltas(build),attrs=effectiveAttrs(build);
+    const one=calculate(raw,build,false),two=calculate(raw,build,true),scadu=SCADU[build.scadu]||1,talismanBonus=talismanDeltas(build),physickBonus=physickDeltas(build),attrs=effectiveAttrs(build);
     const damage=[...new Set([...Object.keys(one.attack),...Object.keys(two.attack)].map(Number))].filter(t=>DAMAGE.includes(t)&&((one.attack[t]||two.attack[t])>0));
     const statuses=[...new Set([...Object.keys(one.attack),...Object.keys(two.attack)].map(Number))].filter(t=>STATUS.includes(t)&&((one.attack[t]||two.attack[t])>0));
     const requirements=ATTRS.filter(a=>raw.requirements[a]).map(a=>`<div class="${one.unmet.includes(a)?'unmet':''}"><span>${a.toUpperCase()}</span><b>${raw.requirements[a]}</b></div>`).join('')||'<div><span>Requirements</span><b>None</b></div>';
     const scaling=ATTRS.filter(a=>one.weapon.attributeScaling[one.level][a]).map(a=>`<div><span>${a.toUpperCase()}</span><b>${scalingLabel(one.weapon,one.level,a)}</b></div>`).join('')||'<div><span>Scaling</span><b>—</b></div>';
-    const deltaText=ATTRS.filter(a=>deltas[a]).map(a=>`${a.toUpperCase()} +${deltas[a]}`).join(' · ');
+    const deltaText=ATTRS.filter(a=>talismanBonus[a]||physickBonus[a]).map(a=>`${a.toUpperCase()} +${talismanBonus[a]+physickBonus[a]}`).join(' · ');
     const notes=conditionalNotes(build);
     const ranked=variantsFor(build.weapon.weaponName).map(candidate=>{const a=calculate(candidate,build,false),b=calculate(candidate,build,true);return {raw:candidate,one:round(a.total),two:round(b.total)};}).sort((a,b)=>Math.max(b.one,b.two)-Math.max(a.one,a.two));
     return `<div class="tc-ar-hero">
@@ -153,7 +172,7 @@
       <div class="tc-weapon-slip"><span>Requirements & scaling</span><div class="tc-requirement-grid">${requirements}${scaling}</div></div>
     </div>
     ${one.unmet.length?`<div class="tc-weapon-note warn">Requirements not met one-handed: ${one.unmet.map(a=>a.toUpperCase()).join(', ')}. The calculator has applied the in-game attack penalty.</div>`:''}
-    ${deltaText?`<div class="tc-weapon-note">Effective combat stats include talisman bonuses: ${deltaText}.</div>`:''}
+    ${deltaText?`<div class="tc-weapon-note">Effective combat stats include active talisman and Physick bonuses: ${deltaText}.</div>`:''}
     ${build.scadu?`<div class="tc-weapon-note">Scadutree Blessing +${build.scadu} uses the current Shadow Realm damage multiplier (×${scadu}). It does not affect damage outside the Realm of Shadow.</div>`:''}
     ${notes.map(note=>`<div class="tc-weapon-note">${h(note)}</div>`).join('')}
     ${ranked.length>1?`<div class="tc-affinity-head"><strong>Best affinities for these stats</strong><span>Tap one to equip it</span></div><div class="tc-affinity-table">${ranked.map((row,i)=>`<button type="button" class="tc-affinity-row ${row.raw.name===raw.name?'current':''}" data-affinity-pick="${h(row.raw.name)}"><span>${i+1}. ${h(affinityLabel(row.raw))}</span><small>1H</small><b>${row.one}</b><span></span><small>2H</small><b>${row.two}</b></button>`).join('')}</div>`:''}`;
@@ -177,6 +196,7 @@
         ${[['level','Level',713],['vig','Vigor',99],['mind','Mind',99],['end','Endurance',99],['str','Strength',99],['dex','Dexterity',99],['int','Intelligence',99],['fai','Faith',99],['arc','Arcane',99],['scadu','Scadutree',20]].map(([key,label,max])=>`<div class="tc-build-field"><label for="tcBuild-${key}">${label}</label><div class="tc-number-stepper"><button type="button" data-step-field="${key}" data-step="-1" aria-label="Decrease ${label}">−</button><input id="tcBuild-${key}" data-build-field="${key}" type="number" inputmode="numeric" min="${key==='scadu'?0:1}" max="${max}" value="${build[key]}"><button type="button" data-step-field="${key}" data-step="1" aria-label="Increase ${label}">+</button></div></div>`).join('')}
       </div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Talismans</h2><span>Stat bonuses affect AR automatically</span></div><div class="tc-build-talismans">${build.talismans.map((value,i)=>`<div class="tc-build-field"><label for="tcTalisman${i}">Slot ${i+1}</label><select id="tcTalisman${i}" data-talisman="${i}"><option value="">Empty slot</option>${value&&!TALISMAN_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${TALISMAN_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div></div>
+      <div class="tc-build-section"><div class="tc-build-section-head"><h2>Wondrous Physick</h2><span>Assumes the Physick is active</span></div><div class="tc-build-talismans">${build.physickTears.map((value,i)=>`<div class="tc-build-field"><label for="tcPhysick${i}">Crystal Tear ${i+1}</label><select id="tcPhysick${i}" data-physick="${i}"><option value="">Empty slot</option>${value&&!PHYSICK_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${PHYSICK_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div><div class="tc-build-helper">Strength, Dexterity, Intelligence, and Faith knot tears add +10 to weapon calculations automatically. Other offensive effects are explained below the AR result.</div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Weapon Lab</h2><span>Regulation 1.17 data</span></div><div class="tc-weapon-controls">
         <div class="tc-build-field tc-weapon-name"><label for="tcBuildWeaponName">Weapon</label><input id="tcBuildWeaponName" list="tcWeaponNames" value="${h(build.weapon.weaponName)}" placeholder="Search any weapon" autocomplete="off"><datalist id="tcWeaponNames"></datalist></div>
         <div class="tc-build-field"><label for="tcBuildAffinity">Affinity</label><select id="tcBuildAffinity"><option>Loading…</option></select></div>
@@ -207,7 +227,7 @@
     const stepper=event.target.closest('[data-step-field]');if(stepper){const field=document.querySelector(`[data-build-field="${stepper.dataset.stepField}"]`);if(field){const min=Number(field.min)||0,max=Number(field.max)||999;field.value=Math.max(min,Math.min(max,(Number(field.value)||0)+Number(stepper.dataset.step||0)));markDirty();refreshResults();}return;}
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
     const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;markDirty();refreshResults();}return;}
-  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){markDirty();refreshResults();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}markDirty();refreshResults();return;}if(event.target.matches('[data-talisman],#tcBuildWeaponName,#tcBuildAffinity')){markDirty();refreshResults();}});}
+  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){markDirty();refreshResults();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}markDirty();refreshResults();return;}if(event.target.matches('[data-talisman],[data-physick],#tcBuildWeaponName,#tcBuildAffinity')){markDirty();refreshResults();}});}
   queueMicrotask(()=>{if(run&&!tcTransitionIsLocked())renderRun();});
 })();
 /* --- End persistent Tarnished build lab --- */
