@@ -116,13 +116,13 @@ runpy.run_path('tarnished-covenant/build-weapon-accessibility.py')
 # Final shared reward acknowledgement must never strand a phone on a stale reel.
 runpy.run_path('tarnished-covenant/build-reward-reveal-exit-hardening.py')
 
+# Import supplied boss and region artwork after all screen builders.
+runpy.run_path('tarnished-covenant/build-image-library.py')
+
 # Build/Craft is a decision-critical calculator. Reassert the current external
 # asset versions after every late HTML builder so a full production rebuild
 # cannot silently reconnect an older cached calculator.
 runpy.run_path('tarnished-covenant/build-build-lab.py')
-
-# Import supplied boss and region artwork after all screen builders.
-runpy.run_path('tarnished-covenant/build-image-library.py')
 
 runpy.run_path('tarnished-covenant/test-coop-world-clears.py')
 runpy.run_path('tarnished-covenant/test-shared-reward-draw.py')
