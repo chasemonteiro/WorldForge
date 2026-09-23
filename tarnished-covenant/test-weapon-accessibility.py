@@ -103,6 +103,15 @@ audit=subprocess.run(['node','-e',node_audit],text=True,capture_output=True)
 if audit.returncode:
     raise SystemExit('weapon acquisition data audit failed:\n'+(audit.stderr or audit.stdout))
 
+# Pool hygiene: only real weapon names belong in the armory, and canonical
+# spellings must be preserved so regulation metadata matching stays exact.
+for bad in ['Noble Presence',"Varre's Bouqet","MIquellan Knight's Sword",'Dancing Blade of Rannah','Star Lined Sword']:
+    if bad in regional_source:
+        raise SystemExit('noncanonical weapon pool entry survived: '+bad)
+for good in ["Varre's Bouquet","Miquellan Knight's Sword",'Dancing Blade of Ranah','Star-Lined Sword']:
+    if good not in regional_source:
+        raise SystemExit('canonical weapon pool entry missing: '+good)
+
 # Multi-stage quest rewards are not legal until every modeled boss requirement is met.
 for needle in [
     '"Maternal Staff":[',
