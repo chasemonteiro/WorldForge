@@ -117,7 +117,7 @@
     const preset=classPreset(base.startingClass);
     if(preset){
       for(const key of CORE_ATTRS)base[key]=Math.max(preset[key],base[key]);
-      base.level=levelForClassStats(base.startingClass,base);
+      base.level=Math.max(preset.level,Math.min(713,Number(src.level??preset.level)||preset.level));
     }else{
       base.level=Math.max(1,Math.min(713,Number(src.level??base.level)||base.level));
     }
@@ -156,13 +156,10 @@
       if(Number(field.value)<min)field.value=String(min);
     }
     if(level){
-      const buttons=document.querySelectorAll('[data-step-field="level"]');
-      if(preset){
-        const draft={};for(const key of CORE_ATTRS)draft[key]=Number(document.querySelector(`[data-build-field="${key}"]`)?.value)||preset[key];
-        level.value=String(levelForClassStats(classKey,draft));level.readOnly=true;level.setAttribute('aria-readonly','true');buttons.forEach(b=>b.disabled=true);
-      }else{
-        level.readOnly=false;level.removeAttribute('aria-readonly');buttons.forEach(b=>b.disabled=false);
-      }
+      level.min=String(preset?Number(preset.level):1);
+      if(Number(level.value)<Number(level.min))level.value=level.min;
+      level.readOnly=false;level.removeAttribute('aria-readonly');
+      document.querySelectorAll('[data-step-field="level"]').forEach(b=>b.disabled=false);
     }
   }
   function refreshTalismanAvailability(){
@@ -177,10 +174,11 @@
   }
   function refreshBuildStatus(build=null){
     const host=document.querySelector('#tcBuildStatus');if(!host)return;
-    const draft=build||currentDraft(),preset=classPreset(draft.startingClass),eff=effectiveAttrs(draft),t=talismanDeltas(draft),p=physickDeltas(draft);
-    const classText=preset?`${preset.label} · Level ${draft.level} · ${Math.max(0,draft.level-preset.level)} points invested`:`Custom stats · Level ${draft.level} entered manually`;
+    const draft=build||currentDraft(),preset=classPreset(draft.startingClass),eff=effectiveAttrs(draft),t=talismanDeltas(draft),p=physickDeltas(draft),implied=preset?levelForClassStats(draft.startingClass,draft):null,mismatch=Boolean(preset&&implied!==draft.level);
+    const classText=preset?`${preset.label} · Entered Level ${draft.level}`:`Custom stats · Level ${draft.level}`;
+    const validation=mismatch?`<div class="tc-level-check warn"><span>Entered attributes imply Level <b>${implied}</b> from ${h(preset.label)}.</span><button type="button" data-sync-build-level="${implied}">Sync Level to ${implied}</button></div>`:`<div class="tc-level-check ok">${preset?'✓ Entered Level matches points spent from this class':'Level is manual in Custom mode'}</div>`;
     const stats=ATTRS.map(key=>{const bonus=(t[key]||0)+(p[key]||0),value=eff[key];return `<span class="${bonus?'boosted':''}">${key.toUpperCase()} <b>${value}</b>${bonus?`<small>+${bonus}</small>`:''}</span>`;}).join('');
-    host.innerHTML=`<div class="tc-build-status-line"><strong>${h(classText)}</strong><span>${preset?'Class minimums enforced · level auto-calculated':'Choose a starting class to validate level and minimum stats'}</span></div><div class="tc-effective-stats"><em>Weapon-effective stats</em>${stats}</div>`;
+    host.innerHTML=`<div class="tc-build-status-line"><strong>${h(classText)}</strong><span>${preset?'Class minimums enforced · Level is never changed automatically':'Choose a starting class for a level/stat consistency check'}</span></div>${validation}<div class="tc-effective-stats"><em>Weapon-effective stats</em>${stats}</div>`;
   }
   function currentDraft(){
     const base=buildFor();
@@ -314,7 +312,7 @@
       <div class="tc-build-hero"><div class="tc-kicker gold">living character sheet</div><h1>Build</h1><p>Keep both Tarnished current, test every weapon, and stop leaving damage on the table.</p></div>
       <div class="tc-build-player-tabs"><button type="button" data-build-slot="chase" class="${slot==='chase'?'active':''}">${h(names[0])}</button><button type="button" data-build-slot="morgan" class="${slot==='morgan'?'active':''}">${h(names[1])}</button></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Attributes</h2><span>Current in-game values</span></div>
-        <div class="tc-build-origin tc-build-field"><label for="tcBuildClass">Starting class</label><select id="tcBuildClass"><option value="">Custom / keep current stats</option>${Object.entries(STARTING_CLASSES).map(([key,value])=>`<option value="${key}" ${build.startingClass===key?'selected':''}>${h(value.label)}</option>`).join('')}</select><small>Choosing a class fills its base stats, enforces that class’s minimum attributes, and keeps Level synchronized with points spent. Choose Custom only when you want to enter Level manually.</small></div>
+        <div class="tc-build-origin tc-build-field"><label for="tcBuildClass">Starting class</label><select id="tcBuildClass"><option value="">Custom / keep current stats</option>${Object.entries(STARTING_CLASSES).map(([key,value])=>`<option value="${key}" ${build.startingClass===key?'selected':''}>${h(value.label)}</option>`).join('')}</select><small>Choosing a class fills its base stats and enforces that class’s minimum attributes. Level stays exactly as entered; if your stats imply a different level, Build will flag it and offer a one-tap sync.</small></div>
         <div class="tc-build-stats">
         ${[['level','Level',713],['vig','Vigor',99],['mind','Mind',99],['end','Endurance',99],['str','Strength',99],['dex','Dexterity',99],['int','Intelligence',99],['fai','Faith',99],['arc','Arcane',99],['scadu','Scadutree',20]].map(([key,label,max])=>`<div class="tc-build-field"><label for="tcBuild-${key}">${label}</label><div class="tc-number-stepper"><button type="button" data-step-field="${key}" data-step="-1" aria-label="Decrease ${label}">−</button><input id="tcBuild-${key}" data-build-field="${key}" type="number" inputmode="numeric" min="${key==='scadu'?0:1}" max="${max}" value="${build[key]}"><button type="button" data-step-field="${key}" data-step="1" aria-label="Increase ${label}">+</button></div></div>`).join('')}
       </div><div id="tcBuildStatus" class="tc-build-status" aria-live="polite"></div></div>
@@ -382,6 +380,7 @@
     const slot=event.target.closest('[data-build-slot]');if(slot){const nextSlot=slot.dataset.buildSlot,currentSlot=selectedSlot();if(nextSlot===currentSlot)return;if(tcBuildDirty){const draft=currentDraft(),changeSeq=tcBuildChangeSeq;clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;saveBuild({slot:currentSlot,draft,automatic:true,changeSeq});}tcBuildSlot=nextSlot;tcBuildDirty=false;renderBuild();return;}
     const stepper=event.target.closest('[data-step-field]');if(stepper){const field=document.querySelector(`[data-build-field="${stepper.dataset.stepField}"]`);if(field){const min=Number(field.min)||0,max=Number(field.max)||999;field.value=Math.max(min,Math.min(max,(Number(field.value)||0)+Number(stepper.dataset.step||0)));refreshResults();scheduleBuildSave();}return;}
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
+    const syncLevel=event.target.closest('[data-sync-build-level]');if(syncLevel){const field=document.querySelector('[data-build-field="level"]');if(field){field.value=String(Math.max(Number(field.min)||1,Math.min(Number(field.max)||713,Number(syncLevel.dataset.syncBuildLevel)||1)));refreshResults();scheduleBuildSave();}return;}
     const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;refreshResults();scheduleBuildSave();}return;}
     if(!event.target.closest('.tc-weapon-name'))closeWeaponPicker();
   });document.addEventListener('focusin',event=>{if(event.target.matches('#tcBuildWeaponName'))renderWeaponPicker();});document.addEventListener('keydown',event=>{if(!event.target.matches('#tcBuildWeaponName'))return;if(event.key==='Escape'){closeWeaponPicker({restore:true});event.target.blur();return;}if(event.key==='Enter'){event.preventDefault();const value=event.target.value.trim(),names=weaponNames(),exact=names.find(n=>n.toLowerCase()===value.toLowerCase()),first=exact||names.find(n=>n.toLowerCase().includes(value.toLowerCase()));if(first)setWeaponSelection(first);}});document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName')){renderWeaponPicker(event.target.value);return;}if(event.target.matches('[data-build-field],#tcBuildUpgrade')){refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildWeaponName')){const value=event.target.value.trim(),exact=weaponNames().find(n=>n.toLowerCase()===value.toLowerCase());if(exact){setWeaponSelection(exact);return;}if(!value){event.target.dataset.selectedWeapon='';closeWeaponPicker();refreshResults();scheduleBuildSave();return;}renderWeaponPicker(value);return;}if(event.target.matches('[data-talisman],[data-physick]')){const isTalisman=event.target.matches('[data-talisman]'),selector=isTalisman?'[data-talisman]':'[data-physick]',value=event.target.value.trim();if(value){const others=[...document.querySelectorAll(selector)].filter(el=>el!==event.target&&el.value);if(isTalisman){const family=talismanFamilyKey(value);if(others.some(el=>talismanFamilyKey(el.value)===family)){event.target.value='';setToast('Those talismans are mutually exclusive in-game.');}}else{const key=itemKey(value);if(!PHYSICK_DUPLICATES_ALLOWED.has(key)&&others.some(el=>itemKey(el.value)===key)){event.target.value='';setToast('You only have one copy of that Crystal Tear.');}}}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
