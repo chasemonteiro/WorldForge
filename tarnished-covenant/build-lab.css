@@ -33,6 +33,14 @@
 .tc-build-save-state{font-size:12px;line-height:1.3;color:var(--ash);font-style:italic}
 .tc-build-save-state.dirty{color:var(--gold-bright)}
 .tc-weapon-controls{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) 88px;gap:8px}
+.tc-weapon-name{position:relative;z-index:12}
+.tc-weapon-picker{position:absolute;z-index:60;left:0;right:0;top:calc(100% + 4px);display:none;max-height:260px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid #4a412f;background:#0b0a08;box-shadow:0 16px 34px rgba(0,0,0,.58);touch-action:pan-y}
+.tc-weapon-picker.open{display:block}
+.tc-weapon-option{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 11px;border:0;border-bottom:1px solid var(--line-soft);background:#0b0a08;color:var(--ink);text-align:left;font:400 15px/1.2 Georgia,serif;touch-action:manipulation}
+.tc-weapon-option:last-child{border-bottom:0}
+.tc-weapon-option:active,.tc-weapon-option.active{background:rgba(198,161,90,.12);color:var(--gold-bright)}
+.tc-weapon-option small{flex:0 0 auto;color:var(--gold);font:800 7px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em}
+.tc-weapon-picker-empty{padding:15px 12px;color:var(--ash);font-size:12px;line-height:1.4}
 .tc-weapon-loading,.tc-weapon-empty,.tc-weapon-error{padding:22px 10px;text-align:center;color:var(--ash);font-size:14px;line-height:1.5;border-top:1px solid var(--line-soft);margin-top:12px}
 .tc-weapon-error{color:#e08a7d}
 .tc-ar-hero{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
