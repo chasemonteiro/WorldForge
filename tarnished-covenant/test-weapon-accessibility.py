@@ -18,7 +18,7 @@ if not gate_match:
     raise SystemExit('universal weapon gate table missing')
 gate_block=gate_match.group(1)
 gate_count=len(re.findall(r'^\s{2}"[^"]+":\[',gate_block,re.M))
-if gate_count < 45:
+if gate_count < 53:
     raise SystemExit(f'universal weapon gate table unexpectedly small: {gate_count} entries')
 
 # Representative gates from the opening hours through endgame and DLC.
@@ -33,6 +33,14 @@ for needle in [
     "\"Gargoyle's Twinblade\":[{name:'Valiant Gargoyle & Valiant Gargoyle (Twinblade)',region:'Siofra River + Nokron'}]",
     "\"Bloody Helice\":[{name:'Sanguine Noble',region:'Altus Plateau + Leyndell'}]",
     "\"Marais Executioner's Sword\":[{name:'Elemer of the Briar',region:'Altus Plateau + Leyndell'}]",
+    "\"Coded Sword\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Star Fist\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Cane Sword\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Black Bow\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Gravel Stone Seal\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Envoy's Long Horn\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Erdtree Bow\":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}]",
+    "\"Bolt of Gransax\":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}]",
     "\"Blasphemous Blade\":[{name:'Rykard, Lord of Blasphemy',region:'Mt. Gelmir'}]",
     "\"Veteran's Prosthesis\":[{name:'Commander Niall',region:'Mountaintops of the Giants'}]",
     "\"Loretta's War Sickle\":[{name:'Loretta, Knight of the Haligtree',region:'Miquella’s Haligtree'}]",
@@ -130,6 +138,20 @@ for needle in [
     '(state?.history||[]).some(matches)',
     '(state?.sanctionedBossKills||[]).some(matches)',
     '(state?.appealPenaltyBossKills||[]).some(matches)',
+]: require(needle)
+
+# Leyndell proper expands the combined regional armory after DTS; two sanctuary-area
+# rewards wait for Golden Godfrey.
+for needle in [
+    'function tcRestoreLeyndellWeapons()',
+    "W('Coded Sword','Straight Sword','Somber Smithing Stones','Unblockable Blade',false)",
+    "W('Star Fist','Fist','Smithing Stones','Endure')",
+    "W('Cane Sword','Straight Sword','Smithing Stones','Square Off')",
+    "W('Black Bow','Bow','Somber Smithing Stones','Barrage',false)",
+    "W('Gravel Stone Seal','Sacred Seal','Smithing Stones','No Skill',false)",
+    "W(\"Envoy's Long Horn\",'Great Hammer','Somber Smithing Stones','Bubble Shower',false)",
+    "W('Erdtree Bow','Bow','Somber Smithing Stones','Mighty Shot',false)",
+    "W('Bolt of Gransax','Spear','Somber Smithing Stones','Ancient Lightning Spear',false)",
 ]: require(needle)
 
 # Ordinary accessible Caelid loot stays in the pool.
