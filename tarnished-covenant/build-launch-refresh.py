@@ -116,6 +116,11 @@ runpy.run_path('tarnished-covenant/build-weapon-accessibility.py')
 # Final shared reward acknowledgement must never strand a phone on a stale reel.
 runpy.run_path('tarnished-covenant/build-reward-reveal-exit-hardening.py')
 
+# Build/Craft is a decision-critical calculator. Reassert the current external
+# asset versions after every late HTML builder so a full production rebuild
+# cannot silently reconnect an older cached calculator.
+runpy.run_path('tarnished-covenant/build-build-lab.py')
+
 # Import supplied boss and region artwork after all screen builders.
 runpy.run_path('tarnished-covenant/build-image-library.py')
 
@@ -138,6 +143,10 @@ runpy.run_path('tarnished-covenant/test-erdtree-writs.py')
 runpy.run_path('tarnished-covenant/test-appeal-extra-boss-record.py')
 runpy.run_path('tarnished-covenant/test-weapon-accessibility.py')
 runpy.run_path('tarnished-covenant/test-reward-reveal-exit-hardening.py')
+
+# The Build/Craft regression suite is Node-based because the calculator is
+# shipped as browser JavaScript. Treat it as a production build gate.
+__import__('subprocess').run(['node','tarnished-covenant/test-build-lab.cjs'],check=True)
 
 p=app_path
 s=p.read_text()
@@ -167,7 +176,7 @@ s=s[:idx]+js+s[idx:]
 s=s.replace("()=>location.reload()", "()=>tcForceFreshNavigation()")
 s=s.replace("location.reload();", "tcForceFreshNavigation();")
 
-for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','weaponPanel.appendChild(appealBar);','tc-boss-victory-actions','ACTIVE WEAPON APPEAL','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor,refreshKind)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','function tcSharedBattleReportDraft(state=run?.state)','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','function tcMaybeSurfaceSharedContract(state=run?.state)','const TC_ERDTREE_TARGETS=[','function tcBuildErdtreeWritSpend(latest,targetId,actor)','function tcBuildAppealBossRecord(latest,encounterId,penanceId,choice,actor)','const TC_WEAPON_ACQUISITION_GATES=','const TC_WEAPON_ACQUISITION_GATE_INDEX=new Map(','function tcWeaponAcquisitionRequirements(weapon)','const TC_ACQUISITION_BOSS_RESTORES=','const tcRewardExitDismissedIds=new Set();']:
+for needle in ['TC_BUILD_ID','tcCheckForFreshBuild','tcForceFreshNavigation','cache:\'no-store\'','./build-lab.css?v=11','./build-lab.js?v=17','rel="apple-touch-icon"','tarnished-covenant-icon-v1.png','function tcSharedRewardDrawPending(state)','function tcSharedRewardIndex(shared)','function tcSharedRewardObservedAll(shared,identity=playerName())','const next=smithingCopy(latest),sm=next.smithing;','Guaranteed Smithing Favor','nextState.smithing.favor+=guaranteedFavor;','function tcShowAppealWaiverChoice(which)','Keep Waiver · Take Penalty','bossPanel.appendChild(bar);','weaponPanel.appendChild(appealBar);','tc-boss-victory-actions','ACTIVE WEAPON APPEAL','function tcBuildSanctionedBossKill(latest,region,name,actor)',"if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);","if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill'",'function tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor,refreshKind)','function tcEffectiveSmithingContractCost(state,bearing)','function tcBuildClemency(latest,encounterId,key,actor)','function tcBuildJointAppeal(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor)','function tcNextUnmetPrerequisite(state,targetName,seen=new Set())','function tcOutstandingRouteGateForCurrentRegion(state)','function tcIsProgressionGateBoss(name)','function tcIsRequiredRemembranceBoss(state,name)','function tcEncounterMutationLocked(state=run?.state)','function tcBossVetoReplacementLegal(state,replacement,oldBoss)','function tcCapstonePrerequisiteDue(state)','function tcCompendiumDossierMarkup(entry,index,state)','Office of Covenant Records','function tcSharedBattleReportDraft(state=run?.state)','function tcBuildMasterworkRecall(latest,encounterId,recordId,expectedCurrentWeapon,slot,actor)','masterworkRecalls','RECALL AVAILABLE','function tcMaybeSurfaceSharedContract(state=run?.state)','const TC_ERDTREE_TARGETS=[','function tcBuildErdtreeWritSpend(latest,targetId,actor)','function tcBuildAppealBossRecord(latest,encounterId,penanceId,choice,actor)','const TC_WEAPON_ACQUISITION_GATES=','const TC_WEAPON_ACQUISITION_GATE_INDEX=new Map(','function tcWeaponAcquisitionRequirements(weapon)','const TC_ACQUISITION_BOSS_RESTORES=','const tcRewardExitDismissedIds=new Set();']:
     if needle not in s: raise SystemExit('freshness/icon/gameplay invariant missing: '+needle)
 p.write_text(s)
 
