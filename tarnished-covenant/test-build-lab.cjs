@@ -5,7 +5,7 @@ const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'build-lab.css'),'utf8');
-assert(html.includes('./build-lab.css?v=12'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.css?v=13'),'Build lab stylesheet is linked');
 assert(html.includes('./build-lab.js?v=17'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
@@ -21,6 +21,8 @@ assert(js.includes("heavyKnight:{label:'Heavy Knight · Tarnished Edition',level
 assert(js.includes('Choosing a class fills its starting level and attributes'),'Class preset guidance is present');
 assert(js.includes('data-step-field'),'Mobile-friendly stat steppers are present');
 assert(css.includes('.tc-weapon-picker{position:static;left:auto;right:auto;top:auto;z-index:auto;max-height:240px'),'Mobile weapon picker stays in flow instead of covering the sticky save bar');
+assert(css.includes('.tc-weapon-controls .tc-weapon-name{grid-column:1/-1;z-index:auto}'),'Mobile Weapon field does not create a stacking context above Save');
+assert(css.includes('.tc-build-save-row{z-index:30}'),'Sticky Save bar wins mobile stacking order');
 assert(js.includes('<select id="tcTalisman'),'Talismans use a native scrolling selector');
 assert(js.includes('Talisman of All Crucibles')&&js.includes('Spelldrake Talisman +3'),'Base-game and expansion talismans are present');
 assert(html.includes("cap&&cap.textContent!==nextCaption"),'Site of Grace observer does not create an endless render loop');
