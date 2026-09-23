@@ -232,6 +232,18 @@ for needle in [
     'if(familyDiverse.length)pool=familyDiverse;',
 ]: require(needle)
 
+# A weapon appealed away by either player is shared encounter memory and also
+# sits out the entire next boss. It returns automatically after that boss unless
+# appealed away again.
+for needle in [
+    'function tcAppealCooldownWeapons(state)',
+    'function tcExcludeAppealCooldown(state,pool)',
+    'const currentPool=tcExcludeAppealCooldown(state,tcLegalRegionWeapons(state,state.region,target))',
+    'for(const name of tcAppealCooldownWeapons(state))avoided.add(name);',
+    'const tcCompleteEncounterBeforeAppealCooldown=completeEncounter;',
+    'prepared.appealWeaponCooldown=[...tcAppealSeenWeapons(state)];',
+]: require(needle)
+
 # Appeals keep moving forward through the legal deck instead of immediately
 # recycling the weapon that was just rejected.
 for needle in [
