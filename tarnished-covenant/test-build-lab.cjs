@@ -4,7 +4,7 @@ const path=require('path');
 const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'.';
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
-assert(html.includes('./build-lab.css?v=11'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.css?v=12'),'Build lab stylesheet is linked');
 assert(html.includes('./build-lab.js?v=17'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
@@ -19,6 +19,7 @@ assert(js.includes("idusKnight:{label:'Idus Knight · Tarnished Edition',level:7
 assert(js.includes("heavyKnight:{label:'Heavy Knight · Tarnished Edition',level:10,vig:14,mind:8,end:17,str:15,dex:11,int:7,fai:8,arc:9}"),'Heavy Knight starting stats are present');
 assert(js.includes('Choosing a class fills its starting level and attributes'),'Class preset guidance is present');
 assert(js.includes('data-step-field'),'Mobile-friendly stat steppers are present');
+assert(css.includes('.tc-weapon-picker{position:static;left:auto;right:auto;top:auto;z-index:auto;max-height:240px'),'Mobile weapon picker stays in flow instead of covering the sticky save bar');
 assert(js.includes('<select id="tcTalisman'),'Talismans use a native scrolling selector');
 assert(js.includes('Talisman of All Crucibles')&&js.includes('Spelldrake Talisman +3'),'Base-game and expansion talismans are present');
 assert(html.includes("cap&&cap.textContent!==nextCaption"),'Site of Grace observer does not create an endless render loop');
