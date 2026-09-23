@@ -5,7 +5,7 @@ path = Path(__file__).with_name("index.html")
 html = path.read_text()
 
 css_tag = '<link rel="stylesheet" href="./build-lab.css?v=11">'
-js_tag = '<script src="./build-lab.js?v=16"></script>'
+js_tag = '<script src="./build-lab.js?v=17"></script>'
 
 css_pattern = r'<link rel="stylesheet" href="\./build-lab\.css\?v=\d+">'
 js_pattern = r'<script src="\./build-lab\.js\?v=\d+"></script>'
