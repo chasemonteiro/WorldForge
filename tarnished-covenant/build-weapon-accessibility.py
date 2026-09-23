@@ -132,7 +132,7 @@ const TC_REGIONAL_WEAPON_RESTORES={
   'Mountaintops of the Giants':["Watchdog's Greatsword",'Thorned Whip',"Monk's Flameblade"],
   'Miquella’s Haligtree':["Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe',"Envoy's Greathorn"],
   'Crumbling Farum Azula':["Beastman's Curved Sword","Beastman's Cleaver","Banished Knight's Greatsword","Banished Knight's Halberd"],
-  'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield']
+  'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield',"Messmer Soldier's Spear"]
 };
 for(const [regionName,names] of Object.entries(TC_REGIONAL_WEAPON_RESTORES)){
   const pool=regions?.[regionName]?.weapons;
