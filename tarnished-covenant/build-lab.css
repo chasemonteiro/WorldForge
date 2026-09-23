@@ -80,6 +80,10 @@
 .tc-build-status-line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding-bottom:9px;border-bottom:1px solid var(--line-soft)}
 .tc-build-status-line strong{font:400 14px/1.25 Georgia,serif;color:var(--ink)}
 .tc-build-status-line span{font-size:9.5px;line-height:1.35;color:var(--ash);text-align:right}
+.tc-level-check{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding:8px 9px;font-size:10.5px;line-height:1.35;border:1px solid var(--line-soft)}
+.tc-level-check.ok{color:#b8c99b;background:rgba(99,123,72,.06)}
+.tc-level-check.warn{color:#e4c39a;border-color:rgba(198,161,90,.42);background:rgba(198,161,90,.07)}
+.tc-level-check button{flex:0 0 auto;min-height:34px;padding:6px 9px;border:1px solid var(--gold);background:rgba(198,161,90,.08);color:var(--gold-bright);font:800 8.5px/1.15 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em}
 .tc-effective-stats{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:9px}
 .tc-effective-stats em{font:800 8px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.09em;color:var(--ash);font-style:normal;margin-right:3px}
 .tc-effective-stats span{display:inline-flex;align-items:baseline;gap:3px;padding:5px 7px;border:1px solid var(--line-soft);background:#090806;color:var(--ash);font:800 9px/1 system-ui,sans-serif}
@@ -107,6 +111,8 @@
   .tc-build-save-row .btn{width:auto;min-width:112px}
   .tc-build-status-line{display:grid;gap:4px}
   .tc-build-status-line span{text-align:left}
+  .tc-level-check{display:grid;gap:7px}
+  .tc-level-check button{width:100%}
 }
 @media(max-width:370px){.tc-build-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.tc-bottom-nav button{font-size:7.5px!important}}
 /* --- End persistent Tarnished build lab --- */
