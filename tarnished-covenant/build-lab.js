@@ -62,7 +62,30 @@
     'winged sword insignia':'Successive attacks build a 3% / 5% / 10% damage bonus.',
     'millicent’s prosthesis':'Adds 5 Dexterity; successive attacks build a 4% / 6% / 11% damage bonus.',
     "millicent's prosthesis":'Adds 5 Dexterity; successive attacks build a 4% / 6% / 11% damage bonus.',
-    'blue dancer charm':'Raises physical damage at low equip load; the exact bonus depends on total carried weight.'
+    'blue dancer charm':'Raises physical damage at low equip load; the exact bonus depends on total carried weight.',
+    "aged one's exultation":'Attack power rises 20% for 30 seconds after Madness is triggered nearby.',
+    "arrow's sting talisman":'Arrow and bolt damage rises 10%; this is conditional projectile damage, not menu AR.',
+    "arrow's soaring sting talisman":'Arrow and bolt damage rises 8% and effective range increases; this is not menu AR.',
+    'blade of mercy':'Attack power rises 20% for 20 seconds after performing a critical attack.',
+    'crusade insignia':'Attack power rises 15% for 20 seconds after defeating an enemy.',
+    'curved sword talisman':'Guard counter damage rises 20%.',
+    'dried bouquet':'Attack power rises 20% for 30 seconds when one of your summoned Spirit Ashes dies.',
+    'enraged divine beast':'Storm-based skills, spells, and ammunition deal 10% more damage.',
+    'fire scorpion charm':'Fire damage rises 12% in PvE, while physical damage taken also increases.',
+    'godfrey icon':'Eligible charged skills, sorceries, and incantations deal 15% more damage.',
+    'lacerating crossed-tree':'Running light and heavy attacks deal 15% more damage in PvE.',
+    'lightning scorpion charm':'Lightning damage rises 12% in PvE, while physical damage taken also increases.',
+    'magic scorpion charm':'Magic damage rises 12% in PvE, while physical damage taken also increases.',
+    "rellana's cameo":'Eligible stance attacks deal 45% more damage after holding the stance for 1 second.',
+    'retaliatory crossed-tree':'Attacks performed after a roll or backstep deal 17% more damage in PvE.',
+    'roar medallion':'Eligible roar attacks and roar-altered heavy attacks deal 15% more damage.',
+    'sacred scorpion charm':'Holy damage rises 12% in PvE, while physical damage taken also increases.',
+    'sharpshot talisman':'Precision-aimed arrow and bolt shots deal 12% more damage in PvE.',
+    'shattered stone talisman':'Eligible kicking and stomping attacks and skills deal 10% more damage.',
+    'smithing talisman':'Eligible weapon-throwing attacks and skills deal 10% more damage in PvE.',
+    "st. trina's smile":'Attack power rises 20% for 20 seconds after Sleep is triggered nearby.',
+    'talisman of the dread':'Magma attacks deal 15% more damage.',
+    'twinblade talisman':'The final normal attack in an attack chain deals 45% more damage.'
   };
 
   let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false,tcBuildAutosaveTimer=null,tcBuildAutosaveDraft=null,tcBuildAutosaveSlot=null,tcBuildChangeSeq=0;
@@ -143,10 +166,10 @@
   }
   function talismanDeltas(build){
     const out={str:0,dex:0,int:0,fai:0,arc:0};
-    for(const raw of build.talismans){const delta=STAT_TALISMANS[String(raw||'').trim().toLowerCase()];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}
+    for(const raw of build.talismans){const delta=STAT_TALISMANS[itemKey(raw)];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}
     return out;
   }
-  function physickDeltas(build){const out={str:0,dex:0,int:0,fai:0,arc:0};for(const raw of build.physickTears){const delta=STAT_PHYSICK[String(raw||'').trim().toLowerCase()];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}return out;}
+  function physickDeltas(build){const out={str:0,dex:0,int:0,fai:0,arc:0};for(const raw of build.physickTears){const delta=STAT_PHYSICK[itemKey(raw)];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}return out;}
   function effectiveAttrs(build){const t=talismanDeltas(build),p=physickDeltas(build),out={};for(const key of ATTRS)out[key]=Math.min(99,Math.max(1,Number(build[key])||1)+t[key]+p[key]);return out;}
   function applyClassConstraintsToInputs(){
     const classKey=document.querySelector('#tcBuildClass')?.value||'',preset=classPreset(classKey),level=document.querySelector('[data-build-field="level"]');
@@ -251,7 +274,7 @@
   function affinityLabel(raw){return AFFINITIES[raw.affinityId]||raw.name.replace(raw.weaponName,'').trim()||'Standard';}
   function round(value){return Math.floor(Number(value||0)+1e-9);}
   function scalingLabel(weapon,level,attr){const value=weapon.attributeScaling[level][attr];return value?weapon.scalingTiers.find(([minimum])=>value>=minimum)?.[1]||'—':'—';}
-  function conditionalNotes(build){return [...new Set([...build.talismans.map(x=>CONDITIONAL_TALISMANS[String(x||'').trim().toLowerCase()]),...build.physickTears.map(x=>PHYSICK_NOTES[String(x||'').trim().toLowerCase()])].filter(Boolean))];}
+  function conditionalNotes(build){return [...new Set([...build.talismans.map(x=>CONDITIONAL_TALISMANS[itemKey(x)]),...build.physickTears.map(x=>PHYSICK_NOTES[itemKey(x)])].filter(Boolean))];}
   function resultMarkup(build,raw){
     if(!raw)return `<div class="tc-weapon-empty">Choose a weapon to calculate its attack rating with this build.</div>`;
     const one=calculate(raw,build,false),two=calculate(raw,build,true),scadu=SCADU[build.scadu]||1,talismanBonus=talismanDeltas(build),physickBonus=physickDeltas(build),attrs=effectiveAttrs(build);
