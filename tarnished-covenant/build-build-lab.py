@@ -4,8 +4,8 @@ import re
 path = Path(__file__).with_name("index.html")
 html = path.read_text()
 
-css_tag = '<link rel="stylesheet" href="./build-lab.css?v=9">'
-js_tag = '<script src="./build-lab.js?v=14"></script>'
+css_tag = '<link rel="stylesheet" href="./build-lab.css?v=10">'
+js_tag = '<script src="./build-lab.js?v=15"></script>'
 
 css_pattern = r'<link rel="stylesheet" href="\./build-lab\.css\?v=\d+">'
 js_pattern = r'<script src="\./build-lab\.js\?v=\d+"></script>'
