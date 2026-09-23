@@ -186,6 +186,18 @@ for needle in [
 ]: require(needle)
 forbid('  return pair;','raw bestPairFromPool candidate may not be returned from chooseWeaponPair')
 
+# Repetition control treats themed variants as a family without removing them
+# from the armory. Celebrants remain drawable, but not back-to-back when other
+# legal choices exist.
+for needle in [
+    'function tcWeaponFamilyKey(name)',
+    'if(key.startsWith("celebrant\'s "))return \'celebrant\';',
+    'function tcBestDiversePairFromPool(state,chasePool,morganPool)',
+    'const diverse=all.filter(x=>!x.sameFamily);',
+    'const seenFamilies=new Set(currentNames.map(tcWeaponFamilyKey).filter(Boolean));',
+    'if(familyDiverse.length)pool=familyDiverse;',
+]: require(needle)
+
 # Appeals keep moving forward through the legal deck instead of immediately
 # recycling the weapon that was just rejected.
 for needle in [
