@@ -64,7 +64,7 @@
     'blue dancer charm':'Raises physical damage at low equip load; the exact bonus depends on total carried weight.'
   };
 
-  let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false,tcBuildAutosaveTimer=null,tcBuildAutosaveDraft=null,tcBuildAutosaveSlot=null;
+  let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false,tcBuildAutosaveTimer=null,tcBuildAutosaveDraft=null,tcBuildAutosaveSlot=null,tcBuildChangeSeq=0;
   const graphCache=new Map();
 
   function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],physickTears:['',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
@@ -113,8 +113,10 @@
     base.weapon={weaponName,variantName,upgrade};return normalizeBuild(base);
   }
   function scheduleBuildSave(){
-    clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveSlot=selectedSlot();tcBuildAutosaveDraft=currentDraft();markDirty(true);
-    tcBuildAutosaveTimer=setTimeout(()=>{const draft=tcBuildAutosaveDraft,slot=tcBuildAutosaveSlot;tcBuildAutosaveTimer=null;if(draft&&slot)saveBuild({slot,draft,automatic:true});},900);
+    clearTimeout(tcBuildAutosaveTimer);
+    const changeSeq=++tcBuildChangeSeq;
+    tcBuildAutosaveSlot=selectedSlot();tcBuildAutosaveDraft=currentDraft();markDirty(true);
+    tcBuildAutosaveTimer=setTimeout(()=>{const draft=tcBuildAutosaveDraft,slot=tcBuildAutosaveSlot;tcBuildAutosaveTimer=null;if(draft&&slot)saveBuild({slot,draft,automatic:true,changeSeq});},650);
   }
   function loadWeaponData(){
     if(tcWeaponData)return Promise.resolve(tcWeaponData);
@@ -231,12 +233,25 @@
     bindNav();markDirty(false);
     loadWeaponData().then(()=>{if(uiScreen!=='build')return;populateWeaponControls(build);refreshResults();}).catch(error=>{console.error(error);const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML='<div class="tc-weapon-error">The weapon records could not be opened. Refresh the app and try again.</div>';});
   }
-  async function saveBuild({slot=selectedSlot(),draft=null,automatic=false}={}){
-    clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;draft=normalizeBuild(draft||currentDraft());draft.weapon.variantName=document.querySelector('#tcBuildAffinity')?.value||draft.weapon.variantName;
+  async function saveBuild({slot=selectedSlot(),draft=null,automatic=false,changeSeq=tcBuildChangeSeq}={}){
+    clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;
+    const fromDom=!draft;
+    draft=normalizeBuild(draft||currentDraft());
+    if(fromDom)draft.weapon.variantName=document.querySelector('#tcBuildAffinity')?.value||draft.weapon.variantName;
     const buildState=latest=>{const next=structuredClone(latest);ensureBuilds(next);next.builds[slot]=structuredClone(draft);next.lastAction=`${playerName()} updated ${playerLabel(slot,next)}’s build.`;next.updatedAt=new Date().toISOString();return next;};
     const button=document.querySelector('#tcSaveBuild'),status=document.querySelector('.tc-build-save-state');if(button&&!automatic){button.disabled=true;button.textContent='Saving…';}if(status)status.textContent='Saving…';
     const saved=await commit(buildState(run.state),{successToast:automatic?'':`${playerLabel(slot,run.state)}’s build saved.`,retryBuilder:buildState});
-    if(saved){tcBuildAutosaveDraft=null;tcBuildAutosaveSlot=null;if(selectedSlot()===slot)markDirty(false);}else if(automatic){tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true}),1400);}else if(button){button.disabled=false;button.textContent='Save Now';}
+    if(saved){
+      if(changeSeq===tcBuildChangeSeq){
+        tcBuildAutosaveDraft=null;tcBuildAutosaveSlot=null;
+        if(selectedSlot()===slot)markDirty(false);
+      }
+    }else if(automatic&&changeSeq===tcBuildChangeSeq){
+      tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;
+      tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),1400);
+    }else if(!automatic&&button){
+      button.disabled=false;button.textContent='Save Now';
+    }
   }
 
   const normalizeBefore=tcNormalizeRunState;
@@ -244,7 +259,18 @@
   const navBefore=navMarkup;
   navMarkup=function(active){return navBefore(active).replace('<button data-screen="settings"',`<button data-screen="build" class="${active==='build'?'active':''}"><span class="nicon">⌁</span><span>Build</span></button><button data-screen="settings"`);};
   const renderBefore=renderRun;
-  renderRun=function(){if(run?.state)ensureBuilds(run.state);if(uiScreen==='build')return renderBuild();return renderBefore();};
+  renderRun=function(){
+    if(run?.state)ensureBuilds(run.state);
+    if(uiScreen==='build'){
+      if(tcBuildDirty&&document.querySelector('.tc-build-screen')){
+        const status=document.querySelector('.tc-build-save-state');
+        if(status)status.textContent='Saving local edits · partner sync received';
+        return;
+      }
+      return renderBuild();
+    }
+    return renderBefore();
+  };
 
   if(!window.__tcBuildLabBound){window.__tcBuildLabBound=true;document.addEventListener('click',event=>{
     const weaponPick=event.target.closest('[data-weapon-pick]');if(weaponPick){setWeaponSelection(weaponPick.dataset.weaponPick);return;}
