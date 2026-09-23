@@ -4,8 +4,8 @@ const path=require('path');
 const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'.';
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
-assert(html.includes('./build-lab.css?v=10'),'Build lab stylesheet is linked');
-assert(html.includes('./build-lab.js?v=15'),'Build lab script is linked');
+assert(html.includes('./build-lab.css?v=11'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.js?v=16'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
 assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
@@ -34,6 +34,7 @@ assert(js.includes('data-sync-build-level'),'Level/stat mismatches offer an expl
 assert(!js.includes('base.level=levelForClassStats(base.startingClass,base);'),'Normalization never silently rewrites a saved character level');
 assert(js.includes('Level is never changed automatically'),'Build screen promises non-destructive level validation');
 assert(js.includes('PHYSICK_DUPLICATES_ALLOWED')&&js.includes('Ruptured Crystal Tear'),'Legal duplicate Crystal Tears are supported');
+assert(js.includes('function refreshPhysickAvailability()'),'Illegal duplicate Physick choices are disabled before selection');
 assert(js.includes('function talismanFamilyKey(value)'),'Mutually exclusive talisman families are modeled');
 assert(js.includes("return 'radagon-seal'")&&js.includes("return 'arsenal'")&&js.includes("return 'dragoncrest'")&&js.includes("return 'turtle'"),'Representative talisman family conflicts are enforced');
 assert(js.includes('function refreshWeaponSearchState()'),'Weapon search clearly distinguishes typed text from equipped weapon');
@@ -41,6 +42,8 @@ assert(js.includes('Calculations still use'),'Weapon search ambiguity warning is
 assert(js.includes('spellScaling[type]=100*total'),'Catalyst spell scaling follows the upstream calculator formula');
 assert(js.includes('Sorcery Scaling')&&js.includes('Incant Scaling'),'Catalyst casting-power readouts are present');
 assert(js.includes('tc-ar-validity'),'One-handed and two-handed requirement validity is surfaced');
+assert(js.includes('Best 1H')&&js.includes('Best 2H'),'Affinity comparison surfaces separate best choices for each wielding mode');
+assert(js.includes("if(event.target.value==='')"),'Transient blank numeric edits are not auto-saved as minimum values');
 assert(js.includes('automatic&&pending'),'Autosave waits safely behind another shared mutation');
 assert(js.includes('Not saved · try again')&&js.includes('Save interrupted · retrying…'),'Failed saves leave an actionable visible status');
 console.log('Build lab invariants passed');
