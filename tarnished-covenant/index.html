@@ -7113,6 +7113,26 @@ function tcLegalAccumulatedWeaponPool(state,target){
 function tcAppealSeenWeapons(state){
   return new Set(Array.isArray(state?.current?.appealedWeaponNames)?state.current.appealedWeaponNames:[]);
 }
+function tcWeaponFamilyKey(name){
+  const key=tcWeaponNameKey(name);
+  if(key.startsWith("celebrant's "))return 'celebrant';
+  return '';
+}
+function tcBestDiversePairFromPool(state,chasePool,morganPool){
+  const all=[];
+  for(const chaseWeapon of chasePool){
+    for(const morganWeapon of morganPool){
+      if(chaseWeapon.name===morganWeapon.name)continue;
+      const cf=tcWeaponFamilyKey(chaseWeapon.name),mf=tcWeaponFamilyKey(morganWeapon.name);
+      all.push({chaseWeapon,morganWeapon,sameFamily:Boolean(cf&&cf===mf),score:scoreWeaponPair(state,chaseWeapon,morganWeapon,Math.max(chasePool.length,morganPool.length))});
+    }
+  }
+  if(!all.length)return null;
+  const diverse=all.filter(x=>!x.sameFamily);
+  const candidates=diverse.length?diverse:all;
+  candidates.sort((a,b)=>b.score-a.score);
+  return candidates[0];
+}
 function tcBuildWeaponPairFromCandidate(pair){
   if(!pair?.chaseWeapon||!pair?.morganWeapon)return null;
   return {chase:buildFromWeapon(pair.chaseWeapon),morgan:buildFromWeapon(pair.morganWeapon)};
@@ -7133,16 +7153,16 @@ const tcChooseWeaponPairBeforeAccess=chooseWeaponPair;
 chooseWeaponPair=function(state,target){
   const currentPool=tcLegalRegionWeapons(state,state.region,target),used=usedWeaponNames(state),unusedCurrent=currentPool.filter(w=>!used.has(w.name));
   let pair=null;
-  if(unusedCurrent.length>=2)pair=bestPairFromPool(state,unusedCurrent,unusedCurrent);
+  if(unusedCurrent.length>=2)pair=tcBestDiversePairFromPool(state,unusedCurrent,unusedCurrent);
   else if(unusedCurrent.length===1){
     const fallback=tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name&&!used.has(w.name));
     const broad=fallback.length?fallback:tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name);
-    if(broad.length)pair=Math.random()<0.5?bestPairFromPool(state,unusedCurrent,broad):bestPairFromPool(state,broad,unusedCurrent);
+    if(broad.length)pair=Math.random()<0.5?tcBestDiversePairFromPool(state,unusedCurrent,broad):tcBestDiversePairFromPool(state,broad,unusedCurrent);
   }
   if(!pair){
     const all=tcLegalAccumulatedWeaponPool(state,target),unused=all.filter(w=>!used.has(w.name));
     const pool=unused.length>=2?unused:all;
-    if(pool.length>=2)pair=bestPairFromPool(state,pool,pool);
+    if(pool.length>=2)pair=tcBestDiversePairFromPool(state,pool,pool);
   }
   const built=tcBuildWeaponPairFromCandidate(pair);
   if(built)return built;
@@ -7177,6 +7197,10 @@ makeBuild=function(regionName,target,avoidNames=[],state=null){
   const avoided=new Set(Array.isArray(avoidNames)?avoidNames:[avoidNames]);
   for(const name of tcAppealSeenWeapons(state))avoided.add(name);
   let pool=tcLegalRegionWeapons(state,regionName,target).filter(w=>!avoided.has(w.name));
+  const currentNames=[state?.current?.chase?.name,state?.current?.morgan?.name,...tcAppealSeenWeapons(state)].filter(Boolean);
+  const seenFamilies=new Set(currentNames.map(tcWeaponFamilyKey).filter(Boolean));
+  const familyDiverse=pool.filter(w=>{const family=tcWeaponFamilyKey(w.name);return !family||!seenFamilies.has(family);});
+  if(familyDiverse.length)pool=familyDiverse;
   const unused=pool.filter(w=>!usedWeaponNames(state).has(w.name));
   if(unused.length)pool=unused;
   else{
@@ -8821,7 +8845,7 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260922-leyndell-armory-2';
+const TC_BUILD_ID='20260922-weapon-family-diversity-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
