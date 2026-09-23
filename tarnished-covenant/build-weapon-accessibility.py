@@ -126,6 +126,23 @@ for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
   pool.push(restored);
 })();
 
+const TC_REGIONAL_WEAPON_RESTORES={
+  'Altus Plateau + Leyndell':["Great Stars","Guardian's Swordspear"],
+  'Mt. Gelmir':['Pulley Bow','Magma Blade'],
+  'Mountaintops of the Giants':["Watchdog's Greatsword",'Thorned Whip',"Monk's Flameblade"],
+  'Miquella’s Haligtree':["Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe',"Envoy's Greathorn"],
+  'Crumbling Farum Azula':["Beastman's Curved Sword","Beastman's Cleaver","Banished Knight's Greatsword","Banished Knight's Halberd"],
+  'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield']
+};
+for(const [regionName,names] of Object.entries(TC_REGIONAL_WEAPON_RESTORES)){
+  const pool=regions?.[regionName]?.weapons;
+  if(!Array.isArray(pool))continue;
+  for(const name of names){
+    if(pool.some(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(name)))continue;
+    pool.push(typeof sheetWeapon==='function'?sheetWeapon(name):W(name,'Regional weapon','Smithing path varies','Native skill',false));
+  }
+}
+
 // Leyndell proper opens after Draconic Tree Sentinel. Keep these weapons in the
 // combined Altus/Leyndell deck, then let acquisition gates decide when they can draw.
 (function tcRestoreLeyndellWeapons(){
