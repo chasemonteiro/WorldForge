@@ -2,6 +2,7 @@
    MIT-licensed Elden Ring Weapon Calculator; see THIRD_PARTY_NOTICES.md. */
 (() => {
   const ATTRS=['str','dex','int','fai','arc'];
+  const CORE_ATTRS=['vig','mind','end','str','dex','int','fai','arc'];
   const DAMAGE=[0,1,2,3,4], STATUS=[5,6,7,8,9,10,11];
   const TYPE_LABELS={0:'Physical',1:'Magic',2:'Fire',3:'Lightning',4:'Holy',5:'Poison',6:'Scarlet Rot',7:'Blood Loss',8:'Frost',9:'Sleep',10:'Madness',11:'Death Blight'};
   const AFFINITIES={[-1]:'Unique',0:'Standard',1:'Heavy',2:'Keen',3:'Quality',4:'Fire',5:'Flame Art',6:'Lightning',7:'Sacred',8:'Magic',9:'Cold',10:'Poison',11:'Blood',12:'Occult'};
@@ -68,15 +69,60 @@
   const graphCache=new Map();
 
   function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],physickTears:['',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
-  function uniqueSlots(values,length){const seen=new Set();return Array.from({length},(_,i)=>{const value=String(Array.isArray(values)?values[i]||'':'').trim();const key=value.toLowerCase();if(!value||seen.has(key))return '';seen.add(key);return value;});}
+  function itemKey(value){return String(value||'').trim().toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g,' ');}
+  const PHYSICK_DUPLICATES_ALLOWED=new Set(['Crimson Crystal Tear','Cerulean Crystal Tear','Ruptured Crystal Tear'].map(itemKey));
+  function talismanFamilyKey(value){
+    let key=itemKey(value).replace(/\s+\+\d+$/,'');
+    if(!key)return '';
+    if(key==="radagon's scarseal"||key==="radagon's soreseal")return 'radagon-seal';
+    if(key==="marika's scarseal"||key==="marika's soreseal")return 'marika-seal';
+    if(key==='arsenal charm'||key==="great-jar's arsenal")return 'arsenal';
+    if(key==='warrior jar shard'||key==='shard of alexander')return 'jar-shard';
+    if(key==='winged sword insignia'||key==='rotten winged sword insignia')return 'winged-sword';
+    if(key==="arrow's reach talisman"||key==="arrow's soaring sting talisman")return 'arrow-reach';
+    if(key==="prince of death's cyst"||key==="prince of death's pustule")return 'prince-of-death';
+    if(key==='dragoncrest greatshield talisman'||key==='dragoncrest shield talisman')return 'dragoncrest';
+    return key;
+  }
+  function normalizeTalismanSlots(values,length=4){
+    const seen=new Set();
+    return Array.from({length},(_,i)=>{
+      const value=String(Array.isArray(values)?values[i]||'':'').trim(),family=talismanFamilyKey(value);
+      if(!value||seen.has(family))return '';
+      seen.add(family);return value;
+    });
+  }
+  function normalizePhysickSlots(values,length=2){
+    const seen=new Map();
+    return Array.from({length},(_,i)=>{
+      const value=String(Array.isArray(values)?values[i]||'':'').trim(),key=itemKey(value);
+      if(!value)return '';
+      const count=seen.get(key)||0;
+      if(count&&!PHYSICK_DUPLICATES_ALLOWED.has(key))return '';
+      if(count>=2)return '';
+      seen.set(key,count+1);return value;
+    });
+  }
+  function classPreset(key){return STARTING_CLASSES[String(key||'')]||null;}
+  function levelForClassStats(classKey,build){
+    const preset=classPreset(classKey);if(!preset)return Math.max(1,Math.min(713,Number(build?.level)||1));
+    const spent=CORE_ATTRS.reduce((sum,key)=>sum+Math.max(0,(Number(build?.[key])||preset[key])-preset[key]),0);
+    return Math.min(713,preset.level+spent);
+  }
   function normalizeBuild(value){
     const base=blankBuild(),src=value&&typeof value==='object'?value:{};
-    base.startingClass=STARTING_CLASSES[src.startingClass]?src.startingClass:'';
-    for(const key of ['level','vig','mind','end','str','dex','int','fai','arc'])base[key]=Math.max(1,Math.min(713,Number(src[key]??base[key])||base[key]));
-    for(const key of ['vig','mind','end','str','dex','int','fai','arc'])base[key]=Math.min(99,base[key]);
+    base.startingClass=classPreset(src.startingClass)?src.startingClass:'';
+    for(const key of CORE_ATTRS)base[key]=Math.max(1,Math.min(99,Number(src[key]??base[key])||base[key]));
+    const preset=classPreset(base.startingClass);
+    if(preset){
+      for(const key of CORE_ATTRS)base[key]=Math.max(preset[key],base[key]);
+      base.level=levelForClassStats(base.startingClass,base);
+    }else{
+      base.level=Math.max(1,Math.min(713,Number(src.level??base.level)||base.level));
+    }
     base.scadu=Math.max(0,Math.min(20,Number(src.scadu)||0));
-    base.talismans=uniqueSlots(src.talismans,4);
-    base.physickTears=uniqueSlots(src.physickTears,2);
+    base.talismans=normalizeTalismanSlots(src.talismans,4);
+    base.physickTears=normalizePhysickSlots(src.physickTears,2);
     base.weapon={...base.weapon,...(src.weapon&&typeof src.weapon==='object'?src.weapon:{})};
     base.weapon.weaponName=String(base.weapon.weaponName||'');base.weapon.variantName=String(base.weapon.variantName||'');base.weapon.upgrade=Math.max(0,Number(base.weapon.upgrade)||0);
     return base;
@@ -101,6 +147,40 @@
   }
   function physickDeltas(build){const out={str:0,dex:0,int:0,fai:0,arc:0};for(const raw of build.physickTears){const delta=STAT_PHYSICK[String(raw||'').trim().toLowerCase()];if(delta)for(const key of ATTRS)out[key]+=Number(delta[key]||0);}return out;}
   function effectiveAttrs(build){const t=talismanDeltas(build),p=physickDeltas(build),out={};for(const key of ATTRS)out[key]=Math.min(99,Math.max(1,Number(build[key])||1)+t[key]+p[key]);return out;}
+  function applyClassConstraintsToInputs(){
+    const classKey=document.querySelector('#tcBuildClass')?.value||'',preset=classPreset(classKey),level=document.querySelector('[data-build-field="level"]');
+    for(const key of CORE_ATTRS){
+      const field=document.querySelector(`[data-build-field="${key}"]`);if(!field)continue;
+      const min=preset?Number(preset[key]):1;field.min=String(min);
+      if(Number(field.value)<min)field.value=String(min);
+    }
+    if(level){
+      const buttons=document.querySelectorAll('[data-step-field="level"]');
+      if(preset){
+        const draft={};for(const key of CORE_ATTRS)draft[key]=Number(document.querySelector(`[data-build-field="${key}"]`)?.value)||preset[key];
+        level.value=String(levelForClassStats(classKey,draft));level.readOnly=true;level.setAttribute('aria-readonly','true');buttons.forEach(b=>b.disabled=true);
+      }else{
+        level.readOnly=false;level.removeAttribute('aria-readonly');buttons.forEach(b=>b.disabled=false);
+      }
+    }
+  }
+  function refreshTalismanAvailability(){
+    const selects=[...document.querySelectorAll('[data-talisman]')];
+    for(const select of selects){
+      const otherFamilies=new Set(selects.filter(x=>x!==select&&x.value).map(x=>talismanFamilyKey(x.value)).filter(Boolean));
+      for(const option of select.options){
+        if(!option.value){option.disabled=false;continue;}
+        option.disabled=otherFamilies.has(talismanFamilyKey(option.value))&&option.value!==select.value;
+      }
+    }
+  }
+  function refreshBuildStatus(build=null){
+    const host=document.querySelector('#tcBuildStatus');if(!host)return;
+    const draft=build||currentDraft(),preset=classPreset(draft.startingClass),eff=effectiveAttrs(draft),t=talismanDeltas(draft),p=physickDeltas(draft);
+    const classText=preset?`${preset.label} · Level ${draft.level} · ${Math.max(0,draft.level-preset.level)} points invested`:`Custom stats · Level ${draft.level} entered manually`;
+    const stats=ATTRS.map(key=>{const bonus=(t[key]||0)+(p[key]||0),value=eff[key];return `<span class="${bonus?'boosted':''}">${key.toUpperCase()} <b>${value}</b>${bonus?`<small>+${bonus}</small>`:''}</span>`;}).join('');
+    host.innerHTML=`<div class="tc-build-status-line"><strong>${h(classText)}</strong><span>${preset?'Class minimums enforced · level auto-calculated':'Choose a starting class to validate level and minimum stats'}</span></div><div class="tc-effective-stats"><em>Weapon-effective stats</em>${stats}</div>`;
+  }
   function currentDraft(){
     const base=buildFor();
     base.startingClass=document.querySelector('#tcBuildClass')?.value||'';
@@ -170,11 +250,11 @@
     const requirements=ATTRS.filter(a=>raw.requirements[a]).map(a=>`<div class="${one.unmet.includes(a)?'unmet':''}"><span>${a.toUpperCase()}</span><b>${raw.requirements[a]}</b></div>`).join('')||'<div><span>Requirements</span><b>None</b></div>';
     const scaling=ATTRS.filter(a=>one.weapon.attributeScaling[one.level][a]).map(a=>`<div><span>${a.toUpperCase()}</span><b>${scalingLabel(one.weapon,one.level,a)}</b></div>`).join('')||'<div><span>Scaling</span><b>—</b></div>';
     const deltaText=ATTRS.filter(a=>talismanBonus[a]||physickBonus[a]).map(a=>`${a.toUpperCase()} +${talismanBonus[a]+physickBonus[a]}`).join(' · ');
-    const notes=conditionalNotes(build);
+    const notes=conditionalNotes(build),oneOk=!one.unmet.length,twoOk=!two.unmet.length,isBow=BOW_TYPES.has(two.weapon.weaponType),isCatalyst=Boolean(raw.sorceryTool||raw.incantationTool);
     const ranked=variantsFor(build.weapon.weaponName).map(candidate=>{const a=calculate(candidate,build,false),b=calculate(candidate,build,true);return {raw:candidate,one:round(a.total),two:round(b.total)};}).sort((a,b)=>Math.max(b.one,b.two)-Math.max(a.one,a.two));
     return `<div class="tc-ar-hero">
-      <div class="tc-ar-card"><span class="mode">one-handed AR</span><strong>${round(one.total)}</strong><small>${h(raw.name)} +${one.level}</small>${build.scadu?`<div class="shadow">Shadow Realm · ${round(one.total*scadu)} AR</div>`:''}</div>
-      <div class="tc-ar-card"><span class="mode">two-handed AR</span><strong>${round(two.total)}</strong><small>${two.weapon.paired?'Paired weapon · no STR bonus':BOW_TYPES.has(two.weapon.weaponType)?'Two-handing required':`Effective STR ${adjustedAttrs(two.weapon,attrs,true).str}`}</small>${build.scadu?`<div class="shadow">Shadow Realm · ${round(two.total*scadu)} AR</div>`:''}</div>
+      <div class="tc-ar-card ${(!isBow&&oneOk)?'valid':'invalid'}"><span class="mode">${isBow?'one-handed reference':'one-handed AR'}</span><strong>${round(one.total)}</strong><small>${h(raw.name)} +${one.level}</small><div class="tc-ar-validity ${(!isBow&&oneOk)?'ok':'bad'}">${isBow?'Bow attacks require two hands':oneOk?'✓ Requirements met':`Needs ${one.unmet.map(a=>a.toUpperCase()).join(' / ')}`}</div>${build.scadu?`<div class="shadow">Shadow Realm · ${round(one.total*scadu)} AR</div>`:''}</div>
+      <div class="tc-ar-card ${twoOk?'valid':'invalid'}"><span class="mode">two-handed AR</span><strong>${round(two.total)}</strong><small>${two.weapon.paired?'Paired weapon · no STR bonus':isBow?'Two-handing required':`Effective STR ${adjustedAttrs(two.weapon,attrs,true).str}`}</small><div class="tc-ar-validity ${twoOk?'ok':'bad'}">${twoOk?'✓ Requirements met':`Needs ${two.unmet.map(a=>a.toUpperCase()).join(' / ')}`}</div>${build.scadu?`<div class="shadow">Shadow Realm · ${round(two.total*scadu)} AR</div>`:''}</div>
     </div>
     <div class="tc-weapon-meta">
       <div class="tc-weapon-slip"><span>Damage & buildup · 1H / 2H</span><div class="tc-damage-grid">${damage.map(t=>`<div><span>${TYPE_LABELS[t]}</span><b>${round(one.attack[t])} / ${round(two.attack[t])}</b></div>`).join('')}${statuses.map(t=>`<div><span>${TYPE_LABELS[t]}</span><b>${round(one.attack[t])}</b></div>`).join('')}</div></div>
@@ -183,24 +263,38 @@
     ${one.unmet.length?`<div class="tc-weapon-note warn">Requirements not met one-handed: ${one.unmet.map(a=>a.toUpperCase()).join(', ')}. The calculator has applied the in-game attack penalty.</div>`:''}
     ${deltaText?`<div class="tc-weapon-note">Effective combat stats include active talisman and Physick bonuses: ${deltaText}.</div>`:''}
     ${build.scadu?`<div class="tc-weapon-note">Scadutree Blessing +${build.scadu} uses the current Shadow Realm damage multiplier (×${scadu}). It does not affect damage outside the Realm of Shadow.</div>`:''}
+    ${isCatalyst?`<div class="tc-weapon-note warn">Catalyst warning: this screen calculates weapon strike AR, not Sorcery Scaling or Incant Scaling. Do not use the AR number above to compare spell-casting power.</div>`:''}
     ${notes.map(note=>`<div class="tc-weapon-note">${h(note)}</div>`).join('')}
-    ${ranked.length>1?`<div class="tc-affinity-head"><strong>Best affinities for these stats</strong><span>Tap one to equip it</span></div><div class="tc-affinity-table">${ranked.map((row,i)=>`<button type="button" class="tc-affinity-row ${row.raw.name===raw.name?'current':''}" data-affinity-pick="${h(row.raw.name)}"><span>${i+1}. ${h(affinityLabel(row.raw))}</span><small>1H</small><b>${row.one}</b><span></span><small>2H</small><b>${row.two}</b></button>`).join('')}</div>`:''}`;
+    ${ranked.length>1?`<div class="tc-affinity-head"><strong>Best affinities for these stats</strong><span>Sorted by the higher displayed 1H/2H AR · tap to equip</span></div><div class="tc-affinity-table">${ranked.map((row,i)=>`<button type="button" class="tc-affinity-row ${row.raw.name===raw.name?'current':''}" data-affinity-pick="${h(row.raw.name)}"><span>${i+1}. ${h(affinityLabel(row.raw))}</span><small>1H</small><b>${row.one}</b><span></span><small>2H</small><b>${row.two}</b></button>`).join('')}</div>`:''}`;
   }
   function weaponNames(){return [...new Set((tcWeaponData?.weapons||[]).map(w=>w.weaponName))].sort((a,b)=>a.localeCompare(b));}
-  function closeWeaponPicker(){const host=document.querySelector('#tcWeaponPicker');if(host){host.classList.remove('open');host.hidden=true;}}
+  function refreshWeaponSearchState(){
+    const input=document.querySelector('#tcBuildWeaponName'),host=document.querySelector('#tcWeaponSearchState');if(!input||!host)return;
+    const selected=String(input.dataset.selectedWeapon||'').trim(),typed=String(input.value||'').trim();
+    if(typed&&itemKey(typed)!==itemKey(selected)){
+      host.innerHTML=selected?`Searching for <b>${h(typed)}</b>. Calculations still use <b>${h(selected)}</b> until you choose a result.`:`Searching for <b>${h(typed)}</b>. Choose a result before calculations or saving can use it.`;
+      host.classList.add('active');
+    }else{host.textContent='';host.classList.remove('active');}
+  }
+  function closeWeaponPicker({restore=true}={}){
+    const host=document.querySelector('#tcWeaponPicker'),input=document.querySelector('#tcBuildWeaponName');
+    if(host){host.classList.remove('open');host.hidden=true;}
+    if(restore&&input){input.value=String(input.dataset.selectedWeapon||'');}
+    refreshWeaponSearchState();
+  }
   function renderWeaponPicker(query=null){
     const input=document.querySelector('#tcBuildWeaponName'),host=document.querySelector('#tcWeaponPicker');if(!input||!host||!tcWeaponData)return;
     const names=weaponNames(),selected=String(input.dataset.selectedWeapon||'').trim();let raw=String(query??input.value??'').trim();
     if(selected&&raw.toLowerCase()===selected.toLowerCase())raw='';
     const q=raw.toLowerCase(),matches=q?names.filter(name=>name.toLowerCase().includes(q)):names;
     host.innerHTML=matches.length?matches.map(name=>`<button type="button" class="tc-weapon-option ${name===selected?'active':''}" data-weapon-pick="${h(name)}" role="option" aria-selected="${name===selected?'true':'false'}"><span>${h(name)}</span>${name===selected?'<small>Equipped</small>':''}</button>`).join(''):`<div class="tc-weapon-picker-empty">No weapons match “${h(raw)}”.</div>`;
-    host.hidden=false;host.classList.add('open');
+    host.hidden=false;host.classList.add('open');refreshWeaponSearchState();
     if(!q&&selected){requestAnimationFrame(()=>{const active=[...host.querySelectorAll('[data-weapon-pick]')].find(el=>el.dataset.weaponPick===selected);if(active)host.scrollTop=Math.max(0,active.offsetTop-host.clientHeight/2+active.offsetHeight/2);});}
   }
   function setWeaponSelection(name,{close=true,save=true}={}){
     const input=document.querySelector('#tcBuildWeaponName');if(!input||!tcWeaponData)return false;
     const canonical=weaponNames().find(n=>n.toLowerCase()===String(name||'').trim().toLowerCase());if(!canonical)return false;
-    input.value=canonical;input.dataset.selectedWeapon=canonical;if(close)closeWeaponPicker();refreshResults();if(save)scheduleBuildSave();return true;
+    input.value=canonical;input.dataset.selectedWeapon=canonical;if(close)closeWeaponPicker({restore:false});refreshWeaponSearchState();refreshResults();if(save)scheduleBuildSave();return true;
   }
   function populateWeaponControls(build){
     const input=document.querySelector('#tcBuildWeaponName'),affinity=document.querySelector('#tcBuildAffinity'),upgrade=document.querySelector('#tcBuildUpgrade');if(!input||!affinity||!upgrade||!tcWeaponData)return;
@@ -211,33 +305,39 @@
     const variants=variantsFor(selected);const current=affinity.value;const saved=variants.some(w=>w.name===current)?current:(variants.some(w=>w.name===build.weapon.variantName)?build.weapon.variantName:(variants[0]?.name||''));affinity.innerHTML=variants.length?variants.map(w=>`<option value="${h(w.name)}">${h(affinityLabel(w))}</option>`).join(''):'<option value="">Choose weapon first</option>';if(saved)affinity.value=saved;
     const raw=variants.find(w=>w.name===affinity.value)||variants[0];const max=raw?(tcWeaponData.reinforceTypes[raw.reinforceTypeId]?.length||1)-1:25;upgrade.max=max;const typed=Number(upgrade.value);const fallback=Math.max(0,Number(build.weapon.upgrade)||0);upgrade.value=Math.min(max,Number.isFinite(typed)?Math.max(0,typed):fallback);document.querySelector('#tcUpgradeMax').textContent=`max +${max}`;
   }
-  function refreshResults(){if(!tcWeaponData)return;const build=currentDraft();populateWeaponControls(build);const raw=rawFor({...build,weapon:{...build.weapon,variantName:document.querySelector('#tcBuildAffinity')?.value||build.weapon.variantName}});build.weapon.variantName=raw?.name||'';const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML=resultMarkup(build,raw);}
+  function refreshResults(){applyClassConstraintsToInputs();const build=currentDraft();refreshBuildStatus(build);refreshTalismanAvailability();refreshWeaponSearchState();if(!tcWeaponData)return;populateWeaponControls(build);const raw=rawFor({...build,weapon:{...build.weapon,variantName:document.querySelector('#tcBuildAffinity')?.value||build.weapon.variantName}});build.weapon.variantName=raw?.name||'';const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML=resultMarkup(build,raw);}
   function renderBuild(){
     ensureBuilds(run.state);const slot=selectedSlot(),build=buildFor(slot),names=covenantNames(run.state);
     app.innerHTML=`<section class="tc-screen tc-build-screen">${screenTop('Tarnished Build')}
       <div class="tc-build-hero"><div class="tc-kicker gold">living character sheet</div><h1>Build</h1><p>Keep both Tarnished current, test every weapon, and stop leaving damage on the table.</p></div>
       <div class="tc-build-player-tabs"><button type="button" data-build-slot="chase" class="${slot==='chase'?'active':''}">${h(names[0])}</button><button type="button" data-build-slot="morgan" class="${slot==='morgan'?'active':''}">${h(names[1])}</button></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Attributes</h2><span>Current in-game values</span></div>
-        <div class="tc-build-origin tc-build-field"><label for="tcBuildClass">Starting class</label><select id="tcBuildClass"><option value="">Custom / keep current stats</option>${Object.entries(STARTING_CLASSES).map(([key,value])=>`<option value="${key}" ${build.startingClass===key?'selected':''}>${h(value.label)}</option>`).join('')}</select><small>Choosing a class fills its starting level and attributes. Keep editing these values as you level.</small></div>
+        <div class="tc-build-origin tc-build-field"><label for="tcBuildClass">Starting class</label><select id="tcBuildClass"><option value="">Custom / keep current stats</option>${Object.entries(STARTING_CLASSES).map(([key,value])=>`<option value="${key}" ${build.startingClass===key?'selected':''}>${h(value.label)}</option>`).join('')}</select><small>Choosing a class fills its base stats, enforces that class’s minimum attributes, and keeps Level synchronized with points spent. Choose Custom only when you want to enter Level manually.</small></div>
         <div class="tc-build-stats">
         ${[['level','Level',713],['vig','Vigor',99],['mind','Mind',99],['end','Endurance',99],['str','Strength',99],['dex','Dexterity',99],['int','Intelligence',99],['fai','Faith',99],['arc','Arcane',99],['scadu','Scadutree',20]].map(([key,label,max])=>`<div class="tc-build-field"><label for="tcBuild-${key}">${label}</label><div class="tc-number-stepper"><button type="button" data-step-field="${key}" data-step="-1" aria-label="Decrease ${label}">−</button><input id="tcBuild-${key}" data-build-field="${key}" type="number" inputmode="numeric" min="${key==='scadu'?0:1}" max="${max}" value="${build[key]}"><button type="button" data-step-field="${key}" data-step="1" aria-label="Increase ${label}">+</button></div></div>`).join('')}
-      </div></div>
+      </div><div id="tcBuildStatus" class="tc-build-status" aria-live="polite"></div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Talismans</h2><span>Stat bonuses affect AR automatically</span></div><div class="tc-build-talismans">${build.talismans.map((value,i)=>`<div class="tc-build-field"><label for="tcTalisman${i}">Slot ${i+1}</label><select id="tcTalisman${i}" data-talisman="${i}"><option value="">Empty slot</option>${value&&!TALISMAN_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${TALISMAN_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div></div>
-      <div class="tc-build-section"><div class="tc-build-section-head"><h2>Wondrous Physick</h2><span>Assumes the Physick is active</span></div><div class="tc-build-talismans">${build.physickTears.map((value,i)=>`<div class="tc-build-field"><label for="tcPhysick${i}">Crystal Tear ${i+1}</label><select id="tcPhysick${i}" data-physick="${i}"><option value="">Empty slot</option>${value&&!PHYSICK_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${PHYSICK_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div><div class="tc-build-helper">Strength, Dexterity, Intelligence, and Faith knot tears add +10 to weapon calculations automatically. Other offensive effects are explained below the AR result.</div></div>
+      <div class="tc-build-section"><div class="tc-build-section-head"><h2>Wondrous Physick</h2><span>Assumes the Physick is active</span></div><div class="tc-build-talismans">${build.physickTears.map((value,i)=>`<div class="tc-build-field"><label for="tcPhysick${i}">Crystal Tear ${i+1}</label><select id="tcPhysick${i}" data-physick="${i}"><option value="">Empty slot</option>${value&&!PHYSICK_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${PHYSICK_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div><div class="tc-build-helper">Strength, Dexterity, Intelligence, and Faith knot tears add +10 to weapon calculations automatically. Crimson Crystal, Cerulean Crystal, and Ruptured Crystal Tears may legally occupy both slots when you own both copies. Other offensive effects are explained below the AR result.</div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Weapon Lab</h2><span>Regulation 1.17 data</span></div><div class="tc-weapon-controls">
         <div class="tc-build-field tc-weapon-name"><label for="tcBuildWeaponName">Weapon</label><input id="tcBuildWeaponName" value="${h(build.weapon.weaponName)}" data-selected-weapon="${h(build.weapon.weaponName)}" placeholder="Search or tap to browse every weapon" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="search" enterkeyhint="search"><div id="tcWeaponPicker" class="tc-weapon-picker" role="listbox" aria-label="Weapon results" hidden></div></div>
         <div class="tc-build-field"><label for="tcBuildAffinity">Affinity</label><select id="tcBuildAffinity"><option>Loading…</option></select></div>
         <div class="tc-build-field"><label for="tcBuildUpgrade">Upgrade · <span id="tcUpgradeMax">max</span></label><input id="tcBuildUpgrade" type="number" inputmode="numeric" min="0" max="25" value="${build.weapon.upgrade}"></div>
-      </div><div id="tcWeaponResults" class="tc-weapon-loading">Opening the armory…</div></div>
+      </div><div id="tcWeaponSearchState" class="tc-weapon-search-state" aria-live="polite"></div><div id="tcWeaponResults" class="tc-weapon-loading">Opening the armory…</div></div>
       <div class="tc-build-save-row"><div class="tc-build-save-state">Saved automatically</div><button id="tcSaveBuild" type="button" class="btn gold">Save Now</button></div>
       <div class="tc-build-attribution">Weapon calculations and v1.17 regulation data adapted from Tom Clark’s MIT-licensed Elden Ring Weapon Calculator. Conditional buffs are listed separately from menu AR.</div>
     </section>${navMarkup('build')}`;
-    bindNav();markDirty(false);
+    bindNav();applyClassConstraintsToInputs();refreshTalismanAvailability();refreshBuildStatus(build);refreshWeaponSearchState();markDirty(false);
     loadWeaponData().then(()=>{if(uiScreen!=='build')return;populateWeaponControls(build);refreshResults();}).catch(error=>{console.error(error);const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML='<div class="tc-weapon-error">The weapon records could not be opened. Refresh the app and try again.</div>';});
   }
   async function saveBuild({slot=selectedSlot(),draft=null,automatic=false,changeSeq=tcBuildChangeSeq}={}){
     clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;
     draft=normalizeBuild(draft||currentDraft());
+    if(automatic&&pending){
+      const status=document.querySelector('.tc-build-save-state');if(status){status.textContent='Waiting to save after current Covenant action…';status.classList.add('dirty');}
+      tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;
+      tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),900);
+      return false;
+    }
     const buildState=latest=>{const next=structuredClone(latest);ensureBuilds(next);next.builds[slot]=structuredClone(draft);next.lastAction=`${playerName()} updated ${playerLabel(slot,next)}’s build.`;next.updatedAt=new Date().toISOString();return next;};
     const button=document.querySelector('#tcSaveBuild'),status=document.querySelector('.tc-build-save-state');if(button&&!automatic){button.disabled=true;button.textContent='Saving…';}if(status)status.textContent='Saving…';
     const saved=await commit(buildState(run.state),{successToast:automatic?'':`${playerLabel(slot,run.state)}’s build saved.`,retryBuilder:buildState});
@@ -280,7 +380,7 @@
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
     const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;refreshResults();scheduleBuildSave();}return;}
     if(!event.target.closest('.tc-weapon-name'))closeWeaponPicker();
-  });document.addEventListener('focusin',event=>{if(event.target.matches('#tcBuildWeaponName'))renderWeaponPicker();});document.addEventListener('keydown',event=>{if(!event.target.matches('#tcBuildWeaponName'))return;if(event.key==='Escape'){closeWeaponPicker();event.target.blur();return;}if(event.key==='Enter'){event.preventDefault();const value=event.target.value.trim(),names=weaponNames(),exact=names.find(n=>n.toLowerCase()===value.toLowerCase()),first=exact||names.find(n=>n.toLowerCase().includes(value.toLowerCase()));if(first)setWeaponSelection(first);}});document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName')){renderWeaponPicker(event.target.value);return;}if(event.target.matches('[data-build-field],#tcBuildUpgrade')){refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildWeaponName')){const value=event.target.value.trim(),exact=weaponNames().find(n=>n.toLowerCase()===value.toLowerCase());if(exact){setWeaponSelection(exact);return;}if(!value){event.target.dataset.selectedWeapon='';closeWeaponPicker();refreshResults();scheduleBuildSave();return;}renderWeaponPicker(value);return;}if(event.target.matches('[data-talisman],[data-physick]')){const selector=event.target.matches('[data-talisman]')?'[data-talisman]':'[data-physick]',label=event.target.matches('[data-talisman]')?'talisman':'Crystal Tear',value=event.target.value.trim().toLowerCase();if(value){const duplicates=[...document.querySelectorAll(selector)].filter(el=>el!==event.target&&el.value.trim().toLowerCase()===value);if(duplicates.length){event.target.value='';setToast(`You can only equip that ${label} once.`);}}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
+  });document.addEventListener('focusin',event=>{if(event.target.matches('#tcBuildWeaponName'))renderWeaponPicker();});document.addEventListener('keydown',event=>{if(!event.target.matches('#tcBuildWeaponName'))return;if(event.key==='Escape'){closeWeaponPicker({restore:true});event.target.blur();return;}if(event.key==='Enter'){event.preventDefault();const value=event.target.value.trim(),names=weaponNames(),exact=names.find(n=>n.toLowerCase()===value.toLowerCase()),first=exact||names.find(n=>n.toLowerCase().includes(value.toLowerCase()));if(first)setWeaponSelection(first);}});document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName')){renderWeaponPicker(event.target.value);return;}if(event.target.matches('[data-build-field],#tcBuildUpgrade')){refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildWeaponName')){const value=event.target.value.trim(),exact=weaponNames().find(n=>n.toLowerCase()===value.toLowerCase());if(exact){setWeaponSelection(exact);return;}if(!value){event.target.dataset.selectedWeapon='';closeWeaponPicker();refreshResults();scheduleBuildSave();return;}renderWeaponPicker(value);return;}if(event.target.matches('[data-talisman],[data-physick]')){const isTalisman=event.target.matches('[data-talisman]'),selector=isTalisman?'[data-talisman]':'[data-physick]',value=event.target.value.trim();if(value){const others=[...document.querySelectorAll(selector)].filter(el=>el!==event.target&&el.value);if(isTalisman){const family=talismanFamilyKey(value);if(others.some(el=>talismanFamilyKey(el.value)===family)){event.target.value='';setToast('Those talismans are mutually exclusive in-game.');}}else{const key=itemKey(value);if(!PHYSICK_DUPLICATES_ALLOWED.has(key)&&others.some(el=>itemKey(el.value)===key)){event.target.value='';setToast('You only have one copy of that Crystal Tear.');}}}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
   queueMicrotask(()=>{if(run&&!tcTransitionIsLocked())renderRun();});
 })();
 /* --- End persistent Tarnished build lab --- */
