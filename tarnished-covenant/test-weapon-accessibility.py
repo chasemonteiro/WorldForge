@@ -155,6 +155,31 @@ for needle in [
     "const i=pool.findIndex(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(weapon.name));if(i>=0)pool[i]=weapon;else pool.push(weapon);",
 ]: require(needle)
 
+# Spreadsheet imports must not silently erase intended regional weapons.
+# These include fixed pickups and low-drop enemy farms; rarity is not a reason
+# to exclude a weapon from the Covenant armory.
+for needle in [
+    'const TC_REGIONAL_WEAPON_RESTORES={',
+    "'Altus Plateau + Leyndell':[\"Great Stars\",\"Guardian's Swordspear\"]",
+    "'Mt. Gelmir':['Pulley Bow','Magma Blade']",
+    "'Mountaintops of the Giants':[\"Watchdog's Greatsword\",'Thorned Whip',\"Monk's Flameblade\"]",
+    "'Miquella’s Haligtree':[\"Cleanrot Knight's Sword\",'Cleanrot Spear','Halo Scythe',\"Envoy's Greathorn\"]",
+    "'Crumbling Farum Azula':[\"Beastman's Curved Sword\",\"Beastman's Cleaver\",\"Banished Knight's Greatsword\",\"Banished Knight's Halberd\"]",
+    "'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield']",
+]: require(needle)
+
+# Source-level protection: every restored weapon must also remain in the durable
+# spreadsheet-backed pool file so normal draws do not depend on a repair layer.
+for weapon in [
+    'Greatsword','Great Stars',"Guardian's Swordspear",'Pulley Bow','Magma Blade',
+    "Watchdog's Greatsword",'Thorned Whip',"Monk's Flameblade",
+    "Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe',"Envoy's Greathorn",
+    "Beastman's Curved Sword","Beastman's Cleaver","Banished Knight's Greatsword",
+    "Banished Knight's Halberd",'Carian Thrusting Shield'
+]:
+    if f'"{weapon}"' not in regional_source:
+        raise SystemExit('restored regional weapon missing from source pool: '+weapon)
+
 # Ordinary accessible Caelid loot stays in the pool.
 for needle in [
     "pool.some(w=>w?.name==='Greatsword')",
