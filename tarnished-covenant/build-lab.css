@@ -21,6 +21,7 @@
 .tc-number-stepper{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;height:46px;border:1px solid var(--line);background:#090806}
 .tc-number-stepper input{height:44px;border:0!important;padding:5px 2px;text-align:center;-moz-appearance:textfield}
 .tc-number-stepper input::-webkit-inner-spin-button,.tc-number-stepper input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.tc-number-stepper input[readonly]{color:var(--gold-bright);background:rgba(198,161,90,.04)}
 .tc-number-stepper button{border:0;background:rgba(198,161,90,.08);color:var(--gold-bright);font:400 23px/1 Georgia,serif;padding:0;touch-action:manipulation}
 .tc-number-stepper button:first-child{border-right:1px solid var(--line-soft)}
 .tc-number-stepper button:last-child{border-left:1px solid var(--line-soft)}
