@@ -5,7 +5,7 @@ path = Path(__file__).with_name("index.html")
 html = path.read_text()
 
 css_tag = '<link rel="stylesheet" href="./build-lab.css?v=6">'
-js_tag = '<script src="./build-lab.js?v=9"></script>'
+js_tag = '<script src="./build-lab.js?v=10"></script>'
 
 if css_tag not in html:
     if "</head>" not in html:
