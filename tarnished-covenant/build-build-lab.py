@@ -4,8 +4,8 @@ from pathlib import Path
 path = Path(__file__).with_name("index.html")
 html = path.read_text()
 
-css_tag = '<link rel="stylesheet" href="./build-lab.css?v=5">'
-js_tag = '<script src="./build-lab.js?v=6"></script>'
+css_tag = '<link rel="stylesheet" href="./build-lab.css?v=6">'
+js_tag = '<script src="./build-lab.js?v=7"></script>'
 
 if css_tag not in html:
     if "</head>" not in html:
