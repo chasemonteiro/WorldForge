@@ -81,8 +81,8 @@ const TC_WEAPON_ACQUISITION_GATES={
     {name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'},
     {name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}
   ],
-  "Dancing Blade of Rannah":[{name:'Dancer of Ranah',region:'Cerulean Coast · DLC'}],
-  "Star Lined Sword":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}],
+  "Dancing Blade of Ranah":[{name:'Dancer of Ranah',region:'Cerulean Coast · DLC'}],
+  "Star-Lined Sword":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}],
   "Dragon-Hunter's Great Katana":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}],
   "Flowerstone Gavel":[{name:'Bayle the Dread',region:'Dragon’s Pit + Jagged Peak · DLC'}],
   "Red Bear's Claw":[{name:'Rugalea the Great Red Bear',region:'Ancient Ruins of Rauh · DLC'}],
