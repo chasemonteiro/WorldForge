@@ -152,6 +152,7 @@ for needle in [
     "W(\"Envoy's Long Horn\",'Great Hammer','Somber Smithing Stones','Bubble Shower',false)",
     "W('Erdtree Bow','Bow','Somber Smithing Stones','Mighty Shot',false)",
     "W('Bolt of Gransax','Spear','Somber Smithing Stones','Ancient Lightning Spear',false)",
+    "const i=pool.findIndex(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(weapon.name));if(i>=0)pool[i]=weapon;else pool.push(weapon);",
 ]: require(needle)
 
 # Ordinary accessible Caelid loot stays in the pool.
