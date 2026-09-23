@@ -106,7 +106,8 @@
     document.querySelectorAll('[data-build-field]').forEach(el=>{const key=el.dataset.buildField;base[key]=Math.max(Number(el.min)||0,Math.min(Number(el.max)||999,Number(el.value)||0));});
     base.talismans=Array.from(document.querySelectorAll('[data-talisman]')).map(el=>el.value.trim()).slice(0,4);
     base.physickTears=Array.from(document.querySelectorAll('[data-physick]')).map(el=>el.value.trim()).slice(0,2);
-    const weaponName=document.querySelector('#tcBuildWeaponName')?.value.trim()||'';
+    const weaponInput=document.querySelector('#tcBuildWeaponName');
+    const weaponName=weaponInput?.dataset.selectedWeapon||'';
     const variantName=document.querySelector('#tcBuildAffinity')?.value||'';
     const upgrade=Math.max(0,Number(document.querySelector('#tcBuildUpgrade')?.value)||0);
     base.weapon={weaponName,variantName,upgrade};return normalizeBuild(base);
@@ -181,11 +182,29 @@
     ${notes.map(note=>`<div class="tc-weapon-note">${h(note)}</div>`).join('')}
     ${ranked.length>1?`<div class="tc-affinity-head"><strong>Best affinities for these stats</strong><span>Tap one to equip it</span></div><div class="tc-affinity-table">${ranked.map((row,i)=>`<button type="button" class="tc-affinity-row ${row.raw.name===raw.name?'current':''}" data-affinity-pick="${h(row.raw.name)}"><span>${i+1}. ${h(affinityLabel(row.raw))}</span><small>1H</small><b>${row.one}</b><span></span><small>2H</small><b>${row.two}</b></button>`).join('')}</div>`:''}`;
   }
+  function weaponNames(){return [...new Set((tcWeaponData?.weapons||[]).map(w=>w.weaponName))].sort((a,b)=>a.localeCompare(b));}
+  function closeWeaponPicker(){const host=document.querySelector('#tcWeaponPicker');if(host){host.classList.remove('open');host.hidden=true;}}
+  function renderWeaponPicker(query=null){
+    const input=document.querySelector('#tcBuildWeaponName'),host=document.querySelector('#tcWeaponPicker');if(!input||!host||!tcWeaponData)return;
+    const names=weaponNames(),selected=String(input.dataset.selectedWeapon||'').trim();let raw=String(query??input.value??'').trim();
+    if(selected&&raw.toLowerCase()===selected.toLowerCase())raw='';
+    const q=raw.toLowerCase(),matches=q?names.filter(name=>name.toLowerCase().includes(q)):names;
+    host.innerHTML=matches.length?matches.map(name=>`<button type="button" class="tc-weapon-option ${name===selected?'active':''}" data-weapon-pick="${h(name)}" role="option" aria-selected="${name===selected?'true':'false'}"><span>${h(name)}</span>${name===selected?'<small>Equipped</small>':''}</button>`).join(''):`<div class="tc-weapon-picker-empty">No weapons match “${h(raw)}”.</div>`;
+    host.hidden=false;host.classList.add('open');
+    if(!q&&selected){requestAnimationFrame(()=>{const active=[...host.querySelectorAll('[data-weapon-pick]')].find(el=>el.dataset.weaponPick===selected);if(active)host.scrollTop=Math.max(0,active.offsetTop-host.clientHeight/2+active.offsetHeight/2);});}
+  }
+  function setWeaponSelection(name,{close=true,save=true}={}){
+    const input=document.querySelector('#tcBuildWeaponName');if(!input||!tcWeaponData)return false;
+    const canonical=weaponNames().find(n=>n.toLowerCase()===String(name||'').trim().toLowerCase());if(!canonical)return false;
+    input.value=canonical;input.dataset.selectedWeapon=canonical;if(close)closeWeaponPicker();refreshResults();if(save)scheduleBuildSave();return true;
+  }
   function populateWeaponControls(build){
-    const input=document.querySelector('#tcBuildWeaponName'),list=document.querySelector('#tcWeaponNames'),affinity=document.querySelector('#tcBuildAffinity'),upgrade=document.querySelector('#tcBuildUpgrade');if(!input||!list||!affinity||!upgrade||!tcWeaponData)return;
-    const names=[...new Set(tcWeaponData.weapons.map(w=>w.weaponName))].sort((a,b)=>a.localeCompare(b));list.innerHTML=names.map(name=>`<option value="${h(name)}"></option>`).join('');
-    let exact=names.find(n=>n.toLowerCase()===input.value.trim().toLowerCase());if(!exact&&input.value.trim())exact=names.find(n=>n.toLowerCase().includes(input.value.trim().toLowerCase()));if(exact)input.value=exact;
-    const variants=variantsFor(exact||'');const saved=affinity.value||build.weapon.variantName;affinity.innerHTML=variants.length?variants.map(w=>`<option value="${h(w.name)}">${h(affinityLabel(w))}</option>`).join(''):'<option value="">Choose weapon first</option>';if(variants.some(w=>w.name===saved))affinity.value=saved;
+    const input=document.querySelector('#tcBuildWeaponName'),affinity=document.querySelector('#tcBuildAffinity'),upgrade=document.querySelector('#tcBuildUpgrade');if(!input||!affinity||!upgrade||!tcWeaponData)return;
+    const names=weaponNames();let selected=String(input.dataset.selectedWeapon||build.weapon.weaponName||'').trim();
+    const canonical=names.find(n=>n.toLowerCase()===selected.toLowerCase())||'';
+    selected=canonical;input.dataset.selectedWeapon=selected;
+    if(document.activeElement!==input||!input.value)input.value=selected;
+    const variants=variantsFor(selected);const saved=affinity.value||build.weapon.variantName;affinity.innerHTML=variants.length?variants.map(w=>`<option value="${h(w.name)}">${h(affinityLabel(w))}</option>`).join(''):'<option value="">Choose weapon first</option>';if(variants.some(w=>w.name===saved))affinity.value=saved;
     const raw=variants.find(w=>w.name===affinity.value)||variants[0];const max=raw?(tcWeaponData.reinforceTypes[raw.reinforceTypeId]?.length||1)-1:25;upgrade.max=max;upgrade.value=Math.min(max,Number(upgrade.value)||build.weapon.upgrade||0);document.querySelector('#tcUpgradeMax').textContent=`max +${max}`;
   }
   function refreshResults(){if(!tcWeaponData)return;const build=currentDraft();populateWeaponControls(build);const raw=rawFor({...build,weapon:{...build.weapon,variantName:document.querySelector('#tcBuildAffinity')?.value||build.weapon.variantName}});build.weapon.variantName=raw?.name||'';const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML=resultMarkup(build,raw);}
@@ -202,7 +221,7 @@
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Talismans</h2><span>Stat bonuses affect AR automatically</span></div><div class="tc-build-talismans">${build.talismans.map((value,i)=>`<div class="tc-build-field"><label for="tcTalisman${i}">Slot ${i+1}</label><select id="tcTalisman${i}" data-talisman="${i}"><option value="">Empty slot</option>${value&&!TALISMAN_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${TALISMAN_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Wondrous Physick</h2><span>Assumes the Physick is active</span></div><div class="tc-build-talismans">${build.physickTears.map((value,i)=>`<div class="tc-build-field"><label for="tcPhysick${i}">Crystal Tear ${i+1}</label><select id="tcPhysick${i}" data-physick="${i}"><option value="">Empty slot</option>${value&&!PHYSICK_NAMES.includes(value)?`<option value="${h(value)}" selected>${h(value)}</option>`:''}${PHYSICK_NAMES.map(x=>`<option value="${h(x)}" ${x===value?'selected':''}>${h(x)}</option>`).join('')}</select></div>`).join('')}</div><div class="tc-build-helper">Strength, Dexterity, Intelligence, and Faith knot tears add +10 to weapon calculations automatically. Other offensive effects are explained below the AR result.</div></div>
       <div class="tc-build-section"><div class="tc-build-section-head"><h2>Weapon Lab</h2><span>Regulation 1.17 data</span></div><div class="tc-weapon-controls">
-        <div class="tc-build-field tc-weapon-name"><label for="tcBuildWeaponName">Weapon</label><input id="tcBuildWeaponName" list="tcWeaponNames" value="${h(build.weapon.weaponName)}" placeholder="Search any weapon" autocomplete="off"><datalist id="tcWeaponNames"></datalist></div>
+        <div class="tc-build-field tc-weapon-name"><label for="tcBuildWeaponName">Weapon</label><input id="tcBuildWeaponName" value="${h(build.weapon.weaponName)}" data-selected-weapon="${h(build.weapon.weaponName)}" placeholder="Search or tap to browse every weapon" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="search" enterkeyhint="search"><div id="tcWeaponPicker" class="tc-weapon-picker" role="listbox" aria-label="Weapon results" hidden></div></div>
         <div class="tc-build-field"><label for="tcBuildAffinity">Affinity</label><select id="tcBuildAffinity"><option>Loading…</option></select></div>
         <div class="tc-build-field"><label for="tcBuildUpgrade">Upgrade · <span id="tcUpgradeMax">max</span></label><input id="tcBuildUpgrade" type="number" inputmode="numeric" min="0" max="25" value="${build.weapon.upgrade}"></div>
       </div><div id="tcWeaponResults" class="tc-weapon-loading">Opening the armory…</div></div>
@@ -228,11 +247,13 @@
   renderRun=function(){if(run?.state)ensureBuilds(run.state);if(uiScreen==='build')return renderBuild();return renderBefore();};
 
   if(!window.__tcBuildLabBound){window.__tcBuildLabBound=true;document.addEventListener('click',event=>{
+    const weaponPick=event.target.closest('[data-weapon-pick]');if(weaponPick){setWeaponSelection(weaponPick.dataset.weaponPick);return;}
     const slot=event.target.closest('[data-build-slot]');if(slot){tcBuildSlot=slot.dataset.buildSlot;tcBuildDirty=false;renderBuild();return;}
     const stepper=event.target.closest('[data-step-field]');if(stepper){const field=document.querySelector(`[data-build-field="${stepper.dataset.stepField}"]`);if(field){const min=Number(field.min)||0,max=Number(field.max)||999;field.value=Math.max(min,Math.min(max,(Number(field.value)||0)+Number(stepper.dataset.step||0)));refreshResults();scheduleBuildSave();}return;}
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
     const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;refreshResults();scheduleBuildSave();}return;}
-  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('[data-talisman],[data-physick],#tcBuildWeaponName,#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
+    if(!event.target.closest('.tc-weapon-name'))closeWeaponPicker();
+  });document.addEventListener('focusin',event=>{if(event.target.matches('#tcBuildWeaponName'))renderWeaponPicker();});document.addEventListener('keydown',event=>{if(!event.target.matches('#tcBuildWeaponName'))return;if(event.key==='Escape'){closeWeaponPicker();event.target.blur();return;}if(event.key==='Enter'){event.preventDefault();const value=event.target.value.trim(),names=weaponNames(),exact=names.find(n=>n.toLowerCase()===value.toLowerCase()),first=exact||names.find(n=>n.toLowerCase().includes(value.toLowerCase()));if(first)setWeaponSelection(first);}});document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName')){renderWeaponPicker(event.target.value);return;}if(event.target.matches('[data-build-field],#tcBuildUpgrade')){refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildWeaponName')){const value=event.target.value.trim(),exact=weaponNames().find(n=>n.toLowerCase()===value.toLowerCase());if(exact){setWeaponSelection(exact);return;}if(!value){event.target.dataset.selectedWeapon='';closeWeaponPicker();refreshResults();scheduleBuildSave();return;}renderWeaponPicker(value);return;}if(event.target.matches('[data-talisman],[data-physick],#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
   queueMicrotask(()=>{if(run&&!tcTransitionIsLocked())renderRun();});
 })();
 /* --- End persistent Tarnished build lab --- */
