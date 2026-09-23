@@ -141,7 +141,7 @@ for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
     W('Erdtree Bow','Bow','Somber Smithing Stones','Mighty Shot',false),
     W('Bolt of Gransax','Spear','Somber Smithing Stones','Ancient Lightning Spear',false)
   ];
-  for(const weapon of extra)if(!pool.some(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(weapon.name)))pool.push(weapon);
+  for(const weapon of extra){const i=pool.findIndex(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(weapon.name));if(i>=0)pool[i]=weapon;else pool.push(weapon);}
 })();
 
 function tcWeaponBossKey(name){
