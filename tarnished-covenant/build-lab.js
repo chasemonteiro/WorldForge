@@ -109,7 +109,8 @@
     base.physickTears=Array.from(document.querySelectorAll('[data-physick]')).map(el=>el.value.trim()).slice(0,2);
     const weaponInput=document.querySelector('#tcBuildWeaponName');
     const weaponName=weaponInput?.dataset.selectedWeapon||'';
-    const variantName=document.querySelector('#tcBuildAffinity')?.value||'';
+    const affinityValue=document.querySelector('#tcBuildAffinity')?.value||'';
+    const variantName=tcWeaponData&&variantsFor(weaponName).some(w=>w.name===affinityValue)?affinityValue:base.weapon.variantName;
     const upgrade=Math.max(0,Number(document.querySelector('#tcBuildUpgrade')?.value)||0);
     base.weapon={weaponName,variantName,upgrade};return normalizeBuild(base);
   }
@@ -236,9 +237,7 @@
   }
   async function saveBuild({slot=selectedSlot(),draft=null,automatic=false,changeSeq=tcBuildChangeSeq}={}){
     clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;
-    const fromDom=!draft;
     draft=normalizeBuild(draft||currentDraft());
-    if(fromDom)draft.weapon.variantName=document.querySelector('#tcBuildAffinity')?.value||draft.weapon.variantName;
     const buildState=latest=>{const next=structuredClone(latest);ensureBuilds(next);next.builds[slot]=structuredClone(draft);next.lastAction=`${playerName()} updated ${playerLabel(slot,next)}’s build.`;next.updatedAt=new Date().toISOString();return next;};
     const button=document.querySelector('#tcSaveBuild'),status=document.querySelector('.tc-build-save-state');if(button&&!automatic){button.disabled=true;button.textContent='Saving…';}if(status)status.textContent='Saving…';
     const saved=await commit(buildState(run.state),{successToast:automatic?'':`${playerLabel(slot,run.state)}’s build saved.`,retryBuilder:buildState});
