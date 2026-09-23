@@ -81,6 +81,7 @@
     if(key==='winged sword insignia'||key==='rotten winged sword insignia')return 'winged-sword';
     if(key==="arrow's reach talisman"||key==="arrow's soaring sting talisman")return 'arrow-reach';
     if(key==="prince of death's cyst"||key==="prince of death's pustule")return 'prince-of-death';
+    if(key==='green turtle talisman'||key==='two-headed turtle talisman')return 'turtle';
     if(key==='dragoncrest greatshield talisman'||key==='dragoncrest shield talisman')return 'dragoncrest';
     return key;
   }
@@ -349,9 +350,11 @@
       }
     }else if(automatic&&changeSeq===tcBuildChangeSeq){
       tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;
+      if(status){status.textContent='Save interrupted · retrying…';status.classList.add('dirty');}
       tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),1400);
-    }else if(!automatic&&button){
-      button.disabled=false;button.textContent='Save Now';
+    }else if(!automatic){
+      if(button){button.disabled=false;button.textContent='Save Now';}
+      if(status){status.textContent='Not saved · try again';status.classList.add('dirty');}
     }
   }
 
