@@ -7856,43 +7856,31 @@ function tcIsProgressionGateBoss(name){
 /* --- End boss prerequisite dependency graph --- */
 
 
+
 /* --- Capstone prerequisite priority --- */
 function tcCapstonePrerequisiteDue(state){
   if(!state?.region||state.region==='The Erdtree')return null;
   const region=regions?.[state.region];
   const exit=region?.exit;
   if(!exit)return null;
-  // Preserve the normal regional exploration requirement. Once the capstone
-  // would otherwise become eligible, however, its physical gate is next.
   const requirement=capstoneRequirement(state);
   if(Number(state.cleared||0)<Number(requirement||0))return null;
   return tcNextUnmetPrerequisite(state,exit);
 }
 
+// Preserve normal regional RNG. A prerequisite is substituted only when the
+// ordinary chooser actually rolls the capstone while its route is still blocked.
 const tcChooseTargetBeforeCapstonePrereqPriority=chooseTarget;
 chooseTarget=function(state){
+  const proposed=tcChooseTargetBeforeCapstonePrereqPriority(state);
+  if(!proposed?.exit)return proposed;
   const due=tcCapstonePrerequisiteDue(state);
-  if(due){
-    const exit=regions?.[state.region]?.exit||'regional capstone';
-    return {name:tcPoolBossName(state.region,due),exit:false,required:true,prerequisiteFor:exit};
-  }
-  return tcChooseTargetBeforeCapstonePrereqPriority(state);
-};
-
-const tcCapstoneChanceBeforePrereqPriority=capstoneChanceForState;
-capstoneChanceForState=function(state){
-  if(tcCapstonePrerequisiteDue(state))return 0;
-  return tcCapstoneChanceBeforePrereqPriority(state);
-};
-
-const tcCapstoneBlockBeforePrereqPriority=capstoneBlock;
-capstoneBlock=function(state){
-  const due=tcCapstonePrerequisiteDue(state);
-  if(!due)return tcCapstoneBlockBeforePrereqPriority(state);
-  const exit=regions?.[state.region]?.exit||'the regional capstone';
-  return `<div class="fate-block"><div class="progress-marks">${progressMarks(state)}</div><div class="fate-title">PREREQUISITE NEXT</div><div class="fate-copy">${h(due)} must be defeated before ${h(exit)} can be drawn.</div></div>`;
+  if(!due)return proposed;
+  const exit=regions?.[state.region]?.exit||proposed.name||'regional capstone';
+  return {name:tcPoolBossName(state.region,due),exit:false,required:true,prerequisiteFor:exit};
 };
 /* --- End capstone prerequisite priority --- */
+
 
 
 /* --- Expanded Covenant reward economy --- */
@@ -8807,7 +8795,7 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260922174400';
+const TC_BUILD_ID='20260922-capstone-rng-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
