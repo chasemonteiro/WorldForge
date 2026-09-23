@@ -165,7 +165,7 @@ for needle in [
     "'Mountaintops of the Giants':[\"Watchdog's Greatsword\",'Thorned Whip',\"Monk's Flameblade\"]",
     "'Miquella’s Haligtree':[\"Cleanrot Knight's Sword\",'Cleanrot Spear','Halo Scythe',\"Envoy's Greathorn\"]",
     "'Crumbling Farum Azula':[\"Beastman's Curved Sword\",\"Beastman's Cleaver\",\"Banished Knight's Greatsword\",\"Banished Knight's Halberd\"]",
-    "'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield']",
+    "'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield',"Messmer Soldier's Spear"]",
 ]: require(needle)
 
 # Source-level protection: every restored weapon must also remain in the durable
@@ -175,7 +175,7 @@ for weapon in [
     "Watchdog's Greatsword",'Thorned Whip',"Monk's Flameblade",
     "Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe',"Envoy's Greathorn",
     "Beastman's Curved Sword","Beastman's Cleaver","Banished Knight's Greatsword",
-    "Banished Knight's Halberd",'Carian Thrusting Shield'
+    "Banished Knight's Halberd",'Carian Thrusting Shield',"Messmer Soldier's Spear"
 ]:
     if f'"{weapon}"' not in regional_source:
         raise SystemExit('restored regional weapon missing from source pool: '+weapon)
