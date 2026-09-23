@@ -4,8 +4,8 @@ const path=require('path');
 const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'.';
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
-assert(html.includes('./build-lab.css?v=5'),'Build lab stylesheet is linked');
-assert(html.includes('./build-lab.js?v=6'),'Build lab script is linked');
+assert(html.includes('./build-lab.css?v=7'),'Build lab stylesheet is linked');
+assert(html.includes('./build-lab.js?v=12'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
 assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
@@ -27,4 +27,16 @@ assert(js.includes("'strength-knot crystal tear':{str:10}")&&js.includes("'faith
 assert(js.includes('Deflecting Hardtear')&&js.includes('Bloodsucking Cracked Tear'),'Base-game and expansion Crystal Tears are present');
 assert(js.includes('scheduleBuildSave')&&js.includes('automatic:true'),'Build edits are automatically persisted');
 assert(js.includes('retryBuilder:buildState'),'Automatic build saves retain shared-state conflict retry');
+
+assert(js.includes("const CORE_ATTRS=['vig','mind','end','str','dex','int','fai','arc']"),'Class-valid core attribute set is present');
+assert(js.includes('function levelForClassStats(classKey,build)'),'Starting-class level is derived from invested attribute points');
+assert(js.includes('Class minimums enforced · level auto-calculated'),'Build screen explains automatic legal-level behavior');
+assert(js.includes('PHYSICK_DUPLICATES_ALLOWED')&&js.includes('Ruptured Crystal Tear'),'Legal duplicate Crystal Tears are supported');
+assert(js.includes('function talismanFamilyKey(value)'),'Mutually exclusive talisman families are modeled');
+assert(js.includes("return 'radagon-seal'")&&js.includes("return 'arsenal'")&&js.includes("return 'dragoncrest'"),'Representative talisman family conflicts are enforced');
+assert(js.includes('function refreshWeaponSearchState()'),'Weapon search clearly distinguishes typed text from equipped weapon');
+assert(js.includes('Calculations still use'),'Weapon search ambiguity warning is present');
+assert(js.includes('Catalyst warning: this screen calculates weapon strike AR'),'Catalyst AR limitation is explicit');
+assert(js.includes('tc-ar-validity'),'One-handed and two-handed requirement validity is surfaced');
+assert(js.includes('automatic&&pending'),'Autosave waits safely behind another shared mutation');
 console.log('Build lab invariants passed');
