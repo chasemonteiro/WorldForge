@@ -48,6 +48,14 @@ const TC_WEAPON_ACQUISITION_GATES={
   "Great Club":[{name:'Stonedigger Troll',region:'Altus Plateau + Leyndell'}],
   "Marais Executioner's Sword":[{name:'Elemer of the Briar',region:'Altus Plateau + Leyndell'}],
   "Onyx Lord's Greatsword":[{name:'Onyx Lord',region:'Altus Plateau + Leyndell'}],
+  "Coded Sword":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Star Fist":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Cane Sword":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Black Bow":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Gravel Stone Seal":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Envoy's Long Horn":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Erdtree Bow":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}],
+  "Bolt of Gransax":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}],
   "Family Heads":[{name:'Necromancer Garris',region:'Altus Plateau + Leyndell'}],
   "Jar Cannon":[{name:'Demi-Human Queen Margot',region:'Mt. Gelmir'}],
   "Godskin Stitcher":[{name:'Godskin Noble',region:'Mt. Gelmir'}],
@@ -116,6 +124,24 @@ for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
   if(!Array.isArray(pool)||pool.some(w=>w?.name==='Greatsword'))return;
   const restored=typeof sheetWeapon==='function'?sheetWeapon('Greatsword'):W('Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)');
   pool.push(restored);
+})();
+
+// Leyndell proper opens after Draconic Tree Sentinel. Keep these weapons in the
+// combined Altus/Leyndell deck, then let acquisition gates decide when they can draw.
+(function tcRestoreLeyndellWeapons(){
+  const pool=regions?.['Altus Plateau + Leyndell']?.weapons;
+  if(!Array.isArray(pool))return;
+  const extra=[
+    W('Coded Sword','Straight Sword','Somber Smithing Stones','Unblockable Blade',false),
+    W('Star Fist','Fist','Smithing Stones','Endure'),
+    W('Cane Sword','Straight Sword','Smithing Stones','Square Off'),
+    W('Black Bow','Bow','Somber Smithing Stones','Barrage',false),
+    W('Gravel Stone Seal','Sacred Seal','Smithing Stones','No Skill',false),
+    W("Envoy's Long Horn",'Great Hammer','Somber Smithing Stones','Bubble Shower',false),
+    W('Erdtree Bow','Bow','Somber Smithing Stones','Mighty Shot',false),
+    W('Bolt of Gransax','Spear','Somber Smithing Stones','Ancient Lightning Spear',false)
+  ];
+  for(const weapon of extra)if(!pool.some(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(weapon.name)))pool.push(weapon);
 })();
 
 function tcWeaponBossKey(name){
