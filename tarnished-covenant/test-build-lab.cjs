@@ -5,7 +5,7 @@ const root=fs.existsSync('tarnished-covenant/index.html')?'tarnished-covenant':'
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
 assert(html.includes('./build-lab.css?v=11'),'Build lab stylesheet is linked');
-assert(html.includes('./build-lab.js?v=16'),'Build lab script is linked');
+assert(html.includes('./build-lab.js?v=17'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
 assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
@@ -41,6 +41,8 @@ assert(js.includes('function refreshWeaponSearchState()'),'Weapon search clearly
 assert(js.includes('Calculations still use'),'Weapon search ambiguity warning is present');
 assert(js.includes('spellScaling[type]=100*total'),'Catalyst spell scaling follows the upstream calculator formula');
 assert(js.includes('Sorcery Scaling')&&js.includes('Incant Scaling'),'Catalyst casting-power readouts are present');
+assert(js.includes('CONDITIONAL_TALISMANS[itemKey(x)]'),'Conditional item lookup normalizes punctuation consistently');
+assert(js.includes("\"rellana's cameo\":'Eligible stance attacks deal 45% more damage")&&js.includes("'godfrey icon':'Eligible charged skills"),'Major conditional offensive talismans are surfaced instead of silently ignored');
 assert(js.includes('tc-ar-validity'),'One-handed and two-handed requirement validity is surfaced');
 assert(js.includes('Best 1H')&&js.includes('Best 2H'),'Affinity comparison surfaces separate best choices for each wielding mode');
 assert(js.includes("if(event.target.value==='')"),'Transient blank numeric edits are not auto-saved as minimum values');
