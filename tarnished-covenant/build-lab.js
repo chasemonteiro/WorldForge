@@ -64,7 +64,7 @@
     'blue dancer charm':'Raises physical damage at low equip load; the exact bonus depends on total carried weight.'
   };
 
-  let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false;
+  let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false,tcBuildAutosaveTimer=null,tcBuildAutosaveDraft=null,tcBuildAutosaveSlot=null;
   const graphCache=new Map();
 
   function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],physickTears:['',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
@@ -110,6 +110,10 @@
     const variantName=document.querySelector('#tcBuildAffinity')?.value||'';
     const upgrade=Math.max(0,Number(document.querySelector('#tcBuildUpgrade')?.value)||0);
     base.weapon={weaponName,variantName,upgrade};return normalizeBuild(base);
+  }
+  function scheduleBuildSave(){
+    clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveSlot=selectedSlot();tcBuildAutosaveDraft=currentDraft();markDirty(true);
+    tcBuildAutosaveTimer=setTimeout(()=>{const draft=tcBuildAutosaveDraft,slot=tcBuildAutosaveSlot;tcBuildAutosaveTimer=null;if(draft&&slot)saveBuild({slot,draft,automatic:true});},900);
   }
   function loadWeaponData(){
     if(tcWeaponData)return Promise.resolve(tcWeaponData);
@@ -202,17 +206,18 @@
         <div class="tc-build-field"><label for="tcBuildAffinity">Affinity</label><select id="tcBuildAffinity"><option>Loading…</option></select></div>
         <div class="tc-build-field"><label for="tcBuildUpgrade">Upgrade · <span id="tcUpgradeMax">max</span></label><input id="tcBuildUpgrade" type="number" inputmode="numeric" min="0" max="25" value="${build.weapon.upgrade}"></div>
       </div><div id="tcWeaponResults" class="tc-weapon-loading">Opening the armory…</div></div>
-      <div class="tc-build-save-row"><div class="tc-build-save-state">Saved to the Covenant</div><button id="tcSaveBuild" type="button" class="btn gold">Save Build</button></div>
+      <div class="tc-build-save-row"><div class="tc-build-save-state">Saved automatically</div><button id="tcSaveBuild" type="button" class="btn gold">Save Now</button></div>
       <div class="tc-build-attribution">Weapon calculations and v1.17 regulation data adapted from Tom Clark’s MIT-licensed Elden Ring Weapon Calculator. Conditional buffs are listed separately from menu AR.</div>
     </section>${navMarkup('build')}`;
     bindNav();markDirty(false);
     loadWeaponData().then(()=>{if(uiScreen!=='build')return;populateWeaponControls(build);refreshResults();}).catch(error=>{console.error(error);const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML='<div class="tc-weapon-error">The weapon records could not be opened. Refresh the app and try again.</div>';});
   }
-  async function saveBuild(){
-    const slot=selectedSlot(),draft=currentDraft();draft.weapon.variantName=document.querySelector('#tcBuildAffinity')?.value||draft.weapon.variantName;
+  async function saveBuild({slot=selectedSlot(),draft=null,automatic=false}={}){
+    clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;draft=normalizeBuild(draft||currentDraft());draft.weapon.variantName=document.querySelector('#tcBuildAffinity')?.value||draft.weapon.variantName;
     const buildState=latest=>{const next=structuredClone(latest);ensureBuilds(next);next.builds[slot]=structuredClone(draft);next.lastAction=`${playerName()} updated ${playerLabel(slot,next)}’s build.`;next.updatedAt=new Date().toISOString();return next;};
-    const button=document.querySelector('#tcSaveBuild');if(button){button.disabled=true;button.textContent='Saving…';}
-    const saved=await commit(buildState(run.state),{successToast:`${playerLabel(slot,run.state)}’s build saved.`,retryBuilder:buildState});if(saved)markDirty(false);else if(button){button.disabled=false;button.textContent='Save Build';}
+    const button=document.querySelector('#tcSaveBuild'),status=document.querySelector('.tc-build-save-state');if(button&&!automatic){button.disabled=true;button.textContent='Saving…';}if(status)status.textContent='Saving…';
+    const saved=await commit(buildState(run.state),{successToast:automatic?'':`${playerLabel(slot,run.state)}’s build saved.`,retryBuilder:buildState});
+    if(saved){tcBuildAutosaveDraft=null;tcBuildAutosaveSlot=null;if(selectedSlot()===slot)markDirty(false);}else if(automatic){tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true}),1400);}else if(button){button.disabled=false;button.textContent='Save Now';}
   }
 
   const normalizeBefore=tcNormalizeRunState;
@@ -224,10 +229,10 @@
 
   if(!window.__tcBuildLabBound){window.__tcBuildLabBound=true;document.addEventListener('click',event=>{
     const slot=event.target.closest('[data-build-slot]');if(slot){tcBuildSlot=slot.dataset.buildSlot;tcBuildDirty=false;renderBuild();return;}
-    const stepper=event.target.closest('[data-step-field]');if(stepper){const field=document.querySelector(`[data-build-field="${stepper.dataset.stepField}"]`);if(field){const min=Number(field.min)||0,max=Number(field.max)||999;field.value=Math.max(min,Math.min(max,(Number(field.value)||0)+Number(stepper.dataset.step||0)));markDirty();refreshResults();}return;}
+    const stepper=event.target.closest('[data-step-field]');if(stepper){const field=document.querySelector(`[data-build-field="${stepper.dataset.stepField}"]`);if(field){const min=Number(field.min)||0,max=Number(field.max)||999;field.value=Math.max(min,Math.min(max,(Number(field.value)||0)+Number(stepper.dataset.step||0)));refreshResults();scheduleBuildSave();}return;}
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
-    const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;markDirty();refreshResults();}return;}
-  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){markDirty();refreshResults();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}markDirty();refreshResults();return;}if(event.target.matches('[data-talisman],[data-physick],#tcBuildWeaponName,#tcBuildAffinity')){markDirty();refreshResults();}});}
+    const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;refreshResults();scheduleBuildSave();}return;}
+  });document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('[data-talisman],[data-physick],#tcBuildWeaponName,#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
   queueMicrotask(()=>{if(run&&!tcTransitionIsLocked())renderRun();});
 })();
 /* --- End persistent Tarnished build lab --- */
