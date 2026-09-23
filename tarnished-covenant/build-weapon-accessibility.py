@@ -214,6 +214,15 @@ function tcLegalAccumulatedWeaponPool(state,target){
 function tcAppealSeenWeapons(state){
   return new Set(Array.isArray(state?.current?.appealedWeaponNames)?state.current.appealedWeaponNames:[]);
 }
+function tcAppealCooldownWeapons(state){
+  return new Set(Array.isArray(state?.appealWeaponCooldown)?state.appealWeaponCooldown:[]);
+}
+function tcExcludeAppealCooldown(state,pool){
+  const cooldown=tcAppealCooldownWeapons(state);
+  if(!cooldown.size)return pool;
+  const filtered=pool.filter(w=>!cooldown.has(w.name));
+  return filtered.length?filtered:pool;
+}
 function tcWeaponFamilyKey(name){
   const key=tcWeaponNameKey(name);
   if(key.startsWith("celebrant's "))return 'celebrant';
@@ -252,16 +261,16 @@ accumulatedWeaponPool=function(state,target){
 // fully built {chase,morgan} assignments. Never leak the raw pair shape.
 const tcChooseWeaponPairBeforeAccess=chooseWeaponPair;
 chooseWeaponPair=function(state,target){
-  const currentPool=tcLegalRegionWeapons(state,state.region,target),used=usedWeaponNames(state),unusedCurrent=currentPool.filter(w=>!used.has(w.name));
+  const currentPool=tcExcludeAppealCooldown(state,tcLegalRegionWeapons(state,state.region,target)),used=usedWeaponNames(state),unusedCurrent=currentPool.filter(w=>!used.has(w.name));
   let pair=null;
   if(unusedCurrent.length>=2)pair=tcBestDiversePairFromPool(state,unusedCurrent,unusedCurrent);
   else if(unusedCurrent.length===1){
-    const fallback=tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name&&!used.has(w.name));
-    const broad=fallback.length?fallback:tcLegalAccumulatedWeaponPool(state,target).filter(w=>w.name!==unusedCurrent[0].name);
+    const fallback=tcExcludeAppealCooldown(state,tcLegalAccumulatedWeaponPool(state,target)).filter(w=>w.name!==unusedCurrent[0].name&&!used.has(w.name));
+    const broad=fallback.length?fallback:tcExcludeAppealCooldown(state,tcLegalAccumulatedWeaponPool(state,target)).filter(w=>w.name!==unusedCurrent[0].name);
     if(broad.length)pair=Math.random()<0.5?tcBestDiversePairFromPool(state,unusedCurrent,broad):tcBestDiversePairFromPool(state,broad,unusedCurrent);
   }
   if(!pair){
-    const all=tcLegalAccumulatedWeaponPool(state,target),unused=all.filter(w=>!used.has(w.name));
+    const all=tcExcludeAppealCooldown(state,tcLegalAccumulatedWeaponPool(state,target)),unused=all.filter(w=>!used.has(w.name));
     const pool=unused.length>=2?unused:all;
     if(pool.length>=2)pair=tcBestDiversePairFromPool(state,pool,pool);
   }
@@ -297,6 +306,7 @@ makeBuild=function(regionName,target,avoidNames=[],state=null){
   if(!state)return tcMakeBuildBeforeAccess(regionName,target,avoidNames,state);
   const avoided=new Set(Array.isArray(avoidNames)?avoidNames:[avoidNames]);
   for(const name of tcAppealSeenWeapons(state))avoided.add(name);
+  for(const name of tcAppealCooldownWeapons(state))avoided.add(name);
   let pool=tcLegalRegionWeapons(state,regionName,target).filter(w=>!avoided.has(w.name));
   const currentNames=[state?.current?.chase?.name,state?.current?.morgan?.name,...tcAppealSeenWeapons(state)].filter(Boolean);
   const seenFamilies=new Set(currentNames.map(tcWeaponFamilyKey).filter(Boolean));
@@ -315,6 +325,13 @@ makeBuild=function(regionName,target,avoidNames=[],state=null){
   }
   if(!pool.length)throw new Error('No legally obtainable Covenant weapon is available for this appeal.');
   return buildFromWeapon(pick(pool));
+};
+
+const tcCompleteEncounterBeforeAppealCooldown=completeEncounter;
+completeEncounter=function(state,actor){
+  const prepared=structuredClone(state);
+  prepared.appealWeaponCooldown=[...tcAppealSeenWeapons(state)];
+  return tcCompleteEncounterBeforeAppealCooldown(prepared,actor);
 };
 
 const tcChangeWeaponsBeforeAccess=changeWeapons;
