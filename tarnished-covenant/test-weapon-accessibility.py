@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import json
 import subprocess
 import textwrap
 
@@ -238,20 +239,29 @@ for region,weapons in assignment_expectations.items():
         if f'"{weapon}"' not in regional_source:
             raise SystemExit(f'assignment-style regional weapon omitted: {region} -> {weapon}')
 
-if '"Raptor Talons"' not in regional_source:
-    raise SystemExit('Raptor Talons must remain in Altus Plateau + Leyndell source pool')
+pool_match=re.search(r'const SHEET_WEAPON_POOLS=(\{.*?\});\nconst SHEET_BOSS_POOLS=',regional_source,re.S)
+if not pool_match:
+    raise SystemExit('regional source weapon pool JSON missing')
+source_pools=json.loads(pool_match.group(1))
 
-verified_omissions=[
-    'Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch",'Cinquedea',"Rogier's Rapier",'Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
-    "Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus',
-    'Beast-Repellent Torch','Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff',
-    'Erdtree Seal',"Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer',
-    'Golden Order Greatsword','Winged Greathorn',"Bastard's Stars","Siluria's Tree",
-    "Prince of Death's Staff","Mohgwyn's Sacred Spear",'Rotten Crystal Staff','Hand of Malenia'
-]
-for weapon in verified_omissions:
-    if f'"{weapon}"' not in regional_source:
-        raise SystemExit('verified obtainable weapon missing from source pool: '+weapon)
+verified_region_omissions={
+    'Weeping Peninsula':['Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow'],
+    'Liurnia of the Lakes':["Rogier's Rapier"],
+    'Caelid':["Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus','Beast-Repellent Torch'],
+    'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade',"Bastard's Stars"],
+    'Deeproot Depths':["Siluria's Tree","Prince of Death's Staff"],
+    'Altus Plateau + Leyndell':['Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer'],
+    'Mt. Gelmir':['Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff','Erdtree Seal'],
+    'Mountaintops of the Giants':["Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer','Golden Order Greatsword','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch"],
+    'Mohgwyn Palace':["Mohgwyn's Sacred Spear"],
+    'Miquella’s Haligtree':['Rotten Crystal Staff','Hand of Malenia'],
+    'Crumbling Farum Azula':['Cinquedea'],
+}
+for region,weapons in verified_region_omissions.items():
+    actual=source_pools.get(region,[])
+    for weapon in weapons:
+        if weapon not in actual:
+            raise SystemExit(f'verified obtainable weapon missing/wrong region: {region} -> {weapon}')
 
 # Source-level protection: every restored weapon must also remain in the durable
 # spreadsheet-backed pool file so normal draws do not depend on a repair layer.
