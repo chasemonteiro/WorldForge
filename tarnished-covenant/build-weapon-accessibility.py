@@ -65,6 +65,7 @@ const TC_WEAPON_ACQUISITION_GATES={
   "Cane Sword":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
   "Black Bow":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
   "Gravel Stone Seal":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
+  "Envoy's Horn":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
   "Envoy's Long Horn":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}],
   "Erdtree Bow":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}],
   "Bolt of Gransax":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}],
@@ -81,6 +82,9 @@ const TC_WEAPON_ACQUISITION_GATES={
   "Fallingstar Beast Jaw":[{name:'Full-Grown Fallingstar Beast',region:'Mt. Gelmir'}],
 
   "Veteran's Prosthesis":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
+  "Flowing Curved Sword":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
+  "Albinauric Bow":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
+  "St. Trina's Torch":[{name:'Commander Niall',region:'Mountaintops of the Giants'}],
   "Zamor Curved Sword":[{name:'Ancient Hero of Zamor',region:'Mountaintops of the Giants'}],
   "Helphen's Steeple":[{name:'Tibia Mariner',region:'Mountaintops of the Giants'}],
   "Death Ritual Spear":[{name:'Death Rite Bird',region:'Mountaintops of the Giants'}],
@@ -159,11 +163,11 @@ const TC_REGIONAL_WEAPON_RESTORES={
   'Siofra River + Nokron':['Winged Greathorn'],
   'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade',"Bastard's Stars"],
   'Deeproot Depths':["Siluria's Tree","Prince of Death's Staff"],
-  'Altus Plateau + Leyndell':["Great Stars","Guardian's Swordspear",'Raptor Talons',"Troll's Golden Sword",'Greatbow',"Sentry's Torch",'Golden Order Seal','Golden Epitaph','Hammer',"Gargoyle's Halberd",'Dragon Greatclaw',"Ordovis's Greatsword","Morgott's Cursed Sword"],
-  'Mt. Gelmir':['Pulley Bow','Magma Blade','Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff','Erdtree Seal','Magma Whip Candlestick'],
-  'Mountaintops of the Giants':["Watchdog's Greatsword",'Thorned Whip',"Monk's Flameblade","Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer','Golden Order Greatsword',"Gargoyle's Black Blades","Gargoyle's Black Axe","Giant's Red Braid"],
+  'Altus Plateau + Leyndell':["Great Stars","Guardian's Swordspear",'Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer',"Troll's Golden Sword",'Greatbow',"Sentry's Torch",'Golden Order Seal','Golden Epitaph','Hammer',"Gargoyle's Halberd",'Dragon Greatclaw',"Ordovis's Greatsword","Morgott's Cursed Sword"],
+  'Mt. Gelmir':['Pulley Bow','Magma Blade','Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff','Albinauric Staff','Erdtree Seal','Magma Whip Candlestick'],
+  'Mountaintops of the Giants':["Watchdog's Greatsword",'Thorned Whip',"Monk's Flameblade","Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer','Golden Order Greatsword',"Gargoyle's Black Blades","Gargoyle's Black Axe","Giant's Red Braid",'Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch"],
   'Mohgwyn Palace':["Mohgwyn's Sacred Spear",'Ripple Crescent Halberd','Curved Club','Curved Great Club'],
-  'Miquella’s Haligtree':["Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe',"Envoy's Greathorn",'Greatbow','Partisan',"Knight's Greatsword",'Rotten Crystal Staff','Hand of Malenia'],
+  'Miquella’s Haligtree':["Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe',"Envoy's Horn","Envoy's Greathorn",'Greatbow','Partisan',"Knight's Greatsword",'Rotten Crystal Staff','Hand of Malenia'],
   'Crumbling Farum Azula':["Beastman's Curved Sword","Beastman's Cleaver","Banished Knight's Greatsword","Banished Knight's Halberd"],
   'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield',"Messmer Soldier's Spear"]
 };
