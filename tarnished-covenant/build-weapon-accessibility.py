@@ -21,6 +21,7 @@ js=r'''
 const TC_WEAPON_ACQUISITION_GATES={
   "Bloodhound's Fang":[{name:'Bloodhound Knight Darriwil',region:'Limgrave + Stormveil'}],
   "Golden Halberd":[{name:'Tree Sentinel',region:'Limgrave + Stormveil'}],
+  "Rogier's Rapier":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}],
   "Axe of Godrick":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}],
   "Grafted Dragon":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}],
   "Grafted Blade Greatsword":[{name:'Leonine Misbegotten',region:'Weeping Peninsula'}],
@@ -156,10 +157,10 @@ for(const [regionName,bosses] of Object.entries(TC_ACQUISITION_BOSS_RESTORES)){
 })();
 
 const TC_REGIONAL_WEAPON_RESTORES={
-  'Limgrave + Stormveil':['Axe of Godrick','Grafted Dragon'],
+  'Limgrave + Stormveil':['Axe of Godrick','Grafted Dragon',"Rogier's Rapier"],
   'Weeping Peninsula':['Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',"Guardian's Swordspear"],
   'Liurnia of the Lakes':['Carian Regal Scepter'],
-  'Caelid':['Greatsword',"Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus','Beast-Repellent Torch','Starscourge Greatsword','Lion Greatbow'],
+  'Caelid':['Greatsword',"Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus','Beast-Repellent Torch','Starscourge Greatsword','Lion Greatbow','Cinquedea'],
   'Siofra River + Nokron':['Winged Greathorn'],
   'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade',"Bastard's Stars"],
   'Deeproot Depths':["Siluria's Tree","Prince of Death's Staff"],
@@ -177,6 +178,19 @@ for(const [regionName,names] of Object.entries(TC_REGIONAL_WEAPON_RESTORES)){
   for(const name of names){
     if(pool.some(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(name)))continue;
     pool.push(typeof sheetWeapon==='function'?sheetWeapon(name):W(name,'Regional weapon','Smithing path varies','Native skill',false));
+  }
+}
+
+const TC_RESTORED_INFUSABLE_WEAPONS=new Set([
+  'Bastard Sword','Sacrificial Axe',"Guardian's Swordspear","Rogier's Rapier",
+  "Cleanrot Knight's Sword",'Spiked Caestus','Raptor Talons','Antspur Rapier',
+  'Battle Hammer',"Troll's Golden Sword",'Hammer',"Gargoyle's Halberd",
+  'Rotten Battle Hammer','Flowing Curved Sword','Curved Club','Curved Great Club',
+  'Partisan',"Knight's Greatsword"
+].map(tcWeaponNameKey));
+for(const region of Object.values(regions)){
+  for(const weapon of (region?.weapons||[])){
+    if(TC_RESTORED_INFUSABLE_WEAPONS.has(tcWeaponNameKey(weapon?.name)))weapon.infusable=true;
   }
 }
 
