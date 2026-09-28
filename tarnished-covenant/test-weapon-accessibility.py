@@ -18,13 +18,14 @@ if not gate_match:
     raise SystemExit('universal weapon gate table missing')
 gate_block=gate_match.group(1)
 gate_count=len(re.findall(r'^\s{2}"[^"]+":\[',gate_block,re.M))
-if gate_count < 80:
+if gate_count < 81:
     raise SystemExit(f'universal weapon gate table unexpectedly small: {gate_count} entries')
 
 # Representative gates from the opening hours through endgame and DLC.
 for needle in [
     "\"Bloodhound's Fang\":[{name:'Bloodhound Knight Darriwil',region:'Limgrave + Stormveil'}]",
     "\"Golden Halberd\":[{name:'Tree Sentinel',region:'Limgrave + Stormveil'}]",
+    "\"Rogier's Rapier\":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}]",
     "\"Axe of Godrick\":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}]",
     "\"Grafted Dragon\":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}]",
     "\"Grafted Blade Greatsword\":[{name:'Leonine Misbegotten',region:'Weeping Peninsula'}]",
@@ -199,7 +200,7 @@ for region,weapons in assignment_expectations.items():
             raise SystemExit(f'assignment-style regional weapon omitted: {region} -> {weapon}')
 
 verified_omissions=[
-    'Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch",'Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
+    'Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch",'Cinquedea',"Rogier's Rapier",'Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
     "Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus',
     'Beast-Repellent Torch','Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff',
     'Erdtree Seal',"Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer',
@@ -221,6 +222,17 @@ for weapon in [
 ]:
     if f'"{weapon}"' not in regional_source:
         raise SystemExit('restored regional weapon missing from source pool: '+weapon)
+
+# Restored normal weapons must not inherit the spreadsheet fallback's
+# "Fixed / unique" flag. This directly protects Covenant affinity draws.
+for needle in [
+    'const TC_RESTORED_INFUSABLE_WEAPONS=new Set([',
+    "'Raptor Talons'",
+    "'Antspur Rapier'",
+    "'Battle Hammer'",
+    "'Flowing Curved Sword'",
+    "if(TC_RESTORED_INFUSABLE_WEAPONS.has(tcWeaponNameKey(weapon?.name)))weapon.infusable=true;",
+]: require(needle)
 
 # Ordinary accessible Caelid loot stays in the pool.
 for needle in [
