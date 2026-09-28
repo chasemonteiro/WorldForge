@@ -247,7 +247,7 @@ source_pools=json.loads(pool_match.group(1))
 verified_region_omissions={
     'Weeping Peninsula':['Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow'],
     'Liurnia of the Lakes':["Rogier's Rapier"],
-    'Caelid':["Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus','Beast-Repellent Torch'],
+    'Caelid':["Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus','Beast-Repellent Torch','Cinquedea'],
     'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade',"Bastard's Stars"],
     'Deeproot Depths':["Siluria's Tree","Prince of Death's Staff"],
     'Altus Plateau + Leyndell':['Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer'],
@@ -255,7 +255,6 @@ verified_region_omissions={
     'Mountaintops of the Giants':["Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer','Golden Order Greatsword','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch"],
     'Mohgwyn Palace':["Mohgwyn's Sacred Spear"],
     'Miquella’s Haligtree':['Rotten Crystal Staff','Hand of Malenia'],
-    'Crumbling Farum Azula':['Cinquedea'],
 }
 for region,weapons in verified_region_omissions.items():
     actual=source_pools.get(region,[])
