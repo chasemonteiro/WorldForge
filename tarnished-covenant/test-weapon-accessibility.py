@@ -186,8 +186,47 @@ for needle in [
     "'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield',"Messmer Soldier's Spear"]",
 ]: require(needle)
 
-# Catalog-integrity audit: this covers both object-literal region definitions and
-# the later regions['name'] assignment form that the older audit accidentally skipped.
+# Catalog-integrity audit: cover BOTH region-definition shapes used by the app.
+# The older audit only inspected the original object literal and therefore missed
+# later regions['name'] assignments such as Lake of Rot, Deeproot, and Mohgwyn.
+catalog_audit=textwrap.dedent(r'''
+const fs=require('fs'),vm=require('vm');
+const html=fs.readFileSync('tarnished-covenant/index.html','utf8');
+const src=fs.readFileSync('tarnished-covenant/regional-pools.js','utf8');
+const ctx={};vm.createContext(ctx);
+vm.runInContext(src+';this.weaponPools=SHEET_WEAPON_POOLS;',ctx);
+function key(name){return String(name||'').replace(/\\s*\\(\\+\\d+\\)\\s*$/,'').toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\\s+/g,' ').trim();}
+const intended={};
+const objectStart=html.indexOf('const regions = {');
+const sheetStart=html.indexOf('const SHEET_WEAPON_POOLS=');
+const authored=html.slice(objectStart,sheetStart);
+for(const m of authored.matchAll(/\\n\\s*'([^']+)'\\s*:\\s*\\{[\\s\\S]*?weapons:\\s*\\[([\\s\\S]*?)\\n\\s*\\]\\s*\\n\\s*\\}/g)){
+  const names=[...m[2].matchAll(/W\\((['"])(.*?)\\1/g)].map(x=>x[2]);
+  if(names.length)intended[m[1]]=names;
+}
+for(const m of authored.matchAll(/regions\\[['"]([^'"]+)['"]\\]\\s*=\\s*\\{[\\s\\S]*?weapons:\\s*\\[([\\s\\S]*?)\\]\\s*\\n\\};/g)){
+  const names=[...m[2].matchAll(/W\\((['"])(.*?)\\1/g)].map(x=>x[2]);
+  if(names.length)intended[m[1]]=names;
+}
+const intentionalRelocations={
+  "Dragon’s Pit + Jagged Peak · DLC":new Set(["nanaya's torch","barbed staff spear"].map(key)),
+  "Siofra River + Nokron":new Set(["nox flowing sword"].map(key))
+};
+const errors=[];
+for(const [region,names] of Object.entries(intended)){
+  const active=new Set((ctx.weaponPools[region]||[]).map(key));
+  for(const name of names){
+    if(active.has(key(name)))continue;
+    if(intentionalRelocations[region]?.has(key(name)))continue;
+    errors.push(`${region}: ${name}`);
+  }
+}
+if(errors.length)throw new Error('hand-authored weapons missing from active source pools:\n'+errors.join('\n'));
+''')
+catalog_result=subprocess.run(['node','-e',catalog_audit],text=True,capture_output=True)
+if catalog_result.returncode:
+    raise SystemExit('regional catalog integrity audit failed:\n'+(catalog_result.stderr or catalog_result.stdout))
+
 # Known historical relocation: Nox Flowing Sword belongs to Caelid (Sellia), not Siofra.
 assignment_expectations={
     'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade'],
@@ -198,6 +237,9 @@ for region,weapons in assignment_expectations.items():
     for weapon in weapons:
         if f'"{weapon}"' not in regional_source:
             raise SystemExit(f'assignment-style regional weapon omitted: {region} -> {weapon}')
+
+if '"Raptor Talons"' not in regional_source:
+    raise SystemExit('Raptor Talons must remain in Altus Plateau + Leyndell source pool')
 
 verified_omissions=[
     'Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch",'Cinquedea',"Rogier's Rapier",'Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
