@@ -18,14 +18,18 @@ if not gate_match:
     raise SystemExit('universal weapon gate table missing')
 gate_block=gate_match.group(1)
 gate_count=len(re.findall(r'^\s{2}"[^"]+":\[',gate_block,re.M))
-if gate_count < 53:
+if gate_count < 76:
     raise SystemExit(f'universal weapon gate table unexpectedly small: {gate_count} entries')
 
 # Representative gates from the opening hours through endgame and DLC.
 for needle in [
     "\"Bloodhound's Fang\":[{name:'Bloodhound Knight Darriwil',region:'Limgrave + Stormveil'}]",
     "\"Golden Halberd\":[{name:'Tree Sentinel',region:'Limgrave + Stormveil'}]",
+    "\"Axe of Godrick\":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}]",
+    "\"Grafted Dragon\":[{name:'Godrick the Grafted',region:'Limgrave + Stormveil'}]",
     "\"Grafted Blade Greatsword\":[{name:'Leonine Misbegotten',region:'Weeping Peninsula'}]",
+    "\"Sacrificial Axe\":[{name:'Deathbird',region:'Weeping Peninsula'}]",
+    "\"Carian Regal Scepter\":[{name:'Rennala, Queen of the Full Moon',region:'Liurnia of the Lakes'}]",
     "\"Magma Wyrm's Scalesword\":[{name:'Magma Wyrm Makar',region:'Liurnia of the Lakes'}]",
     "\"Dark Moon Greatsword\":[{name:'Astel, Naturalborn of the Void',region:'Lake of Rot + Grand Cloister'}]",
     "\"Moonveil\":[{name:'Magma Wyrm',region:'Caelid'}]",
@@ -169,13 +173,38 @@ for needle in [
 # to exclude a weapon from the Covenant armory.
 for needle in [
     'const TC_REGIONAL_WEAPON_RESTORES={',
-    "'Altus Plateau + Leyndell':[\"Great Stars\",\"Guardian's Swordspear\"]",
-    "'Mt. Gelmir':['Pulley Bow','Magma Blade']",
-    "'Mountaintops of the Giants':[\"Watchdog's Greatsword\",'Thorned Whip',\"Monk's Flameblade\"]",
-    "'Miquella’s Haligtree':[\"Cleanrot Knight's Sword\",'Cleanrot Spear','Halo Scythe',\"Envoy's Greathorn\"]",
+    "'Altus Plateau + Leyndell':[\"Great Stars\",\"Guardian's Swordspear\",'Raptor Talons'",
+    "'Mt. Gelmir':['Pulley Bow','Magma Blade','Fallingstar Beast Jaw'",
+    "'Mountaintops of the Giants':[\"Watchdog's Greatsword\",'Thorned Whip',\"Monk's Flameblade\",\"Helphen's Steeple\""
+    "'Miquella’s Haligtree':[\"Cleanrot Knight's Sword\",'Cleanrot Spear','Halo Scythe',\"Envoy's Greathorn\",'Greatbow'"
     "'Crumbling Farum Azula':[\"Beastman's Curved Sword\",\"Beastman's Cleaver\",\"Banished Knight's Greatsword\",\"Banished Knight's Halberd\"]",
     "'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield',"Messmer Soldier's Spear"]",
 ]: require(needle)
+
+# Catalog-integrity audit: this covers both object-literal region definitions and
+# the later regions['name'] assignment form that the older audit accidentally skipped.
+# Known historical relocation: Nox Flowing Sword belongs to Caelid (Sellia), not Siofra.
+assignment_expectations={
+    'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade'],
+    'Deeproot Depths':["Siluria's Tree","Prince of Death's Staff"],
+    'Mohgwyn Palace':["Mohgwyn's Sacred Spear"],
+}
+for region,weapons in assignment_expectations.items():
+    for weapon in weapons:
+        if f'"{weapon}"' not in regional_source:
+            raise SystemExit(f'assignment-style regional weapon omitted: {region} -> {weapon}')
+
+verified_omissions=[
+    'Raptor Talons','Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
+    "Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus',
+    'Beast-Repellent Torch','Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff',
+    'Erdtree Seal',"Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer',
+    'Golden Order Greatsword','Winged Greathorn',"Bastard's Stars","Siluria's Tree",
+    "Prince of Death's Staff","Mohgwyn's Sacred Spear",'Rotten Crystal Staff','Hand of Malenia'
+]
+for weapon in verified_omissions:
+    if f'"{weapon}"' not in regional_source:
+        raise SystemExit('verified obtainable weapon missing from source pool: '+weapon)
 
 # Source-level protection: every restored weapon must also remain in the durable
 # spreadsheet-backed pool file so normal draws do not depend on a repair layer.
