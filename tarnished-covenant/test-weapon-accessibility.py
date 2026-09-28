@@ -18,7 +18,7 @@ if not gate_match:
     raise SystemExit('universal weapon gate table missing')
 gate_block=gate_match.group(1)
 gate_count=len(re.findall(r'^\s{2}"[^"]+":\[',gate_block,re.M))
-if gate_count < 76:
+if gate_count < 80:
     raise SystemExit(f'universal weapon gate table unexpectedly small: {gate_count} entries')
 
 # Representative gates from the opening hours through endgame and DLC.
@@ -42,7 +42,11 @@ for needle in [
     "\"Cane Sword\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
     "\"Black Bow\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
     "\"Gravel Stone Seal\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Envoy's Horn\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
     "\"Envoy's Long Horn\":[{name:'Draconic Tree Sentinel',region:'Altus Plateau + Leyndell'}]",
+    "\"Flowing Curved Sword\":[{name:'Commander Niall',region:'Mountaintops of the Giants'}]",
+    "\"Albinauric Bow\":[{name:'Commander Niall',region:'Mountaintops of the Giants'}]",
+    "\"St. Trina's Torch\":[{name:'Commander Niall',region:'Mountaintops of the Giants'}]",
     "\"Erdtree Bow\":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}]",
     "\"Bolt of Gransax\":[{name:'Godfrey, First Elden Lord',region:'Altus Plateau + Leyndell'}]",
     "\"Blasphemous Blade\":[{name:'Rykard, Lord of Blasphemy',region:'Mt. Gelmir'}]",
@@ -195,7 +199,7 @@ for region,weapons in assignment_expectations.items():
             raise SystemExit(f'assignment-style regional weapon omitted: {region} -> {weapon}')
 
 verified_omissions=[
-    'Raptor Talons','Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
+    'Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch",'Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow',
     "Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus',
     'Beast-Repellent Torch','Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff',
     'Erdtree Seal',"Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer',
