@@ -1,0 +1,16 @@
+name: Verify Tarnished Covenant
+on:
+  pull_request:
+    branches: [tarnished-covenant-assets]
+  push:
+    branches: [tarnished-covenant-assets, consolidation-foundation]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-release-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check reproducible output and offline player journeys
+        run: python tarnished-covenant/tools/build.py --check --test

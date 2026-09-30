@@ -13,12 +13,12 @@ assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is load
 assert(js.includes("DecompressionStream('gzip')"),'Compressed regulation data is decoded in-browser');
 assert(js.includes('retryBuilder:buildState'),'Shared-save conflict retry is present');
 assert(js.includes('one-handed AR')&&js.includes('two-handed AR'),'Both wielding modes are displayed');
-assert(js.includes('Best affinities for these stats'),'Affinity ranking is present');
+assert(js.includes('Best 1H')&&js.includes('Best 2H'),'Affinity ranking is present');
 assert(js.includes('Scadutree Blessing'),'Shadow Realm calculation is present');
 assert(js.includes('Conditional buffs are listed separately'),'Conditional damage is not presented as base AR');
 assert(js.includes("idusKnight:{label:'Idus Knight · Tarnished Edition',level:7,vig:10,mind:12,end:11,str:13,dex:15,int:8,fai:11,arc:6}"),'Idus Knight starting stats are present');
 assert(js.includes("heavyKnight:{label:'Heavy Knight · Tarnished Edition',level:10,vig:14,mind:8,end:17,str:15,dex:11,int:7,fai:8,arc:9}"),'Heavy Knight starting stats are present');
-assert(js.includes('Choosing a class fills its starting level and attributes'),'Class preset guidance is present');
+assert(js.includes('Choosing a class fills its base stats and enforces'),'Class preset guidance is present');
 assert(js.includes('data-step-field'),'Mobile-friendly stat steppers are present');
 assert(css.includes('.tc-weapon-picker{position:static;left:auto;right:auto;top:auto;z-index:auto;max-height:240px'),'Mobile weapon picker stays in flow instead of covering the sticky save bar');
 assert(css.includes('.tc-weapon-controls .tc-weapon-name{grid-column:1/-1;z-index:auto}'),'Mobile Weapon field does not create a stacking context above Save');

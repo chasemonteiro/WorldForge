@@ -1,0 +1,5190 @@
+{
+  "schemaVersion": 1,
+  "regionOrder": [
+    "Limgrave + Stormveil",
+    "Weeping Peninsula",
+    "Liurnia of the Lakes",
+    "Caelid",
+    "Siofra River + Nokron",
+    "Lake of Rot + Grand Cloister",
+    "Deeproot Depths",
+    "Altus Plateau + Leyndell",
+    "Mt. Gelmir",
+    "Mountaintops of the Giants",
+    "Mohgwyn Palace",
+    "Miquella’s Haligtree",
+    "Crumbling Farum Azula",
+    "Gravesite Plain · DLC",
+    "Scadu Altus + Shadow Keep · DLC",
+    "Cerulean Coast · DLC",
+    "Dragon’s Pit + Jagged Peak · DLC",
+    "Abyssal Woods · DLC",
+    "Ancient Ruins of Rauh · DLC",
+    "Enir-Ilim · DLC"
+  ],
+  "weapons": [
+    {
+      "id": "arbalest",
+      "name": "Arbalest",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 0,
+          "label": "Arbalest"
+        }
+      ],
+      "calculatorName": "Arbalest"
+    },
+    {
+      "id": "banished-knight-s-halberd",
+      "name": "Banished Knight's Halberd",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 1,
+          "label": "Banished Knight's Halberd"
+        },
+        {
+          "name": "Weeping Peninsula",
+          "order": 0,
+          "label": "Banished Knight's Halberd (+8)"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 3,
+          "label": "Banished Knight's Halberd"
+        },
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 6,
+          "label": "Banished Knight's Halberd"
+        }
+      ],
+      "calculatorName": "Banished Knight's Halberd"
+    },
+    {
+      "id": "bloodhound-s-fang",
+      "name": "Bloodhound's Fang",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 2,
+          "label": "Bloodhound's Fang"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Bloodhound Knight Darriwil",
+          "region": "Limgrave + Stormveil"
+        }
+      ],
+      "calculatorName": "Bloodhound's Fang"
+    },
+    {
+      "id": "brick-hammer",
+      "name": "Brick Hammer",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 3,
+          "label": "Brick Hammer"
+        }
+      ],
+      "calculatorName": "Brick Hammer"
+    },
+    {
+      "id": "broadsword",
+      "name": "Broadsword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 4,
+          "label": "Broadsword"
+        }
+      ],
+      "calculatorName": "Broadsword"
+    },
+    {
+      "id": "caestus",
+      "name": "Caestus",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 5,
+          "label": "Caestus"
+        }
+      ],
+      "calculatorName": "Caestus"
+    },
+    {
+      "id": "dragon-communion-seal",
+      "name": "Dragon Communion Seal",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 6,
+          "label": "Dragon Communion Seal"
+        }
+      ],
+      "calculatorName": "Dragon Communion Seal"
+    },
+    {
+      "id": "erdtree-greatbow",
+      "name": "Erdtree Greatbow",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 7,
+          "label": "Erdtree Greatbow"
+        }
+      ],
+      "calculatorName": "Erdtree Greatbow"
+    },
+    {
+      "id": "erdsteel-dagger",
+      "name": "Erdsteel Dagger",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 8,
+          "label": "Erdsteel Dagger"
+        }
+      ],
+      "calculatorName": "Erdsteel Dagger"
+    },
+    {
+      "id": "flail",
+      "name": "Flail",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 9,
+          "label": "Flail"
+        }
+      ],
+      "calculatorName": "Flail"
+    },
+    {
+      "id": "godslayer-s-seal",
+      "name": "Godslayer's Seal",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 10,
+          "label": "Godslayer's Seal"
+        }
+      ],
+      "calculatorName": "Godslayer's Seal"
+    },
+    {
+      "id": "golden-halberd",
+      "name": "Golden Halberd",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 11,
+          "label": "Golden Halberd"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Tree Sentinel",
+          "region": "Limgrave + Stormveil"
+        }
+      ],
+      "calculatorName": "Golden Halberd"
+    },
+    {
+      "id": "greataxe",
+      "name": "Greataxe",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 12,
+          "label": "Greataxe"
+        }
+      ],
+      "calculatorName": "Greataxe"
+    },
+    {
+      "id": "great-p-e",
+      "name": "Great Épée",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 13,
+          "label": "Great Épée"
+        }
+      ],
+      "calculatorName": "Great Épée"
+    },
+    {
+      "id": "halberd",
+      "name": "Halberd",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 14,
+          "label": "Halberd"
+        }
+      ],
+      "calculatorName": "Halberd"
+    },
+    {
+      "id": "hand-axe",
+      "name": "Hand Axe",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 15,
+          "label": "Hand Axe"
+        }
+      ],
+      "calculatorName": "Hand Axe"
+    },
+    {
+      "id": "highland-axe",
+      "name": "Highland Axe",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 16,
+          "label": "Highland Axe"
+        }
+      ],
+      "calculatorName": "Highland Axe"
+    },
+    {
+      "id": "hookclaws",
+      "name": "Hookclaws",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 17,
+          "label": "Hookclaws"
+        }
+      ],
+      "calculatorName": "Hookclaws"
+    },
+    {
+      "id": "large-club",
+      "name": "Large Club",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 18,
+          "label": "Large Club"
+        }
+      ],
+      "calculatorName": "Large Club"
+    },
+    {
+      "id": "lance",
+      "name": "Lance",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 19,
+          "label": "Lance"
+        }
+      ],
+      "calculatorName": "Lance"
+    },
+    {
+      "id": "lordsworn-s-greatsword",
+      "name": "Lordsworn's Greatsword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 20,
+          "label": "Lordsworn's Greatsword"
+        }
+      ],
+      "calculatorName": "Lordsworn's Greatsword"
+    },
+    {
+      "id": "misericorde",
+      "name": "Misericorde",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 21,
+          "label": "Misericorde"
+        }
+      ],
+      "calculatorName": "Miséricorde"
+    },
+    {
+      "id": "parrying-dagger",
+      "name": "Parrying Dagger",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 22,
+          "label": "Parrying Dagger"
+        }
+      ],
+      "calculatorName": "Parrying Dagger"
+    },
+    {
+      "id": "pike",
+      "name": "Pike",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 23,
+          "label": "Pike"
+        }
+      ],
+      "calculatorName": "Pike"
+    },
+    {
+      "id": "reduvia",
+      "name": "Reduvia",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 24,
+          "label": "Reduvia"
+        }
+      ],
+      "calculatorName": "Reduvia"
+    },
+    {
+      "id": "shamshir",
+      "name": "Shamshir",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 25,
+          "label": "Shamshir"
+        }
+      ],
+      "calculatorName": "Shamshir"
+    },
+    {
+      "id": "shortbow",
+      "name": "Shortbow",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 26,
+          "label": "Shortbow"
+        }
+      ],
+      "calculatorName": "Shortbow"
+    },
+    {
+      "id": "short-sword",
+      "name": "Short Sword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 27,
+          "label": "Short Sword"
+        }
+      ],
+      "calculatorName": "Short Sword"
+    },
+    {
+      "id": "torch",
+      "name": "Torch",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 28,
+          "label": "Torch"
+        }
+      ],
+      "calculatorName": "Torch"
+    },
+    {
+      "id": "twinblade",
+      "name": "Twinblade",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 29,
+          "label": "Twinblade"
+        }
+      ],
+      "calculatorName": "Twinblade"
+    },
+    {
+      "id": "uchigatana",
+      "name": "Uchigatana",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 30,
+          "label": "Uchigatana"
+        }
+      ],
+      "calculatorName": "Uchigatana"
+    },
+    {
+      "id": "club",
+      "name": "Club",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 31,
+          "label": "Club"
+        }
+      ],
+      "calculatorName": "Club"
+    },
+    {
+      "id": "crescent-moon-axe",
+      "name": "Crescent Moon Axe",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 32,
+          "label": "Crescent Moon Axe"
+        }
+      ],
+      "calculatorName": "Crescent Moon Axe"
+    },
+    {
+      "id": "dagger",
+      "name": "Dagger",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 33,
+          "label": "Dagger"
+        }
+      ],
+      "calculatorName": "Dagger"
+    },
+    {
+      "id": "dismounter",
+      "name": "Dismounter",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 34,
+          "label": "Dismounter"
+        }
+      ],
+      "calculatorName": "Dismounter"
+    },
+    {
+      "id": "falchion",
+      "name": "Falchion",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 35,
+          "label": "Falchion"
+        },
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 7,
+          "label": "Falchion"
+        }
+      ],
+      "calculatorName": "Falchion"
+    },
+    {
+      "id": "forked-greatsword",
+      "name": "Forked Greatsword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 36,
+          "label": "Forked Greatsword"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 42,
+          "label": "Forked Greatsword"
+        }
+      ],
+      "calculatorName": "Forked Greatsword"
+    },
+    {
+      "id": "forked-hatchet",
+      "name": "Forked Hatchet",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 37,
+          "label": "Forked Hatchet"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 43,
+          "label": "Forked Hatchet"
+        }
+      ],
+      "calculatorName": "Forked Hatchet"
+    },
+    {
+      "id": "golem-greatbow",
+      "name": "Golem Greatbow",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 38,
+          "label": "Golem Greatbow"
+        }
+      ],
+      "calculatorName": "Golem Greatbow"
+    },
+    {
+      "id": "golem-s-halberd",
+      "name": "Golem's Halberd",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 39,
+          "label": "Golem's Halberd"
+        }
+      ],
+      "calculatorName": "Golem's Halberd"
+    },
+    {
+      "id": "glintstone-staff",
+      "name": "Glintstone Staff",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 40,
+          "label": "Glintstone Staff"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 45,
+          "label": "Glintstone Staff"
+        }
+      ],
+      "calculatorName": "Glintstone Staff"
+    },
+    {
+      "id": "grave-scythe",
+      "name": "Grave Scythe",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 41,
+          "label": "Grave Scythe"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 46,
+          "label": "Grave Scythe"
+        }
+      ],
+      "calculatorName": "Grave Scythe"
+    },
+    {
+      "id": "grossmesser",
+      "name": "Grossmesser",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 42,
+          "label": "Grossmesser"
+        }
+      ],
+      "calculatorName": "Grossmesser"
+    },
+    {
+      "id": "heavy-crossbow",
+      "name": "Heavy Crossbow",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 43,
+          "label": "Heavy Crossbow"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 48,
+          "label": "Heavy Crossbow"
+        }
+      ],
+      "calculatorName": "Heavy Crossbow"
+    },
+    {
+      "id": "knight-s-greatsword",
+      "name": "Knight's Greatsword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 44,
+          "label": "Knight's Greatsword"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 49,
+          "label": "Knight's Greatsword"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 11,
+          "label": "Knight's Greatsword"
+        }
+      ],
+      "calculatorName": "Knight's Greatsword"
+    },
+    {
+      "id": "lordsworn-s-straight-sword",
+      "name": "Lordsworn's Straight Sword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 45,
+          "label": "Lordsworn's Straight Sword"
+        },
+        {
+          "name": "Weeping Peninsula",
+          "order": 6,
+          "label": "Lordsworn's Straight Sword"
+        }
+      ],
+      "calculatorName": "Lordsworn's Straight Sword"
+    },
+    {
+      "id": "noble-s-estoc",
+      "name": "Noble's Estoc",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 46,
+          "label": "Noble's Estoc"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 52,
+          "label": "Noble's Estoc"
+        }
+      ],
+      "calculatorName": "Noble's Estoc"
+    },
+    {
+      "id": "noble-s-slender-sword",
+      "name": "Noble's Slender Sword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 47,
+          "label": "Noble's Slender Sword"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 53,
+          "label": "Noble's Slender Sword"
+        }
+      ],
+      "calculatorName": "Noble's Slender Sword"
+    },
+    {
+      "id": "omen-cleaver",
+      "name": "Omen Cleaver",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 48,
+          "label": "Omen Cleaver"
+        }
+      ],
+      "calculatorName": "Omen Cleaver"
+    },
+    {
+      "id": "partisan",
+      "name": "Partisan",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 49,
+          "label": "Partisan"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 54,
+          "label": "Partisan"
+        },
+        {
+          "name": "Caelid",
+          "order": 14,
+          "label": "Partisan"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 10,
+          "label": "Partisan"
+        }
+      ],
+      "calculatorName": "Partisan"
+    },
+    {
+      "id": "pickaxe",
+      "name": "Pickaxe",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 50,
+          "label": "Pickaxe"
+        }
+      ],
+      "calculatorName": "Pickaxe"
+    },
+    {
+      "id": "scimitar",
+      "name": "Scimitar",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 51,
+          "label": "Scimitar"
+        }
+      ],
+      "calculatorName": "Scimitar"
+    },
+    {
+      "id": "short-spear",
+      "name": "Short Spear",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 52,
+          "label": "Short Spear"
+        }
+      ],
+      "calculatorName": "Short Spear"
+    },
+    {
+      "id": "soldier-s-crossbow",
+      "name": "Soldier's Crossbow",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 53,
+          "label": "Soldier's Crossbow"
+        }
+      ],
+      "calculatorName": "Soldier's Crossbow"
+    },
+    {
+      "id": "spiked-club",
+      "name": "Spiked Club",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 54,
+          "label": "Spiked Club"
+        },
+        {
+          "name": "Mt. Gelmir",
+          "order": 11,
+          "label": "Spiked Club"
+        }
+      ],
+      "calculatorName": "Spiked Club"
+    },
+    {
+      "id": "spear",
+      "name": "Spear",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 55,
+          "label": "Spear"
+        }
+      ],
+      "calculatorName": "Spear"
+    },
+    {
+      "id": "torchpole",
+      "name": "Torchpole",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 56,
+          "label": "Torchpole"
+        }
+      ],
+      "calculatorName": "Torchpole"
+    },
+    {
+      "id": "warhawk-s-talon",
+      "name": "Warhawk's Talon",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 57,
+          "label": "Warhawk's Talon"
+        }
+      ],
+      "calculatorName": "Warhawk's Talon"
+    },
+    {
+      "id": "warpick",
+      "name": "Warpick",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 58,
+          "label": "Warpick"
+        }
+      ],
+      "calculatorName": "Warpick"
+    },
+    {
+      "id": "weathered-straight-sword",
+      "name": "Weathered Straight Sword",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 59,
+          "label": "Weathered Straight Sword"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 59,
+          "label": "Weathered Straight Sword"
+        }
+      ],
+      "calculatorName": "Weathered Straight Sword"
+    },
+    {
+      "id": "axe-of-godrick",
+      "name": "Axe of Godrick",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 60,
+          "label": "Axe of Godrick"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godrick the Grafted",
+          "region": "Limgrave + Stormveil"
+        }
+      ],
+      "calculatorName": "Axe of Godrick"
+    },
+    {
+      "id": "grafted-dragon",
+      "name": "Grafted Dragon",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 61,
+          "label": "Grafted Dragon"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godrick the Grafted",
+          "region": "Limgrave + Stormveil"
+        }
+      ],
+      "calculatorName": "Grafted Dragon"
+    },
+    {
+      "id": "rogier-s-rapier",
+      "name": "Rogier's Rapier",
+      "regions": [
+        {
+          "name": "Limgrave + Stormveil",
+          "order": 62,
+          "label": "Rogier's Rapier"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godrick the Grafted",
+          "region": "Limgrave + Stormveil"
+        }
+      ],
+      "calculatorName": "Rogier's Rapier"
+    },
+    {
+      "id": "claymore",
+      "name": "Claymore",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 1,
+          "label": "Claymore"
+        }
+      ],
+      "calculatorName": "Claymore"
+    },
+    {
+      "id": "demi-human-queen-s-staff",
+      "name": "Demi-Human Queen's Staff",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 2,
+          "label": "Demi-Human Queen's Staff"
+        }
+      ],
+      "calculatorName": "Demi-Human Queen's Staff"
+    },
+    {
+      "id": "grafted-blade-greatsword",
+      "name": "Grafted Blade Greatsword",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 3,
+          "label": "Grafted Blade Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Leonine Misbegotten",
+          "region": "Weeping Peninsula"
+        }
+      ],
+      "calculatorName": "Grafted Blade Greatsword"
+    },
+    {
+      "id": "hand-ballista",
+      "name": "Hand Ballista",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 4,
+          "label": "Hand Ballista"
+        }
+      ],
+      "calculatorName": "Hand Ballista"
+    },
+    {
+      "id": "iron-cleaver",
+      "name": "Iron Cleaver",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 5,
+          "label": "Iron Cleaver"
+        }
+      ],
+      "calculatorName": "Iron Cleaver"
+    },
+    {
+      "id": "morning-star",
+      "name": "Morning Star",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 7,
+          "label": "Morning Star"
+        }
+      ],
+      "calculatorName": "Morning Star"
+    },
+    {
+      "id": "nightrider-flail",
+      "name": "Nightrider Flail",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 8,
+          "label": "Nightrider Flail"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Night's Cavalry",
+          "region": "Weeping Peninsula"
+        }
+      ],
+      "calculatorName": "Nightrider Flail"
+    },
+    {
+      "id": "rusted-anchor",
+      "name": "Rusted Anchor",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 9,
+          "label": "Rusted Anchor"
+        }
+      ],
+      "calculatorName": "Rusted Anchor"
+    },
+    {
+      "id": "spiked-spear",
+      "name": "Spiked Spear",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 10,
+          "label": "Spiked Spear"
+        },
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 56,
+          "label": "Spiked Spear"
+        }
+      ],
+      "calculatorName": "Spiked Spear"
+    },
+    {
+      "id": "steel-wire-torch",
+      "name": "Steel-Wire Torch",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 11,
+          "label": "Steel-Wire Torch"
+        }
+      ],
+      "calculatorName": "Steel-Wire Torch"
+    },
+    {
+      "id": "whip",
+      "name": "Whip",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 12,
+          "label": "Whip"
+        }
+      ],
+      "calculatorName": "Whip"
+    },
+    {
+      "id": "winged-scythe",
+      "name": "Winged Scythe",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 13,
+          "label": "Winged Scythe"
+        }
+      ],
+      "calculatorName": "Winged Scythe"
+    },
+    {
+      "id": "zweihander",
+      "name": "Zweihander",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 14,
+          "label": "Zweihander"
+        }
+      ],
+      "calculatorName": "Zweihander"
+    },
+    {
+      "id": "bastard-sword",
+      "name": "Bastard Sword",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 15,
+          "label": "Bastard Sword"
+        }
+      ],
+      "calculatorName": "Bastard Sword"
+    },
+    {
+      "id": "light-crossbow",
+      "name": "Light Crossbow",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 16,
+          "label": "Light Crossbow"
+        }
+      ],
+      "calculatorName": "Light Crossbow"
+    },
+    {
+      "id": "sacrificial-axe",
+      "name": "Sacrificial Axe",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 17,
+          "label": "Sacrificial Axe"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Deathbird",
+          "region": "Weeping Peninsula"
+        }
+      ],
+      "calculatorName": "Sacrificial Axe"
+    },
+    {
+      "id": "misbegotten-shortbow",
+      "name": "Misbegotten Shortbow",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 18,
+          "label": "Misbegotten Shortbow"
+        }
+      ],
+      "calculatorName": "Misbegotten Shortbow"
+    },
+    {
+      "id": "guardian-s-swordspear",
+      "name": "Guardian's Swordspear",
+      "regions": [
+        {
+          "name": "Weeping Peninsula",
+          "order": 19,
+          "label": "Guardian's Swordspear"
+        },
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 24,
+          "label": "Guardian's Swordspear"
+        }
+      ],
+      "calculatorName": "Guardian's Swordspear"
+    },
+    {
+      "id": "academy-glintstone-staff",
+      "name": "Academy Glintstone Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 0,
+          "label": "Academy Glintstone Staff"
+        }
+      ],
+      "calculatorName": "Academy Glintstone Staff"
+    },
+    {
+      "id": "astrologer-s-staff",
+      "name": "Astrologer's Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 1,
+          "label": "Astrologer's Staff"
+        }
+      ],
+      "calculatorName": "Astrologer's Staff"
+    },
+    {
+      "id": "azur-s-glintstone-staff",
+      "name": "Azur's Glintstone Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 2,
+          "label": "Azur's Glintstone Staff"
+        }
+      ],
+      "calculatorName": "Azur's Glintstone Staff"
+    },
+    {
+      "id": "carian-glintblade-staff",
+      "name": "Carian Glintblade Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 4,
+          "label": "Carian Glintblade Staff"
+        }
+      ],
+      "calculatorName": "Carian Glintblade Staff"
+    },
+    {
+      "id": "carian-glintstone-staff",
+      "name": "Carian Glintstone Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 5,
+          "label": "Carian Glintstone Staff"
+        }
+      ],
+      "calculatorName": "Carian Glintstone Staff"
+    },
+    {
+      "id": "carian-knight-s-sword",
+      "name": "Carian Knight's Sword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 6,
+          "label": "Carian Knight's Sword"
+        }
+      ],
+      "calculatorName": "Carian Knight's Sword"
+    },
+    {
+      "id": "composite-bow",
+      "name": "Composite Bow",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 7,
+          "label": "Composite Bow"
+        }
+      ],
+      "calculatorName": "Composite Bow"
+    },
+    {
+      "id": "crystal-knife",
+      "name": "Crystal Knife",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 8,
+          "label": "Crystal Knife"
+        }
+      ],
+      "calculatorName": "Crystal Knife"
+    },
+    {
+      "id": "crystal-staff",
+      "name": "Crystal Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 9,
+          "label": "Crystal Staff"
+        }
+      ],
+      "calculatorName": "Crystal Staff"
+    },
+    {
+      "id": "crystal-sword",
+      "name": "Crystal Sword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 10,
+          "label": "Crystal Sword"
+        }
+      ],
+      "calculatorName": "Crystal Sword"
+    },
+    {
+      "id": "dark-moon-greatsword",
+      "name": "Dark Moon Greatsword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 11,
+          "label": "Dark Moon Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Astel, Naturalborn of the Void",
+          "region": "Lake of Rot + Grand Cloister"
+        }
+      ],
+      "calculatorName": "Dark Moon Greatsword"
+    },
+    {
+      "id": "estoc",
+      "name": "Estoc",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 12,
+          "label": "Estoc"
+        }
+      ],
+      "calculatorName": "Estoc"
+    },
+    {
+      "id": "frozen-needle",
+      "name": "Frozen Needle",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 13,
+          "label": "Frozen Needle"
+        }
+      ],
+      "calculatorName": "Frozen Needle"
+    },
+    {
+      "id": "full-moon-crossbow",
+      "name": "Full Moon Crossbow",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 14,
+          "label": "Full Moon Crossbow"
+        }
+      ],
+      "calculatorName": "Full Moon Crossbow"
+    },
+    {
+      "id": "glintstone-kris",
+      "name": "Glintstone Kris",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 15,
+          "label": "Glintstone Kris"
+        }
+      ],
+      "calculatorName": "Glintstone Kris"
+    },
+    {
+      "id": "great-mace",
+      "name": "Great Mace",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 16,
+          "label": "Great Mace"
+        }
+      ],
+      "calculatorName": "Great Mace"
+    },
+    {
+      "id": "hoslow-s-petal-whip",
+      "name": "Hoslow's Petal Whip",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 17,
+          "label": "Hoslow's Petal Whip"
+        },
+        {
+          "name": "Mt. Gelmir",
+          "order": 17,
+          "label": "Hoslow's Petal Whip"
+        }
+      ],
+      "calculatorName": "Hoslow's Petal Whip"
+    },
+    {
+      "id": "icerind-hatchet",
+      "name": "Icerind Hatchet",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 18,
+          "label": "Icerind Hatchet"
+        }
+      ],
+      "calculatorName": "Icerind Hatchet"
+    },
+    {
+      "id": "iron-ball",
+      "name": "Iron Ball",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 19,
+          "label": "Iron Ball"
+        }
+      ],
+      "calculatorName": "Iron Ball"
+    },
+    {
+      "id": "ivory-sickle",
+      "name": "Ivory Sickle",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 20,
+          "label": "Ivory Sickle"
+        }
+      ],
+      "calculatorName": "Ivory Sickle"
+    },
+    {
+      "id": "lucerne",
+      "name": "Lucerne",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 21,
+          "label": "Lucerne"
+        }
+      ],
+      "calculatorName": "Lucerne"
+    },
+    {
+      "id": "magma-wyrm-s-scalesword",
+      "name": "Magma Wyrm's Scalesword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 22,
+          "label": "Magma Wyrm's Scalesword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Magma Wyrm Makar",
+          "region": "Liurnia of the Lakes"
+        }
+      ],
+      "calculatorName": "Magma Wyrm's Scalesword"
+    },
+    {
+      "id": "nightrider-glaive",
+      "name": "Nightrider Glaive",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 23,
+          "label": "Nightrider Glaive"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Night's Cavalry (Liurnia North)",
+          "region": "Liurnia of the Lakes"
+        }
+      ],
+      "calculatorName": "Nightrider Glaive"
+    },
+    {
+      "id": "ornamental-straight-sword",
+      "name": "Ornamental Straight Sword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 24,
+          "label": "Ornamental Straight Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Grafted Scion",
+          "region": "Limgrave + Stormveil"
+        }
+      ],
+      "calculatorName": "Ornamental Straight Sword"
+    },
+    {
+      "id": "ripple-blade",
+      "name": "Ripple Blade",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 25,
+          "label": "Ripple Blade"
+        }
+      ],
+      "calculatorName": "Ripple Blade"
+    },
+    {
+      "id": "rosus-axe",
+      "name": "Rosus' Axe",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 26,
+          "label": "Rosus' Axe"
+        }
+      ],
+      "calculatorName": "Rosus' Axe"
+    },
+    {
+      "id": "royal-greatsword",
+      "name": "Royal Greatsword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 27,
+          "label": "Royal Greatsword"
+        }
+      ],
+      "calculatorName": "Royal Greatsword"
+    },
+    {
+      "id": "scythe",
+      "name": "Scythe",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 28,
+          "label": "Scythe"
+        }
+      ],
+      "calculatorName": "Scythe"
+    },
+    {
+      "id": "serpent-god-s-curved-sword",
+      "name": "Serpent-God's Curved Sword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 29,
+          "label": "Serpent-God's Curved Sword"
+        }
+      ],
+      "calculatorName": "Serpent-God's Curved Sword"
+    },
+    {
+      "id": "sword-of-night-and-flame",
+      "name": "Sword of Night and Flame",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 30,
+          "label": "Sword of Night and Flame"
+        }
+      ],
+      "calculatorName": "Sword of Night and Flame"
+    },
+    {
+      "id": "treespear",
+      "name": "Treespear",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 31,
+          "label": "Treespear"
+        }
+      ],
+      "calculatorName": "Treespear"
+    },
+    {
+      "id": "troll-knight-s-sword",
+      "name": "Troll Knight's Sword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 32,
+          "label": "Troll Knight's Sword"
+        }
+      ],
+      "calculatorName": "Troll Knight's Sword"
+    },
+    {
+      "id": "stormhawk-axe",
+      "name": "Stormhawk Axe",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 33,
+          "label": "Stormhawk Axe"
+        }
+      ],
+      "calculatorName": "Stormhawk Axe"
+    },
+    {
+      "id": "urumi",
+      "name": "Urumi",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 34,
+          "label": "Urumi"
+        }
+      ],
+      "calculatorName": "Urumi"
+    },
+    {
+      "id": "vyke-s-war-spear",
+      "name": "Vyke's War Spear",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 35,
+          "label": "Vyke's War Spear"
+        }
+      ],
+      "calculatorName": "Vyke's War Spear"
+    },
+    {
+      "id": "watchdog-s-staff",
+      "name": "Watchdog's Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 36,
+          "label": "Watchdog's Staff"
+        }
+      ],
+      "calculatorName": "Watchdog's Staff"
+    },
+    {
+      "id": "chainlink-flail",
+      "name": "Chainlink Flail",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 37,
+          "label": "Chainlink Flail"
+        }
+      ],
+      "calculatorName": "Chainlink Flail"
+    },
+    {
+      "id": "curved-club",
+      "name": "Curved Club",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 38,
+          "label": "Curved Club"
+        },
+        {
+          "name": "Mohgwyn Palace",
+          "order": 3,
+          "label": "Curved Club"
+        }
+      ],
+      "calculatorName": "Curved Club"
+    },
+    {
+      "id": "curved-great-club",
+      "name": "Curved Great Club",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 39,
+          "label": "Curved Great Club"
+        },
+        {
+          "name": "Mohgwyn Palace",
+          "order": 4,
+          "label": "Curved Great Club"
+        }
+      ],
+      "calculatorName": "Curved Great Club"
+    },
+    {
+      "id": "digger-s-staff",
+      "name": "Digger's Staff",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 40,
+          "label": "Digger's Staff"
+        }
+      ],
+      "calculatorName": "Digger's Staff"
+    },
+    {
+      "id": "executioner-s-greataxe",
+      "name": "Executioner's Greataxe",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 41,
+          "label": "Executioner's Greataxe"
+        }
+      ],
+      "calculatorName": "Executioner's Greataxe"
+    },
+    {
+      "id": "glaive",
+      "name": "Glaive",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 44,
+          "label": "Glaive"
+        }
+      ],
+      "calculatorName": "Glaive"
+    },
+    {
+      "id": "great-knife",
+      "name": "Great Knife",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 47,
+          "label": "Great Knife"
+        }
+      ],
+      "calculatorName": "Great Knife"
+    },
+    {
+      "id": "lazuli-glintstone-sword",
+      "name": "Lazuli Glintstone Sword",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 50,
+          "label": "Lazuli Glintstone Sword"
+        }
+      ],
+      "calculatorName": "Lazuli Glintstone Sword"
+    },
+    {
+      "id": "monk-s-flamemace",
+      "name": "Monk's Flamemace",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 51,
+          "label": "Monk's Flamemace"
+        }
+      ],
+      "calculatorName": "Monk's Flamemace"
+    },
+    {
+      "id": "ripple-crescent-halberd",
+      "name": "Ripple Crescent Halberd",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 55,
+          "label": "Ripple Crescent Halberd"
+        },
+        {
+          "name": "Mohgwyn Palace",
+          "order": 2,
+          "label": "Ripple Crescent Halberd"
+        }
+      ],
+      "calculatorName": "Ripple Crescent Halberd"
+    },
+    {
+      "id": "stone-club",
+      "name": "Stone Club",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 57,
+          "label": "Stone Club"
+        }
+      ],
+      "calculatorName": "Stone Club"
+    },
+    {
+      "id": "warped-axe",
+      "name": "Warped Axe",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 58,
+          "label": "Warped Axe"
+        }
+      ],
+      "calculatorName": "Warped Axe"
+    },
+    {
+      "id": "carian-regal-scepter",
+      "name": "Carian Regal Scepter",
+      "regions": [
+        {
+          "name": "Liurnia of the Lakes",
+          "order": 60,
+          "label": "Carian Regal Scepter"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Rennala, Queen of the Full Moon",
+          "region": "Liurnia of the Lakes"
+        }
+      ],
+      "calculatorName": "Carian Regal Scepter"
+    },
+    {
+      "id": "cross-naginata",
+      "name": "Cross-Naginata",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 0,
+          "label": "Cross-Naginata"
+        }
+      ],
+      "calculatorName": "Cross-Naginata"
+    },
+    {
+      "id": "flamberge",
+      "name": "Flamberge",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 1,
+          "label": "Flamberge"
+        }
+      ],
+      "calculatorName": "Flamberge"
+    },
+    {
+      "id": "gargoyle-s-blackblade",
+      "name": "Gargoyle's Blackblade",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 2,
+          "label": "Gargoyle's Blackblade"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Black Blade Kindred",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Gargoyle's Blackblade"
+    },
+    {
+      "id": "gargoyle-s-black-halberd",
+      "name": "Gargoyle's Black Halberd",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 3,
+          "label": "Gargoyle's Black Halberd"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Black Blade Kindred",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Gargoyle's Black Halberd"
+    },
+    {
+      "id": "godslayer-s-greatsword",
+      "name": "Godslayer's Greatsword",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 4,
+          "label": "Godslayer's Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godskin Apostle",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Godslayer's Greatsword"
+    },
+    {
+      "id": "katar",
+      "name": "Katar",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 5,
+          "label": "Katar"
+        }
+      ],
+      "calculatorName": "Katar"
+    },
+    {
+      "id": "lusat-s-glintstone-staff",
+      "name": "Lusat's Glintstone Staff",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 6,
+          "label": "Lusat's Glintstone Staff"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Nox Swordstress & Nox Monk",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Lusat's Glintstone Staff"
+    },
+    {
+      "id": "meteoric-ore-blade",
+      "name": "Meteoric Ore Blade",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 7,
+          "label": "Meteoric Ore Blade"
+        }
+      ],
+      "calculatorName": "Meteoric Ore Blade"
+    },
+    {
+      "id": "meteorite-staff",
+      "name": "Meteorite Staff",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 8,
+          "label": "Meteorite Staff"
+        }
+      ],
+      "calculatorName": "Meteorite Staff"
+    },
+    {
+      "id": "moonveil",
+      "name": "Moonveil",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 9,
+          "label": "Moonveil"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Magma Wyrm",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Moonveil"
+    },
+    {
+      "id": "nox-flowing-sword",
+      "name": "Nox Flowing Sword",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 10,
+          "label": "Nox Flowing Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Nox Swordstress & Nox Monk",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Nox Flowing Sword"
+    },
+    {
+      "id": "regalia-of-eochaid",
+      "name": "Regalia of Eochaid",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 11,
+          "label": "Regalia of Eochaid"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Frenzied Duelist",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Regalia of Eochaid"
+    },
+    {
+      "id": "ruins-greatsword",
+      "name": "Ruins Greatsword",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 12,
+          "label": "Ruins Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Crucible Knight and Misbegotten Warrior",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Ruins Greatsword"
+    },
+    {
+      "id": "sword-of-st-trina",
+      "name": "Sword of St. Trina",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 13,
+          "label": "Sword of St. Trina"
+        }
+      ],
+      "calculatorName": "Sword of St. Trina"
+    },
+    {
+      "id": "serpent-bow",
+      "name": "Serpent Bow",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 15,
+          "label": "Serpent Bow"
+        }
+      ],
+      "calculatorName": "Serpent Bow"
+    },
+    {
+      "id": "staff-of-loss",
+      "name": "Staff of Loss",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 16,
+          "label": "Staff of Loss"
+        }
+      ],
+      "calculatorName": "Staff of Loss"
+    },
+    {
+      "id": "venomous-fang",
+      "name": "Venomous Fang",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 17,
+          "label": "Venomous Fang"
+        }
+      ],
+      "calculatorName": "Venomous Fang"
+    },
+    {
+      "id": "wakizashi",
+      "name": "Wakizashi",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 18,
+          "label": "Wakizashi"
+        }
+      ],
+      "calculatorName": "Wakizashi"
+    },
+    {
+      "id": "greatsword",
+      "name": "Greatsword",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 19,
+          "label": "Greatsword"
+        }
+      ],
+      "calculatorName": "Greatsword"
+    },
+    {
+      "id": "death-s-poker",
+      "name": "Death's Poker",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 20,
+          "label": "Death's Poker"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Death Rite Bird",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Death's Poker"
+    },
+    {
+      "id": "cleanrot-knight-s-sword",
+      "name": "Cleanrot Knight's Sword",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 21,
+          "label": "Cleanrot Knight's Sword"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 5,
+          "label": "Cleanrot Knight's Sword"
+        }
+      ],
+      "calculatorName": "Cleanrot Knight's Sword"
+    },
+    {
+      "id": "cleanrot-spear",
+      "name": "Cleanrot Spear",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 22,
+          "label": "Cleanrot Spear"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 6,
+          "label": "Cleanrot Spear"
+        }
+      ],
+      "calculatorName": "Cleanrot Spear"
+    },
+    {
+      "id": "halo-scythe",
+      "name": "Halo Scythe",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 23,
+          "label": "Halo Scythe"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 7,
+          "label": "Halo Scythe"
+        }
+      ],
+      "calculatorName": "Halo Scythe"
+    },
+    {
+      "id": "spiked-caestus",
+      "name": "Spiked Caestus",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 24,
+          "label": "Spiked Caestus"
+        }
+      ],
+      "calculatorName": "Spiked Caestus"
+    },
+    {
+      "id": "beast-repellent-torch",
+      "name": "Beast-Repellent Torch",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 25,
+          "label": "Beast-Repellent Torch"
+        }
+      ],
+      "calculatorName": "Beast-Repellent Torch"
+    },
+    {
+      "id": "starscourge-greatsword",
+      "name": "Starscourge Greatsword",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 26,
+          "label": "Starscourge Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Starscourge Radahn",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Starscourge Greatsword"
+    },
+    {
+      "id": "lion-greatbow",
+      "name": "Lion Greatbow",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 27,
+          "label": "Lion Greatbow"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Starscourge Radahn",
+          "region": "Caelid"
+        }
+      ],
+      "calculatorName": "Lion Greatbow"
+    },
+    {
+      "id": "cinquedea",
+      "name": "Cinquedea",
+      "regions": [
+        {
+          "name": "Caelid",
+          "order": 28,
+          "label": "Cinquedea"
+        }
+      ],
+      "calculatorName": "Cinquedea"
+    },
+    {
+      "id": "ghostflame-torch",
+      "name": "Ghostflame Torch",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 0,
+          "label": "Ghostflame Torch"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 0,
+          "label": "Ghostflame Torch"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 0,
+          "label": "Ghostflame Torch"
+        }
+      ],
+      "calculatorName": "Ghostflame Torch"
+    },
+    {
+      "id": "iron-spear",
+      "name": "Iron Spear",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 1,
+          "label": "Iron Spear"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 1,
+          "label": "Iron Spear"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 1,
+          "label": "Iron Spear"
+        }
+      ],
+      "calculatorName": "Iron Spear"
+    },
+    {
+      "id": "nox-flowing-hammer",
+      "name": "Nox Flowing Hammer",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 2,
+          "label": "Nox Flowing Hammer"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 2,
+          "label": "Nox Flowing Hammer"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 2,
+          "label": "Nox Flowing Hammer"
+        }
+      ],
+      "calculatorName": "Nox Flowing Hammer"
+    },
+    {
+      "id": "horn-bow",
+      "name": "Horn Bow",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 3,
+          "label": "Horn Bow"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 3,
+          "label": "Horn Bow"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 3,
+          "label": "Horn Bow"
+        }
+      ],
+      "calculatorName": "Horn Bow"
+    },
+    {
+      "id": "greathorn-hammer",
+      "name": "Greathorn Hammer",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 4,
+          "label": "Greathorn Hammer"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 4,
+          "label": "Greathorn Hammer"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 4,
+          "label": "Greathorn Hammer"
+        }
+      ],
+      "calculatorName": "Greathorn Hammer"
+    },
+    {
+      "id": "shotel",
+      "name": "Shotel",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 5,
+          "label": "Shotel"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 5,
+          "label": "Shotel"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 5,
+          "label": "Shotel"
+        }
+      ],
+      "calculatorName": "Shotel"
+    },
+    {
+      "id": "dragon-halberd",
+      "name": "Dragon Halberd",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 6,
+          "label": "Dragon Halberd"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 6,
+          "label": "Dragon Halberd"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 6,
+          "label": "Dragon Halberd"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Dragonkin Soldier",
+          "region": "Siofra River + Nokron"
+        }
+      ],
+      "calculatorName": "Dragon Halberd"
+    },
+    {
+      "id": "gargoyle-s-twinblade",
+      "name": "Gargoyle's Twinblade",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 7,
+          "label": "Gargoyle's Twinblade"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 7,
+          "label": "Gargoyle's Twinblade"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 7,
+          "label": "Gargoyle's Twinblade"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Valiant Gargoyle & Valiant Gargoyle (Twinblade)",
+          "region": "Siofra River + Nokron"
+        }
+      ],
+      "calculatorName": "Gargoyle's Twinblade"
+    },
+    {
+      "id": "gargoyle-s-greatsword",
+      "name": "Gargoyle's Greatsword",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 8,
+          "label": "Gargoyle's Greatsword"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 8,
+          "label": "Gargoyle's Greatsword"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 8,
+          "label": "Gargoyle's Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Valiant Gargoyle & Valiant Gargoyle (Twinblade)",
+          "region": "Siofra River + Nokron"
+        }
+      ],
+      "calculatorName": "Gargoyle's Greatsword"
+    },
+    {
+      "id": "alabaster-lord-s-sword",
+      "name": "Alabaster Lord's Sword",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 9,
+          "label": "Alabaster Lord's Sword"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 9,
+          "label": "Alabaster Lord's Sword"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 9,
+          "label": "Alabaster Lord's Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Alabaster Lord",
+          "region": "Lake of Rot + Grand Cloister"
+        }
+      ],
+      "calculatorName": "Alabaster Lord's Sword"
+    },
+    {
+      "id": "clayman-s-harpoon",
+      "name": "Clayman's Harpoon",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 10,
+          "label": "Clayman's Harpoon"
+        },
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 10,
+          "label": "Clayman's Harpoon"
+        },
+        {
+          "name": "Deeproot Depths",
+          "order": 10,
+          "label": "Clayman's Harpoon"
+        }
+      ],
+      "calculatorName": "Clayman's Harpoon"
+    },
+    {
+      "id": "winged-greathorn",
+      "name": "Winged Greathorn",
+      "regions": [
+        {
+          "name": "Siofra River + Nokron",
+          "order": 11,
+          "label": "Winged Greathorn"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Regal Ancestor Spirit",
+          "region": "Siofra River + Nokron"
+        }
+      ],
+      "calculatorName": "Winged Greathorn"
+    },
+    {
+      "id": "scorpion-s-stinger",
+      "name": "Scorpion's Stinger",
+      "regions": [
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 11,
+          "label": "Scorpion's Stinger"
+        }
+      ],
+      "calculatorName": "Scorpion's Stinger"
+    },
+    {
+      "id": "dragonscale-blade",
+      "name": "Dragonscale Blade",
+      "regions": [
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 12,
+          "label": "Dragonscale Blade"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Dragonkin Soldier",
+          "region": "Lake of Rot + Grand Cloister"
+        }
+      ],
+      "calculatorName": "Dragonscale Blade"
+    },
+    {
+      "id": "bastard-s-stars",
+      "name": "Bastard's Stars",
+      "regions": [
+        {
+          "name": "Lake of Rot + Grand Cloister",
+          "order": 13,
+          "label": "Bastard's Stars"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Astel, Naturalborn of the Void",
+          "region": "Lake of Rot + Grand Cloister"
+        }
+      ],
+      "calculatorName": "Bastard's Stars"
+    },
+    {
+      "id": "siluria-s-tree",
+      "name": "Siluria's Tree",
+      "regions": [
+        {
+          "name": "Deeproot Depths",
+          "order": 11,
+          "label": "Siluria's Tree"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Crucible Knight Siluria",
+          "region": "Deeproot Depths"
+        }
+      ],
+      "calculatorName": "Siluria's Tree"
+    },
+    {
+      "id": "prince-of-death-s-staff",
+      "name": "Prince of Death's Staff",
+      "regions": [
+        {
+          "name": "Deeproot Depths",
+          "order": 12,
+          "label": "Prince of Death's Staff"
+        }
+      ],
+      "calculatorName": "Prince of Death's Staff"
+    },
+    {
+      "id": "black-knife",
+      "name": "Black Knife",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 0,
+          "label": "Black Knife"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Black Knife Assassin (Sainted Hero's Grave)",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Black Knife"
+    },
+    {
+      "id": "bloody-helice",
+      "name": "Bloody Helice",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 1,
+          "label": "Bloody Helice"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Sanguine Noble",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Bloody Helice"
+    },
+    {
+      "id": "celebrant-s-cleaver",
+      "name": "Celebrant's Cleaver",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 2,
+          "label": "Celebrant's Cleaver"
+        }
+      ],
+      "calculatorName": "Celebrant's Cleaver"
+    },
+    {
+      "id": "celebrant-s-rib-rake",
+      "name": "Celebrant's Rib Rake",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 3,
+          "label": "Celebrant's Rib Rake"
+        }
+      ],
+      "calculatorName": "Celebrant's Rib-Rake"
+    },
+    {
+      "id": "celebrant-s-sickle",
+      "name": "Celebrant's Sickle",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 4,
+          "label": "Celebrant's Sickle"
+        }
+      ],
+      "calculatorName": "Celebrant's Sickle"
+    },
+    {
+      "id": "celebrant-s-skull",
+      "name": "Celebrant's Skull",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 5,
+          "label": "Celebrant's Skull"
+        }
+      ],
+      "calculatorName": "Celebrant's Skull"
+    },
+    {
+      "id": "eleonora-s-poleblade",
+      "name": "Eleonora's Poleblade",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 6,
+          "label": "Eleonora's Poleblade"
+        }
+      ],
+      "calculatorName": "Eleonora's Poleblade"
+    },
+    {
+      "id": "godskin-peeler",
+      "name": "Godskin Peeler",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 8,
+          "label": "Godskin Peeler"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godskin Apostle",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Godskin Peeler"
+    },
+    {
+      "id": "great-club",
+      "name": "Great Club",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 9,
+          "label": "Great Club"
+        },
+        {
+          "name": "Mt. Gelmir",
+          "order": 16,
+          "label": "Great Club"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Stonedigger Troll",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Great Club"
+    },
+    {
+      "id": "marais-executioner-s-sword",
+      "name": "Marais Executioner's Sword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 10,
+          "label": "Marais Executioner's Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Elemer of the Briar",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Marais Executioner's Sword"
+    },
+    {
+      "id": "nagakiba",
+      "name": "Nagakiba",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 11,
+          "label": "Nagakiba"
+        }
+      ],
+      "calculatorName": "Nagakiba"
+    },
+    {
+      "id": "onyx-lord-s-greatsword",
+      "name": "Onyx Lord's Greatsword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 12,
+          "label": "Onyx Lord's Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Onyx Lord",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Onyx Lord's Greatsword"
+    },
+    {
+      "id": "twinned-knight-swords",
+      "name": "Twinned Knight Swords",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 13,
+          "label": "Twinned Knight Swords"
+        }
+      ],
+      "calculatorName": "Twinned Knight Swords"
+    },
+    {
+      "id": "giant-crusher",
+      "name": "Giant Crusher",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 14,
+          "label": "Giant Crusher"
+        }
+      ],
+      "calculatorName": "Giant-Crusher"
+    },
+    {
+      "id": "coded-sword",
+      "name": "Coded Sword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 15,
+          "label": "Coded Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Coded Sword"
+    },
+    {
+      "id": "star-fist",
+      "name": "Star Fist",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 16,
+          "label": "Star Fist"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Star Fist"
+    },
+    {
+      "id": "cane-sword",
+      "name": "Cane Sword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 17,
+          "label": "Cane Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Cane Sword"
+    },
+    {
+      "id": "black-bow",
+      "name": "Black Bow",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 18,
+          "label": "Black Bow"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Black Bow"
+    },
+    {
+      "id": "gravel-stone-seal",
+      "name": "Gravel Stone Seal",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 19,
+          "label": "Gravel Stone Seal"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Gravel Stone Seal"
+    },
+    {
+      "id": "envoy-s-long-horn",
+      "name": "Envoy's Long Horn",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 20,
+          "label": "Envoy's Long Horn"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Envoy's Long Horn"
+    },
+    {
+      "id": "erdtree-bow",
+      "name": "Erdtree Bow",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 21,
+          "label": "Erdtree Bow"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godfrey, First Elden Lord",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Erdtree Bow"
+    },
+    {
+      "id": "bolt-of-gransax",
+      "name": "Bolt of Gransax",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 22,
+          "label": "Bolt of Gransax"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godfrey, First Elden Lord",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Bolt of Gransax"
+    },
+    {
+      "id": "great-stars",
+      "name": "Great Stars",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 23,
+          "label": "Great Stars"
+        }
+      ],
+      "calculatorName": "Great Stars"
+    },
+    {
+      "id": "raptor-talons",
+      "name": "Raptor Talons",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 25,
+          "label": "Raptor Talons"
+        }
+      ],
+      "calculatorName": "Raptor Talons"
+    },
+    {
+      "id": "troll-s-golden-sword",
+      "name": "Troll's Golden Sword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 26,
+          "label": "Troll's Golden Sword"
+        }
+      ],
+      "calculatorName": "Troll's Golden Sword"
+    },
+    {
+      "id": "greatbow",
+      "name": "Greatbow",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 27,
+          "label": "Greatbow"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 9,
+          "label": "Greatbow"
+        }
+      ],
+      "calculatorName": "Greatbow"
+    },
+    {
+      "id": "sentry-s-torch",
+      "name": "Sentry's Torch",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 28,
+          "label": "Sentry's Torch"
+        }
+      ],
+      "calculatorName": "Sentry's Torch"
+    },
+    {
+      "id": "golden-order-seal",
+      "name": "Golden Order Seal",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 29,
+          "label": "Golden Order Seal"
+        }
+      ],
+      "calculatorName": "Golden Order Seal"
+    },
+    {
+      "id": "golden-epitaph",
+      "name": "Golden Epitaph",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 30,
+          "label": "Golden Epitaph"
+        }
+      ],
+      "calculatorName": "Golden Epitaph"
+    },
+    {
+      "id": "hammer",
+      "name": "Hammer",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 31,
+          "label": "Hammer"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Hammer"
+    },
+    {
+      "id": "gargoyle-s-halberd",
+      "name": "Gargoyle's Halberd",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 32,
+          "label": "Gargoyle's Halberd"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Gargoyle's Halberd"
+    },
+    {
+      "id": "dragon-greatclaw",
+      "name": "Dragon Greatclaw",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 33,
+          "label": "Dragon Greatclaw"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Dragon Greatclaw"
+    },
+    {
+      "id": "ordovis-s-greatsword",
+      "name": "Ordovis's Greatsword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 34,
+          "label": "Ordovis's Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Crucible Knight & Crucible Knight Ordovis",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Ordovis's Greatsword"
+    },
+    {
+      "id": "morgott-s-cursed-sword",
+      "name": "Morgott's Cursed Sword",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 35,
+          "label": "Morgott's Cursed Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Morgott, the Omen King",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Morgott's Cursed Sword"
+    },
+    {
+      "id": "envoy-s-horn",
+      "name": "Envoy's Horn",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 36,
+          "label": "Envoy's Horn"
+        },
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 14,
+          "label": "Envoy's Horn"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Draconic Tree Sentinel",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Envoy's Horn"
+    },
+    {
+      "id": "antspur-rapier",
+      "name": "Antspur Rapier",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 37,
+          "label": "Antspur Rapier"
+        }
+      ],
+      "calculatorName": "Antspur Rapier"
+    },
+    {
+      "id": "battle-hammer",
+      "name": "Battle Hammer",
+      "regions": [
+        {
+          "name": "Altus Plateau + Leyndell",
+          "order": 38,
+          "label": "Battle Hammer"
+        }
+      ],
+      "calculatorName": "Battle Hammer"
+    },
+    {
+      "id": "bloodhound-claws",
+      "name": "Bloodhound Claws",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 0,
+          "label": "Bloodhound Claws"
+        }
+      ],
+      "calculatorName": "Bloodhound Claws"
+    },
+    {
+      "id": "butchering-knife",
+      "name": "Butchering Knife",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 1,
+          "label": "Butchering Knife"
+        }
+      ],
+      "calculatorName": "Butchering Knife"
+    },
+    {
+      "id": "coil-shield",
+      "name": "Coil Shield",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 2,
+          "label": "Coil Shield"
+        }
+      ],
+      "calculatorName": "Coil Shield"
+    },
+    {
+      "id": "jar-cannon",
+      "name": "Jar Cannon",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 3,
+          "label": "Jar Cannon"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Demi-Human Queen Margot",
+          "region": "Mt. Gelmir"
+        }
+      ],
+      "calculatorName": "Jar Cannon"
+    },
+    {
+      "id": "mantis-blade",
+      "name": "Mantis Blade",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 4,
+          "label": "Mantis Blade"
+        }
+      ],
+      "calculatorName": "Mantis Blade"
+    },
+    {
+      "id": "pulley-crossbow",
+      "name": "Pulley Crossbow",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 5,
+          "label": "Pulley Crossbow"
+        }
+      ],
+      "calculatorName": "Pulley Crossbow"
+    },
+    {
+      "id": "ringed-finger",
+      "name": "Ringed Finger",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 6,
+          "label": "Ringed Finger"
+        }
+      ],
+      "calculatorName": "Ringed Finger"
+    },
+    {
+      "id": "scavenger-s-curved-sword",
+      "name": "Scavenger's Curved Sword",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 7,
+          "label": "Scavenger's Curved Sword"
+        }
+      ],
+      "calculatorName": "Scavenger's Curved Sword"
+    },
+    {
+      "id": "serpentbone-blade",
+      "name": "Serpentbone Blade",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 8,
+          "label": "Serpentbone Blade"
+        }
+      ],
+      "calculatorName": "Serpentbone Blade"
+    },
+    {
+      "id": "serpent-hunter",
+      "name": "Serpent-Hunter",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 9,
+          "label": "Serpent-Hunter"
+        }
+      ],
+      "calculatorName": "Serpent-Hunter"
+    },
+    {
+      "id": "great-omenkiller-cleaver",
+      "name": "Great Omenkiller Cleaver",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 10,
+          "label": "Great Omenkiller Cleaver"
+        }
+      ],
+      "calculatorName": "Great Omenkiller Cleaver"
+    },
+    {
+      "id": "troll-s-hammer",
+      "name": "Troll's Hammer",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 12,
+          "label": "Troll's Hammer"
+        }
+      ],
+      "calculatorName": "Troll's Hammer"
+    },
+    {
+      "id": "family-heads",
+      "name": "Family Heads",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 13,
+          "label": "Family Heads"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Necromancer Garris",
+          "region": "Altus Plateau + Leyndell"
+        }
+      ],
+      "calculatorName": "Family Heads"
+    },
+    {
+      "id": "ghiza-s-wheel",
+      "name": "Ghiza's Wheel",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 14,
+          "label": "Ghiza's Wheel"
+        }
+      ],
+      "calculatorName": "Ghiza's Wheel"
+    },
+    {
+      "id": "godskin-stitcher",
+      "name": "Godskin Stitcher",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 15,
+          "label": "Godskin Stitcher"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Godskin Noble",
+          "region": "Mt. Gelmir"
+        }
+      ],
+      "calculatorName": "Godskin Stitcher"
+    },
+    {
+      "id": "inquisitor-s-girandole",
+      "name": "Inquisitor's Girandole",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 18,
+          "label": "Inquisitor's Girandole"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Abductor Virgins (Duo)",
+          "region": "Mt. Gelmir"
+        }
+      ],
+      "calculatorName": "Inquisitor's Girandole"
+    },
+    {
+      "id": "blasphemous-blade",
+      "name": "Blasphemous Blade",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 19,
+          "label": "Blasphemous Blade"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Rykard, Lord of Blasphemy",
+          "region": "Mt. Gelmir"
+        }
+      ],
+      "calculatorName": "Blasphemous Blade"
+    },
+    {
+      "id": "pulley-bow",
+      "name": "Pulley Bow",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 20,
+          "label": "Pulley Bow"
+        }
+      ],
+      "calculatorName": "Pulley Bow"
+    },
+    {
+      "id": "magma-blade",
+      "name": "Magma Blade",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 21,
+          "label": "Magma Blade"
+        }
+      ],
+      "calculatorName": "Magma Blade"
+    },
+    {
+      "id": "fallingstar-beast-jaw",
+      "name": "Fallingstar Beast Jaw",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 22,
+          "label": "Fallingstar Beast Jaw"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Full-Grown Fallingstar Beast",
+          "region": "Mt. Gelmir"
+        }
+      ],
+      "calculatorName": "Fallingstar Beast Jaw"
+    },
+    {
+      "id": "staff-of-the-guilty",
+      "name": "Staff of the Guilty",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 23,
+          "label": "Staff of the Guilty"
+        }
+      ],
+      "calculatorName": "Staff of the Guilty"
+    },
+    {
+      "id": "gelmir-glintstone-staff",
+      "name": "Gelmir Glintstone Staff",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 24,
+          "label": "Gelmir Glintstone Staff"
+        }
+      ],
+      "calculatorName": "Gelmir Glintstone Staff"
+    },
+    {
+      "id": "erdtree-seal",
+      "name": "Erdtree Seal",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 25,
+          "label": "Erdtree Seal"
+        }
+      ],
+      "calculatorName": "Erdtree Seal"
+    },
+    {
+      "id": "magma-whip-candlestick",
+      "name": "Magma Whip Candlestick",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 26,
+          "label": "Magma Whip Candlestick"
+        }
+      ],
+      "calculatorName": "Magma Whip Candlestick"
+    },
+    {
+      "id": "albinauric-staff",
+      "name": "Albinauric Staff",
+      "regions": [
+        {
+          "name": "Mt. Gelmir",
+          "order": 27,
+          "label": "Albinauric Staff"
+        }
+      ],
+      "calculatorName": "Albinauric Staff"
+    },
+    {
+      "id": "cranial-vessel-candlestand",
+      "name": "Cranial Vessel Candlestand",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 0,
+          "label": "Cranial Vessel Candlestand"
+        }
+      ],
+      "calculatorName": "Cranial Vessel Candlestand"
+    },
+    {
+      "id": "eclipse-shotel",
+      "name": "Eclipse Shotel",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 1,
+          "label": "Eclipse Shotel"
+        }
+      ],
+      "calculatorName": "Eclipse Shotel"
+    },
+    {
+      "id": "giant-s-seal",
+      "name": "Giant's Seal",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 2,
+          "label": "Giant's Seal"
+        }
+      ],
+      "calculatorName": "Giant's Seal"
+    },
+    {
+      "id": "rivers-of-blood",
+      "name": "Rivers of Blood",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 3,
+          "label": "Rivers of Blood"
+        }
+      ],
+      "calculatorName": "Rivers of Blood"
+    },
+    {
+      "id": "veteran-s-prosthesis",
+      "name": "Veteran's Prosthesis",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 4,
+          "label": "Veteran's Prosthesis"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Commander Niall",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Veteran's Prosthesis"
+    },
+    {
+      "id": "zamor-curved-sword",
+      "name": "Zamor Curved Sword",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 5,
+          "label": "Zamor Curved Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Ancient Hero of Zamor",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Zamor Curved Sword"
+    },
+    {
+      "id": "watchdog-s-greatsword",
+      "name": "Watchdog's Greatsword",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 6,
+          "label": "Watchdog's Greatsword"
+        }
+      ],
+      "calculatorName": "Watchdog's Greatsword"
+    },
+    {
+      "id": "thorned-whip",
+      "name": "Thorned Whip",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 7,
+          "label": "Thorned Whip"
+        }
+      ],
+      "calculatorName": "Thorned Whip"
+    },
+    {
+      "id": "monk-s-flameblade",
+      "name": "Monk's Flameblade",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 8,
+          "label": "Monk's Flameblade"
+        }
+      ],
+      "calculatorName": "Monk's Flameblade"
+    },
+    {
+      "id": "helphen-s-steeple",
+      "name": "Helphen's Steeple",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 9,
+          "label": "Helphen's Steeple"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Tibia Mariner",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Helphen's Steeple"
+    },
+    {
+      "id": "death-ritual-spear",
+      "name": "Death Ritual Spear",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 10,
+          "label": "Death Ritual Spear"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Death Rite Bird",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Death Ritual Spear"
+    },
+    {
+      "id": "rotten-battle-hammer",
+      "name": "Rotten Battle Hammer",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 11,
+          "label": "Rotten Battle Hammer"
+        }
+      ],
+      "calculatorName": "Rotten Battle Hammer"
+    },
+    {
+      "id": "golden-order-greatsword",
+      "name": "Golden Order Greatsword",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 12,
+          "label": "Golden Order Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Misbegotten Crusader",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Golden Order Greatsword"
+    },
+    {
+      "id": "gargoyle-s-black-blades",
+      "name": "Gargoyle's Black Blades",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 13,
+          "label": "Gargoyle's Black Blades"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Black Blade Kindred",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Gargoyle's Black Blades"
+    },
+    {
+      "id": "gargoyle-s-black-axe",
+      "name": "Gargoyle's Black Axe",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 14,
+          "label": "Gargoyle's Black Axe"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Black Blade Kindred",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Gargoyle's Black Axe"
+    },
+    {
+      "id": "giant-s-red-braid",
+      "name": "Giant's Red Braid",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 15,
+          "label": "Giant's Red Braid"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Fire Giant",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Giant's Red Braid"
+    },
+    {
+      "id": "flowing-curved-sword",
+      "name": "Flowing Curved Sword",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 16,
+          "label": "Flowing Curved Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Commander Niall",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Flowing Curved Sword"
+    },
+    {
+      "id": "albinauric-bow",
+      "name": "Albinauric Bow",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 17,
+          "label": "Albinauric Bow"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Commander Niall",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "Albinauric Bow"
+    },
+    {
+      "id": "st-trina-s-torch",
+      "name": "St. Trina's Torch",
+      "regions": [
+        {
+          "name": "Mountaintops of the Giants",
+          "order": 18,
+          "label": "St. Trina's Torch"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Commander Niall",
+          "region": "Mountaintops of the Giants"
+        }
+      ],
+      "calculatorName": "St. Trina's Torch"
+    },
+    {
+      "id": "varre-s-bouquet",
+      "name": "Varre's Bouquet",
+      "regions": [
+        {
+          "name": "Mohgwyn Palace",
+          "order": 0,
+          "label": "Varre's Bouquet"
+        }
+      ],
+      "calculatorName": "Varré's Bouquet"
+    },
+    {
+      "id": "mohgwyn-s-sacred-spear",
+      "name": "Mohgwyn's Sacred Spear",
+      "regions": [
+        {
+          "name": "Mohgwyn Palace",
+          "order": 1,
+          "label": "Mohgwyn's Sacred Spear"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Mohg, Lord of Blood",
+          "region": "Mohgwyn Palace"
+        }
+      ],
+      "calculatorName": "Mohgwyn's Sacred Spear"
+    },
+    {
+      "id": "loretta-s-war-sickle",
+      "name": "Loretta's War Sickle",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 0,
+          "label": "Loretta's War Sickle"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Loretta, Knight of the Haligtree",
+          "region": "Miquella’s Haligtree"
+        }
+      ],
+      "calculatorName": "Loretta's War Sickle"
+    },
+    {
+      "id": "miquellan-knight-s-sword",
+      "name": "Miquellan Knight's Sword",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 1,
+          "label": "Miquellan Knight's Sword"
+        }
+      ],
+      "calculatorName": "Miquellan Knight's Sword"
+    },
+    {
+      "id": "rotten-crystal-spear",
+      "name": "Rotten Crystal Spear",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 2,
+          "label": "Rotten Crystal Spear"
+        }
+      ],
+      "calculatorName": "Rotten Crystal Spear"
+    },
+    {
+      "id": "rotten-crystal-sword",
+      "name": "Rotten Crystal Sword",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 3,
+          "label": "Rotten Crystal Sword"
+        }
+      ],
+      "calculatorName": "Rotten Crystal Sword"
+    },
+    {
+      "id": "rotten-staff",
+      "name": "Rotten Staff",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 4,
+          "label": "Rotten Staff"
+        }
+      ],
+      "calculatorName": "Rotten Staff"
+    },
+    {
+      "id": "envoy-s-greathorn",
+      "name": "Envoy's Greathorn",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 8,
+          "label": "Envoy's Greathorn"
+        }
+      ],
+      "calculatorName": "Envoy's Greathorn"
+    },
+    {
+      "id": "rotten-crystal-staff",
+      "name": "Rotten Crystal Staff",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 12,
+          "label": "Rotten Crystal Staff"
+        }
+      ],
+      "calculatorName": "Rotten Crystal Staff"
+    },
+    {
+      "id": "hand-of-malenia",
+      "name": "Hand of Malenia",
+      "regions": [
+        {
+          "name": "Miquella’s Haligtree",
+          "order": 13,
+          "label": "Hand of Malenia"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Malenia, Blade of Miquella",
+          "region": "Miquella’s Haligtree"
+        }
+      ],
+      "calculatorName": "Hand of Malenia"
+    },
+    {
+      "id": "maliketh-s-black-blade",
+      "name": "Maliketh's Black Blade",
+      "regions": [
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 0,
+          "label": "Maliketh's Black Blade"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Maliketh, the Black Blade",
+          "region": "Crumbling Farum Azula"
+        }
+      ],
+      "calculatorName": "Maliketh's Black Blade"
+    },
+    {
+      "id": "dragon-king-s-cragblade",
+      "name": "Dragon King's Cragblade",
+      "regions": [
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 1,
+          "label": "Dragon King's Cragblade"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Dragonlord Placidusax",
+          "region": "Crumbling Farum Azula"
+        }
+      ],
+      "calculatorName": "Dragon King's Cragblade"
+    },
+    {
+      "id": "devourer-s-scepter",
+      "name": "Devourer's Scepter",
+      "regions": [
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 2,
+          "label": "Devourer's Scepter"
+        }
+      ],
+      "calculatorName": "Devourer's Scepter"
+    },
+    {
+      "id": "beastman-s-curved-sword",
+      "name": "Beastman's Curved Sword",
+      "regions": [
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 3,
+          "label": "Beastman's Curved Sword"
+        }
+      ],
+      "calculatorName": "Beastman's Curved Sword"
+    },
+    {
+      "id": "beastman-s-cleaver",
+      "name": "Beastman's Cleaver",
+      "regions": [
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 4,
+          "label": "Beastman's Cleaver"
+        }
+      ],
+      "calculatorName": "Beastman's Cleaver"
+    },
+    {
+      "id": "banished-knight-s-greatsword",
+      "name": "Banished Knight's Greatsword",
+      "regions": [
+        {
+          "name": "Crumbling Farum Azula",
+          "order": 5,
+          "label": "Banished Knight's Greatsword"
+        }
+      ],
+      "calculatorName": "Banished Knight's Greatsword"
+    },
+    {
+      "id": "beast-claw",
+      "name": "Beast Claw",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 0,
+          "label": "Beast Claw"
+        }
+      ],
+      "calculatorName": "Beast Claw"
+    },
+    {
+      "id": "black-steel-greathammer",
+      "name": "Black Steel Greathammer",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 1,
+          "label": "Black Steel Greathammer"
+        }
+      ],
+      "calculatorName": "Black Steel Greathammer"
+    },
+    {
+      "id": "backhand-blade",
+      "name": "Backhand Blade",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 2,
+          "label": "Backhand Blade"
+        }
+      ],
+      "calculatorName": "Backhand Blade"
+    },
+    {
+      "id": "greatsword-of-solitude",
+      "name": "Greatsword of Solitude",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 3,
+          "label": "Greatsword of Solitude"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Blackgaol Knight",
+          "region": "Gravesite Plain · DLC"
+        }
+      ],
+      "calculatorName": "Greatsword of Solitude"
+    },
+    {
+      "id": "bone-bow",
+      "name": "Bone Bow",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 4,
+          "label": "Bone Bow"
+        }
+      ],
+      "calculatorName": "Bone Bow"
+    },
+    {
+      "id": "curseblade-s-cirque",
+      "name": "Curseblade's Cirque",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 5,
+          "label": "Curseblade's Cirque"
+        }
+      ],
+      "calculatorName": "Curseblade's Cirque"
+    },
+    {
+      "id": "bloodfiend-s-arm",
+      "name": "Bloodfiend's Arm",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 6,
+          "label": "Bloodfiend's Arm"
+        }
+      ],
+      "calculatorName": "Bloodfiend's Arm"
+    },
+    {
+      "id": "great-katana",
+      "name": "Great Katana",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 7,
+          "label": "Great Katana"
+        }
+      ],
+      "calculatorName": "Great Katana"
+    },
+    {
+      "id": "pata",
+      "name": "Pata",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 8,
+          "label": "Pata"
+        }
+      ],
+      "calculatorName": "Pata"
+    },
+    {
+      "id": "firespark-perfume-bottle",
+      "name": "Firespark Perfume Bottle",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 9,
+          "label": "Firespark Perfume Bottle"
+        }
+      ],
+      "calculatorName": "Firespark Perfume Bottle"
+    },
+    {
+      "id": "milady",
+      "name": "Milady",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 10,
+          "label": "Milady"
+        }
+      ],
+      "calculatorName": "Milady"
+    },
+    {
+      "id": "moonrithyll-s-knight-sword",
+      "name": "Moonrithyll's Knight Sword",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 11,
+          "label": "Moonrithyll's Knight Sword"
+        }
+      ],
+      "calculatorName": "Moonrithyll's Knight Sword"
+    },
+    {
+      "id": "spread-crossbow",
+      "name": "Spread Crossbow",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 12,
+          "label": "Spread Crossbow"
+        }
+      ],
+      "calculatorName": "Spread Crossbow"
+    },
+    {
+      "id": "smithscript-dagger",
+      "name": "Smithscript Dagger",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 13,
+          "label": "Smithscript Dagger"
+        }
+      ],
+      "calculatorName": "Smithscript Dagger"
+    },
+    {
+      "id": "anvil-hammer",
+      "name": "Anvil Hammer",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 14,
+          "label": "Anvil Hammer"
+        }
+      ],
+      "calculatorName": "Anvil Hammer"
+    },
+    {
+      "id": "messmer-soldier-s-spear",
+      "name": "Messmer Soldier's Spear",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 15,
+          "label": "Messmer Soldier's Spear"
+        },
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 31,
+          "label": "Messmer Soldier's Spear"
+        }
+      ],
+      "calculatorName": "Messmer Soldier's Spear"
+    },
+    {
+      "id": "swift-spear",
+      "name": "Swift Spear",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 16,
+          "label": "Swift Spear"
+        }
+      ],
+      "calculatorName": "Swift Spear"
+    },
+    {
+      "id": "death-knight-s-twin-axes",
+      "name": "Death Knight's Twin-Axes",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 17,
+          "label": "Death Knight's Twin-Axes"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Death Knight",
+          "region": "Gravesite Plain · DLC"
+        }
+      ],
+      "calculatorName": "Death Knight's Twin Axes"
+    },
+    {
+      "id": "poisoned-hand",
+      "name": "Poisoned Hand",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 18,
+          "label": "Poisoned Hand"
+        }
+      ],
+      "calculatorName": "Poisoned Hand"
+    },
+    {
+      "id": "horned-warrior-s-sword",
+      "name": "Horned Warrior's Sword",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 19,
+          "label": "Horned Warrior's Sword"
+        }
+      ],
+      "calculatorName": "Horned Warrior's Sword"
+    },
+    {
+      "id": "deadly-poison-perfume-bottle",
+      "name": "Deadly Poison Perfume Bottle",
+      "regions": [
+        {
+          "name": "Gravesite Plain · DLC",
+          "order": 20,
+          "label": "Deadly Poison Perfume Bottle"
+        }
+      ],
+      "calculatorName": "Deadly Poison Perfume Bottle"
+    },
+    {
+      "id": "carian-sorcery-sword",
+      "name": "Carian Sorcery Sword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 0,
+          "label": "Carian Sorcery Sword"
+        }
+      ],
+      "calculatorName": "Carian Sorcery Sword"
+    },
+    {
+      "id": "smithscript-spear",
+      "name": "Smithscript Spear",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 1,
+          "label": "Smithscript Spear"
+        }
+      ],
+      "calculatorName": "Smithscript Spear"
+    },
+    {
+      "id": "smithscript-cirque",
+      "name": "Smithscript Cirque",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 2,
+          "label": "Smithscript Cirque"
+        }
+      ],
+      "calculatorName": "Smithscript Cirque"
+    },
+    {
+      "id": "ancient-meteoric-ore-greatsword",
+      "name": "Ancient Meteoric Ore Greatsword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 3,
+          "label": "Ancient Meteoric Ore Greatsword"
+        }
+      ],
+      "calculatorName": "Ancient Meteoric Ore Greatsword"
+    },
+    {
+      "id": "repeating-crossbow",
+      "name": "Repeating Crossbow",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 4,
+          "label": "Repeating Crossbow"
+        }
+      ],
+      "calculatorName": "Repeating Crossbow"
+    },
+    {
+      "id": "serpent-flail",
+      "name": "Serpent Flail",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 5,
+          "label": "Serpent Flail"
+        }
+      ],
+      "calculatorName": "Serpent Flail"
+    },
+    {
+      "id": "black-steel-twinblade",
+      "name": "Black Steel Twinblade",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 6,
+          "label": "Black Steel Twinblade"
+        }
+      ],
+      "calculatorName": "Black Steel Twinblade"
+    },
+    {
+      "id": "dryleaf-arts",
+      "name": "Dryleaf Arts",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 7,
+          "label": "Dryleaf Arts"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Dryleaf Dane",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        }
+      ],
+      "calculatorName": "Dryleaf Arts"
+    },
+    {
+      "id": "messmer-soldier-s-axe",
+      "name": "Messmer Soldier's Axe",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 8,
+          "label": "Messmer Soldier's Axe"
+        }
+      ],
+      "calculatorName": "Messmer Soldier's Axe"
+    },
+    {
+      "id": "main-gauche",
+      "name": "Main-gauche",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 9,
+          "label": "Main-gauche"
+        }
+      ],
+      "calculatorName": "Main-gauche"
+    },
+    {
+      "id": "fire-knight-s-greatsword",
+      "name": "Fire Knight's Greatsword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 10,
+          "label": "Fire Knight's Greatsword"
+        }
+      ],
+      "calculatorName": "Fire Knight's Greatsword"
+    },
+    {
+      "id": "fire-knight-s-shortsword",
+      "name": "Fire Knight's Shortsword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 11,
+          "label": "Fire Knight's Shortsword"
+        }
+      ],
+      "calculatorName": "Fire Knight's Shortsword"
+    },
+    {
+      "id": "stone-sheathed-sword",
+      "name": "Stone-Sheathed Sword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 12,
+          "label": "Stone-Sheathed Sword"
+        }
+      ],
+      "calculatorName": "Stone-Sheathed Sword"
+    },
+    {
+      "id": "sword-of-light",
+      "name": "Sword of Light",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 13,
+          "label": "Sword of Light"
+        }
+      ],
+      "calculatorName": "Sword of Light"
+    },
+    {
+      "id": "sword-of-darkness",
+      "name": "Sword of Darkness",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 14,
+          "label": "Sword of Darkness"
+        }
+      ],
+      "calculatorName": "Sword of Darkness"
+    },
+    {
+      "id": "ansbach-s-longbow",
+      "name": "Ansbach's Longbow",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 15,
+          "label": "Ansbach's Longbow"
+        }
+      ],
+      "calculatorName": "Ansbach's Longbow"
+    },
+    {
+      "id": "bonny-butchering-knife",
+      "name": "Bonny Butchering Knife",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 16,
+          "label": "Bonny Butchering Knife"
+        }
+      ],
+      "calculatorName": "Bonny Butchering Knife"
+    },
+    {
+      "id": "tooth-whip",
+      "name": "Tooth Whip",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 17,
+          "label": "Tooth Whip"
+        }
+      ],
+      "calculatorName": "Tooth Whip"
+    },
+    {
+      "id": "rabbath-s-cannon",
+      "name": "Rabbath's Cannon",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 18,
+          "label": "Rabbath's Cannon"
+        }
+      ],
+      "calculatorName": "Rabbath's Cannon"
+    },
+    {
+      "id": "claws-of-night",
+      "name": "Claws of Night",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 19,
+          "label": "Claws of Night"
+        }
+      ],
+      "calculatorName": "Claws of Night"
+    },
+    {
+      "id": "maternal-staff",
+      "name": "Maternal Staff",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 20,
+          "label": "Maternal Staff"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Metyr, Mother of Fingers",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        },
+        {
+          "name": "Count Ymir, Mother of Fingers",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        }
+      ],
+      "calculatorName": "Maternal Staff"
+    },
+    {
+      "id": "sword-of-night",
+      "name": "Sword of Night",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 21,
+          "label": "Sword of Night"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Metyr, Mother of Fingers",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        },
+        {
+          "name": "Count Ymir, Mother of Fingers",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        }
+      ],
+      "calculatorName": "Sword of Night"
+    },
+    {
+      "id": "queelign-s-greatsword",
+      "name": "Queelign's Greatsword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 22,
+          "label": "Queelign's Greatsword"
+        }
+      ],
+      "calculatorName": "Queelign's Greatsword"
+    },
+    {
+      "id": "fire-knight-s-seal",
+      "name": "Fire Knight's Seal",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 23,
+          "label": "Fire Knight's Seal"
+        }
+      ],
+      "calculatorName": "Fire Knight's Seal"
+    },
+    {
+      "id": "lightning-perfume-bottle",
+      "name": "Lightning Perfume Bottle",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 24,
+          "label": "Lightning Perfume Bottle"
+        }
+      ],
+      "calculatorName": "Lightning Perfume Bottle"
+    },
+    {
+      "id": "dryleaf-seal",
+      "name": "Dryleaf Seal",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 25,
+          "label": "Dryleaf Seal"
+        }
+      ],
+      "calculatorName": "Dryleaf Seal"
+    },
+    {
+      "id": "rakshasa-s-great-katana",
+      "name": "Rakshasa's Great Katana",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 26,
+          "label": "Rakshasa's Great Katana"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Rakshasa",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        }
+      ],
+      "calculatorName": "Rakshasa's Great Katana"
+    },
+    {
+      "id": "forked-tongue-hatchet",
+      "name": "Forked-Tongue Hatchet",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 27,
+          "label": "Forked-Tongue Hatchet"
+        }
+      ],
+      "calculatorName": "Forked-Tongue Hatchet"
+    },
+    {
+      "id": "lizard-greatsword",
+      "name": "Lizard Greatsword",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 28,
+          "label": "Lizard Greatsword"
+        }
+      ],
+      "calculatorName": "Lizard Greatsword"
+    },
+    {
+      "id": "barbed-staff-spear",
+      "name": "Barbed Staff-Spear",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 29,
+          "label": "Barbed Staff-Spear"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Jori, Elder Inquisitor",
+          "region": "Scadu Altus + Shadow Keep · DLC"
+        }
+      ],
+      "calculatorName": "Barbed Staff-Spear"
+    },
+    {
+      "id": "carian-thrusting-shield",
+      "name": "Carian Thrusting Shield",
+      "regions": [
+        {
+          "name": "Scadu Altus + Shadow Keep · DLC",
+          "order": 30,
+          "label": "Carian Thrusting Shield"
+        }
+      ],
+      "calculatorName": "Carian Thrusting Shield"
+    },
+    {
+      "id": "spirit-glaive",
+      "name": "Spirit Glaive",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 0,
+          "label": "Spirit Glaive"
+        }
+      ],
+      "calculatorName": "Spirit Glaive"
+    },
+    {
+      "id": "dancing-blade-of-ranah",
+      "name": "Dancing Blade of Ranah",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 1,
+          "label": "Dancing Blade of Ranah"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Dancer of Ranah",
+          "region": "Cerulean Coast · DLC"
+        }
+      ],
+      "calculatorName": "Dancing Blade of Ranah"
+    },
+    {
+      "id": "spirit-sword",
+      "name": "Spirit Sword",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 2,
+          "label": "Spirit Sword"
+        }
+      ],
+      "calculatorName": "Spirit Sword"
+    },
+    {
+      "id": "star-lined-sword",
+      "name": "Star-Lined Sword",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 3,
+          "label": "Star-Lined Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Demi-Human Queen Marigga",
+          "region": "Cerulean Coast · DLC"
+        }
+      ],
+      "calculatorName": "Star-Lined Sword"
+    },
+    {
+      "id": "chilling-perfume-bottle",
+      "name": "Chilling Perfume Bottle",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 4,
+          "label": "Chilling Perfume Bottle"
+        }
+      ],
+      "calculatorName": "Chilling Perfume Bottle"
+    },
+    {
+      "id": "lamenting-visage",
+      "name": "Lamenting Visage",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 5,
+          "label": "Lamenting Visage"
+        }
+      ],
+      "calculatorName": "Lamenting Visage"
+    },
+    {
+      "id": "velvet-sword-of-st-trina",
+      "name": "Velvet Sword of St. Trina",
+      "regions": [
+        {
+          "name": "Cerulean Coast · DLC",
+          "order": 6,
+          "label": "Velvet Sword of St. Trina"
+        }
+      ],
+      "calculatorName": "Velvet Sword of St. Trina"
+    },
+    {
+      "id": "igon-s-greatbow",
+      "name": "Igon's Greatbow",
+      "regions": [
+        {
+          "name": "Dragon’s Pit + Jagged Peak · DLC",
+          "order": 0,
+          "label": "Igon's Greatbow"
+        }
+      ],
+      "calculatorName": "Igon's Greatbow"
+    },
+    {
+      "id": "dragon-hunter-s-great-katana",
+      "name": "Dragon-Hunter's Great Katana",
+      "regions": [
+        {
+          "name": "Dragon’s Pit + Jagged Peak · DLC",
+          "order": 1,
+          "label": "Dragon-Hunter's Great Katana"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Ancient Dragon-Man",
+          "region": "Dragon’s Pit + Jagged Peak · DLC"
+        }
+      ],
+      "calculatorName": "Dragon-Hunter's Great Katana"
+    },
+    {
+      "id": "flowerstone-gavel",
+      "name": "Flowerstone Gavel",
+      "regions": [
+        {
+          "name": "Dragon’s Pit + Jagged Peak · DLC",
+          "order": 2,
+          "label": "Flowerstone Gavel"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Bayle the Dread",
+          "region": "Dragon’s Pit + Jagged Peak · DLC"
+        }
+      ],
+      "calculatorName": "Flowerstone Gavel"
+    },
+    {
+      "id": "madding-hand",
+      "name": "Madding Hand",
+      "regions": [
+        {
+          "name": "Abyssal Woods · DLC",
+          "order": 0,
+          "label": "Madding Hand"
+        }
+      ],
+      "calculatorName": "Madding Hand"
+    },
+    {
+      "id": "frenzyflame-perfume-bottle",
+      "name": "Frenzyflame Perfume Bottle",
+      "regions": [
+        {
+          "name": "Abyssal Woods · DLC",
+          "order": 1,
+          "label": "Frenzyflame Perfume Bottle"
+        }
+      ],
+      "calculatorName": "Frenzyflame Perfume Bottle"
+    },
+    {
+      "id": "nanaya-s-torch",
+      "name": "Nanaya's Torch",
+      "regions": [
+        {
+          "name": "Abyssal Woods · DLC",
+          "order": 2,
+          "label": "Nanaya's Torch"
+        }
+      ],
+      "calculatorName": "Nanaya's Torch"
+    },
+    {
+      "id": "bloodfiend-s-fork",
+      "name": "Bloodfiend's Fork",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 0,
+          "label": "Bloodfiend's Fork"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 0,
+          "label": "Bloodfiend's Fork"
+        }
+      ],
+      "calculatorName": "Bloodfiend's Fork"
+    },
+    {
+      "id": "bloodfiend-s-sacred-spear",
+      "name": "Bloodfiend's Sacred Spear",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 1,
+          "label": "Bloodfiend's Sacred Spear"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 1,
+          "label": "Bloodfiend's Sacred Spear"
+        }
+      ],
+      "calculatorName": "Bloodfiend's Sacred Spear"
+    },
+    {
+      "id": "smithscript-axe",
+      "name": "Smithscript Axe",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 2,
+          "label": "Smithscript Axe"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 2,
+          "label": "Smithscript Axe"
+        }
+      ],
+      "calculatorName": "Smithscript Axe"
+    },
+    {
+      "id": "smithscript-greathammer",
+      "name": "Smithscript Greathammer",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 3,
+          "label": "Smithscript Greathammer"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 3,
+          "label": "Smithscript Greathammer"
+        }
+      ],
+      "calculatorName": "Smithscript Greathammer"
+    },
+    {
+      "id": "golem-fist",
+      "name": "Golem Fist",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 4,
+          "label": "Golem Fist"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 4,
+          "label": "Golem Fist"
+        }
+      ],
+      "calculatorName": "Golem Fist"
+    },
+    {
+      "id": "red-bear-s-claw",
+      "name": "Red Bear's Claw",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 5,
+          "label": "Red Bear's Claw"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 5,
+          "label": "Red Bear's Claw"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Rugalea the Great Red Bear",
+          "region": "Ancient Ruins of Rauh · DLC"
+        }
+      ],
+      "calculatorName": "Red Bear's Claw"
+    },
+    {
+      "id": "spiraltree-seal",
+      "name": "Spiraltree Seal",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 6,
+          "label": "Spiraltree Seal"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 6,
+          "label": "Spiraltree Seal"
+        }
+      ],
+      "calculatorName": "Spiraltree Seal"
+    },
+    {
+      "id": "death-knight-s-longhaft-axe",
+      "name": "Death Knight's Longhaft Axe",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 7,
+          "label": "Death Knight's Longhaft Axe"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 7,
+          "label": "Death Knight's Longhaft Axe"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Death Knight",
+          "region": "Ancient Ruins of Rauh · DLC"
+        }
+      ],
+      "calculatorName": "Death Knight's Longhaft Axe"
+    },
+    {
+      "id": "devonia-s-hammer",
+      "name": "Devonia's Hammer",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 8,
+          "label": "Devonia's Hammer"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 8,
+          "label": "Devonia's Hammer"
+        }
+      ],
+      "calculatorName": "Devonia's Hammer"
+    },
+    {
+      "id": "euporia",
+      "name": "Euporia",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 9,
+          "label": "Euporia"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 9,
+          "label": "Euporia"
+        }
+      ],
+      "calculatorName": "Euporia"
+    },
+    {
+      "id": "horned-warrior-s-greatsword",
+      "name": "Horned Warrior's Greatsword",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 10,
+          "label": "Horned Warrior's Greatsword"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 10,
+          "label": "Horned Warrior's Greatsword"
+        }
+      ],
+      "calculatorName": "Horned Warrior's Greatsword"
+    },
+    {
+      "id": "leda-s-sword",
+      "name": "Leda's Sword",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 11,
+          "label": "Leda's Sword"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 11,
+          "label": "Leda's Sword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Leda and Allies",
+          "region": "Enir-Ilim · DLC"
+        }
+      ],
+      "calculatorName": "Leda's Sword"
+    },
+    {
+      "id": "freyja-s-greatsword",
+      "name": "Freyja's Greatsword",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 12,
+          "label": "Freyja's Greatsword"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 12,
+          "label": "Freyja's Greatsword"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Leda and Allies",
+          "region": "Enir-Ilim · DLC"
+        }
+      ],
+      "calculatorName": "Freyja's Greatsword"
+    },
+    {
+      "id": "falx",
+      "name": "Falx",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 13,
+          "label": "Falx"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 13,
+          "label": "Falx"
+        }
+      ],
+      "calculatorName": "Falx"
+    },
+    {
+      "id": "dane-s-footwork",
+      "name": "Dane's Footwork",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 14,
+          "label": "Dane's Footwork"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 14,
+          "label": "Dane's Footwork"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Leda and Allies",
+          "region": "Enir-Ilim · DLC"
+        }
+      ],
+      "calculatorName": "Dane's Footwork"
+    },
+    {
+      "id": "obsidian-lamina",
+      "name": "Obsidian Lamina",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 15,
+          "label": "Obsidian Lamina"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 15,
+          "label": "Obsidian Lamina"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Promised Consort Radahn",
+          "region": "Enir-Ilim · DLC"
+        }
+      ],
+      "calculatorName": "Obsidian Lamina"
+    },
+    {
+      "id": "thiollier-s-hidden-needle",
+      "name": "Thiollier's Hidden Needle",
+      "regions": [
+        {
+          "name": "Ancient Ruins of Rauh · DLC",
+          "order": 16,
+          "label": "Thiollier's Hidden Needle"
+        },
+        {
+          "name": "Enir-Ilim · DLC",
+          "order": 16,
+          "label": "Thiollier's Hidden Needle"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Promised Consort Radahn",
+          "region": "Enir-Ilim · DLC"
+        }
+      ],
+      "calculatorName": "Thiollier's Hidden Needle"
+    }
+  ]
+}

@@ -1,0 +1,5633 @@
+{
+  "commit": "2524f1048ce56554b11ffc22fbea205dfb7ae2f7",
+  "regions": {
+    "Limgrave + Stormveil": {
+      "exit": "Godrick the Grafted",
+      "bosses": [
+        "Beastman of Farum Azula",
+        "Bell Bearing Hunter",
+        "Black Knife Assassin",
+        "Bloodhound Knight Darriwil",
+        "Crucible Knight",
+        "Deathbird",
+        "Demi-Human Chief",
+        "Erdtree Burial Watchdog (Stormfoot Catacombs)",
+        "Flying Dragon Agheel",
+        "Grafted Scion",
+        "Grave Warden Duelist",
+        "Guardian Golem",
+        "Mad Pumpkin Head",
+        "Margit, The Fell Omen",
+        "Night's Cavalry",
+        "Patches",
+        "Soldier of Godrick",
+        "Stonedigger Troll",
+        "Tibia Mariner",
+        "Tree Sentinel",
+        "Ulcerated Tree Spirit"
+      ],
+      "weapons": [
+        {
+          "name": "Arbalest",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Banished Knight's Halberd",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Charge Forth",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Bloodhound's Fang",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Brick Hammer",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Barbaric Roar",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Broadsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Caestus",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragon Communion Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Erdtree Greatbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Erdsteel Dagger",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Flail",
+          "type": "Flail",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Chain",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Godslayer's Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Golden Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Greataxe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Épée",
+          "type": "Heavy Thrusting Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Impaling Thrust",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Hand Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Highland Axe",
+          "type": "Axe",
+          "upgrade": "Smithing Stones",
+          "native": "War Cry",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Hookclaws",
+          "type": "Claw",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Large Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lance",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lordsworn's Greatsword",
+          "type": "Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Misericorde",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Parrying Dagger",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Pike",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Reduvia",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Shamshir",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Shortbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Short Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Twinblade",
+          "type": "Twinblade",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Uchigatana",
+          "type": "Katana",
+          "upgrade": "Smithing Stones",
+          "native": "Unsheathe",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Crescent Moon Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dagger",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dismounter",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Falchion",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Forked Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Forked Hatchet",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Golem Greatbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Golem's Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Grave Scythe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Grossmesser",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Heavy Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Knight's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Lordsworn's Straight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Noble's Estoc",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Noble's Slender Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Omen Cleaver",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Partisan",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Pickaxe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Scimitar",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Short Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Soldier's Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiked Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Torchpole",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Warhawk's Talon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Warpick",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Weathered Straight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Axe of Godrick",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Grafted Dragon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rogier's Rapier",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        }
+      ]
+    },
+    "Weeping Peninsula": {
+      "exit": "Leonine Misbegotten",
+      "bosses": [
+        "Ancient Hero of Zamor",
+        "Cemetery Shade",
+        "Deathbird",
+        "Erdtree Burial Watchdog (Impaler's Catacombs)",
+        "Miranda the Blighted Bloom",
+        "Night's Cavalry",
+        "Runebear",
+        "Scaly Misbegotten"
+      ],
+      "weapons": [
+        {
+          "name": "Banished Knight's Halberd (+8)",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Charge Forth",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Claymore",
+          "type": "Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Lion’s Claw",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Demi-Human Queen's Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Grafted Blade Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Hand Ballista",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Iron Cleaver",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lordsworn's Straight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Morning Star",
+          "type": "Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Kick",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Nightrider Flail",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rusted Anchor",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiked Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Steel-Wire Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Whip",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Winged Scythe",
+          "type": "Reaper",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Angel’s Wings",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Zweihander",
+          "type": "Colossal Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Bastard Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Light Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sacrificial Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Misbegotten Shortbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Guardian's Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        }
+      ]
+    },
+    "Liurnia of the Lakes": {
+      "exit": "Rennala, Queen of the Full Moon",
+      "bosses": [
+        "Adan, Thief of Fire",
+        "Alecto, Black Knife Ringleader",
+        "Bell Bearing Hunter",
+        "Black Knife Assassin",
+        "Bloodhound Knight",
+        "Bols, Carian Knight",
+        "Cemetery Shade",
+        "Cleanrot Knight",
+        "Crystalian",
+        "Crystalian Spear & Crystalian Staff (Duo)",
+        "Death Rite Bird",
+        "Deathbird",
+        "Erdtree Burial Watchdog",
+        "Glintstone Dragon Adula",
+        "Glintstone Dragon Smarag",
+        "Magma Wyrm Makar",
+        "Night's Cavalry (Liurnia North)",
+        "Night's Cavalry (Liurnia South)",
+        "Omenkiller",
+        "Onyx Lord",
+        "Red Wolf of Radagon",
+        "Royal Knight Loretta",
+        "Royal Revenant",
+        "Spirit-Caller Snail",
+        "Tibia Mariner"
+      ],
+      "weapons": [
+        {
+          "name": "Academy Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Astrologer's Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Azur's Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Banished Knight's Halberd",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Charge Forth",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Carian Glintblade Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Carian Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Carian Knight's Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Carian Grandeur",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Composite Bow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Crystal Knife",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Crystal Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Crystal Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dark Moon Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Estoc",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Frozen Needle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Full Moon Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Glintstone Kris",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Mace",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Hoslow's Petal Whip",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Icerind Hatchet",
+          "type": "Axe",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Hoarfrost Stomp",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Iron Ball",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ivory Sickle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lucerne",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Magma Wyrm's Scalesword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nightrider Glaive",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ornamental Straight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ripple Blade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rosus' Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Royal Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Scythe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Serpent-God's Curved Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sword of Night and Flame",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Night-and-Flame Stance",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Treespear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Troll Knight's Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Stormhawk Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Urumi",
+          "type": "Whip",
+          "upgrade": "Smithing Stones",
+          "native": "Kick",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Vyke's War Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Watchdog's Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Chainlink Flail",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Curved Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Curved Great Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Digger's Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Executioner's Greataxe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Forked Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Forked Hatchet",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Glaive",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Grave Scythe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Knife",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Heavy Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Knight's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Lazuli Glintstone Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Glintstone Pebble",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Monk's Flamemace",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Noble's Estoc",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Noble's Slender Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Partisan",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Ripple Crescent Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiked Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Stone Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Warped Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Weathered Straight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Carian Regal Scepter",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Caelid": {
+      "exit": "Starscourge Radahn",
+      "bosses": [
+        "Cemetery Shade",
+        "Commander O'Neil",
+        "Crucible Knight and Misbegotten Warrior",
+        "Death Rite Bird",
+        "Decaying Ekzykes",
+        "Erdtree Burial Watchdog (Duo)",
+        "Fallingstar Beast",
+        "Frenzied Duelist",
+        "Mad Pumpkin Heads",
+        "Magma Wyrm",
+        "Night's Cavalry (Caelid)",
+        "Nox Swordstress & Nox Monk",
+        "Battlemage Hugues",
+        "Beastman of Farum Azula (Duo)",
+        "Bell Bearing Hunter",
+        "Black Blade Kindred",
+        "Cleanrot Knight (Duo)",
+        "Flying Dragon Greyll",
+        "Godskin Apostle",
+        "Night's Cavalry (Dragonbarrow)",
+        "Putrid Crystalian Trio",
+        "Putrid Tree Spirit"
+      ],
+      "weapons": [
+        {
+          "name": "Cross-Naginata",
+          "type": "Spear",
+          "upgrade": "Smithing Stones",
+          "native": "Impaling Thrust",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Flamberge",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Blackblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Black Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Godslayer's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Katar",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lusat's Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Meteoric Ore Blade",
+          "type": "Katana",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Gravitas",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Meteorite Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Moonveil",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nox Flowing Sword",
+          "type": "Curved Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Flowing Form",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Regalia of Eochaid",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ruins Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sword of St. Trina",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Partisan",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Serpent Bow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Staff of Loss",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Venomous Fang",
+          "type": "Claw",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Wakizashi",
+          "type": "Dagger",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Greatsword",
+          "type": "Colossal Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Death's Poker",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Cleanrot Knight's Sword",
+          "type": "Thrusting Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Impaling Thrust",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Cleanrot Spear",
+          "type": "Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Sacred Phalanx",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Halo Scythe",
+          "type": "Reaper",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Miquella’s Ring of Light",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiked Caestus",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Beast-Repellent Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Starscourge Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lion Greatbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Cinquedea",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Altus Plateau + Leyndell": {
+      "exit": "Morgott, the Omen King",
+      "bosses": [
+        "Ancient Dragon Lansseax",
+        "Ancient Hero of Zamor",
+        "Black Knife Assassin (Sage's Cave)",
+        "Black Knife Assassin (Sainted Hero's Grave)",
+        "Crystalian Spear & Crystalian Ringblade",
+        "Demi-Human Queen Gilika",
+        "Elemer of the Briar",
+        "Erdtree Burial Watchdog",
+        "Fallingstar Beast",
+        "Godefroy the Grafted",
+        "Godskin Apostle",
+        "Necromancer Garris",
+        "Night's Cavalry",
+        "Omenkiller & Miranda the Blighted Bloom",
+        "Perfumer Tricia and Misbegotten Warrior",
+        "Sanguine Noble",
+        "Stonedigger Troll",
+        "Tibia Mariner",
+        "Tree Sentinel (Duo)",
+        "Wormface",
+        "Bell Bearing Hunter",
+        "Crucible Knight & Crucible Knight Ordovis",
+        "Deathbird",
+        "Draconic Tree Sentinel",
+        "Fell Twins",
+        "Grave Warden Duelist",
+        "Onyx Lord",
+        "Esgar, Priest of Blood",
+        "Godfrey, First Elden Lord",
+        "Mohg, the Omen"
+      ],
+      "weapons": [
+        {
+          "name": "Black Knife",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bloody Helice",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Celebrant's Cleaver",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Celebrant's Rib Rake",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Celebrant's Sickle",
+          "type": "Dagger",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Celebrant's Skull",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Eleonora's Poleblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Falchion",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Godskin Peeler",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Marais Executioner's Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nagakiba",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Onyx Lord's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Twinned Knight Swords",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Giant Crusher",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Coded Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Unblockable Blade",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Star Fist",
+          "type": "Fist",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Cane Sword",
+          "type": "Straight Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Square Off",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Black Bow",
+          "type": "Bow",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Barrage",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gravel Stone Seal",
+          "type": "Sacred Seal",
+          "upgrade": "Smithing Stones",
+          "native": "No Skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Envoy's Long Horn",
+          "type": "Great Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Bubble Shower",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Erdtree Bow",
+          "type": "Bow",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bolt of Gransax",
+          "type": "Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Ancient Lightning Spear",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Stars",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Guardian's Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Raptor Talons",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Troll's Golden Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Greatbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sentry's Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Golden Order Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Golden Epitaph",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Dragon Greatclaw",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ordovis's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Morgott's Cursed Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Envoy's Horn",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Antspur Rapier",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Battle Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        }
+      ]
+    },
+    "Mt. Gelmir": {
+      "exit": "Rykard, Lord of Blasphemy",
+      "bosses": [
+        "Abductor Virgins (Duo)",
+        "Demi-Human Queen Maggie",
+        "Demi-Human Queen Margot",
+        "Full-Grown Fallingstar Beast",
+        "Godskin Noble",
+        "Kindred of Rot (Duo)",
+        "Magma Wyrm (Fort Laiedd)",
+        "Red Wolf of the Champion",
+        "Ulcerated Tree Spirit"
+      ],
+      "weapons": [
+        {
+          "name": "Bloodhound Claws",
+          "type": "Claw",
+          "upgrade": "Smithing Stones",
+          "native": "Bloodhound Step",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Butchering Knife",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Coil Shield",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Jar Cannon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Mantis Blade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Pulley Crossbow",
+          "type": "Crossbow",
+          "upgrade": "Smithing Stones",
+          "native": "Kick",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Ringed Finger",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Scavenger's Curved Sword",
+          "type": "Curved Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Serpentbone Blade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Serpent-Hunter",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Omenkiller Cleaver",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiked Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Troll's Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Family Heads",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ghiza's Wheel",
+          "type": "Colossal Weapon",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Spinning Wheel",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Godskin Stitcher",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Great Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Hoslow's Petal Whip",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Inquisitor's Girandole",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Blasphemous Blade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Pulley Bow",
+          "type": "Bow",
+          "upgrade": "Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Magma Blade",
+          "type": "Curved Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Magma Shower",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Fallingstar Beast Jaw",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Staff of the Guilty",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gelmir Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Erdtree Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Magma Whip Candlestick",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Albinauric Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Mountaintops of the Giants": {
+      "exit": "Fire Giant",
+      "bosses": [
+        "Ancient Hero of Zamor",
+        "Borealis the Freezing Fog",
+        "Commander Niall",
+        "Death Rite Bird",
+        "Godskin Apostle and Godskin Noble (Spiritcaller Snail)",
+        "Ulcerated Tree Spirit",
+        "Vyke, Knight of the Roundtable",
+        "Black Blade Kindred",
+        "Night's Cavalry",
+        "Stray Mimic Tear",
+        "Astel, Stars of Darkness",
+        "Great Wyrm Theodorix",
+        "Misbegotten Crusader",
+        "Night's Cavalry (Duo)",
+        "Putrid Grave Warden Duelist",
+        "Tibia Mariner"
+      ],
+      "weapons": [
+        {
+          "name": "Cranial Vessel Candlestand",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Eclipse Shotel",
+          "type": "Curved Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Death Flare",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Giant's Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rivers of Blood",
+          "type": "Katana",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Corpse Piler",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Veteran's Prosthesis",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Zamor Curved Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Watchdog's Greatsword",
+          "type": "Colossal Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Thorned Whip",
+          "type": "Whip",
+          "upgrade": "Smithing Stones",
+          "native": "Kick",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Monk's Flameblade",
+          "type": "Curved Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Helphen's Steeple",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Death Ritual Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rotten Battle Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Golden Order Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Black Blades",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Black Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Giant's Red Braid",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Flowing Curved Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Albinauric Bow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "St. Trina's Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Miquella’s Haligtree": {
+      "exit": "Malenia, Blade of Miquella",
+      "bosses": [
+        "Loretta, Knight of the Haligtree"
+      ],
+      "weapons": [
+        {
+          "name": "Loretta's War Sickle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Miquellan Knight's Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Sacred Blade",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rotten Crystal Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rotten Crystal Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rotten Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Cleanrot Knight's Sword",
+          "type": "Thrusting Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Impaling Thrust",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Cleanrot Spear",
+          "type": "Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Sacred Phalanx",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Halo Scythe",
+          "type": "Reaper",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Miquella’s Ring of Light",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Envoy's Greathorn",
+          "type": "Colossal Weapon",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Great Oracular Bubble",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Greatbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Partisan",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Knight's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Rotten Crystal Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Hand of Malenia",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Envoy's Horn",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Crumbling Farum Azula": {
+      "exit": "Maliketh, the Black Blade",
+      "bosses": [
+        "Dragonlord Placidusax",
+        "Godskin Duo"
+      ],
+      "weapons": [
+        {
+          "name": "Maliketh's Black Blade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragon King's Cragblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Devourer's Scepter",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Beastman's Curved Sword",
+          "type": "Curved Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Beastman's Cleaver",
+          "type": "Curved Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Banished Knight's Greatsword",
+          "type": "Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Banished Knight's Halberd",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Charge Forth",
+          "infusable": true,
+          "requires": ""
+        }
+      ]
+    },
+    "Gravesite Plain · DLC": {
+      "exit": "Rellana, Twin Moon Knight",
+      "bosses": [
+        "Blackgaol Knight",
+        "Chief Bloodfiend",
+        "Demi-Human Swordmaster Onze",
+        "Divine Beast Dancing Lion",
+        "Ghostflame Dragon",
+        "Red Bear",
+        "Death Knight"
+      ],
+      "weapons": [
+        {
+          "name": "Beast Claw",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Black Steel Greathammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Backhand Blade",
+          "type": "Backhand Blade",
+          "upgrade": "Smithing Stones",
+          "native": "Blind Spot",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Greatsword of Solitude",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bone Bow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Curseblade's Cirque",
+          "type": "Backhand Blade",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Deadly Dance",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bloodfiend's Arm",
+          "type": "Colossal Weapon",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Great Katana",
+          "type": "Great Katana",
+          "upgrade": "Smithing Stones",
+          "native": "Overhead Stance",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Pata",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Firespark Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Milady",
+          "type": "Light Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Impaling Thrust",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Moonrithyll's Knight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spread Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Dagger",
+          "type": "Throwing Blade",
+          "upgrade": "Smithing Stones",
+          "native": "Piercing Throw",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Anvil Hammer",
+          "type": "Colossal Weapon",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Smithing Art Spears",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Messmer Soldier's Spear",
+          "type": "Great Spear",
+          "upgrade": "Smithing Stones",
+          "native": "Charge Forth",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Swift Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Death Knight's Twin-Axes",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Poisoned Hand",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Horned Warrior's Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Deadly Poison Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Scadu Altus + Shadow Keep · DLC": {
+      "exit": "Messmer the Impaler",
+      "bosses": [
+        "Black Knight Edredd",
+        "Black Knight Garrew",
+        "Count Ymir, Mother of Fingers",
+        "Curseblade Labirith",
+        "Death Knight",
+        "Dryleaf Dane",
+        "Ghostflame Dragon",
+        "Golden Hippopotamus",
+        "Metyr, Mother of Fingers",
+        "Rakshasa",
+        "Jori, Elder Inquisitor",
+        "Ralva the Great Red Bear",
+        "Fallingstar Beast",
+        "Scadutree Avatar",
+        "Commander Gaius",
+        "Tree Sentinel"
+      ],
+      "weapons": [
+        {
+          "name": "Carian Sorcery Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Cirque",
+          "type": "Backhand Blade",
+          "upgrade": "Smithing Stones",
+          "native": "Blind Spot",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Ancient Meteoric Ore Greatsword",
+          "type": "Colossal Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "White Light Charge",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Repeating Crossbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Serpent Flail",
+          "type": "Flail",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Flare, O Serpent",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Black Steel Twinblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dryleaf Arts",
+          "type": "Hand-to-Hand Art",
+          "upgrade": "Smithing Stones",
+          "native": "Palm Blast",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Messmer Soldier's Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Main-gauche",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Fire Knight's Greatsword",
+          "type": "Colossal Sword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Fire Knight's Shortsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Stone-Sheathed Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sword of Light",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sword of Darkness",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Ansbach's Longbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bonny Butchering Knife",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Tooth Whip",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rabbath's Cannon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Claws of Night",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Maternal Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sword of Night",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Queelign's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Fire Knight's Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lightning Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dryleaf Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Rakshasa's Great Katana",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Forked-Tongue Hatchet",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lizard Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Barbed Staff-Spear",
+          "type": "Great Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Jori’s Inquisition",
+          "infusable": false,
+          "requires": "Jori, Elder Inquisitor"
+        },
+        {
+          "name": "Carian Thrusting Shield",
+          "type": "Thrusting Shield",
+          "upgrade": "Smithing Stones",
+          "native": "Shield Strike",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Messmer Soldier's Spear",
+          "type": "Great Spear",
+          "upgrade": "Smithing Stones",
+          "native": "Charge Forth",
+          "infusable": true,
+          "requires": ""
+        }
+      ]
+    },
+    "Cerulean Coast · DLC": {
+      "exit": "Putrescent Knight",
+      "bosses": [
+        "Dancer of Ranah",
+        "Demi-Human Queen Marigga",
+        "Ghostflame Dragon",
+        "Death Rite Bird",
+        "Lamenter",
+        "Tibia Mariner"
+      ],
+      "weapons": [
+        {
+          "name": "Spirit Glaive",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dancing Blade of Ranah",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spirit Sword",
+          "type": "Curved Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Rancor Slash",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Star-Lined Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Chilling Perfume Bottle",
+          "type": "Perfume Bottle",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Kick",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Lamenting Visage",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Velvet Sword of St. Trina",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Dragon’s Pit + Jagged Peak · DLC": {
+      "exit": "Bayle the Dread",
+      "bosses": [
+        "Ancient Dragon-Man",
+        "Ancient Dragon Senessax",
+        "Jagged Peak Drake"
+      ],
+      "weapons": [
+        {
+          "name": "Igon's Greatbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragon-Hunter's Great Katana",
+          "type": "Great Katana",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Dragonwound Slash",
+          "infusable": false,
+          "requires": "Ancient Dragon-Man"
+        },
+        {
+          "name": "Flowerstone Gavel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Abyssal Woods · DLC": {
+      "exit": "Midra, Lord of Frenzied Flame",
+      "bosses": [],
+      "weapons": [
+        {
+          "name": "Madding Hand",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Frenzyflame Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nanaya's Torch",
+          "type": "Torch",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Feeble Lord’s Frenzied Flame",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Ancient Ruins of Rauh · DLC": {
+      "exit": "Romina, Saint of the Bud",
+      "bosses": [
+        "Death Knight",
+        "Rugalea the Great Red Bear",
+        "Divine Beast Dancing Lion"
+      ],
+      "weapons": [
+        {
+          "name": "Bloodfiend's Fork",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bloodfiend's Sacred Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Axe",
+          "type": "Axe",
+          "upgrade": "Smithing Stones",
+          "native": "Wild Strikes",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Greathammer",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Golem Fist",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Red Bear's Claw",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiraltree Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Death Knight's Longhaft Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Devonia's Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Euporia",
+          "type": "Twinblade",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Euporia Vortex",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Horned Warrior's Greatsword",
+          "type": "Curved Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Horn Calling: Storm",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Leda's Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Freyja's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Falx",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dane's Footwork",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Obsidian Lamina",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Thiollier's Hidden Needle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Enir-Ilim · DLC": {
+      "exit": "Promised Consort Radahn",
+      "bosses": [
+        "Leda and Allies"
+      ],
+      "weapons": [
+        {
+          "name": "Bloodfiend's Fork",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bloodfiend's Sacred Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Axe",
+          "type": "Axe",
+          "upgrade": "Smithing Stones",
+          "native": "Wild Strikes",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Smithscript Greathammer",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Golem Fist",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Red Bear's Claw",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Spiraltree Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Death Knight's Longhaft Axe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Devonia's Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Euporia",
+          "type": "Twinblade",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Euporia Vortex",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Horned Warrior's Greatsword",
+          "type": "Curved Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Horn Calling: Storm",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Leda's Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Freyja's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Falx",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dane's Footwork",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Obsidian Lamina",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Thiollier's Hidden Needle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Siofra River + Nokron": {
+      "exit": "Regal Ancestor Spirit",
+      "bosses": [
+        "Ancestor Spirit",
+        "Dragonkin Soldier",
+        "Mimic Tear",
+        "Valiant Gargoyle & Valiant Gargoyle (Twinblade)"
+      ],
+      "weapons": [
+        {
+          "name": "Ghostflame Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Iron Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nox Flowing Hammer",
+          "type": "Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Flowing Form",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Horn Bow",
+          "type": "Bow",
+          "upgrade": "Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Greathorn Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Shotel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragon Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Twinblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Alabaster Lord's Sword",
+          "type": "Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Alabaster Lords’ Pull",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Clayman's Harpoon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Winged Greathorn",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Lake of Rot + Grand Cloister": {
+      "exit": "Astel, Naturalborn of the Void",
+      "bosses": [
+        "Dragonkin Soldier",
+        "Dragonkin Soldier of Nokstella",
+        "Alabaster Lord"
+      ],
+      "weapons": [
+        {
+          "name": "Ghostflame Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Iron Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nox Flowing Hammer",
+          "type": "Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Flowing Form",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Horn Bow",
+          "type": "Bow",
+          "upgrade": "Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Greathorn Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Shotel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragon Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Twinblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Alabaster Lord's Sword",
+          "type": "Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Alabaster Lords’ Pull",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Clayman's Harpoon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Scorpion's Stinger",
+          "type": "Dagger",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Repeating Thrust",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragonscale Blade",
+          "type": "Katana",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Ice Lightning Sword",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Bastard's Stars",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Deeproot Depths": {
+      "exit": "Lichdragon Fortissax",
+      "bosses": [
+        "Crucible Knight Siluria",
+        "Fia's champions"
+      ],
+      "weapons": [
+        {
+          "name": "Ghostflame Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Iron Spear",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Nox Flowing Hammer",
+          "type": "Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Flowing Form",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Horn Bow",
+          "type": "Bow",
+          "upgrade": "Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Greathorn Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Shotel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Dragon Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Twinblade",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Gargoyle's Greatsword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Alabaster Lord's Sword",
+          "type": "Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Alabaster Lords’ Pull",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Clayman's Harpoon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Siluria's Tree",
+          "type": "Great Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Siluria’s Woe",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Prince of Death's Staff",
+          "type": "Glintstone Staff",
+          "upgrade": "Somber Smithing Stones",
+          "native": "No Skill",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "Mohgwyn Palace": {
+      "exit": "Mohg, Lord of Blood",
+      "bosses": [],
+      "weapons": [
+        {
+          "name": "Varre's Bouquet",
+          "type": "Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Blood Tax",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Mohgwyn's Sacred Spear",
+          "type": "Great Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Bloodboon Ritual",
+          "infusable": false,
+          "requires": "Mohg, Lord of Blood"
+        },
+        {
+          "name": "Ripple Crescent Halberd",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Curved Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Curved Great Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": ""
+        }
+      ]
+    },
+    "Leyndell, Ashen Capital": {
+      "exit": "Godfrey, First Elden Lord / Hoarah Loux",
+      "bosses": [
+        "Sir Gideon Ofnir, the All-Knowing"
+      ],
+      "weapons": [
+        {
+          "name": "Great Stars",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Star Fist",
+          "type": "Fist",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Bolt of Gransax",
+          "type": "Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Ancient Lightning Spear",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Coded Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Unblockable Blade",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Guardian’s Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Celebrant’s Sickle",
+          "type": "Dagger",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Envoy’s Long Horn",
+          "type": "Great Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Bubble Shower",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    },
+    "The Erdtree": {
+      "exit": "Radagon of the Golden Order / Elden Beast",
+      "bosses": [],
+      "weapons": [
+        {
+          "name": "Great Stars",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Star Fist",
+          "type": "Fist",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Bolt of Gransax",
+          "type": "Spear",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Ancient Lightning Spear",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Coded Sword",
+          "type": "Straight Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Unblockable Blade",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Guardian’s Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Celebrant’s Sickle",
+          "type": "Dagger",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": ""
+        },
+        {
+          "name": "Envoy’s Long Horn",
+          "type": "Great Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Bubble Shower",
+          "infusable": false,
+          "requires": ""
+        }
+      ]
+    }
+  },
+  "gates": {
+    "Bloodhound's Fang": [
+      {
+        "name": "Bloodhound Knight Darriwil",
+        "region": "Limgrave + Stormveil"
+      }
+    ],
+    "Golden Halberd": [
+      {
+        "name": "Tree Sentinel",
+        "region": "Limgrave + Stormveil"
+      }
+    ],
+    "Rogier's Rapier": [
+      {
+        "name": "Godrick the Grafted",
+        "region": "Limgrave + Stormveil"
+      }
+    ],
+    "Axe of Godrick": [
+      {
+        "name": "Godrick the Grafted",
+        "region": "Limgrave + Stormveil"
+      }
+    ],
+    "Grafted Dragon": [
+      {
+        "name": "Godrick the Grafted",
+        "region": "Limgrave + Stormveil"
+      }
+    ],
+    "Grafted Blade Greatsword": [
+      {
+        "name": "Leonine Misbegotten",
+        "region": "Weeping Peninsula"
+      }
+    ],
+    "Sacrificial Axe": [
+      {
+        "name": "Deathbird",
+        "region": "Weeping Peninsula"
+      }
+    ],
+    "Carian Regal Scepter": [
+      {
+        "name": "Rennala, Queen of the Full Moon",
+        "region": "Liurnia of the Lakes"
+      }
+    ],
+    "Nightrider Flail": [
+      {
+        "name": "Night's Cavalry",
+        "region": "Weeping Peninsula"
+      }
+    ],
+    "Magma Wyrm's Scalesword": [
+      {
+        "name": "Magma Wyrm Makar",
+        "region": "Liurnia of the Lakes"
+      }
+    ],
+    "Nightrider Glaive": [
+      {
+        "name": "Night's Cavalry (Liurnia North)",
+        "region": "Liurnia of the Lakes"
+      }
+    ],
+    "Ornamental Straight Sword": [
+      {
+        "name": "Grafted Scion",
+        "region": "Limgrave + Stormveil"
+      }
+    ],
+    "Dark Moon Greatsword": [
+      {
+        "name": "Astel, Naturalborn of the Void",
+        "region": "Lake of Rot + Grand Cloister"
+      }
+    ],
+    "Gargoyle's Blackblade": [
+      {
+        "name": "Black Blade Kindred",
+        "region": "Caelid"
+      }
+    ],
+    "Gargoyle's Black Halberd": [
+      {
+        "name": "Black Blade Kindred",
+        "region": "Caelid"
+      }
+    ],
+    "Godslayer's Greatsword": [
+      {
+        "name": "Godskin Apostle",
+        "region": "Caelid"
+      }
+    ],
+    "Lusat's Glintstone Staff": [
+      {
+        "name": "Nox Swordstress & Nox Monk",
+        "region": "Caelid"
+      }
+    ],
+    "Moonveil": [
+      {
+        "name": "Magma Wyrm",
+        "region": "Caelid"
+      }
+    ],
+    "Nox Flowing Sword": [
+      {
+        "name": "Nox Swordstress & Nox Monk",
+        "region": "Caelid"
+      }
+    ],
+    "Regalia of Eochaid": [
+      {
+        "name": "Frenzied Duelist",
+        "region": "Caelid"
+      }
+    ],
+    "Ruins Greatsword": [
+      {
+        "name": "Crucible Knight and Misbegotten Warrior",
+        "region": "Caelid"
+      }
+    ],
+    "Death's Poker": [
+      {
+        "name": "Death Rite Bird",
+        "region": "Caelid"
+      }
+    ],
+    "Starscourge Greatsword": [
+      {
+        "name": "Starscourge Radahn",
+        "region": "Caelid"
+      }
+    ],
+    "Lion Greatbow": [
+      {
+        "name": "Starscourge Radahn",
+        "region": "Caelid"
+      }
+    ],
+    "Dragon Halberd": [
+      {
+        "name": "Dragonkin Soldier",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Gargoyle's Twinblade": [
+      {
+        "name": "Valiant Gargoyle & Valiant Gargoyle (Twinblade)",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Gargoyle's Greatsword": [
+      {
+        "name": "Valiant Gargoyle & Valiant Gargoyle (Twinblade)",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Alabaster Lord's Sword": [
+      {
+        "name": "Alabaster Lord",
+        "region": "Lake of Rot + Grand Cloister"
+      }
+    ],
+    "Winged Greathorn": [
+      {
+        "name": "Regal Ancestor Spirit",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Dragonscale Blade": [
+      {
+        "name": "Dragonkin Soldier",
+        "region": "Lake of Rot + Grand Cloister"
+      }
+    ],
+    "Bastard's Stars": [
+      {
+        "name": "Astel, Naturalborn of the Void",
+        "region": "Lake of Rot + Grand Cloister"
+      }
+    ],
+    "Siluria's Tree": [
+      {
+        "name": "Crucible Knight Siluria",
+        "region": "Deeproot Depths"
+      }
+    ],
+    "Mohgwyn's Sacred Spear": [
+      {
+        "name": "Mohg, Lord of Blood",
+        "region": "Mohgwyn Palace"
+      }
+    ],
+    "Black Knife": [
+      {
+        "name": "Black Knife Assassin (Sainted Hero's Grave)",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Bloody Helice": [
+      {
+        "name": "Sanguine Noble",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Godskin Peeler": [
+      {
+        "name": "Godskin Apostle",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Great Club": [
+      {
+        "name": "Stonedigger Troll",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Marais Executioner's Sword": [
+      {
+        "name": "Elemer of the Briar",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Onyx Lord's Greatsword": [
+      {
+        "name": "Onyx Lord",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Coded Sword": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Star Fist": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Cane Sword": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Black Bow": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Gravel Stone Seal": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Envoy's Horn": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Envoy's Long Horn": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Erdtree Bow": [
+      {
+        "name": "Godfrey, First Elden Lord",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Bolt of Gransax": [
+      {
+        "name": "Godfrey, First Elden Lord",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Family Heads": [
+      {
+        "name": "Necromancer Garris",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Hammer": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Gargoyle's Halberd": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Dragon Greatclaw": [
+      {
+        "name": "Draconic Tree Sentinel",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Ordovis's Greatsword": [
+      {
+        "name": "Crucible Knight & Crucible Knight Ordovis",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Morgott's Cursed Sword": [
+      {
+        "name": "Morgott, the Omen King",
+        "region": "Altus Plateau + Leyndell"
+      }
+    ],
+    "Jar Cannon": [
+      {
+        "name": "Demi-Human Queen Margot",
+        "region": "Mt. Gelmir"
+      }
+    ],
+    "Godskin Stitcher": [
+      {
+        "name": "Godskin Noble",
+        "region": "Mt. Gelmir"
+      }
+    ],
+    "Inquisitor's Girandole": [
+      {
+        "name": "Abductor Virgins (Duo)",
+        "region": "Mt. Gelmir"
+      }
+    ],
+    "Blasphemous Blade": [
+      {
+        "name": "Rykard, Lord of Blasphemy",
+        "region": "Mt. Gelmir"
+      }
+    ],
+    "Fallingstar Beast Jaw": [
+      {
+        "name": "Full-Grown Fallingstar Beast",
+        "region": "Mt. Gelmir"
+      }
+    ],
+    "Veteran's Prosthesis": [
+      {
+        "name": "Commander Niall",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Flowing Curved Sword": [
+      {
+        "name": "Commander Niall",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Albinauric Bow": [
+      {
+        "name": "Commander Niall",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "St. Trina's Torch": [
+      {
+        "name": "Commander Niall",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Zamor Curved Sword": [
+      {
+        "name": "Ancient Hero of Zamor",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Helphen's Steeple": [
+      {
+        "name": "Tibia Mariner",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Death Ritual Spear": [
+      {
+        "name": "Death Rite Bird",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Golden Order Greatsword": [
+      {
+        "name": "Misbegotten Crusader",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Gargoyle's Black Blades": [
+      {
+        "name": "Black Blade Kindred",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Gargoyle's Black Axe": [
+      {
+        "name": "Black Blade Kindred",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Giant's Red Braid": [
+      {
+        "name": "Fire Giant",
+        "region": "Mountaintops of the Giants"
+      }
+    ],
+    "Loretta's War Sickle": [
+      {
+        "name": "Loretta, Knight of the Haligtree",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
+    "Hand of Malenia": [
+      {
+        "name": "Malenia, Blade of Miquella",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
+    "Maliketh's Black Blade": [
+      {
+        "name": "Maliketh, the Black Blade",
+        "region": "Crumbling Farum Azula"
+      }
+    ],
+    "Dragon King's Cragblade": [
+      {
+        "name": "Dragonlord Placidusax",
+        "region": "Crumbling Farum Azula"
+      }
+    ],
+    "Greatsword of Solitude": [
+      {
+        "name": "Blackgaol Knight",
+        "region": "Gravesite Plain · DLC"
+      }
+    ],
+    "Death Knight's Twin-Axes": [
+      {
+        "name": "Death Knight",
+        "region": "Gravesite Plain · DLC"
+      }
+    ],
+    "Dryleaf Arts": [
+      {
+        "name": "Dryleaf Dane",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      }
+    ],
+    "Rakshasa's Great Katana": [
+      {
+        "name": "Rakshasa",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      }
+    ],
+    "Barbed Staff-Spear": [
+      {
+        "name": "Jori, Elder Inquisitor",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      }
+    ],
+    "Maternal Staff": [
+      {
+        "name": "Metyr, Mother of Fingers",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      },
+      {
+        "name": "Count Ymir, Mother of Fingers",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      }
+    ],
+    "Sword of Night": [
+      {
+        "name": "Metyr, Mother of Fingers",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      },
+      {
+        "name": "Count Ymir, Mother of Fingers",
+        "region": "Scadu Altus + Shadow Keep · DLC"
+      }
+    ],
+    "Dancing Blade of Ranah": [
+      {
+        "name": "Dancer of Ranah",
+        "region": "Cerulean Coast · DLC"
+      }
+    ],
+    "Star-Lined Sword": [
+      {
+        "name": "Demi-Human Queen Marigga",
+        "region": "Cerulean Coast · DLC"
+      }
+    ],
+    "Dragon-Hunter's Great Katana": [
+      {
+        "name": "Ancient Dragon-Man",
+        "region": "Dragon’s Pit + Jagged Peak · DLC"
+      }
+    ],
+    "Flowerstone Gavel": [
+      {
+        "name": "Bayle the Dread",
+        "region": "Dragon’s Pit + Jagged Peak · DLC"
+      }
+    ],
+    "Red Bear's Claw": [
+      {
+        "name": "Rugalea the Great Red Bear",
+        "region": "Ancient Ruins of Rauh · DLC"
+      }
+    ],
+    "Death Knight's Longhaft Axe": [
+      {
+        "name": "Death Knight",
+        "region": "Ancient Ruins of Rauh · DLC"
+      }
+    ],
+    "Leda's Sword": [
+      {
+        "name": "Leda and Allies",
+        "region": "Enir-Ilim · DLC"
+      }
+    ],
+    "Dane's Footwork": [
+      {
+        "name": "Leda and Allies",
+        "region": "Enir-Ilim · DLC"
+      }
+    ],
+    "Freyja's Greatsword": [
+      {
+        "name": "Leda and Allies",
+        "region": "Enir-Ilim · DLC"
+      }
+    ],
+    "Obsidian Lamina": [
+      {
+        "name": "Promised Consort Radahn",
+        "region": "Enir-Ilim · DLC"
+      }
+    ],
+    "Thiollier's Hidden Needle": [
+      {
+        "name": "Promised Consort Radahn",
+        "region": "Enir-Ilim · DLC"
+      }
+    ]
+  },
+  "scenarios": {
+    "Limgrave + Stormveil": {
+      "version": 2,
+      "phase": "active",
+      "region": "Limgrave + Stormveil",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "target": {
+          "name": "Crucible Knight",
+          "exit": false
+        },
+        "chase": {
+          "name": "Lordsworn's Straight Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "stamina budget analyst"
+        },
+        "morgan": {
+          "name": "Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "accidental tank"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Talisman Teetotaler",
+          "text": "Both players remove all talismans for the encounter.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "unfortunately he has health.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Weeping Peninsula": {
+      "version": 2,
+      "phase": "active",
+      "region": "Weeping Peninsula",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "target": {
+          "name": "Runebear",
+          "exit": false
+        },
+        "chase": {
+          "name": "Winged Scythe",
+          "type": "Reaper",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Angel’s Wings",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "hitbox dispute specialist"
+        },
+        "morgan": {
+          "name": "Rusted Anchor",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "designated aggro holder"
+        },
+        "chaosTrigger": "WHEN A PLAYER REACHES ZERO CRIMSON FLASKS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "No Free Crits",
+          "text": "On the first stance break, deliberately skip the critical attack and bow or crouch instead.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "regional target.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Liurnia of the Lakes": {
+      "version": 2,
+      "phase": "active",
+      "region": "Liurnia of the Lakes",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "target": {
+          "name": "Omenkiller",
+          "exit": false
+        },
+        "chase": {
+          "name": "Executioner's Greataxe",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "dodge specialist"
+        },
+        "morgan": {
+          "name": "Glintstone Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "stance-break goblin"
+        },
+        "chaosTrigger": "WHEN BOTH PLAYERS ARE HIT BY THE SAME BOSS ATTACK OR AOE",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Knife Check",
+          "text": "Hit the boss with a Kukri before victory. The hit has to connect.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "unfortunately he has health.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Caelid": {
+      "version": 2,
+      "phase": "active",
+      "region": "Caelid",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "target": {
+          "name": "Beastman of Farum Azula (Duo)",
+          "exit": false
+        },
+        "chase": {
+          "name": "Spiked Caestus",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Magic",
+          "role": "hitbox dispute specialist"
+        },
+        "morgan": {
+          "name": "Partisan",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Sacred",
+          "role": "hitbox dispute specialist"
+        },
+        "chaosTrigger": "WHEN THE BOSS USES A RANGED OR PROJECTILE ATTACK",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "The Procession",
+          "text": "Both players walk, not sprint, from the nearest safe approach to the arena entrance, then gesture before entering.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "confidence currently unsupported.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Altus Plateau + Leyndell": {
+      "version": 2,
+      "phase": "active",
+      "region": "Altus Plateau + Leyndell",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000005",
+        "target": {
+          "name": "Tibia Mariner",
+          "exit": false
+        },
+        "chase": {
+          "name": "Raptor Talons",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Magic",
+          "role": "dodge timing consultant"
+        },
+        "morgan": {
+          "name": "Golden Order Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "scheduled maintenance hazard"
+        },
+        "chaosTrigger": "WHEN THE TEAM LANDS A CRITICAL ATTACK",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Volcano Pot Incident",
+          "text": "Land a Volcano Pot on the boss before victory.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "not sure what his deal is.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Mt. Gelmir": {
+      "version": 2,
+      "phase": "active",
+      "region": "Mt. Gelmir",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000006",
+        "target": {
+          "name": "Ulcerated Tree Spirit",
+          "exit": false
+        },
+        "chase": {
+          "name": "Great Omenkiller Cleaver",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "flask break supervisor"
+        },
+        "morgan": {
+          "name": "Magma Whip Candlestick",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "dodge specialist"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER REACHES ZERO FP",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Living Off The Land",
+          "text": "Before victory, each player must land damage with one crafted offensive item.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "go beat his ass, probably.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Mountaintops of the Giants": {
+      "version": 2,
+      "phase": "active",
+      "region": "Mountaintops of the Giants",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000007",
+        "target": {
+          "name": "Ancient Hero of Zamor",
+          "exit": false
+        },
+        "chase": {
+          "name": "Cranial Vessel Candlestand",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "unpaid boss inspector"
+        },
+        "morgan": {
+          "name": "Rotten Battle Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Occult",
+          "role": "poise research volunteer"
+        },
+        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Deep Dish",
+          "text": "Both players must reach Heavy Load before the pull and keep it for the encounter.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "unfortunately he has health.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Miquella’s Haligtree": {
+      "version": 2,
+      "phase": "active",
+      "region": "Miquella’s Haligtree",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000008",
+        "target": {
+          "name": "Loretta, Knight of the Haligtree",
+          "exit": false
+        },
+        "chase": {
+          "name": "Partisan",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Cold",
+          "role": "boss morale problem"
+        },
+        "morgan": {
+          "name": "Envoy's Greathorn",
+          "type": "Colossal Weapon",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Great Oracular Bubble",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "rolling safety officer"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER LANDS A JUMP ATTACK",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "The Long Introduction",
+          "text": "Before attacking, both players gesture, use one consumable each, and circle the arena entrance once.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "famous last words.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Crumbling Farum Azula": {
+      "version": 2,
+      "phase": "active",
+      "region": "Crumbling Farum Azula",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000009",
+        "target": {
+          "name": "Godskin Duo",
+          "exit": false
+        },
+        "chase": {
+          "name": "Banished Knight's Greatsword",
+          "type": "Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Stamp (Upward Cut)",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Keen",
+          "role": "fog gate enthusiast"
+        },
+        "morgan": {
+          "name": "Beastman's Cleaver",
+          "type": "Curved Greatsword",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Keen",
+          "role": "stance-break goblin"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER IS KNOCKED DOWN OR STANCE-BROKEN",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Perfumer’s Union",
+          "text": "Use two different Aromatics during the fight. They must be differently named items.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "go beat his ass, probably.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Gravesite Plain · DLC": {
+      "version": 2,
+      "phase": "active",
+      "region": "Gravesite Plain · DLC",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000010",
+        "target": {
+          "name": "Divine Beast Dancing Lion",
+          "exit": false
+        },
+        "chase": {
+          "name": "Horned Warrior's Sword",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "close-range pressure"
+        },
+        "morgan": {
+          "name": "Anvil Hammer",
+          "type": "Colossal Weapon",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Smithing Art Spears",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "rune recovery intern"
+        },
+        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "The Four Offices",
+          "text": "As a team, land a light attack, charged heavy, jump attack, and weapon skill before anyone uses a second Crimson Flask.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "current target.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Scadu Altus + Shadow Keep · DLC": {
+      "version": 2,
+      "phase": "active",
+      "region": "Scadu Altus + Shadow Keep · DLC",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000011",
+        "target": {
+          "name": "Fallingstar Beast",
+          "exit": false
+        },
+        "chase": {
+          "name": "Ansbach's Longbow",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "panic-roll coordinator"
+        },
+        "morgan": {
+          "name": "Serpent Flail",
+          "type": "Flail",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Flare, O Serpent",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "hitbox dispute specialist"
+        },
+        "chaosTrigger": "WHEN THE BOSS REACHES 50% HEALTH",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "The Wheel",
+          "text": "If one player dies three times while using the same assigned weapon on this encounter, that player must reroll it before the next serious attempt.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "confidence currently unsupported.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Cerulean Coast · DLC": {
+      "version": 2,
+      "phase": "active",
+      "region": "Cerulean Coast · DLC",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000012",
+        "target": {
+          "name": "Lamenter",
+          "exit": false
+        },
+        "chase": {
+          "name": "Lamenting Visage",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "L2 button owner"
+        },
+        "morgan": {
+          "name": "Spirit Glaive",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "poise research volunteer"
+        },
+        "chaosTrigger": "WHEN A PLAYER REACHES ZERO CRIMSON FLASKS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "False Pilgrimage",
+          "text": "Use a Grace Mimic somewhere inconvenient, mark it with two Rainbow Stones, and perform a gesture before continuing.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "this seems manageable. suspicious.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Dragon’s Pit + Jagged Peak · DLC": {
+      "expectedError": "Covenant armory could not produce two legally obtainable weapon assignments. Encounter creation was stopped before saving malformed state."
+    },
+    "Abyssal Woods · DLC": {
+      "version": 2,
+      "phase": "active",
+      "region": "Abyssal Woods · DLC",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000013",
+        "target": {
+          "name": "Midra, Lord of Frenzied Flame",
+          "exit": true
+        },
+        "chase": {
+          "name": "Frenzyflame Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "panic-roll coordinator"
+        },
+        "morgan": {
+          "name": "Nanaya's Torch",
+          "type": "Torch",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Feeble Lord’s Frenzied Flame",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "support / utility"
+        },
+        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "No Aerial Budget",
+          "text": "Jump attacks are forbidden for the entire encounter. Normal jumping for traversal is allowed.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "we have to kill this thing apparently.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Ancient Ruins of Rauh · DLC": {
+      "version": 2,
+      "phase": "active",
+      "region": "Ancient Ruins of Rauh · DLC",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000014",
+        "target": {
+          "name": "Divine Beast Dancing Lion",
+          "exit": false
+        },
+        "chase": {
+          "name": "Smithscript Axe",
+          "type": "Axe",
+          "upgrade": "Smithing Stones",
+          "native": "Wild Strikes",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Lightning",
+          "role": "poise research volunteer"
+        },
+        "morgan": {
+          "name": "Smithscript Greathammer",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Quality",
+          "role": "unpaid boss inspector"
+        },
+        "chaosTrigger": "WHEN THE FIGHT REACHES THREE MINUTES",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Panacea",
+          "text": "Do not intentionally add any status source beyond whatever your assigned weapon already has.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "not sure what his deal is.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Enir-Ilim · DLC": {
+      "version": 2,
+      "phase": "active",
+      "region": "Enir-Ilim · DLC",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "target": {
+          "name": "Leda and Allies",
+          "exit": false
+        },
+        "chase": {
+          "name": "Euporia",
+          "type": "Twinblade",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Euporia Vortex",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "fog gate enthusiast"
+        },
+        "morgan": {
+          "name": "Spiraltree Seal",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "boss morale problem"
+        },
+        "chaosTrigger": "WHEN THE BOSS REACHES 75% HEALTH",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "The Four Offices",
+          "text": "As a team, land a light attack, charged heavy, jump attack, and weapon skill before anyone uses a second Crimson Flask.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "famous last words.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Siofra River + Nokron": {
+      "version": 2,
+      "phase": "active",
+      "region": "Siofra River + Nokron",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000016",
+        "target": {
+          "name": "Ancestor Spirit",
+          "exit": false
+        },
+        "chase": {
+          "name": "Greathorn Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "counter-hit guy"
+        },
+        "morgan": {
+          "name": "Shotel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "certified ankle menace"
+        },
+        "chaosTrigger": "WHEN ANY STATUS EFFECT PROCS ON THE BOSS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Three Strikes",
+          "text": "If the team wipes three times on this boss, both assigned weapons are condemned and must be rerolled before attempt four.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "go beat his ass, probably.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Lake of Rot + Grand Cloister": {
+      "version": 2,
+      "phase": "active",
+      "region": "Lake of Rot + Grand Cloister",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000017",
+        "target": {
+          "name": "Dragonkin Soldier",
+          "exit": false
+        },
+        "chase": {
+          "name": "Greathorn Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "panic-roll coordinator"
+        },
+        "morgan": {
+          "name": "Clayman's Harpoon",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "unpaid boss inspector"
+        },
+        "chaosTrigger": "60 SECONDS AFTER THE FIRST PLAYER DAMAGES THE BOSS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Three Strikes",
+          "text": "If the team wipes three times on this boss, both assigned weapons are condemned and must be rerolled before attempt four.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "source: the app said so.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Deeproot Depths": {
+      "version": 2,
+      "phase": "active",
+      "region": "Deeproot Depths",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000018",
+        "target": {
+          "name": "Crucible Knight Siluria",
+          "exit": false
+        },
+        "chase": {
+          "name": "Shotel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "rune recovery intern"
+        },
+        "morgan": {
+          "name": "Horn Bow",
+          "type": "Bow",
+          "upgrade": "Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Sacred",
+          "role": "heavy attack accountant"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Exalted Flesh Situation",
+          "text": "One player must use Exalted Flesh immediately before the fight.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "source: the app said so.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Mohgwyn Palace": {
+      "version": 2,
+      "phase": "active",
+      "region": "Mohgwyn Palace",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000019",
+        "target": {
+          "name": "Mohg, Lord of Blood",
+          "exit": true
+        },
+        "chase": {
+          "name": "Curved Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Quality",
+          "role": "rolling safety officer"
+        },
+        "morgan": {
+          "name": "Varre's Bouquet",
+          "type": "Hammer",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Blood Tax",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "close-range pressure"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER USES A WEAPON SKILL / ASH OF WAR",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Perfumer’s Union",
+          "text": "Use two different Aromatics during the fight. They must be differently named items.",
+          "tier": "Grand",
+          "favor": 2
+        },
+        "flavor": "current target.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "Leyndell, Ashen Capital": {
+      "version": 2,
+      "phase": "active",
+      "region": "Leyndell, Ashen Capital",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000020",
+        "target": {
+          "name": "Sir Gideon Ofnir, the All-Knowing",
+          "exit": false
+        },
+        "chase": {
+          "name": "Celebrant’s Sickle",
+          "type": "Dagger",
+          "upgrade": "Smithing Stones",
+          "native": "Quickstep",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Heavy",
+          "role": "certified ankle menace"
+        },
+        "morgan": {
+          "name": "Guardian’s Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Flame Art",
+          "role": "close-range pressure"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER DRINKS ANY FLASK",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Performance Enhancement",
+          "text": "One player must use Uplifting Aromatic during the fight.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "unfortunately he has health.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    },
+    "The Erdtree": {
+      "version": 2,
+      "phase": "active",
+      "region": "The Erdtree",
+      "severity": "standard",
+      "includeDlc": true,
+      "playerNames": [
+        "Tarnished One",
+        "Tarnished Two"
+      ],
+      "createdBy": "Chase",
+      "cleared": 0,
+      "clearedRegions": [],
+      "history": [],
+      "current": {
+        "id": "00000000-0000-4000-8000-000000000021",
+        "target": {
+          "name": "Radagon of the Golden Order / Elden Beast",
+          "exit": true
+        },
+        "chase": {
+          "name": "Guardian’s Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Cold",
+          "role": "emergency aggro recipient"
+        },
+        "morgan": {
+          "name": "Great Stars",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Sacred",
+          "role": "stamina budget analyst"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
+        "chaosTriggered": false,
+        "chaosConsequence": "",
+        "weirdness": {
+          "name": "Emissary of Insomnia",
+          "text": "Do not intentionally add Sleep sources during the encounter.",
+          "tier": "True",
+          "favor": 1
+        },
+        "flavor": "this seems manageable. suspicious.",
+        "penances": [],
+        "createdAt": "2026-09-30T00:00:00.000Z"
+      },
+      "regionComplete": false,
+      "runComplete": false,
+      "lastAction": "Chase started the Covenant.",
+      "updatedAt": "2026-09-30T00:00:00.000Z"
+    }
+  }
+}
