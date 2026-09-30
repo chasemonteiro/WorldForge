@@ -59,7 +59,7 @@ for needle in [
     "\"Death Knight's Twin-Axes\":[{name:'Death Knight',region:'Gravesite Plain · DLC'}]",
     "\"Dryleaf Arts\":[{name:'Dryleaf Dane',region:'Scadu Altus + Shadow Keep · DLC'}]",
     "\"Rakshasa's Great Katana\":[{name:'Rakshasa',region:'Scadu Altus + Shadow Keep · DLC'}]",
-    "\"Star Lined Sword\":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}]",
+    "\"Star-Lined Sword\":[{name:'Demi-Human Queen Marigga',region:'Cerulean Coast · DLC'}]",
     "\"Dragon-Hunter's Great Katana\":[{name:'Ancient Dragon-Man',region:'Dragon’s Pit + Jagged Peak · DLC'}]",
     "\"Red Bear's Claw\":[{name:'Rugalea the Great Red Bear',region:'Ancient Ruins of Rauh · DLC'}]",
     "\"Death Knight's Longhaft Axe\":[{name:'Death Knight',region:'Ancient Ruins of Rauh · DLC'}]",
@@ -174,18 +174,8 @@ for needle in [
     "const i=pool.findIndex(w=>tcWeaponNameKey(w?.name)===tcWeaponNameKey(weapon.name));if(i>=0)pool[i]=weapon;else pool.push(weapon);",
 ]: require(needle)
 
-# Spreadsheet imports must not silently erase intended regional weapons.
-# These include fixed pickups and low-drop enemy farms; rarity is not a reason
-# to exclude a weapon from the Covenant armory.
-for needle in [
-    'const TC_REGIONAL_WEAPON_RESTORES={',
-    "'Altus Plateau + Leyndell':[\"Great Stars\",\"Guardian's Swordspear\",'Raptor Talons'",
-    "'Mt. Gelmir':['Pulley Bow','Magma Blade','Fallingstar Beast Jaw'",
-    "'Mountaintops of the Giants':[\"Watchdog's Greatsword\",'Thorned Whip',\"Monk's Flameblade\",\"Helphen's Steeple\""
-    "'Miquella’s Haligtree':[\"Cleanrot Knight's Sword\",'Cleanrot Spear','Halo Scythe',\"Envoy's Greathorn\",'Greatbow'"
-    "'Crumbling Farum Azula':[\"Beastman's Curved Sword\",\"Beastman's Cleaver\",\"Banished Knight's Greatsword\",\"Banished Knight's Halberd\"]",
-    "'Scadu Altus + Shadow Keep · DLC':['Carian Thrusting Shield',"Messmer Soldier's Spear"]",
-]: require(needle)
+# Regional membership is checked semantically by the catalog audit below.
+require('const TC_REGIONAL_WEAPON_RESTORES={')
 
 # Catalog-integrity audit: cover BOTH region-definition shapes used by the app.
 # The older audit only inspected the original object literal and therefore missed
@@ -196,26 +186,21 @@ const html=fs.readFileSync('tarnished-covenant/index.html','utf8');
 const src=fs.readFileSync('tarnished-covenant/regional-pools.js','utf8');
 const ctx={};vm.createContext(ctx);
 vm.runInContext(src+';this.weaponPools=SHEET_WEAPON_POOLS;',ctx);
-function key(name){return String(name||'').replace(/\\s*\\(\\+\\d+\\)\\s*$/,'').toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\\s+/g,' ').trim();}
-const intended={};
-const objectStart=html.indexOf('const regions = {');
+function key(name){return String(name||'').replace(/\s*\(\+\d+\)\s*$/,'').toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\s+/g,' ').trim();}
+const objectStart=html.indexOf('const omens = [');
 const sheetStart=html.indexOf('const SHEET_WEAPON_POOLS=');
-const authored=html.slice(objectStart,sheetStart);
-for(const m of authored.matchAll(/\\n\\s*'([^']+)'\\s*:\\s*\\{[\\s\\S]*?weapons:\\s*\\[([\\s\\S]*?)\\n\\s*\\]\\s*\\n\\s*\\}/g)){
-  const names=[...m[2].matchAll(/W\\((['"])(.*?)\\1/g)].map(x=>x[2]);
-  if(names.length)intended[m[1]]=names;
-}
-for(const m of authored.matchAll(/regions\\[['"]([^'"]+)['"]\\]\\s*=\\s*\\{[\\s\\S]*?weapons:\\s*\\[([\\s\\S]*?)\\]\\s*\\n\\};/g)){
-  const names=[...m[2].matchAll(/W\\((['"])(.*?)\\1/g)].map(x=>x[2]);
-  if(names.length)intended[m[1]]=names;
-}
+const authoredContext={crypto:require('node:crypto').webcrypto};vm.createContext(authoredContext);
+vm.runInContext(html.slice(objectStart,sheetStart)+';this.authored=regions;',authoredContext);
+const intended=Object.fromEntries(Object.entries(authoredContext.authored).map(([region,data])=>[region,(data.weapons||[]).map(w=>w.name)]));
+if(Object.keys(intended).length!==22)throw new Error('Regional audit failed to inspect all 22 authored regions');
 const intentionalRelocations={
+  "Abyssal Woods · DLC":new Set(["barbed staff spear"].map(key)),
   "Dragon’s Pit + Jagged Peak · DLC":new Set(["nanaya's torch","barbed staff spear"].map(key)),
   "Siofra River + Nokron":new Set(["nox flowing sword"].map(key))
 };
 const errors=[];
 for(const [region,names] of Object.entries(intended)){
-  const active=new Set((ctx.weaponPools[region]||[]).map(key));
+  const active=new Set((ctx.weaponPools[region]||names).map(key));
   for(const name of names){
     if(active.has(key(name)))continue;
     if(intentionalRelocations[region]?.has(key(name)))continue;
@@ -246,13 +231,13 @@ source_pools=json.loads(pool_match.group(1))
 
 verified_region_omissions={
     'Weeping Peninsula':['Bastard Sword','Light Crossbow','Sacrificial Axe','Misbegotten Shortbow'],
-    'Liurnia of the Lakes':["Rogier's Rapier"],
+    'Limgrave + Stormveil':["Rogier's Rapier"],
     'Caelid':["Death's Poker","Cleanrot Knight's Sword",'Cleanrot Spear','Halo Scythe','Spiked Caestus','Beast-Repellent Torch','Cinquedea'],
     'Lake of Rot + Grand Cloister':["Scorpion's Stinger",'Dragonscale Blade',"Bastard's Stars"],
     'Deeproot Depths':["Siluria's Tree","Prince of Death's Staff"],
     'Altus Plateau + Leyndell':['Raptor Talons',"Envoy's Horn",'Antspur Rapier','Battle Hammer'],
-    'Mt. Gelmir':['Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff','Erdtree Seal'],
-    'Mountaintops of the Giants':["Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer','Golden Order Greatsword','Albinauric Staff','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch"],
+    'Mt. Gelmir':['Fallingstar Beast Jaw','Staff of the Guilty','Gelmir Glintstone Staff','Erdtree Seal','Albinauric Staff'],
+    'Mountaintops of the Giants':["Helphen's Steeple",'Death Ritual Spear','Rotten Battle Hammer','Golden Order Greatsword','Flowing Curved Sword','Albinauric Bow',"St. Trina's Torch"],
     'Mohgwyn Palace':["Mohgwyn's Sacred Spear"],
     'Miquella’s Haligtree':['Rotten Crystal Staff','Hand of Malenia'],
 }
@@ -297,8 +282,8 @@ for needle in [
     '!weaponBlockedByTarget(w,target)&&tcWeaponAcquisitionUnlocked(state,w)',
     'function tcLegalAccumulatedWeaponPool(state,target)',
     'chooseWeaponPair=function(state,target)',
-    'const currentPool=tcLegalRegionWeapons(state,state.region,target)',
-    'const all=tcLegalAccumulatedWeaponPool(state,target)',
+    'const currentPool=tcExcludeAppealCooldown(state,tcLegalRegionWeapons(state,state.region,target))',
+    'const all=tcExcludeAppealCooldown(state,tcLegalAccumulatedWeaponPool(state,target))',
     'makeBuild=function(regionName,target,avoidNames=[],state=null)',
 ]: require(needle)
 

@@ -1,0 +1,5193 @@
+const omens = [
+  'dog ahead.',
+  'fort, night.',
+  'the app has noticed.',
+  'the two fingers have left the group chat.',
+  'verified by nobody.',
+  'works on my machine.',
+  'big sword department open.',
+  'the greater will is unavailable.',
+  'source: it happened.',
+  'miyazaki has opened the spreadsheet.',
+  'someone is about to make this worse.',
+  'grace remains unhelpful.'
+];
+
+
+const encounterFlavors = [
+  'current target.',
+  'regional target.',
+  'unfortunately he has health.',
+  'not sure what his deal is.',
+  'go beat his ass, probably.',
+  'boss-shaped inconvenience.',
+  'we have to kill this thing apparently.',
+  'source: the app said so.',
+  'confidence currently unsupported.',
+  'this seems manageable. suspicious.',
+  'famous last words.'
+];
+
+
+
+const W = (name, type, upgrade, native, infusable = true, requires = '') => ({
+  name, type, upgrade, native, infusable, requires
+});
+
+const regions = {
+  'Limgrave + Stormveil': {
+    exit: 'Godrick the Grafted',
+    bosses: ['Tree Sentinel','Flying Dragon Agheel','Tibia Mariner','Deathbird','Night’s Cavalry','Stonedigger Troll','Erdtree Burial Watchdog','Black Knife Assassin','Margit, the Fell Omen'],
+    weapons: [
+      W('Twinblade','Twinblade','Smithing Stones','Spinning Slash'),
+      W('Great Épée','Heavy Thrusting Sword','Smithing Stones','Impaling Thrust'),
+      W('Lordsworn’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Flail','Flail','Smithing Stones','Spinning Chain'),
+      W('Uchigatana','Katana','Smithing Stones','Unsheathe'),
+      W('Brick Hammer','Great Hammer','Smithing Stones','Barbaric Roar'),
+      W('Hookclaws','Claw','Smithing Stones','Quickstep'),
+      W('Highland Axe','Axe','Smithing Stones','War Cry')
+    ]
+  },
+  'Weeping Peninsula': {
+    exit: 'Leonine Misbegotten',
+    bosses: ['Erdtree Avatar','Deathbird','Night’s Cavalry','Cemetery Shade','Runebear','Miranda the Blighted Bloom','Scaly Misbegotten'],
+    weapons: [
+      W('Claymore','Greatsword','Smithing Stones','Lion’s Claw'),
+      W('Zweihander','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Morning Star','Hammer','Smithing Stones','Kick'),
+      W('Winged Scythe','Reaper','Somber Smithing Stones','Angel’s Wings',false)
+    ]
+  },
+  'Liurnia of the Lakes': {
+    exit: 'Rennala, Queen of the Full Moon',
+    bosses: ['Red Wolf of Radagon','Glintstone Dragon Smarag','Royal Knight Loretta','Omenkiller','Tibia Mariner','Death Rite Bird','Crystalian','Magma Wyrm Makar'],
+    weapons: [
+      W('Urumi','Whip','Smithing Stones','Kick'),
+      W('Sword of Night and Flame','Straight Sword','Somber Smithing Stones','Night-and-Flame Stance',false),
+      W('Icerind Hatchet','Axe','Somber Smithing Stones','Hoarfrost Stomp',false),
+      W('Carian Knight’s Sword','Straight Sword','Somber Smithing Stones','Carian Grandeur',false),
+      W('Crystal Sword','Straight Sword','Somber Smithing Stones','Spinning Slash',false),
+      W('Lazuli Glintstone Sword','Straight Sword','Somber Smithing Stones','Glintstone Pebble',false)
+    ]
+  },
+  'Caelid': {
+    exit: 'Starscourge Radahn',
+    bosses: ['Commander O’Neil','Decaying Ekzykes','Putrid Avatar','Death Rite Bird','Night’s Cavalry','Fallingstar Beast','Godskin Apostle','Magma Wyrm'],
+    weapons: [
+      W('Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Cross-Naginata','Spear','Smithing Stones','Impaling Thrust'),
+      W('Meteoric Ore Blade','Katana','Somber Smithing Stones','Gravitas',false),
+      W('Venomous Fang','Claw','Smithing Stones','Quickstep'),
+      W('Wakizashi','Dagger','Smithing Stones','Quickstep')
+    ]
+  },
+  'Altus Plateau + Leyndell': {
+    exit: 'Morgott, the Omen King',
+    bosses: ['Ancient Dragon Lansseax','Wormface','Godskin Apostle','Elemer of the Briar','Draconic Tree Sentinel','Godfrey, Golden Shade','Mohg, the Omen'],
+    weapons: [
+      W('Great Stars','Great Hammer','Smithing Stones','Endure'),
+      W('Star Fist','Fist','Smithing Stones','Endure'),
+      W('Bolt of Gransax','Spear','Somber Smithing Stones','Ancient Lightning Spear',false),
+      W('Coded Sword','Straight Sword','Somber Smithing Stones','Unblockable Blade',false),
+      W('Guardian’s Swordspear','Halberd','Smithing Stones','Spinning Slash'),
+      W('Celebrant’s Sickle','Dagger','Smithing Stones','Quickstep'),
+      W('Envoy’s Long Horn','Great Hammer','Somber Smithing Stones','Bubble Shower',false)
+    ]
+  },
+  'Mt. Gelmir': {
+    exit: 'Rykard, Lord of Blasphemy',
+    bosses: ['Full-Grown Fallingstar Beast','Godskin Noble','Demi-Human Queen Maggie','Abductor Virgins'],
+    weapons: [
+      W('Scavenger’s Curved Sword','Curved Sword','Smithing Stones','Spinning Slash'),
+      W('Pulley Bow','Bow','Smithing Stones','Mighty Shot'),
+      W('Pulley Crossbow','Crossbow','Smithing Stones','Kick'),
+      W('Magma Blade','Curved Sword','Somber Smithing Stones','Magma Shower',false),
+      W('Ghiza’s Wheel','Colossal Weapon','Somber Smithing Stones','Spinning Wheel',false),
+      W('Bloodhound Claws','Claw','Smithing Stones','Bloodhound Step')
+    ]
+  },
+  'Mountaintops of the Giants': {
+    exit: 'Fire Giant',
+    bosses: ['Borealis the Freezing Fog','Commander Niall','Death Rite Bird','Erdtree Avatar','Ancient Hero of Zamor'],
+    weapons: [
+      W('Eclipse Shotel','Curved Sword','Somber Smithing Stones','Death Flare',false),
+      W('Rivers of Blood','Katana','Somber Smithing Stones','Corpse Piler',false),
+      W('Watchdog’s Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Thorned Whip','Whip','Smithing Stones','Kick'),
+      W('Monk’s Flameblade','Curved Greatsword','Smithing Stones','Spinning Slash')
+    ]
+  },
+  'Miquella’s Haligtree': {
+    exit: 'Malenia, Blade of Miquella',
+    bosses: ['Loretta, Knight of the Haligtree','Putrid Avatar','Ulcerated Tree Spirit'],
+    weapons: [
+      W('Cleanrot Knight’s Sword','Thrusting Sword','Smithing Stones','Impaling Thrust'),
+      W('Cleanrot Spear','Spear','Somber Smithing Stones','Sacred Phalanx',false),
+      W('Halo Scythe','Reaper','Somber Smithing Stones','Miquella’s Ring of Light',false),
+      W('Miquellan Knight’s Sword','Straight Sword','Somber Smithing Stones','Sacred Blade',false),
+      W('Rotten Crystal Sword','Straight Sword','Somber Smithing Stones','Spinning Slash',false),
+      W('Envoy’s Greathorn','Colossal Weapon','Somber Smithing Stones','Great Oracular Bubble',false)
+    ]
+  },
+  'Crumbling Farum Azula': {
+    exit: 'Maliketh, the Black Blade',
+    bosses: ['Godskin Duo','Dragonlord Placidusax','Draconic Tree Sentinel'],
+    weapons: [
+      W('Beastman’s Curved Sword','Curved Sword','Smithing Stones','Spinning Slash'),
+      W('Beastman’s Cleaver','Curved Greatsword','Smithing Stones','Spinning Slash'),
+      W('Banished Knight’s Greatsword','Greatsword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Banished Knight’s Halberd','Halberd','Smithing Stones','Charge Forth')
+    ]
+  },
+  'Gravesite Plain · DLC': {
+    exit: 'Rellana, Twin Moon Knight',
+    bosses: ['Divine Beast Dancing Lion','Blackgaol Knight','Ghostflame Dragon','Death Knight','Demi-Human Swordmaster Onze','Furnace Golem'],
+    weapons: [
+      W('Backhand Blade','Backhand Blade','Smithing Stones','Blind Spot'),
+      W('Great Katana','Great Katana','Smithing Stones','Overhead Stance'),
+      W('Smithscript Dagger','Throwing Blade','Smithing Stones','Piercing Throw'),
+      W('Anvil Hammer','Colossal Weapon','Somber Smithing Stones','Smithing Art Spears',false),
+      W('Milady','Light Greatsword','Smithing Stones','Impaling Thrust'),
+      W('Bloodfiend’s Arm','Colossal Weapon','Smithing Stones','Endure'),
+      W('Curseblade’s Cirque','Backhand Blade','Somber Smithing Stones','Deadly Dance',false)
+    ]
+  },
+  'Scadu Altus + Shadow Keep · DLC': {
+    exit: 'Messmer the Impaler',
+    bosses: ['Golden Hippopotamus','Commander Gaius','Scadutree Avatar','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem','Metyr, Mother of Fingers'],
+    weapons: [
+      W('Smithscript Cirque','Backhand Blade','Smithing Stones','Blind Spot'),
+      W('Ancient Meteoric Ore Greatsword','Colossal Sword','Somber Smithing Stones','White Light Charge',false),
+      W('Dryleaf Arts','Hand-to-Hand Art','Smithing Stones','Palm Blast'),
+      W('Carian Thrusting Shield','Thrusting Shield','Smithing Stones','Shield Strike'),
+      W('Fire Knight’s Greatsword','Colossal Sword','Smithing Stones','Stamp (Upward Cut)'),
+      W('Messmer Soldier’s Spear','Great Spear','Smithing Stones','Charge Forth'),
+      W('Serpent Flail','Flail','Somber Smithing Stones','Flare, O Serpent',false)
+    ]
+  },
+  'Cerulean Coast · DLC': {
+    exit: 'Putrescent Knight',
+    bosses: ['Ghostflame Dragon','Demi-Human Queen Marigga','Dancer of Ranah'],
+    weapons: [
+      W('Spirit Sword','Curved Sword','Somber Smithing Stones','Rancor Slash',false),
+      W('Chilling Perfume Bottle','Perfume Bottle','Somber Smithing Stones','Kick',false)
+    ]
+  },
+  'Dragon’s Pit + Jagged Peak · DLC': {
+    exit: 'Bayle the Dread',
+    bosses: ['Ancient Dragon-Man','Jagged Peak Drake','Ancient Dragon Senessax'],
+    weapons: [W('Dragon-Hunter’s Great Katana','Great Katana','Somber Smithing Stones','Dragonwound Slash',false,'Ancient Dragon-Man')]
+  },
+  'Abyssal Woods · DLC': {
+    exit: 'Midra, Lord of Frenzied Flame',
+    bosses: ['Jori, Elder Inquisitor'],
+    weapons: [
+      W('Nanaya’s Torch','Torch','Somber Smithing Stones','Feeble Lord’s Frenzied Flame',false),
+      W('Barbed Staff-Spear','Great Spear','Somber Smithing Stones','Jori’s Inquisition',false,'Jori, Elder Inquisitor')
+    ]
+  },
+  'Ancient Ruins of Rauh · DLC': {
+    exit: 'Romina, Saint of the Bud',
+    bosses: ['Divine Beast Dancing Lion','Death Knight','Red Bear'],
+    weapons: [
+      W('Smithscript Axe','Axe','Smithing Stones','Wild Strikes'),
+      W('Smithscript Greathammer','Great Hammer','Smithing Stones','Endure')
+    ]
+  },
+  'Enir-Ilim · DLC': {
+    exit: 'Promised Consort Radahn',
+    bosses: ['Needle Knight Leda and allies'],
+    weapons: [
+      W('Euporia','Twinblade','Somber Smithing Stones','Euporia Vortex',false),
+      W('Horned Warrior’s Greatsword','Curved Greatsword','Somber Smithing Stones','Horn Calling: Storm',false)
+    ]
+  }
+};
+
+regions['Siofra River + Nokron'] = {
+  exit: 'Regal Ancestor Spirit',
+  bosses: ['Mimic Tear','Dragonkin Soldier','Valiant Gargoyles'],
+  weapons: [
+    W('Horn Bow','Bow','Smithing Stones','Mighty Shot'),
+    W('Nox Flowing Sword','Curved Sword','Somber Smithing Stones','Flowing Form',false),
+    W('Nox Flowing Hammer','Hammer','Somber Smithing Stones','Flowing Form',false)
+  ]
+};
+regions['Lake of Rot + Grand Cloister'] = {
+  exit: 'Astel, Naturalborn of the Void',
+  bosses: ['Dragonkin Soldier of Nokstella','Alabaster Lord','Putrid Tree Spirit'],
+  weapons: [
+    W('Scorpion’s Stinger','Dagger','Somber Smithing Stones','Repeating Thrust',false),
+    W('Dragonscale Blade','Katana','Somber Smithing Stones','Ice Lightning Sword',false),
+    W('Alabaster Lord’s Sword','Greatsword','Somber Smithing Stones','Alabaster Lords’ Pull',false)
+  ]
+};
+regions['Deeproot Depths'] = {
+  exit: 'Lichdragon Fortissax',
+  bosses: ['Fia’s Champions','Crucible Knight Siluria','Erdtree Avatar'],
+  weapons: [
+    W('Siluria’s Tree','Great Spear','Somber Smithing Stones','Siluria’s Woe',false),
+    W('Prince of Death’s Staff','Glintstone Staff','Somber Smithing Stones','No Skill',false)
+  ]
+};
+regions['Mohgwyn Palace'] = {
+  exit: 'Mohg, Lord of Blood',
+  bosses: ['Nameless White Mask','Sanguine Noble','Putrid Corpse Swarm'],
+  weapons: [
+    W('Varre’s Bouquet','Hammer','Somber Smithing Stones','Blood Tax',false),
+    W('Mohgwyn’s Sacred Spear','Great Spear','Somber Smithing Stones','Bloodboon Ritual',false,'Mohg, Lord of Blood')
+  ]
+};
+regions['Leyndell, Ashen Capital'] = {
+  exit: 'Godfrey, First Elden Lord / Hoarah Loux',
+  bosses: ['Sir Gideon Ofnir, the All-Knowing','Ulcerated Tree Spirit','Erdtree Avatar'],
+  weapons: regions['Altus Plateau + Leyndell'].weapons
+};
+regions['The Erdtree'] = {
+  exit: 'Radagon of the Golden Order / Elden Beast',
+  bosses: [],
+  weapons: regions['Altus Plateau + Leyndell'].weapons
+};
+
+{{generated/regional-pools.js}}
+
+// Spreadsheet-backed regional pools.
+const ORIGINAL_WEAPON_CATALOG = new Map();
+for (const region of Object.values(regions)) {
+  for (const weapon of (region.weapons || [])) {
+    const key = weapon.name.replace(/ \(\+\d+\)$/,'').toLowerCase().replace(/[’]/g,"'");
+    if (!ORIGINAL_WEAPON_CATALOG.has(key)) ORIGINAL_WEAPON_CATALOG.set(key, weapon);
+  }
+}
+
+function sheetWeapon(name) {
+  const lookup = name.replace(/ \(\+\d+\)$/,'').toLowerCase().replace(/[’]/g,"'");
+  const known = ORIGINAL_WEAPON_CATALOG.get(lookup);
+  if (known) return { ...known, name };
+  return W(name, 'Regional weapon', 'Smithing path varies', 'Native skill', false);
+}
+
+for (const [regionName, names] of Object.entries(SHEET_WEAPON_POOLS)) {
+  if (regions[regionName]) regions[regionName].weapons = names.map(sheetWeapon);
+}
+for (const [regionName, names] of Object.entries(SHEET_BOSS_POOLS)) {
+  if (regions[regionName]) regions[regionName].bosses = [...names];
+}
+
+const WEAPON_TARGET_BLOCKS = {
+  "bloodhound's fang": 'darriwil',
+  'golden halberd': 'tree sentinel',
+  'grafted blade greatsword': 'leonine misbegotten',
+  'moonveil': 'magma wyrm',
+  'ruins greatsword': 'crucible knight and misbegotten warrior',
+  "godslayer's greatsword": 'godskin apostle',
+  'blasphemous blade': 'rykard',
+  "loretta's war sickle": 'loretta, knight of the haligtree',
+  "maliketh's black blade": 'maliketh',
+  "dragon king's cragblade": 'placidusax',
+  "dragon-hunter's great katana": 'ancient dragon-man',
+  "leda's sword": 'leda and allies',
+  'flowerstone gavel': 'bayle',
+  'obsidian lamina': 'promised consort radahn'
+};
+
+function normalizedGameName(name = '') {
+  return name.toLowerCase().replace(/[’]/g,"'");
+}
+
+function weaponBlockedByTarget(weapon, target) {
+  if (weapon.requires && normalizedGameName(target.name).includes(normalizedGameName(weapon.requires))) return true;
+  const block = WEAPON_TARGET_BLOCKS[normalizedGameName(weapon.name).replace(/ \(\+\d+\)$/,'')];
+  return Boolean(block && normalizedGameName(target.name).includes(block));
+}
+
+const chaosTriggers = [
+  'WHEN THE BOSS REACHES 75% HEALTH',
+  'WHEN THE BOSS REACHES 50% HEALTH',
+  'WHEN THE BOSS REACHES 25% HEALTH',
+  'WHEN EITHER PLAYER USES A WEAPON SKILL / ASH OF WAR',
+  'WHEN EITHER PLAYER DRINKS ANY FLASK',
+  'WHEN THE TEAM LANDS A CRITICAL ATTACK',
+  'WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER',
+  'WHEN THE BOSS CHANGES PHASE OR TRANSFORMS',
+  'WHEN EITHER PLAYER IS KNOCKED DOWN OR STANCE-BROKEN',
+  'WHEN EITHER PLAYER SUCCESSFULLY PARRIES THE BOSS',
+  'WHEN EITHER PLAYER ATTEMPTS A PARRY AND GETS HIT DURING IT',
+  '30 SECONDS AFTER THE FIRST PLAYER DAMAGES THE BOSS',
+  '60 SECONDS AFTER THE FIRST PLAYER DAMAGES THE BOSS',
+  'WHEN EITHER PLAYER CASTS A SORCERY OR INCANTATION',
+  'WHEN EITHER PLAYER TAKES FALL DAMAGE DURING THE ENCOUNTER',
+  'WHEN EITHER PLAYER REACHES ZERO FP',
+  'WHEN EITHER PLAYER BLOCKS A BOSS ATTACK',
+  'WHEN THE BOSS GRABS EITHER PLAYER',
+  'WHEN THE TEAM KILLS AN ADD OR MINION DURING THE BOSS FIGHT',
+  'WHEN EITHER PLAYER FALLS BELOW 20% HEALTH',
+  'WHEN EITHER PLAYER APPLIES A SELF-BUFF',
+  'WHEN EITHER PLAYER TWO-HANDS THEIR ASSIGNED WEAPON',
+  'WHEN THE BOSS USES A RANGED OR PROJECTILE ATTACK',
+  'WHEN BLEED, FROSTBITE, POISON, ROT, SLEEP, OR MADNESS PROCS ON A PLAYER',
+  'WHEN THE TEAM LANDS A BACKSTAB OR RIPOSTE',
+  'WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS',
+  'WHEN EITHER PLAYER LANDS A JUMP ATTACK',
+  'WHEN THE FIGHT REACHES THREE MINUTES',
+  'WHEN EITHER PLAYER DIES',
+  'AFTER THE FIRST FULL TEAM WIPE',
+  'WHEN BOTH PLAYERS HAVE TAKEN DAMAGE AT LEAST ONCE',
+  'WHEN BOTH PLAYERS ARE BELOW 50% HEALTH AT THE SAME TIME',
+  'WHEN THE TEAM CAUSES THE FIRST BOSS STANCE BREAK',
+  'WHEN ANY STATUS EFFECT PROCS ON THE BOSS',
+  'WHEN BOTH PLAYERS ARE HIT BY THE SAME BOSS ATTACK OR AOE',
+  'WHEN A PLAYER REACHES ZERO CRIMSON FLASKS'
+];
+
+const weirdness = [
+  ['Knife Check','Hit the boss with a Kukri before victory. The hit has to connect.'],
+  ['Tiny Knife Check','Hit the boss with a Throwing Dagger before victory.'],
+  ['Bone Department','Hit the boss with a Bone Dart before victory.'],
+  ['Crystal Mathematics','Hit the boss with a Crystal Dart before victory.'],
+  ['Fire Pot Compliance','Land a Fire Pot on the boss before it dies.'],
+  ['Holy Water Audit','Land a Holy Water Pot on the boss before victory.'],
+  ['Oil First, Questions Later','Hit the boss with an Oil Pot at least once before victory.'],
+  ['Poison Paperwork','Hit the boss with a Poisonbone Dart before victory. Poison does not have to proc.'],
+  ['Volcano Pot Incident','Land a Volcano Pot on the boss before victory.'],
+  ['Lightning In A Jar','Land a Lightning Pot on the boss before victory.'],
+  ['Arena Survey Marker','Place one Rainbow Stone somewhere inside or immediately beside the boss arena before victory.'],
+  ['Glowstone OSHA','Drop a Glowstone in the arena before the boss dies.'],
+  ['Union-Mandated Break','Place a Warming Stone during the fight. At least one player must stand in its effect briefly.'],
+  ['Stealth Technology','Use Mimic’s Veil before approaching the boss arena. Remain disguised for at least five seconds.'],
+  ['Lantern Protocol','Both players must turn on a Lantern before the first attack and leave it on for the fight.'],
+  ['Professional Cartography','Use the Telescope to inspect the boss or arena before pulling aggro.'],
+  ['Personal Hygiene','Use Soap immediately before entering the boss fight.'],
+  ['Hello, Management','Use Prattling Pate “Hello” before either player attacks.'],
+  ['Thank You For Your Service','Use Prattling Pate “Thank You” after the boss reaches roughly half health.'],
+  ['Formal Apology','Use Prattling Pate “Apologies” after the first player takes damage.'],
+  ['Wonderful Assessment','Use Prattling Pate “Wonderful” after the first stance break or major punish.'],
+  ['You’re Beautiful','Use Prattling Pate “You’re Beautiful” while facing the boss before the first attack.'],
+  ['Performance Enhancement','One player must use Uplifting Aromatic during the fight.'],
+  ['Perfume Violence','One player must use Spark Aromatic during the fight.'],
+  ['Become A Fridge','One player must use Ironjar Aromatic and survive at least ten seconds in combat afterward.'],
+  ['Crab Before Combat','One player must eat Boiled Crab immediately before the fight.'],
+  ['Turtle Neck Technology','One player must use a Pickled Turtle Neck immediately before the fight.'],
+  ['Exalted Flesh Situation','One player must use Exalted Flesh immediately before the fight.'],
+  ['Starlight Budget','One player must use a Starlight Shard during the fight.'],
+  ['Free Hug Debuff','One player must use Baldachin’s Blessing before the first attack.'],
+  ['Pumpkin Assignment','One randomly chosen player must wear Pumpkin Helm for the entire fight.'],
+  ['Cat Head Clause','One randomly chosen player must wear Imp Head (Cat) for the entire fight.'],
+  ['Octopus Formalwear','One randomly chosen player must wear Octopus Head for the entire fight.'],
+  ['Albinauric Representation','One randomly chosen player must wear Albinauric Mask for the entire fight.'],
+  ['Mushroom Management','One randomly chosen player must wear Mushroom Crown for the entire fight.'],
+  ['Bubble Executive','One randomly chosen player must wear Envoy Crown for the entire fight.'],
+  ['Jar Employee Of The Month','One randomly chosen player must wear Jar for the entire fight.'],
+  ['Business Casual','One randomly chosen player must wear Commoner’s Headband for the entire fight.'],
+  ['Silver Tear Internship','One randomly chosen player must wear Silver Tear Mask for the entire fight.'],
+  ['Bad Hat Day','One randomly chosen player must wear Black Dumpling for the entire fight.'],
+  ['Polite Opening','Both players must perform Polite Bow before either damages the boss.'],
+  ['Standard Opening','Both players must perform Bow before either damages the boss.'],
+  ['Point Downward Review','After the first stance break, one player must perform Point Downward before attacking again.'],
+  ['Academic Violence','One player must perform Erudition immediately before entering or engaging the boss.'],
+  ['Chairman Of The Arena','Before the pull, both players must crouch side by side and stare at the boss for five seconds.'],
+  ['Mandatory Lap','Before the first attack, both players must run one unnecessary circle around each other.'],
+  ['Aggro Ceremony','The player who gets first aggro must stop and slowly walk for three seconds before attacking.'],
+  ['Doorway Committee','Both players must stand in the boss doorway or fog-gate area for five seconds before entering.'],
+  ['Post-Stance Meeting','After the first stance break, both players must stop attacking for three seconds and regroup.'],
+  ['Victory Was Foretold','Before the pull, one player must point directly at the boss while the other crouches. Hold this tableau for three seconds.']
+];
+
+const affinities = ['Heavy','Keen','Quality','Fire','Flame Art','Lightning','Sacred','Magic','Cold','Poison','Blood','Occult'];
+const roles = [
+  'close-range pressure','L2 button owner','jump attack specialist','stance-break goblin','counter-hit guy',
+  'designated aggro holder','dodge specialist','heavy attack specialist','still learning poise','support / utility',
+  'panic-roll coordinator','flask break supervisor','unpaid boss inspector','hitbox dispute specialist','part-time floor ornament','emergency aggro recipient','stamina budget analyst','certified ankle menace','fog gate enthusiast','camera angle victim','one-more-hit optimist','rolling safety officer','poise research volunteer','rune recovery intern','overqualified distraction','heavy attack accountant','boss morale problem','dodge timing consultant','accidental tank','scheduled maintenance hazard'
+];
+
+const penaltyDefs = [
+  ['No Talismans',(s,p)=>`${s} gets ZERO talismans until ${p} is dead. The appeal has consequences.`],
+  ['One Sip',(s,p)=>`${s} may use ONE Crimson Flask per attempt until ${p} dies. One. That is the entire budget.`],
+  ['Heavy Load',(s,p)=>`${s} must stay Heavy Load for every serious attempt against ${p} until victory. Good luck moving.`],
+  ['Shirtless Consequences',(s,p)=>`${s} must remove chest armor AND one additional armor piece until ${p} dies.`],
+  ['No Weapon Skills',(s,p)=>`${s} may not use any weapon skill or Ash of War against ${p} until victory.`],
+  ['No Healing Until It Sucks',(s,p)=>`${s} may not use a Crimson Flask until ${p} is at roughly half health. Every attempt. Yes, this is harsh.`],
+  ['Forty Enemies',(s,p)=>`${s} must kill 40 ordinary enemies in this region without resting before the new weapon is legal against ${p}. Rest or die and the count resets.`],
+  ['Extra Boss',(s,p)=>`${s} must help kill one additional named field or dungeon boss in this region before the replacement weapon is legal against ${p}.`],
+  ['No Rolling For Thirty Seconds',(s,p)=>`${s} may not dodge roll for the first 30 seconds of every serious attempt against ${p}. Run, jump, block, improvise.`],
+  ['Walk Of Shame',(s,p)=>`${s} must go from the current staging Grace to a different Grace in this region and then reach ${p} without fast travel.`],
+  ['Dungeon Chore',(s,p)=>`${s} must clear one uncleared cave, catacomb, tunnel, gaol, or minor dungeon before using the replacement weapon on ${p}.`],
+  ['Twenty Bonks First',(s,p)=>`${s} must kill 20 ordinary enemies with the replacement weapon without resting before it is legal against ${p}.`],
+  ['First Attempt: Absolutely No Juice',(s,p)=>`${s} gets ZERO Crimson Flasks on the first serious attempt against ${p}. After the disaster, normal healing returns.`],
+  ['No Chest Armor',(s,p)=>`${s} must fight ${p} with no chest armor and no talismans until victory. Fashion Souls is unavailable.`],
+  ['Don’t Get Hit',(s,p)=>`${s} must kill 10 ordinary enemies with the replacement weapon without taking damage before it becomes legal against ${p}. One hit and the counter resets.`],
+  ['Light Load Or Die Trying',(s,p)=>`${s} must reach Light Load and may use at most TWO Crimson Flasks for every serious attempt against ${p} until victory.`],
+  ['Leg Armor Tax',(s,p)=>`${s} must remove leg armor and one talisman until ${p} is dead. This is unfortunately mandatory.`],
+  ['Two-Handed Only',(s,p)=>`${s} must two-hand the replacement weapon and may not swap to another weapon, shield, seal, or staff until ${p} dies.`],
+  ['Flask Audit',(s,p)=>`${s} must permanently leave three Crimson Flask uses unused on every attempt against ${p}. If you normally have 12, you have 9 now.`]
+];
+const PLAYERS = ['Chase', 'Morgan'];
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+const MIN_REGIONAL_BOSSES = 3;
+
+const BASE_REMEMBRANCES = [
+  'Godrick the Grafted',
+  'Rennala, Queen of the Full Moon',
+  'Starscourge Radahn',
+  'Regal Ancestor Spirit',
+  'Astel, Naturalborn of the Void',
+  'Rykard, Lord of Blasphemy',
+  'Morgott, the Omen King',
+  'Lichdragon Fortissax',
+  'Fire Giant',
+  'Mohg, Lord of Blood',
+  'Malenia, Blade of Miquella',
+  'Maliketh, the Black Blade',
+  'Dragonlord Placidusax',
+  'Godfrey, First Elden Lord / Hoarah Loux'
+];
+
+const DLC_REMEMBRANCES = [
+  'Divine Beast Dancing Lion',
+  'Rellana, Twin Moon Knight',
+  'Putrescent Knight',
+  'Commander Gaius',
+  'Scadutree Avatar',
+  'Metyr, Mother of Fingers',
+  'Midra, Lord of Frenzied Flame',
+  'Messmer the Impaler',
+  'Romina, Saint of the Bud',
+  'Promised Consort Radahn'
+];
+
+const REMEMBRANCE_REGION = {
+  'Godrick the Grafted': 'Limgrave + Stormveil',
+  'Rennala, Queen of the Full Moon': 'Liurnia of the Lakes',
+  'Starscourge Radahn': 'Caelid',
+  'Regal Ancestor Spirit': 'Siofra River + Nokron',
+  'Astel, Naturalborn of the Void': 'Lake of Rot + Grand Cloister',
+  'Rykard, Lord of Blasphemy': 'Mt. Gelmir',
+  'Morgott, the Omen King': 'Altus Plateau + Leyndell',
+  'Lichdragon Fortissax': 'Deeproot Depths',
+  'Fire Giant': 'Mountaintops of the Giants',
+  'Mohg, Lord of Blood': 'Mohgwyn Palace',
+  'Malenia, Blade of Miquella': 'Miquella’s Haligtree',
+  'Maliketh, the Black Blade': 'Crumbling Farum Azula',
+  'Dragonlord Placidusax': 'Crumbling Farum Azula',
+  'Godfrey, First Elden Lord / Hoarah Loux': 'Leyndell, Ashen Capital',
+  'Divine Beast Dancing Lion': 'Gravesite Plain · DLC',
+  'Rellana, Twin Moon Knight': 'Gravesite Plain · DLC',
+  'Putrescent Knight': 'Cerulean Coast · DLC',
+  'Commander Gaius': 'Scadu Altus + Shadow Keep · DLC',
+  'Scadutree Avatar': 'Scadu Altus + Shadow Keep · DLC',
+  'Metyr, Mother of Fingers': 'Scadu Altus + Shadow Keep · DLC',
+  'Midra, Lord of Frenzied Flame': 'Abyssal Woods · DLC',
+  'Messmer the Impaler': 'Scadu Altus + Shadow Keep · DLC',
+  'Romina, Saint of the Bud': 'Ancient Ruins of Rauh · DLC',
+  'Promised Consort Radahn': 'Enir-Ilim · DLC'
+};
+
+function collectedRemembrances(state) {
+  return new Set((state.history || []).map(x => x.name));
+}
+
+function requiredRemembrances(state) {
+  return state.includeDlc ? [...BASE_REMEMBRANCES, ...DLC_REMEMBRANCES] : [...BASE_REMEMBRANCES];
+}
+
+function missingRemembrances(state) {
+  const collected = collectedRemembrances(state);
+  return requiredRemembrances(state).filter(name => !collected.has(name));
+}
+
+function finalSealOpen(state) {
+  return missingRemembrances(state).length === 0;
+}
+
+function hasRemembrance(state, name) {
+  return collectedRemembrances(state).has(name);
+}
+
+function regionHasMissingRemembrance(state, regionName) {
+  return missingRemembrances(state).some(name => REMEMBRANCE_REGION[name] === regionName);
+}
+
+function regionUnlocked(state, regionName) {
+  const cleared = new Set(state.clearedRegions || []);
+  const has = name => hasRemembrance(state, name);
+  switch (regionName) {
+    case 'Weeping Peninsula':
+    case 'Liurnia of the Lakes':
+    case 'Caelid':
+      return cleared.has('Limgrave + Stormveil');
+    case 'Siofra River + Nokron':
+      return has('Starscourge Radahn');
+    case 'Lake of Rot + Grand Cloister':
+      return has('Regal Ancestor Spirit') && has('Rennala, Queen of the Full Moon');
+    case 'Altus Plateau + Leyndell':
+      return has('Rennala, Queen of the Full Moon');
+    case 'Mt. Gelmir':
+      return cleared.has('Altus Plateau + Leyndell');
+    case 'Deeproot Depths':
+      return has('Regal Ancestor Spirit');
+    case 'Mountaintops of the Giants':
+      return has('Morgott, the Omen King');
+    case 'Mohgwyn Palace':
+      return has('Starscourge Radahn') && cleared.has('Mountaintops of the Giants');
+    case 'Miquella’s Haligtree':
+      return cleared.has('Mountaintops of the Giants');
+    case 'Crumbling Farum Azula':
+      return has('Fire Giant');
+    case 'Leyndell, Ashen Capital':
+      return has('Maliketh, the Black Blade');
+    case 'The Erdtree':
+      return has('Godfrey, First Elden Lord / Hoarah Loux') && finalSealOpen(state);
+    case 'Gravesite Plain · DLC':
+      return Boolean(state.includeDlc) && has('Starscourge Radahn') && has('Mohg, Lord of Blood');
+    case 'Cerulean Coast · DLC':
+    case 'Dragon’s Pit + Jagged Peak · DLC':
+    case 'Scadu Altus + Shadow Keep · DLC':
+      return Boolean(state.includeDlc) && cleared.has('Gravesite Plain · DLC');
+    case 'Abyssal Woods · DLC':
+      return Boolean(state.includeDlc) && cleared.has('Scadu Altus + Shadow Keep · DLC');
+    case 'Ancient Ruins of Rauh · DLC':
+      return Boolean(state.includeDlc) && has('Messmer the Impaler');
+    case 'Enir-Ilim · DLC':
+      return Boolean(state.includeDlc) && has('Messmer the Impaler') && has('Romina, Saint of the Bud');
+    default:
+      return regionName === 'Limgrave + Stormveil';
+  }
+}
+
+function availableNextRegions(state) {
+  const cleared = new Set(state.clearedRegions || []);
+  return Object.keys(regions).filter(regionName => {
+    if (regionName === state.region) return false;
+    if (!state.includeDlc && regionName.includes('· DLC')) return false;
+    if (!regionUnlocked(state, regionName)) return false;
+    if (!cleared.has(regionName)) return true;
+    return regionHasMissingRemembrance(state, regionName);
+  });
+}
+
+function remembranceLedgerMarkup(state) {
+  const required = requiredRemembrances(state);
+  const collected = collectedRemembrances(state);
+  const done = required.filter(name => collected.has(name)).length;
+  const missing = required.filter(name => !collected.has(name));
+  return `<section class="fate-block">
+    <div class="fate-title">REMEMBRANCES · ${done}/${required.length}</div>
+    <div class="fate-copy">${missing.length ? `${missing.length} required before the final seal can break.` : 'all required Remembrances claimed · the final seal is open.'}</div>
+  </section>`;
+}
+
+function defeatedBossNames(state, regionName = state.region) {
+  const names=new Set((state.history || [])
+    .filter(entry => entry?.region === regionName)
+    .map(entry => entry.name));
+  for(const entry of (state.sanctionedBossKills||[])){
+    if(entry?.region===regionName&&entry?.name)names.add(entry.name);
+  }
+  return names;
+}
+
+function availableRegionalBosses(state) {
+  const defeated = defeatedBossNames(state);
+  return (regions[state.region].bosses || []).filter(name => !defeated.has(name));
+}
+
+function capstoneRequirement(state) {
+  if (state.region === 'The Erdtree') return 0;
+  const available = availableRegionalBosses(state);
+  const poolAtEntry = state.cleared + available.length;
+  return Math.min(MIN_REGIONAL_BOSSES, poolAtEntry);
+}
+
+function capstoneChanceForState(state) {
+  const requirement = capstoneRequirement(state);
+  if (state.cleared < requirement) return 0;
+  return Math.min(0.10 + Math.max(0, state.cleared - requirement) * 0.09, 0.82);
+}
+
+function chooseTarget(state) {
+  const region = regions[state.region];
+  if (state.region === 'The Erdtree') return { name: region.exit, exit: true };
+
+  const available = availableRegionalBosses(state);
+  const revisiting = (state.clearedRegions || []).includes(state.region);
+  if (revisiting && available.length) return { name: pick(available), exit: false };
+
+  const requirement = capstoneRequirement(state);
+  if (!available.length) return { name: region.exit, exit: true };
+  if (state.cleared < requirement) return { name: pick(available), exit: false };
+  return Math.random() < capstoneChanceForState(state)
+    ? { name: region.exit, exit: true }
+    : { name: pick(available), exit: false };
+}
+
+function eligibleWeapons(regionName, target) {
+  const region = regions[regionName];
+  const pool = (region.weapons || []).filter(w => !weaponBlockedByTarget(w, target));
+  return pool.length ? pool : (region.weapons || []);
+}
+
+function buildFromWeapon(weapon) {
+  return {
+    ...weapon,
+    affinity: weapon.infusable ? pick(affinities) : 'Fixed / unique',
+    role: pick(roles)
+  };
+}
+
+function recentWeaponNames(state, key, limit = 3) {
+  return (state.history || [])
+    .map(entry => entry?.[key])
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function pairKey(a, b) {
+  return [a, b].sort().join(' || ');
+}
+
+function usedWeaponNames(state) {
+  const used = new Set();
+  for (const entry of (state.history || [])) {
+    if (entry.chaseWeapon) used.add(entry.chaseWeapon);
+    if (entry.morganWeapon) used.add(entry.morganWeapon);
+  }
+  return used;
+}
+
+function accumulatedWeaponPool(state, target) {
+  const regionNames = Array.from(new Set([...(state.clearedRegions || []), state.region]));
+  const byName = new Map();
+  for (const regionName of regionNames) {
+    for (const weapon of eligibleWeapons(regionName, target)) {
+      if (!byName.has(weapon.name)) byName.set(weapon.name, weapon);
+    }
+  }
+  return [...byName.values()];
+}
+
+function scoreWeaponPair(state, chaseWeapon, morganWeapon, poolSize) {
+  const chaseRecent = new Set(recentWeaponNames(state, 'chaseWeapon'));
+  const morganRecent = new Set(recentWeaponNames(state, 'morganWeapon'));
+  const recentPairs = new Set((state.history || [])
+    .map(entry => entry?.weaponPair)
+    .filter(Boolean)
+    .slice(0, Math.min(10, Math.max(4, poolSize * 2))));
+  let score = Math.random();
+  if (!chaseRecent.has(chaseWeapon.name)) score += 5;
+  if (!morganRecent.has(morganWeapon.name)) score += 5;
+  if (!recentPairs.has(pairKey(chaseWeapon.name, morganWeapon.name))) score += 8;
+  return score;
+}
+
+function bestPairFromPool(state, chasePool, morganPool) {
+  const candidates = [];
+  const poolSize = Math.max(chasePool.length, morganPool.length);
+  for (const chaseWeapon of chasePool) {
+    for (const morganWeapon of morganPool) {
+      if (chaseWeapon.name === morganWeapon.name) continue;
+      candidates.push({
+        chaseWeapon,
+        morganWeapon,
+        score: scoreWeaponPair(state, chaseWeapon, morganWeapon, poolSize)
+      });
+    }
+  }
+  if (!candidates.length) return null;
+  candidates.sort((a,b) => b.score - a.score);
+  return candidates[0];
+}
+
+function chooseWeaponPair(state, target) {
+  const currentPool = eligibleWeapons(state.region, target);
+  const used = usedWeaponNames(state);
+  const unusedCurrent = currentPool.filter(w => !used.has(w.name));
+  let pair = null;
+
+  // Burn through the current region's deck before recycling older areas.
+  if (unusedCurrent.length >= 2) {
+    pair = bestPairFromPool(state, unusedCurrent, unusedCurrent);
+  } else if (unusedCurrent.length === 1) {
+    const fallback = accumulatedWeaponPool(state, target).filter(w => w.name !== unusedCurrent[0].name);
+    if (Math.random() < 0.5) pair = bestPairFromPool(state, unusedCurrent, fallback);
+    else pair = bestPairFromPool(state, fallback, unusedCurrent);
+  }
+
+  if (!pair) {
+    const fallback = accumulatedWeaponPool(state, target);
+    pair = bestPairFromPool(state, fallback, fallback);
+  }
+
+  if (!pair) {
+    const only = currentPool[0] || accumulatedWeaponPool(state, target)[0];
+    return { chase: buildFromWeapon(only), morgan: buildFromWeapon(only) };
+  }
+
+  return {
+    chase: buildFromWeapon(pair.chaseWeapon),
+    morgan: buildFromWeapon(pair.morganWeapon)
+  };
+}
+
+function makeBuild(regionName, target, avoidNames = [], state = null) {
+  const avoided = new Set(Array.isArray(avoidNames) ? avoidNames : [avoidNames]);
+  let pool = eligibleWeapons(regionName, target).filter(w => !avoided.has(w.name));
+  if (state) {
+    const unused = pool.filter(w => !usedWeaponNames(state).has(w.name));
+    if (unused.length) pool = unused;
+    else pool = accumulatedWeaponPool(state, target).filter(w => !avoided.has(w.name));
+  }
+  if (!pool.length) pool = eligibleWeapons(regionName, target);
+  return buildFromWeapon(pick(pool));
+}
+
+function newEncounter(state) {
+  const target = chooseTarget(state);
+  const pair = chooseWeaponPair(state, target);
+  const weird = tcPickRite(state);
+  return {
+    id: crypto.randomUUID(),
+    target,
+    chase: pair.chase,
+    morgan: pair.morgan,
+    chaosTrigger: tcPickChaosTrigger(state),
+    chaosTriggered: false,
+    chaosConsequence: '',
+    weirdness: { name: weird[0], text: weird[1], ...riteMeta(weird) },
+    flavor: pick(encounterFlavors),
+    penances: [],
+    createdAt: new Date().toISOString()
+  };
+}
+
+function initialRunState({ region, severity, includeDlc = false, playerNames = ['Tarnished One','Tarnished Two'], createdBy = 'Chase' }) {
+  const base = {
+    version: 2,
+    phase: 'active',
+    region,
+    severity,
+    includeDlc,
+    playerNames: Array.isArray(playerNames) && playerNames.length >= 2 ? playerNames.slice(0,2) : ['Tarnished One','Tarnished Two'],
+    createdBy,
+    cleared: 0,
+    clearedRegions: [],
+    history: [],
+    current: null,
+    regionComplete: false,
+    runComplete: false,
+    lastAction: `${createdBy} started the Covenant.`,
+    updatedAt: new Date().toISOString()
+  };
+  base.current = newEncounter(base);
+  return base;
+}
+
+function completeEncounter(state, actor) {
+  const next = structuredClone(state);
+  const target = next.current.target;
+  const encounter = next.current;
+  const riteFavor = encounter?.smithingRiteFavor ? Math.max(0, Number(encounter?.weirdness?.favor ?? 1)) : 0;
+  const chaosFavor = encounter?.smithingChaosFavor ? Math.max(0, Number(encounter?.chaosFavor ?? 1)) : 0;
+  next.history.unshift({
+    name: target.name,
+    exit: target.exit,
+    region: next.region,
+    completedBy: actor,
+    completedAt: new Date().toISOString(),
+    playerNames: structuredClone(next.playerNames || {}),
+    chaseWeapon: encounter?.chase?.name || '',
+    morganWeapon: encounter?.morgan?.name || '',
+    chaseBuild: encounter?.chase ? structuredClone(encounter.chase) : null,
+    morganBuild: encounter?.morgan ? structuredClone(encounter.morgan) : null,
+    oddRite: encounter?.weirdness ? structuredClone(encounter.weirdness) : null,
+    chaosTrigger: encounter?.chaosTrigger || '',
+    chaosTriggered: Boolean(encounter?.chaosTriggered),
+    chaosConsequence: encounter?.chaosConsequence || '',
+    penances: structuredClone(encounter?.penances || []),
+    favorEarned: Math.max(0, Number(encounter?.favorEarned ?? 0)),
+    rewards: structuredClone(encounter?.postBattleRewards || []),
+    riteOutcome: encounter?.riteForfeited?'Forfeited':(encounter?.smithingRiteFavor?'Honored':'Failed'),
+    chaosOutcome: encounter?.chaosForfeited?'Forfeited':(encounter?.chaosTriggered?(encounter?.smithingChaosFavor?'Honored':'Failed'):'Not triggered')
+  });
+  next.cleared += 1;
+  next.lastAction = `${actor} says ${target.name} is defeated.`;
+  next.updatedAt = new Date().toISOString();
+
+  if (target.exit) {
+    next.clearedRegions = Array.from(new Set([...(next.clearedRegions || []), next.region]));
+    next.regionComplete = true;
+    next.current = null;
+    if (target.name === 'Radagon of the Golden Order / Elden Beast') next.runComplete = true;
+    return next;
+  }
+
+  // If this is a return trip, leave automatically once its outstanding Remembrances are done.
+  if ((next.clearedRegions || []).includes(next.region) && !regionHasMissingRemembrance(next, next.region)) {
+    next.regionComplete = true;
+    next.current = null;
+    return next;
+  }
+
+  const tcDebt=next.pendingDebt||null;
+  next.current = newEncounter(next);
+  if(tcDebt){next.current.covenantDebt=tcDebt;next.pendingDebt=null;}
+  return next;
+}
+
+function rerollChaos(state, actor) {
+  const next = structuredClone(state);
+  next.current.chaosTrigger = pick(chaosTriggers);
+  next.current.chaosTriggered = false;
+  next.current.chaosConsequence = '';
+  next.lastAction = `${actor} rerolled Chaos.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function rerollWeirdness(state, actor) {
+  const next = structuredClone(state);
+  const weird = pick(weirdness);
+  next.current.weirdness = { name: weird[0], text: weird[1], ...riteMeta(weird) };
+  next.lastAction = `${actor} rerolled the Odd Rite.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+
+const TC_EXTRA_RITES = [
+ ['Funeral Custom','Use a Grace Mimic, place a Rainbow Stone beside it, perform Dejection, then walk away without resting.','Grand',2],
+ ['The Three Gifts','Before victory, use a Glowstone, a Warming Stone, and any Prattling Pate in that order.','Grand',2],
+ ['Unlicensed Alchemy','During the encounter, use three differently named temporary-buff consumables as a team. Flask buffs do not count.','Grand',2],
+ ['The Turtle Knows','Bring a Pickled Turtle Neck. Both players bow to the carrier, then the carrier eats it immediately before entering.','Grand',2],
+ ['Pottery Degree','Land three different pot types on the boss before victory.','Grand',2],
+ ['Full Performance Review','Before victory, the team must land a throwing-knife hit, jump attack, charged heavy, weapon skill, and thrown pot.','Grand',2],
+ ['The Procession','Both players walk, not sprint, from the nearest safe approach to the arena entrance, then gesture before entering.','Grand',2],
+ ['False Pilgrimage','Use a Grace Mimic somewhere inconvenient, mark it with two Rainbow Stones, and perform a gesture before continuing.','Grand',2],
+ ['Perfumer’s Union','Use two different Aromatics during the fight. They must be differently named items.','Grand',2],
+ ['Stonehenge, Unfortunately','Place five Rainbow Stones in the arena or immediately outside it before victory.','Grand',2],
+ ['The Four Offices','As a team, land a light attack, charged heavy, jump attack, and weapon skill before anyone uses a second Crimson Flask.','Grand',2],
+ ['Union Dinner','Each player consumes a different food item immediately before the encounter, then neither may heal for the first 15 seconds.','Grand',2],
+ ['Warming Stone Hostage Negotiation','Place a Warming Stone during combat. Both players must touch its effect before either may heal again.','Grand',2],
+ ['Inventory Archaeology','Use three different consumables you have not used yet during this run. Honor system.','Grand',2],
+ ['The Long Introduction','Before attacking, both players gesture, use one consumable each, and circle the arena entrance once.','Grand',2],
+ ['Elemental Filing Cabinet','As a team, deal three different damage types through consumables, grease, weapon skills, or attacks before victory.','Grand',2],
+ ['The Archaeologist','Carry at least five Ruin Fragments into the encounter, place one Rainbow Stone, and use the Telescope before engaging.','Grand',2],
+ ['Ceremonial Bankruptcy','Use one annoying-to-replace consumable you have been hoarding. You decide what counts, but it must hurt emotionally.','Grand',2],
+ ['The Union Has Standards','Use Soap, a food consumable, a crafted offensive item, and a gesture between leaving Grace and defeating the boss.','Grand',2],
+ ['The Liturgical Combo','In order: gesture, thrown-item hit, charged heavy, weapon skill. Any player may perform each step, but do not break the order.','Grand',2],
+ ['Against Better Judgment','No Crimson Flask until both players land a charged heavy. Then use a Warming Stone before anyone takes their second flask.','Grand',2],
+ ['The Full Audit','Before victory, each player uses a non-flask consumable, lands a jump attack, and lands a weapon skill. Also place a Rainbow Stone.','Grand',2],
+ ['Potluck','Each player must land a different type of thrown pot before victory.','True',1],
+ ['Three Point Inspection','Before victory, land one thrown knife, one pot, and one weapon skill as a team.','True',1],
+ ['Stone Witness','Place a Rainbow Stone at the entrance and another inside the arena before victory.','True',1],
+ ['Emergency Illumination','Use a Glowstone after the boss reaches half health.','True',1],
+ ['False Grace','Use a Grace Mimic immediately before the encounter. Respect its complete uselessness.','True',1],
+ ['Sacramental Snack','Each player consumes a different non-flask consumable before the first attack.','True',1],
+ ['Weapon Skill Witness','Both players land their assigned weapon skill at least once before victory.','True',1],
+ ['Heavy Machinery','Both players land one charged heavy before either uses their third Crimson Flask.','True',1],
+ ['Jump Department','Both players land a jump attack before the boss reaches half health.','True',1],
+ ['No Free Crits','On the first stance break, deliberately skip the critical attack and bow or crouch instead.','True',1],
+ ['Formal Introductions','Both players gesture to the boss before either attacks. Different gestures required.','True',1],
+ ['Ceremonial Stonework','Place three Rainbow Stones in a rough triangle before or during the encounter.','True',1],
+ ['The Bell Does Not Toll','Use any Prattling Pate twice during the fight at two different health phases.','True',1],
+ ['Tiny OSHA','Drop one Rainbow Stone and turn on both Lanterns before the pull.','Minor',0],
+ ['Management Photo','Both players stand beside a Rainbow Stone and gesture before engaging.','Minor',0],
+ ['Mandatory Orientation','Both players crouch for five seconds at the arena entrance.','Minor',0],
+ ['Tourist Behavior','Use the Telescope and place a Rainbow Stone before engaging.','Minor',0],
+ ['Clean Workplace','Use Soap and a gesture before the encounter.','Minor',0],
+ ['Off The Sauce','Do not use the Flask of Wondrous Physick for this encounter.','True',1],
+ ['Talisman Teetotaler','Both players remove all talismans for the encounter.','Grand',2],
+ ['Daring Disrobement','Each player removes two armor pieces of their choice for the encounter.','Grand',2],
+ ['The Waver','Both players must one-hand their assigned weapon for the entire encounter. The other hand stays empty.','True',1],
+ ['Thin Crust','Both players must reach Light Load before the pull and keep it for the encounter.','True',1],
+ ['Deep Dish','Both players must reach Heavy Load before the pull and keep it for the encounter.','Grand',2],
+ ['Substance Over Style','No weapon skills for the entire encounter.','True',1],
+ ['Original Flavor','Use the assigned weapon exactly as issued: no changing affinity, no alternate Ash of War, no backup weapon.','True',1],
+ ['QuikClot','Do not intentionally add extra Hemorrhage sources. If your assigned weapon has innate bleed, that is allowed.','True',1],
+ ['Warm Heart','Do not intentionally add extra Frostbite sources. If your assigned weapon has innate frost, that is allowed.','True',1],
+ ['Antidote Inherent','Do not intentionally add Poison sources during the encounter.','True',1],
+ ['Putrefaction Preventative','Do not intentionally add Scarlet Rot sources during the encounter.','True',1],
+ ['Emissary of Insomnia','Do not intentionally add Sleep sources during the encounter.','True',1],
+ ['Panacea','Do not intentionally add any status source beyond whatever your assigned weapon already has.','Grand',2],
+ ['Rejuvenating Rocks','After the first player drops below half health, Crimson Flasks are forbidden until someone stands in a Warming Stone effect.','Grand',2],
+ ['Apeshit Intermission','After the boss reaches half health, both players must make their next damaging hit with a throwable before resuming weapon attacks.','True',1],
+ ['Living Off The Land','Before victory, each player must land damage with one crafted offensive item.','True',1],
+ ['Fastest Draw','If either player uses grease, it must be Drawstring Grease for this encounter.','Minor',0],
+ ['Hygienic Hero','No weapon grease of any kind for this encounter.','Minor',0],
+ ['Critical Convalescence','After the first stance break, nobody may use a Crimson Flask until a critical hit is landed or the stagger window ends unused.','True',1],
+ ['Three Strikes','If the team wipes three times on this boss, both assigned weapons are condemned and must be rerolled before attempt four.','Grand',2],
+ ['The Wheel','If one player dies three times while using the same assigned weapon on this encounter, that player must reroll it before the next serious attempt.','Grand',2],
+ ['Boss and Toss','After victory, both current assigned weapons are retired from the very next encounter only.','Grand',2],
+ ['Arsenal Aesthete','After victory, each current assigned weapon becomes ineligible for that same player on the next two encounters.','Grand',2],
+ ['No Need For Golden Seed','Each player voluntarily removes two Crimson Flask uses from their personal budget for this encounter.','True',1],
+ ['No Tears, No Fears','No Physick and one fewer Crimson Flask use per player for this encounter.','True',1],
+ ['Mana From The Heavens','After your Cerulean Flasks are exhausted, FP recovery may only come from Starlight Shards for the rest of the encounter.','Grand',2],
+ ['The Wall, Temporarily','For 20 consecutive seconds during the fight, one randomly chosen player may not roll. Blocking, sprinting, spacing, and suffering are legal.','True',1],
+];
+const TC_RITE_META = new Map(TC_EXTRA_RITES.map(r=>[r[0],{tier:r[2],favor:r[3]}]));
+weirdness.push(...TC_EXTRA_RITES.map(r=>[r[0],r[1]]));
+function riteMeta(weird){ return TC_RITE_META.get(weird?.[0]) || {tier:'True',favor:1}; }
+
+const TC_EXTRA_CHAOS = [
+ 'SUCCESSION CRISIS: every time aggro changes, the new target must stop attacking for five seconds until victory.',
+ 'FALSE CONFIDENCE: once the boss falls below 25% health, nobody may use Crimson Flasks.',
+ 'DEBT COLLECTOR: if either player dies, the survivor cannot heal for the remainder of that attempt.',
+ 'SCARLET ACCOUNTING: after each Crimson Flask, that player must land a hit before healing again.',
+ 'THE COVENANT WANTS A SHOW: before victory, both players must land a charged heavy and a weapon skill.',
+ 'DIVORCE PROCEEDINGS: both players must remain separated for the rest of this attempt.',
+ 'HOSTILE WORK ENVIRONMENT: randomly choose one player. Remove all talismans until victory.',
+ 'LAST CALL: each player receives exactly two more Crimson Flask uses for the rest of the attempt.',
+ 'SILENT PARTNER: randomly choose one player. They may only attack while the other player has aggro for 30 seconds.',
+ 'NO SAFE OPENINGS: after every heal, that player must land a hit before healing again.',
+ 'MELEE ARBITRATION: nobody may deal ranged damage for the next 30 seconds.',
+ 'ASH OF WAR STRIKE: weapon skills are banned until somebody lands a charged heavy.',
+ 'ROLLING BLACKOUT: randomly choose one player. They may not roll for 15 seconds.',
+ 'STAMINA UNION: neither player may attack while their stamina is below half for 30 seconds.',
+ 'FASHION COURT: both players remove one armor piece of their choice until victory.',
+ 'BODYGUARD CLAUSE: the player with more health must stay closer to the boss for 20 seconds.',
+ 'POTION PROHIBITION: nobody may heal for 20 seconds.',
+ 'AGGRESSION QUOTA: each player must land three hits before their next Crimson Flask.',
+ 'COMPULSORY RETREAT: after each player lands one hit, both must fully disengage once before continuing.',
+ 'THE LONG WAY HOME: if you wipe this attempt, the current Chaos restriction remains binding for the next attempt too.',
+ 'NO MORE MISTAKES: the next player who takes damage loses Crimson Flask access for 30 seconds.',
+ 'EXECUTIVE DECISION: randomly choose one player. Only that player may use weapon skills until the attempt ends.',
+ 'BLOOD PRICE: the next Crimson Flask used requires that player to remove one talisman until victory.',
+ 'COMBO INSPECTION: nobody may hit the boss more than twice consecutively until victory.',
+ 'PANIC TAX: after three consecutive panic rolls, that player must stop attacking for five seconds.',
+ 'DEPARTMENT OF HEAVY OBJECTS: both players must land a jumping heavy before either may heal again.',
+ 'UNPAID INTERNSHIP: randomly choose one player. They deal no damage for 20 seconds and may only survive.',
+ 'MEDICAL LEAVE DENIED: the player with lower health is the only player allowed to heal until health totals reverse.',
+ 'SHARED LIABILITY: if either player heals, the other player cannot heal for 15 seconds.',
+ 'FOG OF WAR: no lock-on and no weapon skills for 30 seconds.',
+ 'AUDIT FROM HELL: before victory, each player must land a light attack, heavy attack, jump attack, and weapon skill.',
+ 'THE GREATER WILL HAS CUT FUNDING: each player gets one more Crimson Flask use. Total. Good luck.',
+ 'SURVIVOR BENEFITS CANCELLED: if one player dies, the survivor removes one talisman and cannot use weapon skills.',
+ 'BOARD MEETING: both players stop attacking for ten seconds. If anyone gets hit, restart the ten seconds.',
+ 'THE COVENANT IS DISPLEASED: both players remove one talisman, no weapon skills, and no lock-on for 20 seconds.',
+ 'MALICIOUS COMPLIANCE: both players two-hand their assigned weapon and cannot heal for 15 seconds.',
+ 'ABSOLUTE SHAMBLES: randomly choose one player to remove all talismans; the other loses weapon skills until wipe or victory.',
+ 'MUTUAL ASSURED DESTRUCTION: while both players are below half health, nobody may heal until one player lands a charged heavy.',
+ 'ONE BUTTON DEPARTMENT: for 30 seconds both players may use only light attacks or only heavy attacks. Choose randomly.',
+ 'NO COMFORT ZONE: both players must swap which side of the boss they are fighting from before attacking again.'
+,
+ 'OFF THE SAUCE: Flask of Wondrous Physick is disabled for the rest of this attempt.',
+ 'TALISMAN TEETOTALER: both players remove all talismans until victory or wipe.',
+ 'DARING DISROBEMENT: each player removes two armor pieces until victory or wipe.',
+ 'THE WAVER: both players must one-hand their assigned weapon for the rest of this attempt. The other hand stays empty.',
+ 'THIN CRUST: both players must reach Light Load before the next attempt and keep it until victory or wipe.',
+ 'DEEP DISH: both players must reach Heavy Load before the next attempt and keep it until victory or wipe.',
+ 'SUBSTANCE OVER STYLE: no weapon skills for the remainder of this attempt.',
+ 'ORIGINAL FLAVOR: no changing affinity, Ash of War, or assigned weapon before the next attempt. Use exactly what the Covenant issued.',
+ 'STATUS EMBARGO: no intentionally added bleed, frost, poison, rot, sleep, or madness sources for the rest of this attempt.',
+ 'REJUVENATING ROCKS: Crimson Flasks are locked until someone stands in a Warming Stone effect.',
+ 'APESHIT INTERMISSION: both players must make their next damaging hit with a throwable before weapon attacks resume.',
+ 'LIVING OFF THE LAND: each player must land damage with one crafted offensive item before either may heal again.',
+ 'HYGIENIC HERO: no weapon grease for the remainder of this attempt.',
+ 'CRITICAL CONVALESCENCE: after the next stance break, no Crimson Flask until a critical hit is landed or the stagger window expires.',
+ 'THE WALL: randomly choose one player. No rolling for 30 seconds. Blocking, sprinting, spacing, and prayer remain legal.',
+ 'THREE STRIKES: if this is your third team wipe on the current boss, both assigned weapons are condemned and must be rerolled before attempt four.',
+ 'THE WHEEL: if a player reaches three deaths on this encounter with the same assigned weapon, that player must reroll before the next serious attempt.',
+ 'BOSS AND TOSS: if you win this attempt, both assigned weapons are retired from the next encounter only.',
+ 'ARSENAL AESTHETE: if you win this attempt, each current weapon is barred from that same player for the next two encounters.',
+ 'NO NEED FOR GOLDEN SEED: each player loses two voluntary Crimson Flask uses for the remainder of this attempt.',
+ 'NO TEARS, NO FEARS: Physick is disabled and each player loses one voluntary Crimson Flask use for the remainder of this attempt.',
+ 'MANA FROM THE HEAVENS: once Cerulean Flasks are gone, the only legal FP recovery is Starlight Shards for the rest of this attempt.',
+ 'SCAVENGER LAW: until victory or wipe, no purchased consumable may be used. Only found or crafted items are legal.',
+ 'DRAWSTRING BUREAU: any grease used for the rest of this attempt must be Drawstring Grease.',
+ 'PANACEA PLAYTHROUGH: do not intentionally add any status source beyond what your assigned weapon already carries.',
+ 'ONE TOOL POLICY: no weapon swapping, no backup weapon, no offhand weapon. Your current assigned weapon is the only weapon you may deal damage with.',
+].map(text=>({text,favor:1}));
+
+const TC_OLD_SOULS_RITES = [
+ ['Old Souls','No jumping for the entire encounter. Jump attacks are therefore also gone.','True',1],
+ ['Dark Souls Department','No jumping, no jump attacks, no Flask of Wondrous Physick, and no weapon skills until victory.','Grand',2],
+ ['Pre-2016 Combat Design','No jumping and no weapon skills for the entire encounter.','True',1],
+ ['The Floor Is Fine','Neither player may jump. If somebody does, both players must fully disengage for five seconds before attacking again.','True',1],
+ ['No Aerial Budget','Jump attacks are forbidden for the entire encounter. Normal jumping for traversal is allowed.','True',1],
+ ['Grounded Employment','For the first 30 seconds after engaging the boss, neither player may jump or use a jump attack.','Minor',0]
+];
+TC_OLD_SOULS_RITES.forEach(r=>{weirdness.push([r[0],r[1]]);TC_RITE_META.set(r[0],{tier:r[2],favor:r[3]});});
+TC_EXTRA_CHAOS.push(...[
+ 'DARK SOULS DEPARTMENT: no jumping, no jump attacks, no Physick, and no weapon skills until victory or wipe.',
+ 'OLD SOULS: no jumping for the rest of this attempt.',
+ 'NO AERIAL BUDGET: jump attacks are forbidden for the rest of this attempt.',
+ 'PRE-2016 COMBAT DESIGN: no jumping and no weapon skills until victory or wipe.',
+ 'GROUNDED: neither player may jump for the next 30 seconds.',
+ 'THE FLOOR IS FINE: if either player jumps, both must disengage for five seconds before attacking again.'
+].map(text=>({text,favor:1})));
+
+const TC_MERCIFUL_CHAOS = new Set([
+ 'ABSOLUTELY NOTHING: Chaos has reviewed the situation and decided you are already suffering enough.',
+ 'FREE DRINK: both players may immediately use one Crimson Flask without it counting against any existing Chaos flask restriction.',
+ 'MORALE BOOST: no new restriction. Both players must say something encouraging and deeply unconvincing before continuing.',
+ 'BOSS UNION BREAK: stop attacking for five seconds. Healing and repositioning are allowed. The boss has requested a meeting.'
+]);
+
+
+const TC_CHAOS_EARLY = [
+ 'ROLLING BLACKOUT: neither player may roll for 15 seconds.',
+ 'WALK IT OFF: neither player may sprint for 30 seconds.',
+ 'FOG OF WAR: no target lock for 30 seconds.',
+ 'POTION PROHIBITION: nobody may heal for 20 seconds.',
+ 'NO CONSUMABLES YET: no consumables until the team lands five more hits.',
+ 'TWO-HAND NOTICE: both players must two-hand their assigned weapon for 30 seconds.',
+ 'GROUND FLOOR: no jump attacks for 30 seconds.',
+ 'NO RUNNING START: no running attacks for the rest of this attempt.',
+ 'MELEE ARBITRATION: no ranged damage for 20 seconds.',
+ 'MAGIC BLACKOUT: no sorceries or incantations for 30 seconds.',
+ 'ASH OF WAR STRIKE: no weapon skills for 30 seconds.',
+ 'HELMET INSPECTION: both players remove their helmets until victory or wipe.',
+ 'CHEST OPEN: randomly choose one player. They remove chest armor until victory or wipe.',
+ 'STAND THERE: both players stop moving for five seconds. Dodging, attacking, and healing are forbidden during the five seconds.',
+ 'INWARD ROLL: each player’s next three dodges must travel toward or across the boss, never directly away.',
+ 'LEFT DEPARTMENT: both players must dodge left for their next three dodges.',
+ 'RIGHT DEPARTMENT: both players must dodge right for their next three dodges.',
+ 'SINGLE INPUTS ONLY: for 15 seconds, each player must release the controls between attacks; no buffered attack strings.',
+ 'THE LONG WAIT: for 20 seconds, after either player dodges they must wait three seconds before attacking.',
+ 'NO FREE JUICE: the next Crimson Flask used by each player is their last Crimson Flask for 30 seconds.'
+];
+
+const TC_CHAOS_MID = [
+ 'SUBSTANCE OVER STYLE: no weapon skills for the rest of this attempt.',
+ 'NO AERIAL BUDGET: no jump attacks or charged heavy attacks for the rest of this attempt.',
+ 'SILENT BUILD: no sorceries or incantations for the rest of this attempt.',
+ 'DRY CERULEAN: no Cerulean Flasks for the rest of this attempt.',
+ 'SHIELD UNION STRIKE: blocking and parrying are forbidden for the rest of this attempt.',
+ 'TALISMAN TEETOTALER: each player removes one equipped talisman until victory or wipe.',
+ 'DARING DISROBEMENT: each player removes one armor piece until victory or wipe.',
+ 'OLD SOULS: no jumping for the rest of this attempt.',
+ 'NO TARGET LOCK: both players disable target lock until victory or wipe.',
+ 'STARVING TARNISHED: no healing of any kind for 45 seconds.',
+ 'FORCED AGGRESSION: each player’s next three damaging hits must be jump attacks.',
+ 'THE WAVER: both players must one-hand their assigned weapon for 30 seconds.',
+ 'MALICIOUS COMPLIANCE: both players two-hand their assigned weapon and may not heal for 20 seconds.',
+ 'FIVE HIT MEDICAL PLAN: each player must land five hits before their next heal.',
+ 'SHACKLED: for 20 seconds, dodges may only travel sideways or toward the boss.',
+ 'Feral Instinct: for 20 seconds, after every dodge that player must sprint toward the boss before attacking again.',
+ 'SPLIT FOCUS: if an add exists, both players must attack an add exclusively for 15 seconds before returning to the boss.',
+ 'HOLLOW OATH: each player loses access to their assigned weapon skill until victory or wipe.',
+ 'WEIGHT OF SIN: both players must reach Heavy Load for 30 seconds, if their inventory allows it; otherwise remove all talismans for 30 seconds.',
+ 'NO SECOND CHANCES: after a failed block or parry, that player may not attack for five seconds. This lasts until victory or wipe.',
+ 'THE COVENANT WANTS A SHOW: before anyone may heal again, each player must land a charged heavy or jump heavy.',
+ 'ONE BUTTON DEPARTMENT: for 30 seconds, both players use light attacks only. Weapon skills, charged attacks, and jump attacks are banned.',
+ 'THE OTHER ONE BUTTON DEPARTMENT: for 30 seconds, both players use heavy attacks only for weapon damage.',
+ 'DRAWSTRING BUREAU: if grease is used for the rest of this attempt, it must be Drawstring Grease.',
+ 'HYGIENIC HERO: no grease for the rest of this attempt.'
+];
+
+const TC_CHAOS_LATE = [
+ 'DARK SOULS DEPARTMENT: no jumping, no jump attacks, no Physick, and no weapon skills until victory or wipe.',
+ 'PRE-2016 COMBAT DESIGN: no jumping and no weapon skills until victory or wipe.',
+ 'ABSOLUTE SHAMBLES: randomly choose one player to remove all talismans; the other loses weapon skills until victory or wipe.',
+ 'THE GREATER WILL HAS CUT FUNDING: each player gets exactly one more Crimson Flask use for the rest of this attempt.',
+ 'FALSE CONFIDENCE: once the boss is below 25% health, nobody may use Crimson Flasks.',
+ 'DEBT COLLECTOR: if either player dies, the survivor cannot heal for the rest of that attempt.',
+ 'SURVIVOR BENEFITS CANCELLED: if one player dies, the survivor removes one talisman and cannot use weapon skills until wipe or victory.',
+ 'PANACEA PLAYTHROUGH: no intentional status buildup may be added beyond the assigned weapons’ native status until victory or wipe.',
+ 'NO TEARS, NO FEARS: no Physick, and each player voluntarily loses one Crimson Flask use for the rest of the attempt.',
+ 'THE PALE CURSE: after any status effect procs on either player, that player may not heal until they land three hits.',
+ 'THE HOLLOW BARGAIN: each player removes one talisman slot; in exchange, each may ignore exactly one later 30-second healing restriction this attempt.',
+ 'ONE LIFE: if the team wipes once more, both assigned weapons are condemned and must be rerolled before the next serious attempt.',
+ 'THE WHEEL: if either player has already died twice with their current assigned weapon, their next death condemns that weapon for the next encounter.',
+ 'BOARD MEETING: both players stop attacking for ten seconds. If either player deals damage, restart the ten-second count.',
+ 'AUDIT FROM HELL: before victory, each player must land a light attack, heavy attack, jump attack, and weapon skill.',
+ 'MUTUAL ASSURED DESTRUCTION: while both players are below half health, nobody may heal until one player lands a charged heavy.',
+ 'NO COMFORT ZONE: both players must cross to the opposite side of the boss before either may attack again.',
+ 'FULL DARK SOULS: no jumping, no target lock, and no weapon skills until victory or wipe.',
+ 'FLOOR IS FINE: if either player jumps, neither player may deal damage for five seconds. This lasts until victory or wipe.',
+ 'FINAL VOW: if the boss reaches 10% health, add OLD SOULS, no weapon skills, and no Crimson Flask use until victory or wipe.',
+ 'TARNISHED NO MORE: the killing blow must be a light or heavy attack from one of the two currently assigned weapons. Skills, spells, throwables, and status ticks do not count; otherwise the victory is not recorded.',
+ 'ASHEN SILENCE: no weapon skills, sorceries, incantations, or Physick until victory or wipe.',
+ 'HOSTILE WORK ENVIRONMENT: each player removes one talisman and loses sprinting for 30 seconds; weapon skills remain banned until victory or wipe.',
+ 'THE COVENANT IS DISPLEASED: both players remove one talisman, disable target lock, and lose weapon skills for 30 seconds.',
+ 'NO SECOND PHASE BENEFITS: from the next phase change onward, no Crimson Flasks until one player lands a critical attack or the attempt ends.'
+];
+
+function tcChaosProgress(state){
+  const kills = Array.isArray(state?.history) ? state.history.length : Number(state?.cleared || 0);
+  const target = state?.includeDlc ? 42 : 30;
+  return Math.max(0, Math.min(1, kills / target));
+}
+
+function tcPickEscalatingChaos(state){
+  const progress = tcChaosProgress(state);
+  const severityBias = state?.severity === 'cursed' ? 0.18 : state?.severity === 'hard' ? 0.09 : 0;
+  const heat = Math.max(0, Math.min(1, progress + severityBias));
+  // Early: mostly tier 1. Mid: tier 2 dominates. Late: tier 3 becomes the plurality.
+  const lateChance = 0.05 + heat * 0.55;
+  const midChance = 0.25 + heat * 0.20;
+  const roll = Math.random();
+  if (roll < lateChance) return pick(TC_CHAOS_LATE);
+  if (roll < lateChance + midChance) return pick(TC_CHAOS_MID);
+  return pick(TC_CHAOS_EARLY);
+}
+
+function triggerChaos(state, actor) {
+  const next = structuredClone(state);
+  if (next.current.chaosTriggered) return next;
+  const consequences = [
+    'TALISMAN TAX: Chase and Morgan each lose one talisman slot until victory.',
+    'JUICE BUDGET: both players lose two voluntary Crimson Flask uses for the rest of this attempt.',
+    'L2 BUTTON BROKE: no weapon skills for the rest of this attempt.',
+    'NO HEALS YET: nobody heals until both players have damaged the boss again.',
+    'BRICK MODE: randomly choose Chase or Morgan. That person must Heavy Load on the next serious attempt.',
+    'THROWN ITEM CHECK: both players must land one thrown consumable before victory.',
+    'AGGRO SWAP: whoever currently has aggro must stop attacking until the boss changes targets.',
+    'PHASE TWO BUDGET CUT: after phase two begins, only one player may heal until somebody dies or the attempt ends.',
+    'CROUCH OF SHAME: both players must crouch for three full seconds before either can attack again.',
+    'NO LOCK-ON: both players turn off target lock for 20 seconds.',
+    'FIVE-SECOND PENALTY: the next player hit must stop attacking for five seconds.',
+    'LEFT SIDE ONLY: Chase may not use light attacks for 20 seconds. Heavy attacks, skills, and panic are legal.',
+    'RIGHT SIDE ONLY: Morgan may not use light attacks for 20 seconds. Figure it out.',
+    'DODGE EMBARGO: both players may not roll for the next 10 seconds. Sprinting and screaming remain available.',
+    'NO SPRINTING: both players may only walk or dodge for the next 15 seconds.',
+    'SOLO WINDOW: Chase must fight alone for 15 seconds while Morgan avoids dealing damage.',
+    'SOLO WINDOW: Morgan must fight alone for 15 seconds while Chase avoids dealing damage.',
+    'HEALING UNION: only Chase may use Crimson Flasks until the boss changes phase or somebody dies.',
+    'HEALING UNION: only Morgan may use Crimson Flasks until the boss changes phase or somebody dies.',
+    'SHARED CUP: the team gets three total Crimson Flask uses for the remainder of this attempt.',
+    'ONE AND DONE: each player gets exactly one more Crimson Flask use this attempt.',
+    'WEAPON SKILL QUOTA: somebody must land a weapon skill before either player may heal again.',
+    'HEAVY ATTACK QUOTA: both players must land one charged heavy before victory.',
+    'JUMP ATTACK AUDIT: each player must land one jump attack before using another Crimson Flask.',
+    'NO CRITS: no critical attacks after stance breaks for the rest of this attempt. Just stare at the glowing spot.',
+    'NO GREED: after landing three hits, a player must disengage until the other player lands a hit.',
+    'PASS THE BOSS: nobody may attack twice in a row. Alternate successful hits until someone gets hit.',
+    'PERSONAL SPACE: Chase and Morgan must stay on opposite sides of the boss for 20 seconds.',
+    'GROUP PROJECT: Chase and Morgan must stand near each other for 10 seconds while the boss remains active.',
+    'NO BLUE JUICE: no Cerulean Flasks for the rest of this attempt.',
+    'NO RED JUICE FOR CHASE: Chase may not use another Crimson Flask this attempt.',
+    'NO RED JUICE FOR MORGAN: Morgan may not use another Crimson Flask this attempt.',
+    'FASHION EMERGENCY: on the next attempt, both players remove their helmets until victory.',
+    'PANTS ARE A PRIVILEGE: randomly choose one player. They remove leg armor on the next attempt.',
+    'TALISMAN EVICTION: randomly choose one player. Remove all talismans on the next attempt.',
+    'TWO-HAND DEPARTMENT: randomly choose one player. They must two-hand their assigned weapon for the rest of this attempt.',
+    'NO TWO-HANDING: both players must one-hand their assigned weapons for 20 seconds.',
+    'CAMERA DEPARTMENT CLOSED: both players fight unlocked for 30 seconds.',
+    'BACK UP: both players must disengage to medium distance before attacking again.',
+    'GET IN THERE: both players must close to melee range before either may heal again.',
+    'CONSUMABLE MEETING: each player must use any non-flask consumable before victory.',
+    'GESTURE OF DOOM: at the next safe opening, one player must perform any gesture. The other must protect them.',
+    'PRATTling PATE EMERGENCY BROADCAST: use any Prattling Pate before the next attempt begins. Its message is legally binding.',
+    'WARMING STONE BUDGET MEETING: place a Warming Stone at the next safe opportunity. Someone has to actually use it.',
+    'CHAIR RULES: after the next wipe, both players must sit or crouch at the fog gate for five seconds before re-entering.',
+    'THE GAME DETECTED FUN: reroll both assigned weapons immediately. No appeal penalty this time; Chaos did it for free.',
+    'ABSOLUTELY NOTHING: Chaos has reviewed the situation and decided you are already suffering enough.',
+    'FREE DRINK: both players may immediately use one Crimson Flask without it counting against any existing Chaos flask restriction.',
+    'MORALE BOOST: no new restriction. Both players must say something encouraging and deeply unconvincing before continuing.',
+    'BOSS UNION BREAK: stop attacking for five seconds. Healing and repositioning are allowed. The boss has requested a meeting.'
+  ];
+  next.current.chaosTriggered = true;
+  const rolledChaos = tcPickEscalatingChaos(next);
+  next.current.chaosConsequence = rolledChaos;
+  next.current.chaosFavor = 1;
+  if(String(rolledChaos).startsWith('NEXT ENCOUNTER DEBT:')) next.pendingDebt=String(rolledChaos).replace('NEXT ENCOUNTER DEBT:','').trim();
+  next.lastAction = `${actor} triggered Chaos.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function targetScope() {
+  const n = Math.random();
+  if (n < 0.34) return { label: 'CHASE', text: 'Chase' };
+  if (n < 0.68) return { label: 'MORGAN', text: 'Morgan' };
+  return { label: 'BOTH', text: 'Chase and Morgan' };
+}
+
+function makePenance(targetName) {
+  const def = pick(penaltyDefs);
+  const scope = targetScope();
+  return {
+    id: crypto.randomUUID(),
+    name: def[0],
+    scope: scope.label,
+    text: def[1](scope.text, targetName)
+  };
+}
+
+function changeWeapons(state, actor, which, useWaiver = false) {
+  const next = structuredClone(state);
+  const current = next.current;
+  if (which === 'chase') {
+    current.chase = makeBuild(next.region, current.target, [current.morgan.name, current.chase.name], next);
+  } else if (which === 'morgan') {
+    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name], next);
+  } else {
+    current.chase = makeBuild(next.region, current.target, [], next);
+    current.morgan = makeBuild(next.region, current.target, [current.chase.name, current.morgan.name], next);
+  }
+  const sm = smithingData(next);
+  const waived = Boolean(useWaiver && sm.appealWaivers > 0);
+  if (waived) { next.smithing = sm; next.smithing.appealWaivers -= 1; }
+  else current.penances.push(makePenance(current.target.name));
+  const names = Array.isArray(next.playerNames) && next.playerNames.length >= 2 ? next.playerNames : ['Tarnished One','Tarnished Two'];
+  const label = which === 'both' ? 'both weapons' : `${which === 'chase' ? names[0] : names[1]}’s weapon`;
+  next.lastAction = waived ? `${actor} changed ${label}; an Appeal Waiver covered the penalty.` : `${actor} changed ${label}; a penalty was added.`;
+  next.updatedAt = new Date().toISOString();
+  return next;
+}
+
+function startNextRegion(state, actor, region, severity = state.severity) {
+  const next = initialRunState({
+    region,
+    severity,
+    includeDlc: Boolean(state.includeDlc),
+    playerNames: state.playerNames || ['Tarnished One','Tarnished Two'],
+    createdBy: state.createdBy || actor
+  });
+  next.history = [...(state.history || [])];
+  next.clearedRegions = [...(state.clearedRegions || [])];
+  next.lastAction = `${actor} entered ${region}.`;
+  return next;
+}
+const SESSION_KEY = 'tarnished-covenant-session-v1';
+const LOCAL_RUN_KEY = 'tarnished-covenant-local-run-v1';
+
+const SESSION_COOKIE = 'tarnished_covenant_session_v1';
+
+function sessionCookiePath() {
+  const path = location.pathname || '/';
+  return path.endsWith('/') ? path : path.slice(0, path.lastIndexOf('/') + 1);
+}
+
+function loadSession() {
+  try {
+    const local = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (local?.runId) return local;
+  } catch {}
+  try {
+    const prefix = `${SESSION_COOKIE}=`;
+    const raw = document.cookie.split(';').map(x=>x.trim()).find(x=>x.startsWith(prefix));
+    if (!raw) return null;
+    const restored = JSON.parse(decodeURIComponent(raw.slice(prefix.length)));
+    if (restored?.runId) {
+      try { localStorage.setItem(SESSION_KEY, JSON.stringify(restored)); } catch {}
+      return restored;
+    }
+  } catch {}
+  return null;
+}
+
+function persistSessionCookie(value) {
+  try {
+    document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(JSON.stringify(value))}; Max-Age=31536000; Path=${sessionCookiePath()}; SameSite=Lax; Secure`;
+  } catch {}
+}
+
+function rememberSharedRunUrl(value) {
+  if (!value?.joinCode || location.protocol === 'file:') return;
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('join', value.joinCode);
+    history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  } catch {}
+}
+
+function saveSession(value) {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(value)); } catch {}
+  persistSessionCookie(value);
+  rememberSharedRunUrl(value);
+}
+
+function clearSession() {
+  try { localStorage.removeItem(SESSION_KEY); } catch {}
+  try { document.cookie = `${SESSION_COOKIE}=; Max-Age=0; Path=${sessionCookiePath()}; SameSite=Lax; Secure`; } catch {}
+  incomingCode = '';
+  try {
+    const url = new URL(location.href);
+    url.searchParams.delete('join');
+    history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  } catch {}
+}
+
+function loadLocalRun() {
+  try { return JSON.parse(localStorage.getItem(LOCAL_RUN_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function saveLocalRun(run) {
+  localStorage.setItem(LOCAL_RUN_KEY, JSON.stringify(run));
+}
+
+function clearLocalRun() {
+  localStorage.removeItem(LOCAL_RUN_KEY);
+}
+function randomCode() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for (let i = 0; i < 6; i++) out += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return out;
+}
+
+async function createBackend(config = {}) {
+  const online = Boolean(config.SUPABASE_URL && config.SUPABASE_ANON_KEY);
+  if (!online) return createLocalBackend();
+
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.115.0/+esm');
+    const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
+    let { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      const result = await supabase.auth.signInAnonymously();
+      if (result.error) throw result.error;
+      session = result.data.session;
+    }
+    return createSupabaseBackend(supabase);
+  } catch (error) {
+    console.warn('Supabase unavailable; falling back to local mode.', error);
+    return createLocalBackend('Cloud sync unavailable; using local save.');
+  }
+}
+
+function createLocalBackend(warning = '') {
+  let listener = null;
+  return {
+    mode: 'local',
+    warning,
+    async createRun(displayName, state) {
+      const run = { id: crypto.randomUUID(), joinCode: randomCode(), state, revision: 0, displayName };
+      saveLocalRun(run);
+      return run;
+    },
+    async joinRun() { throw new Error('Shared rooms are not connected yet. Add Supabase settings to config.js.'); },
+    async getRun() { return loadLocalRun(); },
+    async restartRun(runId, expectedRevision, state) {
+      const current = loadLocalRun();
+      if (current && Number(current.revision ?? 0) !== Number(expectedRevision ?? 0)) {
+        return { success:false, ...current };
+      }
+      const revision = Number(expectedRevision ?? current?.revision ?? 0) + 1;
+      const restarted = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(restarted);
+      if (listener) queueMicrotask(() => listener(restarted));
+      return { success:true, ...restarted };
+    },
+    async updateRun(runId, expectedRevision, state) {
+      const current = loadLocalRun();
+      const revision = (current?.revision ?? expectedRevision) + 1;
+      const run = { ...(current || {}), id: runId, state, revision };
+      saveLocalRun(run);
+      if (listener) queueMicrotask(() => listener(run));
+      return { success: true, ...run };
+    },
+    subscribe(_runId, fn) { listener = fn; return () => { listener = null; }; }
+  };
+}
+
+function createSupabaseBackend(supabase) {
+  let channel = null;
+  return {
+    mode: 'shared',
+    warning: '',
+    async createRun(displayName, state) {
+      const { data, error } = await supabase.rpc('create_covenant_run', {
+        p_display_name: displayName,
+        p_initial_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return normalizeRun(row);
+    },
+    async joinRun(joinCode, displayName) {
+      const { data, error } = await supabase.rpc('join_covenant_run', {
+        p_join_code: joinCode.trim().toUpperCase(),
+        p_display_name: displayName
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return normalizeRun(row);
+    },
+    async getRun(runId) {
+      const { data, error } = await supabase.from('runs')
+        .select('id, join_code, state, revision')
+        .eq('id', runId)
+        .single();
+      if (error) throw error;
+      return normalizeRun(data);
+    },
+    async updateRun(runId, expectedRevision, state) {
+      const { data, error } = await supabase.rpc('update_covenant_state', {
+        p_run_id: runId,
+        p_expected_revision: expectedRevision,
+        p_new_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return {
+        success: Boolean(row.success),
+        id: runId,
+        state: row.state,
+        revision: Number(row.revision)
+      };
+    },
+    async restartRun(runId, expectedRevision, state) {
+      const { data, error } = await supabase.rpc('restart_covenant_run_guarded', {
+        p_run_id: runId,
+        p_expected_revision: expectedRevision,
+        p_new_state: state
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      return {
+        success: Boolean(row.success),
+        id: runId,
+        state: row.state,
+        revision: Number(row.revision)
+      };
+    },
+    subscribe(runId, fn) {
+      if (channel) supabase.removeChannel(channel);
+      let intentionalClose = false;
+      let localChannel = null;
+      localChannel = supabase.channel(`covenant-${runId}`)
+        .on('postgres_changes', {
+          event: 'UPDATE', schema: 'public', table: 'runs', filter: `id=eq.${runId}`
+        }, payload => {
+          const incoming = normalizeRun(payload.new);
+          if (incoming?.id && incoming.id !== runId) return;
+          fn(incoming);
+        })
+        .subscribe((status, error) => {
+          if (typeof window.tcHandleRealtimeChannelStatus === 'function') {
+            window.tcHandleRealtimeChannelStatus(status, error, runId, intentionalClose);
+          }
+        });
+      channel = localChannel;
+      return () => {
+        intentionalClose = true;
+        if (localChannel) supabase.removeChannel(localChannel);
+        if (channel === localChannel) channel = null;
+      };
+    }
+  };
+}
+
+function normalizeRun(row) {
+  return {
+    id: row.id || row.run_id,
+    joinCode: row.join_code,
+    state: row.state,
+    revision: Number(row.revision || 0)
+  };
+}
+const app = document.querySelector('#app');
+const config = window.TARNISHED_CONFIG || {};
+let backend = null;
+let session = loadSession();
+let run = null;
+let unsubscribe = null;
+let pending = false;
+let tcEntryMutationBusy = false;
+let toastTimer = null;
+let uiScreen = 'sanctuary';
+let pendingRevealId = null;
+const acknowledgedChaos = new Set();
+let postBattleReport = null;
+let pendingRewardReveal = null;
+let incomingCode = new URLSearchParams(location.search).get('join')?.trim().toUpperCase() || '';
+
+function h(value = '') {
+  return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+function playerName() { return session?.displayName || 'Chase'; }
+
+function setToast(message) {
+  let el = document.querySelector('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.className = 'toast';
+    app.appendChild(el);
+  }
+  el.textContent = message;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 2800);
+}
+
+function header(compact = false) {
+  return `<header class="site-header ${compact ? 'compact' : ''}">
+    <div class="sigil">✦</div>
+    <div class="eyebrow">shared challenge run</div>
+    <h1>The Tarnished Covenant</h1>
+    ${compact ? '' : '<div class="header-dumb">regional co-op challenge generator</div>'}
+  </header>`;
+}
+
+function setRegionTheme(region = '') {
+  const map = [
+    ['Caelid','caelid'],['Liurnia','liurnia'],['Leyndell','leyndell'],['Altus','leyndell'],
+    ['Gelmir','gelmir'],['Mountaintops','snow'],['Haligtree','haligtree'],['Farum','farum'],
+    ['Gravesite','gravesite'],['Scadu','shadow'],['Cerulean','coast'],['Jagged','jagged'],
+    ['Abyssal','abyss'],['Rauh','rauh'],['Enir','enir'],['Weeping','weeping'],['Limgrave','limgrave']
+  ];
+  const match = map.find(([needle]) => region.includes(needle));
+  document.body.dataset.region = match?.[1] || 'default';
+}
+
+
+function tcResumeDelay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+
+function tcRenderResumeStatus(message='Reconnecting to Covenant…', detail='Your saved run is still remembered on this phone.'){
+  setRegionTheme('');
+  const code=session?.joinCode||incomingCode||'';
+  app.innerHTML=`${header(true)}
+    <section class="menu-section stack tc-resume-guard">
+      <div class="menu-title">${h(message)}</div>
+      <div class="sub center">${h(detail)}</div>
+      ${code?`<div class="center"><span class="mode-pill">saved room · ${h(code)}</span></div>`:''}
+      <div class="status">Do not start a new Covenant. The app is recovering the existing one.</div>
+    </section>`;
+}
+
+function tcActivateRememberedRun(recovered, remembered){
+  run=recovered;
+  session={
+    runId:run.id,
+    joinCode:run.joinCode||remembered?.joinCode||incomingCode||'',
+    displayName:remembered?.displayName||'Tarnished'
+  };
+  saveSession(session);
+  subscribe();
+  renderRun();
+  return true;
+}
+
+function tcRenderResumeRecovery(lastError){
+  setRegionTheme('');
+  const code=session?.joinCode||incomingCode||'';
+  app.innerHTML=`${header(true)}
+    <section class="menu-section stack tc-resume-guard">
+      <div class="menu-title">Covenant still saved</div>
+      <div class="sub center">The cloud connection did not recover yet. Your saved run reference has not been erased.</div>
+      ${code?`<div class="center"><span class="mode-pill">saved room · ${h(code)}</span></div>`:''}
+      <button id="tcRetryResume" class="btn gold" type="button">Retry Existing Covenant</button>
+      ${code?`<button id="tcRetryRoom" class="btn ghost" type="button">Reconnect to Saved Room ${h(code)}</button>`:''}
+      <div class="status warn">${h(lastError?.message||'Temporary sync failure.')} · Starting a new run is intentionally blocked from this recovery screen.</div>
+    </section>`;
+  document.querySelector('#tcRetryResume')?.addEventListener('click',boot);
+  document.querySelector('#tcRetryRoom')?.addEventListener('click',async()=>{
+    tcRenderResumeStatus('Rejoining saved room…','Using the room code stored on this phone.');
+    try{
+      if(backend.mode!=='shared')backend=await createBackend(config);
+      if(backend.mode!=='shared')throw new Error('Shared sync is still unavailable.');
+      const joined=await backend.joinRun(code,session?.displayName||'Tarnished');
+      tcActivateRememberedRun(joined,session);
+    }catch(error){console.warn(error);tcRenderResumeRecovery(error);}
+  });
+}
+
+async function tcRecoverRememberedRun(){
+  const remembered={...(session||{})};
+  const hasSharedBreadcrumb=Boolean(remembered.joinCode||incomingCode);
+  const delays=[0,450,1000,1800];
+  let lastError=null;
+  tcRenderResumeStatus();
+
+  for(let attempt=0;attempt<delays.length;attempt+=1){
+    if(delays[attempt])await tcResumeDelay(delays[attempt]);
+    try{
+      if(hasSharedBreadcrumb && backend.mode!=='shared'){
+        tcRenderResumeStatus('Reconnecting to shared Covenant…',`Recovery attempt ${attempt+1} of ${delays.length}.`);
+        backend=await createBackend(config);
+      }
+
+      if(remembered.runId && (!hasSharedBreadcrumb || backend.mode==='shared')){
+        const recovered=await backend.getRun(remembered.runId);
+        if(recovered?.state)return tcActivateRememberedRun(recovered,remembered);
+        throw new Error('Saved run was not returned yet.');
+      }
+    }catch(error){lastError=error;console.warn('Covenant resume attempt failed',attempt+1,error);}
+  }
+
+  const code=remembered.joinCode||incomingCode||'';
+  if(code && backend.mode==='shared'){
+    try{
+      tcRenderResumeStatus('Rejoining saved room…','The saved run ID did not answer, so the app is recovering through its room code.');
+      const joined=await backend.joinRun(code,remembered.displayName||'Tarnished');
+      if(joined?.state)return tcActivateRememberedRun(joined,remembered);
+    }catch(error){lastError=error;console.warn('Saved room recovery failed',error);}
+  }
+
+  tcRenderResumeRecovery(lastError||new Error('Covenant sync is temporarily unavailable.'));
+  return false;
+}
+
+async function boot(){
+  if(session?.runId||session?.joinCode||incomingCode){
+    return tcRecoverRememberedRun();
+  }
+  renderHome();
+}
+
+
+function renderHome() {
+  setRegionTheme('');
+  const saved = Boolean(session?.runId);
+  app.innerHTML = `${header()}
+    <p class="sub center">Two Tarnished. One increasingly questionable covenant.</p>
+    <div class="center"><span class="mode-pill">${backend.mode === 'shared' ? 'shared sync ready' : 'local save mode'}</span></div>
+    ${incomingCode ? `<div class="join-banner">shared Covenant invite · code <strong>${h(incomingCode)}</strong></div>` : ''}
+    ${backend.warning ? `<div class="status warn">${h(backend.warning)}</div>` : ''}
+    <section class="menu-section stack">
+      <button class="btn gold" id="newRun" type="button">Begin New Covenant</button>
+      ${saved ? `<button class="btn ghost" id="resumeRun" type="button">Resume Existing Run</button>` : ''}
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <div class="eyebrow left">join a shared run</div>
+      <div>
+        <label class="label" for="joinCode">covenant code</label>
+        <input id="joinCode" inputmode="text" autocomplete="off" maxlength="6" placeholder="ABC123" value="${h(incomingCode)}" ${backend.mode !== 'shared' ? 'disabled' : ''}>
+      </div>
+      <button class="btn ghost" id="joinRun" type="button" ${backend.mode !== 'shared' ? 'disabled' : ''}>Join Covenant</button>
+      ${backend.mode !== 'shared' ? `<div class="status">shared mode unavailable</div>` : ''}
+    </section>`;
+
+  document.querySelector('#newRun').addEventListener('click', () => renderNewRun('Chase'));
+  document.querySelector('#resumeRun')?.addEventListener('click', boot);
+  document.querySelector('#joinRun').addEventListener('click', async () => {
+    const code = document.querySelector('#joinCode').value.trim().toUpperCase();
+    if (code.length < 4) return setToast('Enter the Covenant code first.');
+    await joinSharedRun(code, 'Morgan');
+  });
+}
+
+function renderNewRun(identity) {
+  app.innerHTML = `${header(true)}
+    <section class="menu-section stack new-run">
+      <div class="menu-title">name your Tarnished</div>
+      <div class="tc-name-grid">
+        <div>
+          <label class="label" for="characterOne">your character</label>
+          <input id="characterOne" type="text" maxlength="24" autocomplete="off" placeholder="Character name">
+        </div>
+        <div>
+          <label class="label" for="characterTwo">co-op partner</label>
+          <input id="characterTwo" type="text" maxlength="24" autocomplete="off" placeholder="Character name">
+        </div>
+      </div>
+      <div class="status" style="font-style:italic">These are the names the Covenant will use for weapon assignments, Chaos, appeals, and decrees.</div>
+      <div>
+        <label class="label">starting region</label>
+        <div class="status">Limgrave + Stormveil</div>
+      </div>
+      <div>
+        <label class="label" for="ruleset">remembrance ruleset</label>
+        <select id="ruleset"><option value="base" selected>Base Game · All Remembrances</option><option value="dlc">Base + Shadow of the Erdtree · All Remembrances</option></select>
+      </div>
+      <button class="btn gold" id="createRun" type="button">Begin Covenant</button>
+      <button class="btn text-btn" id="back" type="button">Back</button>
+    </section>`;
+  document.querySelector('#back').addEventListener('click', renderHome);
+  document.querySelector('#createRun').addEventListener('click', async () => {
+    const one = document.querySelector('#characterOne').value.trim();
+    const two = document.querySelector('#characterTwo').value.trim();
+    if (!one || !two) return setToast('Name both Tarnished first.');
+    if (tcEntryMutationBusy) return;
+    tcEntryMutationBusy = true;
+    const state = initialRunState({
+      region: 'Limgrave + Stormveil',
+      severity: 'cursed',
+      includeDlc: document.querySelector('#ruleset').value === 'dlc',
+      playerNames: [one, two],
+      createdBy: identity
+    });
+    try {
+      const created = await backend.createRun(identity, state);
+      run = created;
+      session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
+      saveSession(session);
+      subscribe();
+      uiScreen = 'sanctuary';
+      renderRun();
+    } catch (error) {
+      console.error(error);
+      setToast(error.message || 'Could not create Covenant.');
+    } finally {
+      tcEntryMutationBusy = false;
+    }
+  });
+}
+
+async function joinSharedRun(code, identity) {
+  if (tcEntryMutationBusy) return false;
+  tcEntryMutationBusy = true;
+  try {
+    const joined = await backend.joinRun(code, identity);
+    run = joined;
+    session = { runId: run.id, joinCode: run.joinCode, displayName: identity };
+    saveSession(session);
+    subscribe();
+    rememberSharedRunUrl(session);
+    renderRun();
+  } catch (error) {
+    console.error(error);
+    setToast(error.message || 'Could not join that Covenant.');
+    return false;
+  } finally {
+    tcEntryMutationBusy = false;
+  }
+}
+
+function subscribe() {
+  unsubscribe?.();
+  unsubscribe = backend.subscribe(run.id, incoming => {
+    if (!incoming?.state) return;
+    if (incoming.revision >= run.revision) {
+      run = { ...run, ...incoming };
+      renderRun();
+    }
+  });
+}
+
+async function commit(nextState, { retryBuilder = null, successToast = '' } = {}) {
+  if (pending) {
+    setToast('One action is still saving.');
+    return false;
+  }
+  pending = true;
+  try {
+    let desiredState = nextState;
+    let expectedRevision = run.revision;
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const result = await backend.updateRun(run.id, expectedRevision, desiredState);
+      const resultRevision = Number(result.revision || 0);
+      if (result.success) {
+        if (resultRevision >= Number(run.revision || 0)) {
+          const previousState = run.state;
+          run = { ...run, state: result.state, revision: resultRevision };
+          if (typeof tcClearStaleSharedTransients === 'function') tcClearStaleSharedTransients(previousState, run.state);
+        }
+        try {
+          renderRun();
+        } catch (renderError) {
+          console.error('State saved, but rendering the next screen failed:', renderError);
+          if (run.state?.regionComplete && !run.state?.runComplete) {
+            renderRegionCompleteSafe();
+          } else {
+            setToast('Saved successfully. Refresh the app if this screen looks stuck.');
+          }
+        }
+        if (successToast) setToast(successToast);
+        return true;
+      }
+
+      if (resultRevision >= Number(run.revision || 0)) {
+        const previousState = run.state;
+        run = { ...run, state: result.state, revision: resultRevision };
+        if (typeof tcClearStaleSharedTransients === 'function') tcClearStaleSharedTransients(previousState, run.state);
+      }
+      if (!retryBuilder) {
+        renderRun();
+        setToast('The run changed on the other phone. Try again.');
+        return false;
+      }
+
+      expectedRevision = run.revision;
+      const rebuiltState = retryBuilder(run.state);
+      if (!rebuiltState) {
+        renderRun();
+        setToast('The run changed on the other phone. That action no longer applies.');
+        return false;
+      }
+      desiredState = rebuiltState;
+    }
+
+    renderRun();
+    setToast('Restart could not complete. Try again.');
+    return false;
+  } catch (error) {
+    console.error(error);
+    if (backend?.mode === 'shared' && run?.id) {
+      try {
+        const latest = await backend.getRun(run.id);
+        const changed = tcApplyAuthoritativeRun(latest, {source:'save-recovery'});
+        if (changed) {
+          setToast('Connection hiccup. Shared run resynced; check the latest state before retrying.');
+          return false;
+        }
+      } catch (syncError) {
+        console.warn('Shared save recovery fetch failed', syncError);
+      }
+    }
+    setToast('Save failed. Try again.');
+    return false;
+  } finally {
+    pending = false;
+    if (typeof tcDrainDeferredSharedSync === 'function') queueMicrotask(tcDrainDeferredSharedSync);
+  }
+}
+
+const weaponAsides = ['sorry','well then','this one I guess','weapon','good luck','could be worse','hell yeah?','unfortunate','big if true','don’t overthink it'];
+function stableAside(name, build) {
+  const str = `${name}:${build.name}`;
+  let n = 0;
+  for (const ch of str) n = (n * 31 + ch.charCodeAt(0)) >>> 0;
+  return weaponAsides[n % weaponAsides.length];
+}
+
+function weaponCard(name, build) {
+  return `<article class="player">
+    <div class="who">${h(name)} has to use</div>
+    <div class="weapon">${h(build.name)}</div>
+    <div class="weapon-aside">${h(stableAside(name, build))}</div>
+    <div class="weapon-type">${h(build.type)}</div>
+    <dl class="weapon-stats">
+      <div><dt>skill</dt><dd>${h(build.native)}</dd></div>
+      <div><dt>upgrade</dt><dd>${h(build.upgrade)}</dd></div>
+      <div><dt>infusion</dt><dd>${h(build.affinity)}</dd></div>
+      <div><dt>job</dt><dd>${h(build.role)}</dd></div>
+    </dl>
+  </article>`;
+}
+
+function progressMarks(state) {
+  const required = capstoneRequirement(state);
+  const count = Math.max(4, Math.min(10, Math.max(required + 4, state.cleared + 3)));
+  return Array.from({length:count},(_,i)=>`<span class="mark ${i < state.cleared ? 'done' : ''} ${i < required ? 'required' : ''}">${i < state.cleared ? '◆' : '◇'}</span>`).join('');
+}
+
+function capstoneBlock(state) {
+  if (state.region === 'The Erdtree') return `<div class="fate-block"><div class="fate-title">FINAL AUDIENCE</div><div class="fate-copy">all required Remembrances have been claimed.</div></div>`;
+  const required = capstoneRequirement(state);
+  const fate = Math.round(capstoneChanceForState(state) * 100);
+  const locked = state.cleared < required;
+  const needed = Math.max(0, required - state.cleared);
+  return `<div class="fate-block">
+    <div class="progress-marks">${progressMarks(state)}</div>
+    <div class="fate-title">${locked ? 'CAPSTONE SEALED' : (availableRegionalBosses(state).length ? `CAPSTONE CHANCE · ${fate}%` : 'CAPSTONE NEXT')}</div>
+    <div class="fate-copy">${locked ? `${needed} more regional ${needed === 1 ? 'boss' : 'bosses'} required · capstone remains locked` : (availableRegionalBosses(state).length ? 'the regional capstone is now eligible to roll.' : 'all preliminary bosses in this area are cleared.')}</div>
+  </div>`;
+}
+
+function penanceMarkup(c) {
+  if (!c.penances?.length) return '';
+  const state = run?.state;
+  return `<section class="curse-section">
+    <div class="section-kicker redtext">armament penalties</div>
+    <div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>
+    ${c.penances.map((p,i)=>`<div class="penance-item">
+      <div class="scope">${h(personalizePlayers(p.scope,state))} · penalty ${i+1}</div>
+      <div class="penance-name">${h(p.name)}</div>
+      <div class="penance-text">${h(personalizePlayers(p.text,state))}</div>
+    </div>`).join('')}
+    <div class="subtext">Penalties stack until the current target is defeated.</div>
+  </section>`;
+}
+
+
+
+
+const TC_REGION_IMAGES = {
+  "Limgrave + Stormveil": "./assets/regions/limgrave.webp",
+  "Weeping Peninsula": "./assets/regions/limgrave.webp",
+  "Liurnia of the Lakes": "./assets/regions/liurnia-of-the-lakes.webp",
+  "Caelid": "./assets/regions/caelid.webp",
+  "Altus Plateau + Leyndell": "./assets/regions/altus-plateau.webp",
+  "Mt. Gelmir": "./assets/regions/mt-gelmir.webp",
+  "Mountaintops of the Giants": "./assets/regions/mountaintops-of-the-giants.webp",
+  "Miquella’s Haligtree": "./assets/regions/haligtree.webp",
+  "Crumbling Farum Azula": "./assets/regions/farum-azula.webp",
+  "Siofra River + Nokron": "./assets/regions/underground.webp",
+  "Lake of Rot + Grand Cloister": "./assets/regions/underground.webp",
+  "Deeproot Depths": "./assets/regions/underground.webp",
+  "Mohgwyn Palace": "./assets/regions/mohgwyn-palace.webp",
+  "Leyndell, Ashen Capital": "./assets/regions/altus-plateau.webp",
+  "The Erdtree": "./assets/regions/altus-plateau.webp",
+  "Gravesite Plain · DLC": "./assets/regions/gravesite-plain.webp",
+  "Cerulean Coast · DLC": "./assets/regions/cerulean-coast.webp",
+  "Dragon’s Pit + Jagged Peak · DLC": "./assets/regions/jagged-peak.webp",
+  "Scadu Altus + Shadow Keep · DLC": "./assets/regions/scadu-altus.webp",
+  "Abyssal Woods · DLC": "./assets/regions/abyssal-woods.webp",
+  "Ancient Ruins of Rauh · DLC": "./assets/regions/ancient-ruins-of-rauh.webp",
+  "Enir-Ilim · DLC": "./assets/regions/enir-ilim.webp"
+};
+function actualRegionImage(name){ return TC_REGION_IMAGES[name] || TC_REGION_IMAGES['Limgrave + Stormveil']; }
+
+/* --- Imported boss image library --- */
+const TC_BOSS_IMAGES={"abductor duo": "./assets/bosses/abductor-duo.webp", "adan thief of fire": "./assets/bosses/adan-thief-of-fire.webp", "alabaster lord": "./assets/bosses/alabaster-lord.webp", "alecto black knife ringleader": "./assets/bosses/alecto-black-knife-ringleader.webp", "ancestor spirit": "./assets/bosses/ancestor-spirit.webp", "ancient dragon lansseax": "./assets/bosses/ancient-dragon-lansseax.webp", "ancient dragon man": "./assets/bosses/ancient-dragon-man.webp", "ancient dragon senessax": "./assets/bosses/ancient-dragon-senessax.webp", "ancient hero of zamor": "./assets/bosses/ancient-hero-of-zamor.webp", "astel stars of darkness": "./assets/bosses/astel-stars-of-darkness.webp", "astel naturalborn of the void": "./assets/bosses/astel-naturalborn-of-the-void.webp", "battlemage hugues": "./assets/bosses/battlemage-hugues.webp", "bayle the dread": "./assets/bosses/bayle-the-dread.webp", "beastman of farum azula": "./assets/bosses/beastman-of-farum-azula.webp", "bell bearing hunter": "./assets/bosses/bell-bearing-hunter.webp", "black blade kindred": "./assets/bosses/black-blade-kindred.webp", "black knife assassin": "./assets/bosses/black-knife-assassin.webp", "black knight edredd": "./assets/bosses/black-knight-edredd.webp", "black knight garrew": "./assets/bosses/black-knight-garrew.webp", "blackgaol knight or knight of the solitary gaol": "./assets/bosses/blackgaol-knight-or-knight-of-the-solitary-gaol.webp", "bloodhound knight darriwil": "./assets/bosses/bloodhound-knight-darriwil.webp", "bols carian knight": "./assets/bosses/bols-carian-knight.webp", "borealis of the freezing fog": "./assets/bosses/borealis-of-the-freezing-fog.webp", "cemetery shade": "./assets/bosses/cemetery-shade.webp", "chief bloodfiend": "./assets/bosses/chief-bloodfiend.webp", "cleanrot knight": "./assets/bosses/cleanrot-knight.webp", "commander gaius": "./assets/bosses/commander-gaius.webp", "commander niall": "./assets/bosses/commander-niall.webp", "commander oneil": "./assets/bosses/commander-oneil.webp", "count ymir": "./assets/bosses/count-ymir.webp", "crucible knight ordovis": "./assets/bosses/crucible-knight-ordovis.webp", "crucible knight siluria": "./assets/bosses/crucible-knight-siluria.webp", "crucible knight": "./assets/bosses/crucible-knight.webp", "crystalian ringblade": "./assets/bosses/crystalian-ringblade.webp", "curseblade labirith": "./assets/bosses/curseblade-labirith.webp", "dancer of ranah": "./assets/bosses/dancer-of-ranah.webp", "death knight": "./assets/bosses/death-knight.webp", "death rite bird": "./assets/bosses/death-rite-bird.webp", "deathbird": "./assets/bosses/deathbird.webp", "decaying ekzykes": "./assets/bosses/decaying-ekzykes.webp", "demi human chiefs": "./assets/bosses/demi-human-chiefs.webp", "demi human queen gilika": "./assets/bosses/demi-human-queen-gilika.webp", "demi human queen maggie": "./assets/bosses/demi-human-queen-maggie.webp", "demi human queen margot": "./assets/bosses/demi-human-queen-margot.webp", "demi human queen marigga": "./assets/bosses/demi-human-queen-marigga.webp", "demi human swordmaster onze": "./assets/bosses/demi-human-swordmaster-onze.webp", "divine beast dancing lion deathblight": "./assets/bosses/divine-beast-dancing-lion-deathblight.webp", "divine beast dancing lion": "./assets/bosses/divine-beast-dancing-lion.webp", "draconic tree sentinel": "./assets/bosses/draconic-tree-sentinel.webp", "dragonkin soldier lake of rot": "./assets/bosses/dragonkin-soldier-lake-of-rot.webp", "dragonkin soldier of nokstella": "./assets/bosses/dragonkin-soldier-of-nokstella.webp", "dragonkin soldier": "./assets/bosses/dragonkin-soldier.webp", "dragonlord placidusax": "./assets/bosses/dragonlord-placidusax.webp", "dryleaf dane": "./assets/bosses/dryleaf-dane.webp", "elemer of the briar": "./assets/bosses/elemer-of-the-briar.webp", "erdtree avatar": "./assets/bosses/erdtree-avatar.webp", "erdtree burial watchdog": "./assets/bosses/erdtree-burial-watchdog.webp", "esgar priest of blood": "./assets/bosses/esgar-priest-of-blood.webp", "fallingstar beast": "./assets/bosses/fallingstar-beast.webp", "fell twins": "./assets/bosses/fell-twins.webp", "fia s champions": "./assets/bosses/fia-s-champions.webp", "fire giant": "./assets/bosses/fire-giant.webp", "flying dragon agheel": "./assets/bosses/flying-dragon-agheel.webp", "flying dragon greyll": "./assets/bosses/flying-dragon-greyll.webp", "frenzied duelist": "./assets/bosses/frenzied-duelist.webp", "ghostflame dragon": "./assets/bosses/ghostflame-dragon.webp", "glintstone dragon adula": "./assets/bosses/glintstone-dragon-adula.webp", "glintstone dragon smarag": "./assets/bosses/glintstone-dragon-smarag.webp", "godefroy the grafted": "./assets/bosses/godefroy-the-grafted.webp", "godfrey first elden lord": "./assets/bosses/godfrey-first-elden-lord.webp", "godksin duo": "./assets/bosses/godksin-duo.webp", "godrey hoarah loux": "./assets/bosses/godrey-hoarah-loux.webp", "godrick the grafted": "./assets/bosses/godrick-the-grafted.webp", "godskin apostle": "./assets/bosses/godskin-apostle.webp", "godskin noble": "./assets/bosses/godskin-noble.webp", "golden hippopotamus": "./assets/bosses/golden-hippopotamus.webp", "grafted scion": "./assets/bosses/grafted-scion.webp", "grave warden duelist": "./assets/bosses/grave-warden-duelist.webp", "great wyrm theodorix": "./assets/bosses/great-wyrm-theodorix.webp", "guardian golem": "./assets/bosses/guardian-golem.webp", "jagged peak drake": "./assets/bosses/jagged-peak-drake.webp", "jori elder inquisitor": "./assets/bosses/jori-elder-inquisitor.webp", "kindred of rot": "./assets/bosses/kindred-of-rot.webp", "lamenter": "./assets/bosses/lamenter.webp", "leonine misbegotten": "./assets/bosses/leonine-misbegotten.webp", "lichdragon fortissax": "./assets/bosses/lichdragon-fortissax.webp", "loretta knight of the haligtree": "./assets/bosses/loretta-knight-of-the-haligtree.webp", "mad pumpkin head": "./assets/bosses/mad-pumpkin-head.webp", "magma wyrm makar": "./assets/bosses/magma-wyrm-makar.webp", "magma wyrm": "./assets/bosses/magma-wyrm.webp", "malekith the black blade": "./assets/bosses/malekith-the-black-blade.webp", "malenia blade of miquella": "./assets/bosses/malenia-blade-of-miquella.webp", "margit the fell omen": "./assets/bosses/margit-the-fell-omen.webp", "messmer the impaler": "./assets/bosses/messmer-the-impaler.webp", "metyr mother of fingers": "./assets/bosses/metyr-mother-of-fingers.webp", "midra lord of frenzied flame": "./assets/bosses/midra-lord-of-frenzied-flame.webp", "mimic tear": "./assets/bosses/mimic-tear.webp", "miranda the blighted bloom": "./assets/bosses/miranda-the-blighted-bloom.webp", "misbegotten crusader": "./assets/bosses/misbegotten-crusader.webp", "misbegotten warrior and crucible knight": "./assets/bosses/misbegotten-warrior-and-crucible-knight.webp", "mohg lord of blood": "./assets/bosses/mohg-lord-of-blood.webp", "mohg the omen": "./assets/bosses/mohg-the-omen.webp", "morgott omen king": "./assets/bosses/morgott-omen-king.webp", "necromancer garris": "./assets/bosses/necromancer-garris.webp", "night s cavalry": "./assets/bosses/night-s-cavalry.webp", "nox swordstress and nox priest": "./assets/bosses/nox-swordstress-and-nox-priest.webp", "omenkiller": "./assets/bosses/omenkiller.webp", "onyx lord": "./assets/bosses/onyx-lord.webp", "patches": "./assets/bosses/patches.webp", "perfumer tricia": "./assets/bosses/perfumer-tricia.webp", "promised consort radahn": "./assets/bosses/promised-consort-radahn.webp", "putrescent knight": "./assets/bosses/putrescent-knight.webp", "putrid crystallians": "./assets/bosses/putrid-crystallians.webp", "radagon elden beast": "./assets/bosses/radagon-elden-beast.webp", "rakshasa": "./assets/bosses/rakshasa.webp", "ralva the great red bear": "./assets/bosses/ralva-the-great-red-bear.webp", "red wolf of radagon": "./assets/bosses/red-wolf-of-radagon.webp", "regal ancestor spirit": "./assets/bosses/regal-ancestor-spirit.webp", "rellana twin moon knight": "./assets/bosses/rellana-twin-moon-knight.webp", "rennala queen of the full moon": "./assets/bosses/rennala-queen-of-the-full-moon.webp", "romina saint of the bud": "./assets/bosses/romina-saint-of-the-bud.webp", "royal knight loretta": "./assets/bosses/royal-knight-loretta.webp", "royal revenant": "./assets/bosses/royal-revenant.webp", "rugalea the great red bear": "./assets/bosses/rugalea-the-great-red-bear.webp", "runebear": "./assets/bosses/runebear.webp", "rykard lord of blasphemy": "./assets/bosses/rykard-lord-of-blasphemy.webp", "scadutree avatar": "./assets/bosses/scadutree-avatar.webp", "scaly misbegotten": "./assets/bosses/scaly-misbegotten.webp", "sir gideon ofnir the all knowing": "./assets/bosses/sir-gideon-ofnir-the-all-knowing.webp", "soldier of godrick": "./assets/bosses/soldier-of-godrick.webp", "spiritcaller snail": "./assets/bosses/spiritcaller-snail.webp", "starscourge radahn": "./assets/bosses/starscourge-radahn.webp", "stonedigger troll": "./assets/bosses/stonedigger-troll.webp", "stray mimic tear": "./assets/bosses/stray-mimic-tear.webp", "tibia mariner": "./assets/bosses/tibia-mariner.webp", "tree sentinel duo": "./assets/bosses/tree-sentinel-duo.webp", "tree sentinel": "./assets/bosses/tree-sentinel.webp", "ulcerated tree spirit": "./assets/bosses/ulcerated-tree-spirit.webp", "valiant gargoyles": "./assets/bosses/valiant-gargoyles.webp", "vyke": "./assets/bosses/vyke.webp", "wormface": "./assets/bosses/wormface.webp", "abductor virgins duo": "./assets/bosses/abductor-duo.webp", "blackgaol knight": "./assets/bosses/blackgaol-knight-or-knight-of-the-solitary-gaol.webp", "borealis the freezing fog": "./assets/bosses/borealis-of-the-freezing-fog.webp", "commander o neil": "./assets/bosses/commander-oneil.webp", "count ymir mother of fingers": "./assets/bosses/count-ymir.webp", "crucible knight crucible knight ordovis": "./assets/bosses/crucible-knight-ordovis.webp", "crucible knight and misbegotten warrior": "./assets/bosses/misbegotten-warrior-and-crucible-knight.webp", "crystalian": "./assets/bosses/crystalian-ringblade.webp", "crystalian spear crystalian ringblade": "./assets/bosses/crystalian-ringblade.webp", "crystalian spear crystalian staff duo": "./assets/bosses/crystalian-ringblade.webp", "demi human chief": "./assets/bosses/demi-human-chiefs.webp", "full grown fallingstar beast": "./assets/bosses/fallingstar-beast.webp", "godfrey first elden lord hoarah loux": "./assets/bosses/godrey-hoarah-loux.webp", "godskin duo": "./assets/bosses/godksin-duo.webp", "godskin apostle and godskin noble spiritcaller snail": "./assets/bosses/spiritcaller-snail.webp", "mad pumpkin heads": "./assets/bosses/mad-pumpkin-head.webp", "maliketh the black blade": "./assets/bosses/malekith-the-black-blade.webp", "morgott the omen king": "./assets/bosses/morgott-omen-king.webp", "nox swordstress nox monk": "./assets/bosses/nox-swordstress-and-nox-priest.webp", "omenkiller miranda the blighted bloom": "./assets/bosses/omenkiller.webp", "perfumer tricia and misbegotten warrior": "./assets/bosses/perfumer-tricia.webp", "putrid avatar": "./assets/bosses/erdtree-avatar.webp", "putrid crystalian trio": "./assets/bosses/putrid-crystallians.webp", "putrid grave warden duelist": "./assets/bosses/grave-warden-duelist.webp", "putrid tree spirit": "./assets/bosses/ulcerated-tree-spirit.webp", "radagon of the golden order elden beast": "./assets/bosses/radagon-elden-beast.webp", "red wolf of the champion": "./assets/bosses/red-wolf-of-radagon.webp", "spirit caller snail": "./assets/bosses/spiritcaller-snail.webp", "valiant gargoyle valiant gargoyle twinblade": "./assets/bosses/valiant-gargoyles.webp", "vyke knight of the roundtable": "./assets/bosses/vyke.webp"};
+
+function tcBossImageKey(name){return String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+function actualBossImage(name,region){
+  const key=tcBossImageKey(name);
+  // Distinct supplied variants share the same title in regional gameplay data.
+  if(key==='dragonkin soldier'&&region==='Lake of Rot + Grand Cloister')return TC_BOSS_IMAGES['dragonkin soldier lake of rot'];
+  if(key==='divine beast dancing lion'&&region==='Ancient Ruins of Rauh · DLC')return TC_BOSS_IMAGES['divine beast dancing lion deathblight'];
+  const base=tcBossImageKey(String(name||'').replace(/\s*\([^)]*\)/g,''));
+  return TC_BOSS_IMAGES[key]||TC_BOSS_IMAGES[base]||actualRegionImage(region);
+}
+/* --- End imported boss image library --- */
+
+function thematicRegionArt(name, mode='region') {
+  const n=(name||'').toLowerCase();
+  let sky='#403a30',far='#25231e',near='#12110e',sun='#c59d51';
+  if(n.includes('caelid')){sky='#5c251e';far='#331817';near='#160d0b';sun='#d05c3c'}
+  else if(n.includes('liurnia')){sky='#2d4654';far='#1d303a';near='#10191e';sun='#80a8bb'}
+  else if(n.includes('weeping')){sky='#39473e';far='#27332a';near='#111813';sun='#8a9d7f'}
+  else if(n.includes('gelmir')||n.includes('jagged')){sky='#5e2f1e';far='#331d16';near='#160c09';sun='#d27744'}
+  else if(n.includes('mountain')||n.includes('haligtree')){sky='#687276';far='#43494a';near='#1c2020';sun='#dad2a8'}
+  else if(n.includes('leyndell')||n.includes('altus')){sky='#645433';far='#3b3120';near='#1c170f';sun='#e2ba62'}
+  else if(n.includes('coast')){sky='#315764';far='#213944';near='#10191e';sun='#76a9b6'}
+  else if(n.includes('abyss')){sky='#463a2b';far='#2a251d';near='#11100d';sun='#b18d51'}
+  else if(n.includes('shadow')||n.includes('gravesite')){sky='#403c34';far='#29261f';near='#11100e';sun='#9d865e'}
+  else if(n.includes('rauh')){sky='#405541';far='#29372b';near='#111813';sun='#8fa273'}
+  const grace = mode==='grace' ? `<path d="M300 79 C294 61 303 51 300 32 C309 47 310 58 306 76" stroke="${sun}" stroke-width="3" fill="none"/><ellipse cx="302" cy="82" rx="35" ry="5" fill="${sun}" opacity=".34"/><circle cx="303" cy="58" r="8" fill="${sun}" opacity=".18"/>` : '';
+  const boss = mode==='boss' ? `<path d="M302 88c-24-9-29-34-16-48 11-12 35-10 44 4 13 21-2 37-3 44z" fill="#070706" opacity=".78"/><path d="M283 57l-18 26m65-26l19 26" stroke="#090807" stroke-width="8"/>` : '';
+  return `<svg viewBox="0 0 600 150" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="trg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${sky}"/><stop offset="1" stop-color="#080706"/></linearGradient><radialGradient id="sun"><stop stop-color="${sun}" stop-opacity=".75"/><stop offset="1" stop-color="${sun}" stop-opacity="0"/></radialGradient></defs><rect width="600" height="150" fill="url(#trg)"/><circle cx="470" cy="32" r="48" fill="url(#sun)"/><path d="M0 111L58 79l45 18 72-55 52 61 66-41 50 45 71-64 50 56 59-38 77 38v51H0Z" fill="${far}"/><path d="M0 126l85-22 45 17 69-31 48 28 77-18 58 24 73-32 57 25 88-19v52H0Z" fill="${near}"/><path d="M420 102V60h13v42m-35 0V77h11v25m51 0V69h10v33" stroke="${sun}" stroke-width="2" opacity=".32"/>${grace}${boss}</svg>`;
+}
+const chaosQuips = [
+  'The covenant bends. So do your plans.',
+  'A completely avoidable problem has entered the chat.',
+  'The Greater Will has adjusted the difficulty without asking.',
+  'Miyazaki has noticed a positive mood developing.',
+  'This seemed easier five seconds ago.',
+  'The game has detected confidence.',
+  'An HR complaint has been filed against the run.',
+  'Fort, night.',
+  'Melina has muted the group chat.',
+  'This is now canon unfortunately.'
+];
+function chaosEventName(text){
+  const t=text.toUpperCase();
+  if(t.includes('DARK SOULS DEPARTMENT')) return 'DARK SOULS DEPARTMENT';
+  if(t.includes('OLD SOULS')) return 'OLD SOULS';
+  if(t.includes('PRE-2016')) return 'PRE-2016 COMBAT DESIGN';
+  if(t.includes('NO AERIAL')) return 'NO AERIAL BUDGET';
+  if(t.includes('GROUNDED')) return 'GROUNDED';
+  if(t.includes('NOTHING')) return 'MERCIFUL VOID';
+  if(t.includes('FLASK')||t.includes('JUICE')||t.includes('DRINK')) return 'CRIMSON DECREE';
+  if(t.includes('TALISMAN')) return 'CHARM EVICTION';
+  if(t.includes('HEAVY')||t.includes('ARMOR')||t.includes('PANTS')||t.includes('HELMET')) return 'BURDEN OF FLESH';
+  if(t.includes('LOCK-ON')||t.includes('CAMERA')) return 'BLIND COVENANT';
+  if(t.includes('WEAPON')||t.includes('L2')) return 'ARMAMENT SCHISM';
+  if(t.includes('SOLO')||t.includes('AGGRO')) return 'DIVIDED OATH';
+  if(t.includes('HEAL')) return 'RUPTURED BOON';
+  if(t.includes('GESTURE')||t.includes('CROUCH')||t.includes('CHAIR')) return 'CEREMONIAL NONSENSE';
+  return pick(['RUPTURED BOON','BROKEN DECREE','ERRANT GRACE','SCARLET AMENDMENT','UNWELCOME MIRACLE','COVENANT MALFUNCTION']);
+}
+function renderChaosEvent(){
+  const c=run.state.current;
+  const eventName=chaosEventName(c.chaosConsequence||'');
+  const reward=Number(c.chaosFavor??1);
+  const embers=Array.from({length:18},(_,i)=>`<i class="tc-ember" style="--x:${(i*41)%101}%;--dur:${5.5+(i%6)*.8}s;--delay:${-(i%7)*.71}s;--drift:${((i%5)-2)*11}px"></i>`).join('');
+  app.innerHTML=`<section class="tc-chaos-event">
+    <div class="tc-ember-field">${embers}</div>
+    <div class="tc-chaos-head"><strong>Encounter</strong><span class="favor">${reward>0?`+${reward} FAVOR IF SURVIVED`:'NO FAVOR'}</span></div>
+    <div class="tc-chaos-card">
+      <div class="tc-chaos-art-wrap"><img class="tc-chaos-art" src="./assets/chaos-seal.webp?v=3" alt="Cracking Covenant seal" onerror="this.remove()"><div class="tc-chaos-halo"></div></div>
+      <div class="tc-chaos-title">Chaos Unleashed</div><div class="tc-chaos-rule"></div>
+      <div class="tc-chaos-label">Event</div><div class="tc-chaos-event-name">${h(eventName)}</div>
+      <div class="tc-chaos-reading"><div class="tc-chaos-label" style="color:#a84835">Consequence</div><div class="tc-chaos-consequence">${h(personalizePlayers(c.chaosConsequence,run.state))}</div></div>
+      <div class="tc-chaos-quip">“${h(eventName==='DARK SOULS DEPARTMENT'?'The Covenant has requested older, worse game design.':pick(chaosQuips))}”</div>
+      <button id="ackChaos" class="btn">Endure Decree</button>
+    </div>
+  </section>${navMarkup('encounter')}`;
+  bindNav();
+  document.querySelector('#ackChaos').addEventListener('click',()=>{acknowledgedChaos.add(c.id);uiScreen='encounter';renderRun();});
+}
+
+function covenantNames(state = run?.state) {
+  const names = state?.playerNames;
+  return Array.isArray(names) && names.length >= 2
+    ? [String(names[0] || 'Tarnished One'), String(names[1] || 'Tarnished Two')]
+    : ['Tarnished One','Tarnished Two'];
+}
+function playerLabel(slot, state = run?.state) {
+  const names = covenantNames(state);
+  return slot === 'morgan' ? names[1] : names[0];
+}
+function personalizePlayers(text, state = run?.state) {
+  if (!text) return text || '';
+  const [one,two] = covenantNames(state);
+  return String(text)
+    .replace(/\bChase\b/g, one)
+    .replace(/\bMorgan\b/g, two)
+    .replace(/\bCHASE\b/g, one.toUpperCase())
+    .replace(/\bMORGAN\b/g, two.toUpperCase());
+}
+
+
+const TC_BELL_BEARINGS = [
+  {id:'smith1',kind:'Smithing',name:'Smithing-Stone Miner’s Bell Bearing [1]',region:'Liurnia of the Lakes',custodian:'Crystalian',place:'Raya Lucaria Crystal Tunnel'},
+  {id:'somber1',kind:'Somber',name:'Somberstone Miner’s Bell Bearing [1]',region:'Caelid',custodian:'Fallingstar Beast',place:'Sellia Crystal Tunnel'},
+  {id:'smith2',kind:'Smithing',name:'Smithing-Stone Miner’s Bell Bearing [2]',region:'Altus Plateau + Leyndell',custodian:'Sealed Tunnel cache',place:'Sealed Tunnel'},
+  {id:'somber2',kind:'Somber',name:'Somberstone Miner’s Bell Bearing [2]',region:'Altus Plateau + Leyndell',custodian:'Crystalian Duo',place:'Altus Tunnel'},
+  {id:'smith3',kind:'Smithing',name:'Smithing-Stone Miner’s Bell Bearing [3]',region:'Mountaintops of the Giants',custodian:'Zamor Ruins cache',place:'Zamor Ruins'},
+  {id:'somber3',kind:'Somber',name:'Somberstone Miner’s Bell Bearing [3]',region:'Mountaintops of the Giants',custodian:'The frozen road',place:'First Church of Marika'},
+  {id:'smith4',kind:'Smithing',name:'Smithing-Stone Miner’s Bell Bearing [4]',region:'Crumbling Farum Azula',custodian:'Godskin Duo',place:'Dragon Temple'},
+  {id:'somber4',kind:'Somber',name:'Somberstone Miner’s Bell Bearing [4]',region:'Crumbling Farum Azula',custodian:'Farum Azula cache',place:'Crumbling Farum Azula'}
+];
+
+const TC_SMITHING_TASKS = [
+  'MINER’S DUE: possess at least five Cracked Crystals before approaching the custodian.',
+  'RAINBOW AUDIT: place three Rainbow Stones at the entrance to the bearing’s dungeon or route.',
+  'FALSE GRACE: use one Grace Mimic somewhere on the way to the bearing. It will accomplish nothing. This is important.',
+  'LIGHTING CODE: use a Glowstone before entering the bearing’s dungeon or approach.',
+  'SOFT LANDING CLAUSE: use Soft Cotton before entering the bearing’s dungeon or approach.',
+  'TURTLE RETAINER: one Tarnished must consume a Pickled Turtle Neck before confronting the custodian.',
+  'CRAB RETAINER: one Tarnished must consume Boiled Crab before confronting the custodian.',
+  'FORMAL NOTICE: use any Prattling Pate at the fog gate or immediately before collecting the bearing.',
+  'POST-MINING HYGIENE: use Soap after the contract is complete. The union has standards.',
+  'LANTERN INSPECTION: keep a Lantern lit for the entire dungeon or approach.',
+  'STRIKE NEGOTIATOR: at least one Tarnished must bring a strike-damage weapon to the custodian.',
+  'POTTERY CLAUSE: land one thrown pot on the custodian before the contract can be considered complete.',
+  'WARMING STONE MEETING: place a Warming Stone at the next safe point inside the dungeon or route.',
+  'RUIN FRAGMENT TITHE: possess at least five Ruin Fragments when you arrive.',
+  'CEREMONIAL NONSENSE: both Tarnished must gesture before the fog gate or before collecting the bearing.',
+  'NO EARLY JUICE: no Crimson Flask until the custodian is below half health. If there is no custodian fight, no flask until the bearing is in sight.'
+];
+
+let ledgerView = 'remembrances';
+
+function smithingData(state) {
+  const raw = state?.smithing || {};
+  return {
+    favor: Number(raw.favor || 0),
+    acquired: Array.isArray(raw.acquired) ? raw.acquired : [],
+    activeContract: raw.activeContract || null,
+    masterworks: Array.isArray(raw.masterworks) ? raw.masterworks : [],
+    masterworkCredits: Number(raw.masterworkCredits || 0),
+    appealWaivers: Number(raw.appealWaivers || 0),
+    chaosRefreshes: Number(raw.chaosRefreshes || 0),
+    riteRefreshes: Number(raw.riteRefreshes || 0),
+    aviaryTickets: Number(raw.aviaryTickets || 0),
+    freeBossKills: Number(raw.freeBossKills || 0),
+    bossVetoes: Number(raw.bossVetoes || 0),
+    clemencies: Number(raw.clemencies || 0),
+    unionDiscounts: Number(raw.unionDiscounts || 0),
+    blankAmendments: Number(raw.blankAmendments || 0),
+    jointAppeals: Number(raw.jointAppeals || 0),
+    erdtreeWrits: Number(raw.erdtreeWrits || 0),
+    erdtreeWritsAwarded: Number(raw.erdtreeWritsAwarded || 0),
+    erdtreeAvatarClears: Array.isArray(raw.erdtreeAvatarClears) ? Array.from(new Set(raw.erdtreeAvatarClears.filter(Boolean))) : []
+  };
+}
+function smithingCopy(state) {
+  const next = JSON.parse(JSON.stringify(state));
+  next.smithing = smithingData(next);
+  return next;
+}
+function bellById(id){ return TC_BELL_BEARINGS.find(x=>x.id===id); }
+function bellRegionVisited(state,b){
+  return Boolean(b&&state&&(b.region===state.region||(state.clearedRegions||[]).includes(b.region)));
+}
+function nextBellBearingForKind(state,kind){
+  const sm=smithingData(state);
+  return TC_BELL_BEARINGS.find(b=>b.kind===kind&&!sm.acquired.includes(b.id))||null;
+}
+function bellAccessible(state,b){
+  if(!b||!bellRegionVisited(state,b))return false;
+  const next=nextBellBearingForKind(state,b.kind);
+  return Boolean(next&&next.id===b.id);
+}
+function availableBellBearings(state){
+  const sm=smithingData(state);
+  return TC_BELL_BEARINGS.filter(b=>!sm.acquired.includes(b.id) && (!sm.activeContract || sm.activeContract.bearingId!==b.id) && bellAccessible(state,b));
+}
+
+const TC_COVENANT_TAXES=[
+  {label:'Bone Dart Audit',detail:'Before the next encounter, spend half of your currently held runes on Bone Darts. If the merchant runs out, the bureaucracy accepts as many as you can buy.'},
+  {label:'Merchant Compliance',detail:'Before the next encounter, spend 25% of your currently held runes on throwables, arrows, or bolts. The Covenant requires receipts.'},
+  {label:'Inventory Tithe',detail:'Before the next encounter, buy at least 20 Rainbow Stones or Glowstones. This improves nothing.'},
+  {label:'Procurement Error',detail:'Spend 5,000 runes on consumables you do not intend to use. If you have fewer than 5,000, spend what you have.'}
+];
+function drawCovenantReward(state){
+  const sm=state.smithing || (state.smithing=smithingData(state));
+  const roll=Math.random();
+  if(roll<0.12){sm.favor+=1;return {kind:'favor',label:'+1 Smithing Favor',detail:'One additional mark of Smithing Favor. Hewg has reluctantly updated the ledger.'};}
+  if(roll<0.16){sm.favor+=2;return {kind:'favor2',label:'+2 Smithing Favor',detail:'Two extra marks. Administrative generosity has not been ruled out.'};}
+  if(roll<0.29){sm.chaosRefreshes+=1;return {kind:'chaos',label:'Chaos Refresh',detail:'Amend one Chaos decree. Repeated amendments still get expensive.'};}
+  if(roll<0.42){sm.riteRefreshes+=1;return {kind:'rite',label:'Rite Refresh',detail:'Amend one Odd Rite. The Covenant keeps a fee schedule.'};}
+  if(roll<0.49){sm.appealWaivers+=1;return {kind:'appeal',label:'Appeal Waiver',detail:'May be spent to make a Weapon Appeal penalty-free. Spending it is your choice.'};}
+  if(roll<0.59){sm.aviaryTickets+=1;return {kind:'aviary',label:'Dynasty Frequent Flier',detail:'Grants 5 sanctioned trips to the Mohgwyn bird. The bird remains a valued member of the economy.'};}
+  if(roll<0.64){const tax=pick(TC_COVENANT_TAXES);return {kind:'tax',label:tax.label,detail:tax.detail};}
+  if(roll<0.74){sm.freeBossKills+=1;return {kind:'freeboss',label:'Sanctioned Boss Kill',detail:'Kill one optional boss of your choice in the current or a previously reached region, then remove it from future Covenant encounter draws. Does not advance regional progression.'};}
+  if(roll<0.78){sm.bossVetoes+=1;return {kind:'veto',label:'Covenant Veto',detail:'A rare writ allowing one non-required boss reassignment. Invoking it also costs 2 Favor and your choice of 1 Chaos or Rite Refresh.'};}
+  if(roll<0.84){sm.clemencies+=1;return {kind:'clemency',label:'Letter of Clemency',detail:'Erase one existing Weapon Appeal penalty from the current encounter.'};}
+  if(roll<0.85){sm.unionDiscounts+=1;return {kind:'discount',label:'Union Discount Voucher',detail:'The next Bell Bearing Contract costs 3 fewer Smithing Favor. The voucher is consumed automatically when that contract is commissioned.'};}
+  if(roll<0.95){sm.blankAmendments+=1;return {kind:'blank',label:'Blank Amendment',detail:'Convert this document into either one Chaos Refresh or one Rite Refresh whenever you choose.'};}
+  if(roll<0.98){sm.jointAppeals+=1;return {kind:'joint',label:'Joint Appeal',detail:'Reroll both assigned weapons once without adding an Appeal penalty.'};}
+  sm.favor+=3;return {kind:'windfall',label:'Treasury Windfall',detail:'+3 Smithing Favor. Someone in Accounts Payable has made a spectacular mistake.'};
+}
+function tcRewardIcon(kind){
+  const icons={favor:'✦',favor2:'✦✦',chaos:'◉',rite:'✧',appeal:'⚖',aviary:'✈',freeboss:'⚔',tax:'☠',veto:'↺',clemency:'♢',discount:'¤',blank:'□',joint:'⚔⚔',windfall:'✦✦✦'};
+  return icons[kind]||'◇';
+}
+function tcRewardClass(kind){return ['tax','chaos','rite','appeal','aviary','freeboss','veto','clemency','discount','blank','joint','windfall'].includes(kind)?kind:'favor';}
+
+function covenantBoonMarkup(state){
+  const sm=smithingData(state);
+  return `<div class="tc-boon-ledger"><div class="tc-kicker ember">covenant boons</div><div class="tc-boon-grid">
+    <div><strong>${sm.appealWaivers}</strong><span>Appeal Waiver${sm.appealWaivers===1?'':'s'}</span></div>
+    <div><strong>${sm.chaosRefreshes}</strong><span>Chaos Refresh${sm.chaosRefreshes===1?'':'es'}</span></div>
+    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
+    <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+  </div><div class="tc-muted">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Each Dynasty Frequent Flier grants 5 sanctioned trips to the Mohgwyn bird.</div></div>`;
+}
+function tcEncounterBoons(state){
+  const sm=smithingData(state),c=state.current;if(!c)return '';
+  const buttons=[];
+  if(sm.chaosRefreshes>0&&!c.chaosTriggered)buttons.push(`<button type="button" data-use-boon="chaos" class="btn ghost small">Chaos Refresh · ${sm.chaosRefreshes}</button>`);
+  if(sm.riteRefreshes>0)buttons.push(`<button type="button" data-use-boon="rite" class="btn ghost small">Rite Refresh · ${sm.riteRefreshes}</button>`);
+  return buttons.length?`<div class="tc-earned-refreshes"><div class="tc-kicker">earned refreshes</div><div class="tc-earned-refresh-grid">${buttons.join('')}</div></div>`:'';
+}
+async function useCovenantBoon(kind){
+  if(window.__tcBoonBusy || !run?.state?.current)return;
+  window.__tcBoonBusy=true;
+  const clicked=document.querySelector(`[data-use-boon="${kind}"]`);
+  if(clicked)clicked.disabled=true;
+  const sm=smithingData(run.state),key=kind==='chaos'?'chaosRefreshes':'riteRefreshes';
+  if(Number(sm[key]||0)<1){window.__tcBoonBusy=false;return setToast('No refresh token available.');}
+  if(kind==='chaos'&&run.state.current.chaosTriggered){window.__tcBoonBusy=false;return setToast('Chaos has already broken loose. Too late to refresh it.');}
+  let staged=smithingCopy(run.state);staged.smithing[key]-=1;
+  staged=kind==='chaos'?rerollChaos(staged,playerName()):rerollWeirdness(staged,playerName());
+  try{await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} refreshed. Token spent.`});}
+  finally{window.__tcBoonBusy=false;}
+}
+
+
+function tcTierRank(t){return t==='Grand'?3:t==='True'?2:1;}
+function tcChaosTier(text){
+  if((TC_CHAOS_LATE||[]).includes(text)||String(text).startsWith('NEXT ENCOUNTER DEBT:')||String(text).startsWith('DOUBLE DECREE'))return 3;
+  if((TC_CHAOS_MID||[]).includes(text))return 2;
+  return 1;
+}
+function tcFamily(text){
+  const t=String(text||'').toLowerCase();
+  if(/heal|flask|crimson|cerulean|physick/.test(t))return 'healing';
+  if(/roll|dodge|sprint|jump|movement|stand still|walk/.test(t))return 'movement';
+  if(/talisman|armor|helmet|heavy load|equip/.test(t))return 'equipment';
+  if(/skill|ash of war|sorcer|incant|magic|fp/.test(t))return 'skills';
+  if(/attack|heavy|light|critical|parry|block|hit/.test(t))return 'offense';
+  if(/add|minion|both players|each player|opposite side|aggro/.test(t))return 'coordination';
+  return 'misc';
+}
+function tcRecentHistory(state,n=12){return (state?.history||[]).slice(0,n);}
+function tcPickChaosTrigger(state){
+  const recent=tcRecentHistory(state,10).map(x=>x.chaosTrigger).filter(Boolean);
+  let pool=chaosTriggers.filter(x=>!recent.includes(x));
+  return pick(pool.length?pool:chaosTriggers);
+}
+function tcPickRite(state,minTier=2){
+  const recent=tcRecentHistory(state,12);
+  const names=new Set(recent.map(x=>x.oddRite?.name).filter(Boolean));
+  const fams=new Set(recent.slice(0,4).map(x=>tcFamily(x.oddRite?.text||x.oddRite?.name)).filter(Boolean));
+  let pool=weirdness.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')>=minTier && !names.has(w[0]) && !fams.has(tcFamily(w[1])));
+  if(!pool.length)pool=weirdness.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')>=minTier && !names.has(w[0]));
+  if(!pool.length)pool=weirdness.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')>=minTier);
+  const grand=pool.filter(w=>tcTierRank((typeof riteMeta==='function'?riteMeta(w):{}).tier||'True')===3);
+  if(grand.length&&Math.random()<0.45)return pick(grand);
+  return pick(pool);
+}
+const TC_CHAOS_DEBTS=[
+ 'NEXT ENCOUNTER DEBT: the first Crimson Flask use by each player is forbidden.',
+ 'NEXT ENCOUNTER DEBT: no Physick until the boss reaches 50% health.',
+ 'NEXT ENCOUNTER DEBT: one randomly chosen player begins at Heavy Load until the first stance break.',
+ 'NEXT ENCOUNTER DEBT: weapon skills are forbidden for the first 30 seconds.',
+ 'NEXT ENCOUNTER DEBT: the first failed dodge means no healing for 20 seconds.'
+];
+function tcPickEscalatingChaos(state,minTier=2){
+  const recent=tcRecentHistory(state,12);
+  const exact=new Set(recent.map(x=>x.chaosConsequence).filter(Boolean));
+  const recentFamilies=new Set(recent.slice(0,4).map(x=>tcFamily(x.chaosConsequence)).filter(Boolean));
+  const capstone=Boolean(state?.current?.target?.exit);
+  const progress=Math.min(1,(state?.history?.length||0)/24);
+  let tier=(Math.random() < (0.34 + progress*.20 + (capstone?.20:0)))?3:2;
+  tier=Math.max(tier,minTier);
+  let base=tier===3?[...TC_CHAOS_LATE,...TC_CHAOS_DEBTS]:[...TC_CHAOS_MID];
+  let pool=base.filter(x=>!exact.has(x)&&!recentFamilies.has(tcFamily(x)));
+  if(!pool.length)pool=base.filter(x=>!exact.has(x));
+  if(!pool.length)pool=base;
+  let first=pick(pool);
+  const doubleChance=capstone?0.25:0.11+progress*.08;
+  if(Math.random()<doubleChance && !String(first).startsWith('NEXT ENCOUNTER DEBT:')){
+    let secondPool=[...TC_CHAOS_MID,...TC_CHAOS_LATE].filter(x=>x!==first&&tcChaosTier(x)>=Math.min(3,tier)&&tcFamily(x)!==tcFamily(first)&&!exact.has(x));
+    if(secondPool.length){const second=pick(secondPool);first=`DOUBLE DECREE — ${first} SECOND DECREE — ${second}`;}
+  }
+  return first;
+}
+function rerollChaos(state,actor){
+  const next=smithingCopy(state),c=next.current;if(!c)return next;
+  if(!c.chaosTriggered){c.chaosTrigger=tcPickChaosTrigger(next);next.lastAction=`${actor} amended the Chaos trigger.`;return next;}
+  const oldTier=tcChaosTier(c.chaosConsequence||'');
+  c.chaosConsequence=tcPickEscalatingChaos(next,oldTier);
+  c.chaosForfeited=false;c.smithingChaosFavor=false;
+  next.lastAction=`${actor} amended an active Chaos decree. It did not get nicer.`;return next;
+}
+function rerollWeirdness(state,actor){
+  const next=smithingCopy(state),c=next.current;if(!c)return next;
+  const min=tcTierRank(c.weirdness?.tier||'True');const w=tcPickRite(next,min);const meta=riteMeta(w);
+  c.weirdness={name:w[0],text:w[1],...meta};c.riteForfeited=false;c.smithingRiteFavor=false;
+  next.lastAction=`${actor} amended the Rite. The replacement is no easier.`;return next;
+}
+function tcRefreshCost(c,kind){return Number(c?.[kind+'RefreshUses']||0)+1;}
+function tcEncounterBoons(state){
+  const sm=smithingData(state),c=state.current;if(!c)return '';
+  const cc=tcRefreshCost(c,'chaos'),rc=tcRefreshCost(c,'rite');
+  const chaosLabel=cc===1?'AMEND DECREE':cc===2?'AMEND AGAIN':'THE COVENANT IS LOSING PATIENCE';
+  const riteLabel=rc===1?'AMEND RITE':rc===2?'AMEND AGAIN':'THE COVENANT IS LOSING PATIENCE';
+  return `<div class="tc-earned-refreshes"><div class="tc-kicker">amendments & forfeits</div><div class="tc-earned-refresh-grid">
+    <button type="button" data-use-boon="chaos" class="btn ghost small" ${sm.chaosRefreshes<cc?'disabled':''}>${chaosLabel} · ${cc} CHAOS REFRESH${cc===1?'':'ES'} (${sm.chaosRefreshes})</button>
+    <button type="button" data-use-boon="rite" class="btn ghost small" ${sm.riteRefreshes<rc?'disabled':''}>${riteLabel} · ${rc} RITE REFRESH${rc===1?'':'ES'} (${sm.riteRefreshes})</button>
+    <button type="button" data-forfeit-boon="chaos" class="btn text-btn small">Forfeit Chaos boon</button>
+    <button type="button" data-forfeit-boon="rite" class="btn text-btn small">Forfeit Rite boon</button>
+  </div></div>`;
+}
+async function useCovenantBoon(kind){
+  if(window.__tcBoonBusy||!run?.state?.current)return;window.__tcBoonBusy=true;
+  const key=kind==='chaos'?'chaosRefreshes':'riteRefreshes';
+  const c=run.state.current;
+  const encounterId=c.id;
+  const originalUses=Number(c?.[kind+'RefreshUses']||0);
+  const originalChaosTriggered=Boolean(c.chaosTriggered);
+  const originalChaosText=String(originalChaosTriggered?c.chaosConsequence||'':c.chaosTrigger||'');
+  const originalRiteName=String(c.weirdness?.name||'');
+  const cost=tcRefreshCost(c,kind);
+  const actor=playerName();
+  const buildRefresh=(latest)=>{
+    const lc=latest?.current;if(!lc||lc.id!==encounterId)return null;
+    if(Number(lc?.[kind+'RefreshUses']||0)!==originalUses)return null;
+    if(kind==='chaos'){
+      if(Boolean(lc.chaosTriggered)!==originalChaosTriggered)return null;
+      const latestChaosText=String(originalChaosTriggered?lc.chaosConsequence||'':lc.chaosTrigger||'');
+      if(latestChaosText!==originalChaosText)return null;
+    }
+    if(kind==='rite'&&String(lc.weirdness?.name||'')!==originalRiteName)return null;
+    const latestSm=smithingData(latest);
+    if(Number(latestSm[key]||0)<cost)return null;
+    let rebased=smithingCopy(latest);
+    rebased.smithing[key]-=cost;
+    rebased.current[kind+'RefreshUses']=originalUses+1;
+    rebased=kind==='chaos'?rerollChaos(rebased,actor):rerollWeirdness(rebased,actor);
+    return rebased;
+  };
+  const sm=smithingData(run.state);
+  if(Number(sm[key]||0)<cost){window.__tcBoonBusy=false;return setToast(`That amendment costs ${cost} Refreshes.`);}
+  const staged=buildRefresh(run.state);
+  if(!staged){window.__tcBoonBusy=false;return setToast('That amendment changed on the other phone.');}
+  try{
+    const saved=await commit(staged,{successToast:`${kind==='chaos'?'Chaos':'Rite'} amended. ${cost} Refresh${cost===1?'':'es'} spent.`,retryBuilder:buildRefresh});
+    if(saved&&kind==='chaos')try{acknowledgedChaos.delete(encounterId)}catch{}
+  }finally{window.__tcBoonBusy=false;}
+}
+async function tcForfeitBoon(kind){
+  if(!run?.state?.current)return;const next=smithingCopy(run.state);next.current[kind==='chaos'?'chaosForfeited':'riteForfeited']=true;
+  next.lastAction=`${playerName()} forfeited the ${kind==='chaos'?'Chaos':'Rite'} reward. No draw will be awarded.`;
+  await commit(next,{successToast:'Potential boon forfeited. The Covenant has noted your cowardice.'});
+}
+
+function smithingFavorMarkup(state){
+  const sm=smithingData(state);
+  return `<div class="tc-forge-favor"><span class="tc-forge-mark">✦</span><div><div class="tc-kicker ember">smithing favor</div><strong>${sm.favor}</strong></div><div class="tc-muted">1 guaranteed per completed Covenant encounter · bonus draws can add more</div></div>`;
+}
+function smithingContractCost(bearing){
+  const tier=Math.max(1,Math.min(4,Number(String(bearing?.id||'').match(/(\d+)$/)?.[1]||1)));
+  return 4 + tier*2;
+}
+
+function smithingHubMarkup(state){
+  const sm=smithingData(state), contract=sm.activeContract, bearing=contract?bellById(contract.bearingId):null;
+  if(contract && bearing){
+    const sanctioned=contract.status==='sanctioned';
+    return `<button class="tc-forge-notice ${sanctioned?'sanctioned':''}" data-smith-action="open-contract" type="button">
+      <div class="tc-forge-glyph">${sanctioned?'⚒':'◈'}</div><div><div class="tc-kicker ember">${sanctioned?'custodian sanctioned':'active bell bearing contract'}</div><div class="tc-forge-title">${h(bearing.name)}</div><div class="tc-muted">${h(sanctioned?`${bearing.custodian} · permission granted`:'The Twin Maiden Husks have developed demands.')}</div></div><span class="tc-forge-arrow">›</span>
+    </button>`;
+  }
+  const available=availableBellBearings(state);
+  if(available.length && sm.favor>=Math.min(...available.map(smithingContractCost))){
+    return `<button class="tc-forge-notice" data-smith-action="commission" type="button"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">a contract awaits</div><div class="tc-forge-title">The Smith Calls In A Debt</div><div class="tc-muted">Eligible contracts cost 6–12 Favor depending on Bell Bearing tier.</div></div><span class="tc-forge-arrow">›</span></button>`;
+  }
+  return `<button class="tc-forge-notice quiet" data-smith-action="ledger" type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s books</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">${available.length?`Next eligible contract: ${Math.min(...available.map(smithingContractCost))} Favor.`:'No accessible contract is waiting yet.'}</div></div><span class="tc-forge-arrow">›</span></button>`;
+}
+function smithingLedgerMarkup(state){
+  const sm=smithingData(state), contract=sm.activeContract, acquired=new Set(sm.acquired);
+  return `<div class="tc-smith-ledger">
+    ${smithingFavorMarkup(state)}
+    ${covenantBoonMarkup(state)}
+    ${contract?(()=>{const b=bellById(contract.bearingId);return b?`<button class="tc-contract-mini" data-smith-action="open-contract"><div class="tc-kicker ember">current contract · ${contract.status==='sanctioned'?'sanctioned':'terms outstanding'}</div><strong>${h(b.name)}</strong><span>${h(b.custodian)} · ${h(b.place)}</span></button>`:''})():''}
+    <div class="tc-kicker ember" style="margin-top:18px">bell bearing ledger</div>
+    <div class="tc-bearing-grid">${TC_BELL_BEARINGS.map(b=>{const got=acquired.has(b.id),active=contract?.bearingId===b.id,accessible=bellAccessible(state,b);return `<div class="tc-bearing ${got?'done':active?'active':accessible?'available':'locked'}"><div><span class="tc-bearing-kind">${h(b.kind)}</span><strong>${h(b.name.replace(/^.*Bell Bearing /,'Bell Bearing '))}</strong><small>${h(b.place)}</small></div><span class="tc-bearing-stamp">${got?'claimed':active?'contract':accessible?'eligible':'later'}</span></div>`}).join('')}</div>
+    <div class="tc-workbench"><div class="tc-kicker ember">Hewg’s Workbench</div><div class="tc-muted">Each claimed Bell Bearing grants one Masterwork. Masterworked weapons become part of the Covenant’s veteran arsenal.</div><div class="tc-workbench-credit">MASTERWORK CREDITS <strong>${sm.masterworkCredits}</strong></div>${sm.masterworkCredits>0&&state.current?`<div class="tc-master-actions"><button class="btn ghost" data-smith-action="masterwork" data-slot="chase">Masterwork ${h(playerLabel('chase',state))}’s ${h(state.current.chase.name)}</button><button class="btn ghost" data-smith-action="masterwork" data-slot="morgan">Masterwork ${h(playerLabel('morgan',state))}’s ${h(state.current.morgan.name)}</button></div>`:''}
+      <div class="tc-master-list">${sm.masterworks.length?sm.masterworks.map(w=>`<span>⚒ ${h(w)}</span>`).join(''):'<span class="tc-muted">No veteran weapons yet.</span>'}</div>
+    </div>
+  </div>`;
+}
+function remembranceLedgerBody(state){
+  const req=requiredRemembrances(state),done=req.filter(x=>hasRemembrance(state,x));
+  const regionNames=Object.keys(regions).filter(r=>state.includeDlc||!r.includes('· DLC')).filter(r=>r!=='The Erdtree');
+  return `<div class="tc-ledger-head"><div><div class="tc-kicker gold">remembrances claimed</div><div class="tc-muted">The final seal opens only when the ledger is complete.</div></div><div class="tc-ledger-count">${done.length}/${req.length}</div></div>
+    <div class="tc-panel"><div class="tc-rem-grid">${req.map(name=>`<div class="tc-rem ${hasRemembrance(state,name)?'done':''}"><span>${h(name)}</span><span class="stamp">${hasRemembrance(state,name)?'claimed':'missing'}</span></div>`).join('')}</div></div>
+    <div class="tc-kicker gold" style="margin-top:20px">world progress</div><div class="tc-region-list">${regionNames.map(r=>`<div class="tc-region-chip ${(state.clearedRegions||[]).includes(r)?'done':''}">${h(r)}${r===state.region?' · ACTIVE':(state.clearedRegions||[]).includes(r)?' · CLEARED':''}</div>`).join('')}</div>`;
+}
+function renderSmithingContract(){
+  const state=run.state,sm=smithingData(state),ct=sm.activeContract,b=ct?bellById(ct.bearingId):null;
+  if(!b) return;
+  document.querySelector('#tcSmithOverlay')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcSmithOverlay" class="tc-overlay tc-forge-overlay"><div class="tc-sheet tc-contract-sheet">
+    <button class="tc-sheet-x" data-smith-action="close-contract">×</button><div class="tc-contract-seal">⚒</div><div class="tc-kicker ember">THE SMITH CALLS IN A DEBT</div><h2>${h(b.name)}</h2>
+    <div class="tc-contract-facts"><div><span>Custodian</span><strong>${h(b.custodian)}</strong></div><div><span>Location</span><strong>${h(b.place)}</strong></div></div>
+    ${ct.status==='sanctioned'?`<div class="tc-contract-sanction"><div class="tc-kicker ember">sanction granted</div><strong>The custodian is approved for execution.</strong><p>Kill the custodian or collect the bearing, then confirm below. The bearing itself is the receipt.</p></div><button class="btn gold" data-smith-action="claim-bearing">Bearing Claimed · Close Contract</button>`:`<div class="tc-contract-demand"><div class="tc-kicker ember">price of permission</div><p>${h(ct.task)}</p></div><div class="tc-muted tc-contract-note">Honor system: one assigned weapon per player, no backup weapon. When you have actually completed the demand in Elden Ring, certify it here.</div><button class="btn gold" data-smith-action="fulfill-contract">We Have Met The Union’s Demands</button>`}
+  </div></div>`);
+}
+function commissionSmithingContract(state){
+  const sm=smithingData(state),pool=availableBellBearings(state);
+  const affordable=pool.filter(b=>sm.favor>=smithingContractCost(b));
+  if(!affordable.length)return null;
+  const next=smithingCopy(state),b=pick(affordable),cost=smithingContractCost(b),task=pick(TC_SMITHING_TASKS);
+  next.smithing.favor-=cost;
+  next.smithing.activeContract={bearingId:b.id,task,status:'task',cost,commissionedAt:new Date().toISOString()};
+  next.lastAction=`A Bell Bearing Contract has been commissioned for ${b.name} for ${cost} Favor.`;
+  return next;
+}
+function fulfillSmithingContract(state){const next=smithingCopy(state);if(!next.smithing.activeContract)return null;next.smithing.activeContract.status='sanctioned';next.lastAction='The union’s demands have been met. Custodian sanctioned.';return next;}
+function claimSmithingBearing(state){
+  const next=smithingCopy(state),ct=next.smithing.activeContract;
+  if(!ct||ct.status!=='sanctioned')return null;
+  const b=bellById(ct.bearingId);
+  if(!b){
+    setToast('This contract is no longer valid. No reward was spent or granted.');
+    return null;
+  }
+  next.smithing.acquired=Array.from(new Set([...next.smithing.acquired,ct.bearingId]));
+  next.smithing.masterworkCredits+=1;
+  next.smithing.activeContract=null;
+  next.lastAction=`${b.name} claimed. Hewg owes the Covenant one Masterwork.`;
+  return next;
+}
+function masterworkCurrent(state,slot){
+  const next=smithingCopy(state);
+  if(next.smithing.masterworkCredits<1||!next.current)return null;
+  const weapon=slot==='morgan'?next.current.morgan?.name:next.current.chase?.name;
+  if(!weapon)return null;
+  if(next.smithing.masterworks.includes(weapon)){
+    setToast(`${weapon} is already Masterworked.`);
+    return null;
+  }
+  next.smithing.masterworks.push(weapon);
+  next.smithing.masterworkCredits-=1;
+  next.lastAction=`Hewg has Masterworked ${weapon}.`;
+  return next;
+}
+function bindNav() {
+  document.querySelectorAll('[data-screen]').forEach(btn=>btn.addEventListener('click',()=>{
+    uiScreen = btn.dataset.screen;
+    pendingRevealId = null;
+    renderRun();
+  }));
+}
+function screenTop(title='The Tarnished Covenant') {
+  return `<div class="tc-topline"><div class="tc-brand-small">${h(title)}</div><div class="tc-sync">${backend.mode==='shared'?'shared · synced':'local save'}</div></div>`;
+}
+function regionArtSvg(name) {
+  const n = name.toLowerCase();
+  let sky='#46505b', ground='#252b28', accent='#8a7952';
+  if(n.includes('caelid')){sky='#6d3028';ground='#351b16';accent='#b66a45'}
+  else if(n.includes('liurnia')){sky='#44606e';ground='#1e3035';accent='#7393a3'}
+  else if(n.includes('weeping')){sky='#536052';ground='#28302a';accent='#819078'}
+  else if(n.includes('gelmir')||n.includes('jagged')){sky='#6a3928';ground='#2c1c16';accent='#a36743'}
+  else if(n.includes('mountain')||n.includes('haligtree')){sky='#7a8588';ground='#3e4445';accent='#b8b69b'}
+  else if(n.includes('leyndell')||n.includes('altus')){sky='#756542';ground='#383022';accent='#c0a15c'}
+  else if(n.includes('coast')){sky='#386574';ground='#21343c';accent='#72a0aa'}
+  else if(n.includes('abyss')){sky='#524735';ground='#211e18';accent='#8c7955'}
+  else if(n.includes('shadow')||n.includes('gravesite')){sky='#4d473d';ground='#25231e';accent='#82735d'}
+  else if(n.includes('rauh')){sky='#4e6650';ground='#263529';accent='#81956e'}
+  return `<svg viewBox="0 0 600 110" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${sky}"/><stop offset="1" stop-color="#11100d"/></linearGradient></defs><rect width="600" height="110" fill="url(#g)"/><circle cx="495" cy="24" r="20" fill="${accent}" opacity=".32"/><path d="M0 83 L70 58 L125 76 L186 38 L235 74 L292 49 L346 81 L413 42 L470 69 L536 36 L600 70 V110 H0Z" fill="${ground}"/><path d="M390 75v-32h10v32m-26 0v-19h8v19m48 0v-24h8v24" stroke="${accent}" stroke-width="3" opacity=".45"/></svg>`;
+}
+function bindShare() { document.querySelector('#share')?.addEventListener('click',shareCovenant); }
+function hubProgressPct(state){const req=Math.max(1,capstoneRequirement(state));return Math.min(100,Math.round((state.cleared/req)*100));}
+
+function renderSanctuary() {
+  const state=run.state,c=state.current,done=requiredRemembrances(state).filter(x=>hasRemembrance(state,x)).length,required=requiredRemembrances(state).length;
+  app.innerHTML=`<section class="tc-screen">${screenTop('Site of Grace')}
+    <div class="tc-rune"></div><h1 class="tc-title">The Tarnished<br>Covenant</h1><div class="tc-subtitle">Site of Grace</div><div class="tc-grace-art tc-photo" style="background-image:linear-gradient(180deg,rgba(3,3,2,.08),rgba(4,3,2,.42)),url('${actualRegionImage(state.region)}')"></div>
+    <div class="tc-hub-grid">
+      <div class="tc-panel"><div class="tc-kicker">current region</div><div class="tc-value">${h(state.region)}</div><div class="tc-muted" style="margin-top:7px">${state.cleared} regional ${state.cleared===1?'boss':'bosses'} defeated</div></div>
+      <button id="openBoss" type="button" class="tc-panel tc-target-card"><div class="tc-kicker">current target</div><div class="tc-value">${h(c?.target?.name||'Awaiting decree')}</div><span class="tc-target-enter">open encounter · view decree</span></button>
+      <div class="tc-panel"><div class="tc-kicker">remembrances</div><div class="tc-value">${done} <span class="tc-muted">/ ${required}</span></div></div>
+      <div class="tc-panel" style="grid-column:1/-1"><div class="tc-kicker">regional progress</div><div class="tc-progress-line"><span style="width:${hubProgressPct(state)}%"></span></div><div class="tc-muted">${capstoneRequirement(state)>state.cleared?`${capstoneRequirement(state)-state.cleared} more before the capstone can appear`:'capstone eligible'}</div></div>
+    </div>
+    ${smithingHubMarkup(state)}
+    <div class="tc-code-row">CODE <strong>${h(run.joinCode||'LOCAL')}</strong><button id="share">SHARE ↗</button></div>
+    <div class="tc-quick"><button data-screen="encounter"><span class="tc-icon">✦</span>Encounter</button><button data-screen="ledger"><span class="tc-icon">▤</span>Ledger</button><button data-screen="settings"><span class="tc-icon">⚙</span>Settings</button></div>
+  </section>${navMarkup('sanctuary')}`;
+  bindNav();bindShare();
+  document.querySelector('#openBoss')?.addEventListener('click',()=>{uiScreen='encounter';pendingRevealId=null;renderRun();});
+}
+
+function compactLoadout(label,b){return `<div class="tc-loadout"><div class="tc-kicker">${h(label)}</div><div class="tc-loadout-name">${h(b.name)}</div><div class="tc-mini-stat tc-weapon-job"><b>job</b><span>${h(b.role||'awaiting an unreasonable assignment')}</span></div></div>`}
+function renderEncounter() {
+  const state=run.state,c=state.current;
+  app.innerHTML=`<section class="tc-screen">${screenTop('Encounter Briefing')}
+    <div class="tc-brief-head"><div class="tc-kicker gold">${c.target.exit?'regional capstone':'current target'}</div><div class="tc-brief-boss">${h(c.target.name)}</div><div class="tc-brief-region">${h(state.region)}</div></div><div class="tc-boss-art tc-photo" style="background-image:linear-gradient(180deg,rgba(4,3,2,.12),rgba(5,4,3,.58)),url('${actualBossImage(c.target.name,state.region)}')"></div>
+    <div class="tc-kicker gold" style="text-align:center;margin:5px 0 7px">assigned weapons</div><div class="tc-loadouts">${compactLoadout(playerLabel('chase',state),c.chase)}${compactLoadout(playerLabel('morgan',state),c.morgan)}</div>
+    ${c.covenantDebt?`<div class="tc-feature debt"><div class="tc-kicker red">COVENANT DEBT · THIS ENCOUNTER</div><div class="tc-feature-title">${h(c.covenantDebt)}</div></div>`:''}
+    ${c.penances?.length?`<details class="tc-penalty-summary" open><summary>${c.penances.length} ACTIVE WEAPON APPEAL ${c.penances.length===1?'PENALTY':'PENALTIES'}</summary>${penanceMarkup(c)}</details>`:''}
+    <div class="tc-feature chaos"><div class="tc-feature-row"><div class="tc-feature-glyph">◉</div><div><div class="tc-kicker red">chaos</div><div class="tc-feature-text">when this happens:</div><div class="tc-feature-title">${h(personalizePlayers(c.chaosTrigger,state))}</div>${c.chaosTriggered?`<div class="tc-feature-text" style="color:#df8b80">${h(personalizePlayers(c.chaosConsequence,run.state))}</div>`:`<button id="triggerChaos" class="tc-seal-inline">◉ break the seal</button>`}</div></div></div>
+    <div class="tc-feature rite"><div class="tc-feature-row"><div class="tc-feature-glyph">✧</div><div><div class="tc-kicker violet">${h(c.weirdness?.tier||'True')} rite · ${Number(c.weirdness?.favor??1)>0?`+${Number(c.weirdness?.favor??1)} Favor`:'no Favor'}</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div></div></div>
+    ${tcEncounterBoons(state)}
+      <button id="complete" class="btn gold victory">${c.target.exit?'CAPSTONE DEFEATED · CONTINUE':'VICTORY · ROLL NEXT ENCOUNTER'}</button>
+    <div class="tc-actions-3"><button id="appealOpen" class="btn curse">Weapon Appeal</button></div>
+    <div id="appealConfirm"></div>
+  </section>${navMarkup('encounter')}`;
+  bindNav();
+  document.querySelector('#triggerChaos')?.addEventListener('click',()=>commit(triggerChaos(state,playerName())));
+  document.querySelector('#appealOpen')?.addEventListener('click',showAppealMenu);
+  /* Co-op victory controls mount after Encounter panel enhancement. */
+}
+
+
+function postBattleChoice(kind,value){
+  if(!postBattleReport || postBattleReport.encounterId!==run.state.current?.id) return;
+  postBattleReport[kind]=Boolean(value);
+  renderPostBattleReport();
+}
+function postBattleChoiceMarkup(kind,label,detail,reward,available=true){
+  if(!available){
+    return `<div class="tc-report-row muted"><div><div class="tc-kicker">${label}</div><div class="tc-report-detail">${detail}</div></div><span class="tc-report-stamp">not triggered</span></div>`;
+  }
+  if(reward<=0){
+    return `<div class="tc-report-row muted"><div><div class="tc-kicker">${label}</div><div class="tc-report-detail">${detail}</div></div><span class="tc-report-stamp">no reward</span></div>`;
+  }
+  const current=postBattleReport?.[kind];
+  return `<div class="tc-report-row"><div class="tc-report-copy"><div class="tc-kicker">${label} · ${reward} reward ${reward===1?'draw':'draws'}</div><div class="tc-report-detail">${detail}</div></div><div class="tc-report-choices">
+    <button type="button" data-report-kind="${kind}" data-report-value="1" class="${current===true?'active yes':''}">Yes</button>
+    <button type="button" data-report-kind="${kind}" data-report-value="0" class="${current===false?'active no':''}">No</button>
+  </div></div>`;
+}
+function renderPostBattleReport(){
+  const state=run.state,c=state.current;
+  if(!c){postBattleReport=null;return renderRun();}
+  if(!postBattleReport || postBattleReport.encounterId!==c.id) postBattleReport={encounterId:c.id,rite:null,chaos:null};
+  const riteDraws=Number(c.weirdness?.favor??1);
+  const chaosDraws=Number(c.chaosFavor??1);
+  const riteReady=riteDraws<=0 || postBattleReport.rite!==null;
+  const chaosAvailable=Boolean(c.chaosTriggered);
+  const chaosReady=!chaosAvailable || chaosDraws<=0 || postBattleReport.chaos!==null;
+  const draws=(postBattleReport.rite===true?Math.max(0,riteDraws):0)+(postBattleReport.chaos===true?Math.max(0,chaosDraws):0);
+  app.innerHTML=`<section class="tc-battle-report">
+    <div class="tc-report-kicker">Encounter Complete</div>
+    <div class="tc-report-victory">VICTORY</div>
+    <div class="tc-report-boss">${h(c.target?.name||'Enemy Felled')}</div>
+    <div class="tc-report-rule"></div>
+    ${postBattleChoiceMarkup('rite','Odd Rite',`${h(c.weirdness?.name||'No Rite')} · ${h(c.weirdness?.text||'')}`,riteDraws,true)}
+    ${postBattleChoiceMarkup('chaos','Chaos',chaosAvailable?`${h(chaosEventName(c.chaosConsequence||''))} · ${h(personalizePlayers(c.chaosConsequence||'',state))}`:'The Chaos seal never broke during this encounter.',chaosDraws,chaosAvailable)}
+    <div class="tc-report-total"><span>Guaranteed Smithing Favor</span><strong>+1</strong></div><div class="tc-report-total"><span>Bonus Covenant reward draws</span><strong>${draws}</strong></div>
+    <button id="finishBattleReport" class="btn gold" ${riteReady&&chaosReady?'':'disabled'}>${c.target?.exit?'Record Victory · Draw Rewards':'Record Victory · Draw Rewards & Roll Next'}</button>
+    <div class="tc-report-note">${riteReady&&chaosReady?'Every completed Covenant encounter pays 1 guaranteed Smithing Favor. Honored Rite and Chaos objectives determine bonus Covenant reward draws.':'Answer the eligible honor-system checks first.'}</div>
+  </section>`;
+  document.querySelectorAll('[data-report-kind]').forEach(btn=>btn.addEventListener('click',()=>postBattleChoice(btn.dataset.reportKind,btn.dataset.reportValue==='1')));
+  document.querySelector('#finishBattleReport')?.addEventListener('click',finalizePostBattleReport);
+}
+async function finalizePostBattleReport(){
+  if(window.__tcReportBusy)return;
+  const state=run.state,c=state.current;
+  if(!c || !postBattleReport || postBattleReport.encounterId!==c.id) return;
+  window.__tcReportBusy=true;
+  const submit=document.querySelector('#finishBattleReport');
+  if(submit){submit.disabled=true;submit.textContent='Recording victory…';}
+  const nextState=smithingCopy(state);
+  const nc=nextState.current;
+  let draws=0,guaranteedFavor=1;
+  const riteDraws=Number(nc.weirdness?.favor??1);
+  if(postBattleReport.rite===true && !nc.riteForfeited && riteDraws>0 && !nc.smithingRiteFavor){
+    nc.smithingRiteFavor=true;draws+=riteDraws;
+  }
+  const chaosDraws=Number(nc.chaosFavor??1);
+  if(postBattleReport.chaos===true && !nc.chaosForfeited && nc.chaosTriggered && chaosDraws>0 && !nc.smithingChaosFavor){
+    nc.smithingChaosFavor=true;draws+=chaosDraws;
+  }
+  nextState.smithing=smithingData(nextState);
+  nextState.smithing.favor+=guaranteedFavor;
+  nc.postBattleRewards=[];
+  nc.favorEarned=guaranteedFavor;
+  const completed=completeEncounter(nextState,playerName());
+  if(!completed.regionComplete && !completed.runComplete && completed.current){
+    completed.smithing = smithingData(completed);
+    const affordableCorporate = availableBellBearings(completed).filter(b=>completed.smithing.favor>=smithingContractCost(b));
+    if(!completed.smithing.activeContract && affordableCorporate.length){
+      completed.smithing.pendingCorporateForEncounterId = completed.current.id;
+    }
+  }
+  postBattleReport=null;
+  if(!completed.regionComplete&&!completed.runComplete&&completed.current){pendingRevealId=completed.current.id;uiScreen='encounter';}
+  completed.sharedRewardDraw=draws>0?{
+    id:`${c.id}:${Date.now()}`,
+    encounterId:c.id,
+    count:draws,
+    boss:c.target?.name||'Enemy Felled',
+    filedBy:playerName()
+  }:null;
+  completed.sharedRewardReveal=null;
+  pendingRewardReveal=null;
+  const rewardText=draws>0?'Shared Covenant reward ready to draw.':'Post-battle report filed.';
+  try{
+    const saved=await commit(completed,{successToast:rewardText});
+    if(!saved)pendingRewardReveal=null;
+  }
+  finally{window.__tcReportBusy=false;}
+}
+
+
+function renderRewardMachine(){
+  const data=pendingRewardReveal;
+  if(!data?.rewards?.length){pendingRewardReveal=null;return renderRun();}
+  const current=data.rewards[data.index]||data.rewards[0];
+  const total=data.rewards.length;
+  const symbols=['✦','◉','✧','⚖','☠','◇','✦','✧','◉'];
+  app.innerHTML=`<section class="tc-reward-machine">
+    <div class="tc-reward-kicker">Covenant Treasury</div>
+    <div class="tc-reward-title">DRAW ${data.index+1} <span>OF ${total}</span></div>
+    <div class="tc-reward-boss">Victory over ${h(data.boss||'the enemy')}</div>
+    <div class="tc-slot-frame" aria-live="polite">
+      <div class="tc-slot-reel" data-reel="0">${symbols.map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="tc-slot-reel" data-reel="1">${symbols.slice().reverse().map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="tc-slot-reel" data-reel="2">${symbols.slice(3).concat(symbols.slice(0,3)).map(x=>`<span>${x}</span>`).join('')}</div>
+    </div>
+    <div id="tcRewardResult" class="tc-reward-result ${tcRewardClass(current.kind)}" hidden>
+      <div class="tc-reward-icon">${tcRewardIcon(current.kind)}</div>
+      <div class="tc-reward-type">${current.kind==='tax'?'Covenant Tax':'Reward Acquired'}</div>
+      <div class="tc-reward-name">${h(current.label)}</div>
+      <div class="tc-reward-detail">${h(current.detail||'The Covenant has spoken.')}</div>
+    </div>
+    <button id="tcRewardContinue" type="button" class="btn gold" disabled aria-disabled="true">${data.index+1<total?'Draw Next Reward':'Continue'}</button>
+    <div class="tc-reward-quip">${current.kind==='tax'?'The Covenant giveth. The Covenant also has purchasing requirements.':'Honor has been converted into administratively approved loot.'}</div>
+  </section>`;
+  const reels=[...document.querySelectorAll('.tc-slot-reel')];
+  const result=document.querySelector('#tcRewardResult');
+  const btn=document.querySelector('#tcRewardContinue');
+  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const finish=()=>{
+    reels.forEach((reel,i)=>{reel.classList.remove('spinning');reel.innerHTML=`<span class="winner">${tcRewardIcon(current.kind)}</span>`;});
+    result.hidden=false;result.classList.add('revealed');data.spinning=false;btn.disabled=false;btn.setAttribute('aria-disabled','false');btn.dataset.ready='1';
+  };
+  if(reduced){finish();}
+  else{
+    reels.forEach((reel,i)=>{reel.classList.add('spinning');reel.style.setProperty('--tc-spin-delay',`${i*110}ms`);});
+    window.setTimeout(finish,1250);
+  }
+  const advanceReward=(event)=>{
+    if(event)event.preventDefault();
+    if(btn.dataset.ready!=='1'||btn.disabled)return;
+    btn.dataset.ready='0';btn.disabled=true;btn.setAttribute('aria-disabled','true');data.spinning=false;
+    if(data.index+1<total){data.index+=1;data.spinning=true;renderRewardMachine();return;}
+    void tcAcknowledgeSharedRewardReveal(data);
+  };
+  btn.addEventListener('click',advanceReward);
+  btn.addEventListener('pointerup',event=>{if(event.pointerType==='touch')advanceReward(event);});
+  btn.addEventListener('touchend',advanceReward,{passive:false});
+}
+
+function tcLegacyShowAppealMenu(){
+  const c=run.state.current;
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">${smithingData(run.state).appealWaivers>0?`Appeal Waiver available · this appeal is penalty-free and will consume 1 waiver.`:`Changing an assigned weapon creates a severe random penalty.`}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',run.state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',run.state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',run.state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',run.state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
+  document.querySelector('#closeAppeal').addEventListener('click',()=>document.querySelector('#tcAppealOverlay')?.remove());
+  document.querySelectorAll('[data-overlay-appeal]').forEach(btn=>btn.addEventListener('click',async()=>{const which=btn.dataset.overlayAppeal;document.querySelector('#tcAppealOverlay')?.remove();await commit(changeWeapons(run.state,playerName(),which));}));
+}
+
+
+function compendiumNames(entry,state){
+  const current=typeof covenantNames==='function'?covenantNames(state):{chase:'Tarnished One',morgan:'Tarnished Two'};
+  const saved=entry?.playerNames||{};
+  return {
+    chase:saved.chase||saved.player1||current.chase||'Tarnished One',
+    morgan:saved.morgan||saved.player2||current.morgan||'Tarnished Two'
+  };
+}
+function compendiumDate(value){
+  if(!value)return '';
+  try{return new Date(value).toLocaleDateString(undefined,{month:'short',day:'numeric'});}catch{return '';}
+}
+function compendiumEntryMarkup(entry,index,state){
+  const names=compendiumNames(entry,state);
+  const rich=Boolean(entry.chaseWeapon||entry.morganWeapon||entry.oddRite||entry.chaosTrigger);
+  const chaos=entry.chaosTriggered&&entry.chaosConsequence;
+  const mods=Array.isArray(entry.penances)?entry.penances:[];
+  if(!rich){
+    return `<details class="tc-comp-card legacy"><summary><div><div class="tc-comp-number">ENTRY ${String(Math.max(1,(run.state.history?.length||0)-index)).padStart(2,'0')} · ${h(entry.region||'Earlier run')}</div><div class="tc-comp-boss">${h(entry.name||'Unknown foe')}</div></div><span class="tc-comp-mark">${entry.exit?'CAPSTONE':'LEGACY'}</span></summary><div class="tc-comp-legacy">This kill predates the Compendium. The Covenant remembers the corpse, but not what nonsense got you there.</div></details>`;
+  }
+  return `<details class="tc-comp-card ${entry.exit?'capstone':''}"><summary><div><div class="tc-comp-number">ENTRY ${String(Math.max(1,(run.state.history?.length||0)-index)).padStart(2,'0')} · ${h(entry.region||'Unknown region')} ${compendiumDate(entry.completedAt)?'· '+h(compendiumDate(entry.completedAt)):''}</div><div class="tc-comp-boss">${h(entry.name||'Unknown foe')}</div><div class="tc-comp-pair">${h(entry.chaseWeapon||'Unknown weapon')} × ${h(entry.morganWeapon||'Unknown weapon')}</div></div><span class="tc-comp-mark">${entry.exit?'CAPSTONE':'FELLED'}</span></summary>
+    <div class="tc-comp-body">
+      <div class="tc-comp-weapons"><div><span>${h(names.chase)}</span><strong>${h(entry.chaseWeapon||'—')}</strong>${entry.chaseBuild?.role?`<em>${h(entry.chaseBuild.role)}</em>`:''}</div><div><span>${h(names.morgan)}</span><strong>${h(entry.morganWeapon||'—')}</strong>${entry.morganBuild?.role?`<em>${h(entry.morganBuild.role)}</em>`:''}</div></div>
+      ${entry.oddRite?`<div class="tc-comp-mod rite"><span>ODD RITE</span><strong>${h(entry.oddRite.name||'Unnamed Rite')}</strong><p>${h(entry.oddRite.text||'')}</p></div>`:''}
+      ${entry.chaosTriggered?`<div class="tc-comp-mod chaos"><span>CHAOS · TRIGGERED</span><strong>${h(typeof chaosEventName==='function'?chaosEventName(entry.chaosConsequence||'Chaos'): 'Chaos')}</strong><p>${h(personalizePlayers(entry.chaosConsequence||'The seal broke. Details lost to history.',{playerNames:[names.chase,names.morgan]}))}</p></div>`:`<div class="tc-comp-mod quiet"><span>CHAOS</span><strong>Seal remained intact</strong></div>`}
+      ${mods.length?`<div class="tc-comp-mod penalties"><span>ARMAMENT PENALTIES · ${mods.length}</span>${mods.map(x=>`<p><b>${h(x.name||'Penalty')}</b> · ${h(personalizePlayers(x.text||'',{playerNames:[names.chase,names.morgan]}))}</p>`).join('')}</div>`:''}
+      ${Array.isArray(entry.rewards)&&entry.rewards.length?`<div class="tc-comp-mod rewards"><span>COVENANT REWARDS</span><p>${entry.rewards.map(h).join(' · ')}</p></div>`:''}
+      <div class="tc-comp-footer"><span>${entry.completedBy?`recorded by ${h(personalizePlayers(entry.completedBy,{playerNames:[names.chase,names.morgan]}))}`:'victory recorded'}</span><strong>${Number(entry.favorEarned||0)>0?`+${Number(entry.favorEarned)} Favor`:(Array.isArray(entry.rewards)&&entry.rewards.length?'Boons earned':'No reward')}</strong></div>
+    </div>
+  </details>`;
+}
+function compendiumLedgerMarkup(state){
+  const entries=Array.isArray(state.history)?state.history:[];
+  const rich=entries.filter(x=>x.chaseWeapon||x.morganWeapon||x.oddRite);
+  const chaosCount=entries.filter(x=>x.chaosTriggered).length;
+  const favor=entries.reduce((sum,x)=>sum+Number(x.favorEarned||0),0);
+  if(!entries.length)return `<div class="tc-comp-empty"><div class="tc-comp-empty-glyph">◇</div><div class="tc-value">Nothing to remember yet.</div><div class="tc-muted">Kill something regrettable and it will be preserved here.</div></div>`;
+  return `<div class="tc-comp-hero"><div><div class="tc-kicker gold">Covenant Compendium</div><div class="tc-comp-title">The run, as it actually happened.</div><div class="tc-muted">Bosses, cursed weapon pairings, Rites, Chaos, and other decisions that seemed reasonable at the time.</div></div><div class="tc-comp-total">${entries.length}</div></div>
+    <div class="tc-comp-stats"><div><strong>${entries.length}</strong><span>Felled</span></div><div><strong>${rich.length}</strong><span>Full records</span></div><div><strong>${chaosCount}</strong><span>Chaos events</span></div><div><strong>${favor}</strong><span>Favor earned</span></div></div>
+    <div class="tc-comp-list">${entries.map((entry,i)=>compendiumEntryMarkup(entry,i,state)).join('')}</div>`;
+}
+
+function renderLedger() {
+  const state=run.state;
+  const title=ledgerView==='smithing'?'Smithing Ledger':ledgerView==='compendium'?'Covenant Compendium':'Remembrance Ledger';
+  const body=ledgerView==='smithing'?smithingLedgerMarkup(state):ledgerView==='compendium'?compendiumLedgerMarkup(state):remembranceLedgerBody(state);
+  app.innerHTML=`<section class="tc-screen tc-ledger-screen">${screenTop(title)}
+    <div class="tc-ledger-tabs tc-ledger-tabs-3"><button class="${ledgerView==='remembrances'?'active':''}" data-ledger-view="remembrances">Progress</button><button class="${ledgerView==='compendium'?'active':''}" data-ledger-view="compendium">Compendium</button><button class="${ledgerView==='smithing'?'active':''}" data-ledger-view="smithing">Smithing</button></div>
+    ${body}
+    ${navMarkup('ledger')}</section>`;
+  bindNav();
+}
+
+function renderSettings() {
+ const state=run.state;
+ app.innerHTML=`<section class="tc-screen">${screenTop('Covenant Settings')}<div class="tc-rune" style="margin:5px auto 5px"></div>
+  <div class="tc-panel"><div class="tc-kicker gold">share code</div><div class="tc-value big" style="text-align:center;letter-spacing:.14em;margin:9px">${h(run.joinCode||'LOCAL')}</div><button id="share" class="btn ghost">Share Covenant</button></div>
+  <div class="tc-kicker gold" style="margin-top:20px">run options</div>
+  <div class="tc-settings-row"><div class="lefty"><div class="name">difficulty</div><div class="desc">${state.severity==='normal'?'Silly':state.severity==='hard'?'Maidenless':'Miyazaki Has Noticed You'}</div></div><span>›</span></div>
+  <div class="tc-settings-row"><div class="lefty"><div class="name">ruleset</div><div class="desc">${state.includeDlc?'Base + Shadow of the Erdtree · All Remembrances':'Base Game · All Remembrances'}</div></div><span class="tc-muted">locked</span></div>
+  <div class="tc-kicker gold" style="margin-top:22px">app</div>
+  <button id="refreshApp" class="tc-settings-row" style="width:100%;border-left:0;border-right:0;border-top:0;background:transparent;color:var(--ink);text-align:left"><div class="lefty"><div class="name">refresh app</div><div class="desc">Load the latest published version. Your Covenant stays connected.</div></div><span>↻</span></button>
+  <div class="tc-kicker gold" style="margin-top:22px">run management</div>
+  <button id="restartRun" class="tc-settings-row danger" style="width:100%;border-left:0;border-right:0;border-top:0;background:transparent;text-align:left"><div class="lefty"><div class="name">restart covenant</div><div class="desc">Erase progress and return to the beginning.</div></div><span>↻</span></button>
+  <button id="leave" class="tc-settings-row" style="width:100%;border-left:0;border-right:0;border-top:0;background:transparent;color:var(--ink);text-align:left"><div class="lefty"><div class="name">leave run</div><div class="desc">Return to the opening screen.</div></div><span>›</span></button><div id="restartConfirm"></div>
+ </section>${navMarkup('settings')}`;
+ bindNav();bindShare();document.querySelector('#refreshApp')?.addEventListener('click',()=>{const u=new URL(window.location.href);u.searchParams.set('_refresh',Date.now().toString());window.location.replace(u.toString());});document.querySelector('#restartRun').addEventListener('click',showRestart);document.querySelector('#leave').addEventListener('click',()=>{unsubscribe?.();run=null;clearSession();session=null;renderHome();});
+}
+
+function renderDecreeReveal(){
+ const state=run.state,c=state.current;
+ app.innerHTML=`<section class="tc-screen tc-reveal">${screenTop('New Decree')}<div class="decree">new decree</div><div class="new-boss">${h(c.target.name)}</div><div class="tc-reveal-weapons"><div class="tc-reveal-box"><div class="tc-kicker">${h(playerLabel('chase',state))}</div><strong>${h(c.chase.name)}</strong></div><div class="tc-reveal-box"><div class="tc-kicker">${h(playerLabel('morgan',state))}</div><strong>${h(c.morgan.name)}</strong></div></div><div class="tc-feature chaos" style="text-align:left"><div class="tc-kicker red">chaos</div><div class="tc-feature-text">${h(personalizePlayers(c.chaosTrigger,state))}</div></div><div class="tc-feature rite" style="text-align:left"><div class="tc-kicker violet">odd rite</div><div class="tc-feature-title">${h(c.weirdness.name)}</div><div class="tc-feature-text">${h(c.weirdness.text)}</div></div><button id="acceptDecree" class="btn gold">Accept the Decree</button></section>${navMarkup('encounter')}`;
+ bindNav();document.querySelector('#acceptDecree').addEventListener('click',()=>{pendingRevealId=null;uiScreen='encounter';renderRun();});
+}
+
+function renderRun() {
+  const state=run.state;
+  if(pendingRewardReveal?.rewards?.length) return renderRewardMachine();
+  if(postBattleReport?.encounterId===state.current?.id) return renderPostBattleReport();
+  setRegionTheme(state.region);
+  if (uiScreen==='encounter' && state.current?.chaosTriggered && !acknowledgedChaos.has(state.current.id)) return renderChaosEvent();
+  if (state.runComplete) return renderRunComplete();
+  if(state.regionComplete){try{return renderRegionComplete();}catch(error){console.error('Region Complete render failed:',error);return renderRegionCompleteSafe();}}
+  if(pendingRevealId && state.current?.id===pendingRevealId) return renderDecreeReveal();
+  if(uiScreen==='encounter') return renderEncounter();
+  if(uiScreen==='ledger') return renderLedger();
+  if(uiScreen==='settings') return renderSettings();
+  return renderSanctuary();
+}
+
+function showRestart() {
+  const state = run.state;
+  const options = Object.keys(regions).map(r => `<option value="${h(r)}" ${r === state.region ? 'selected' : ''}>${h(r)}</option>`).join('');
+  const box = document.querySelector('#restartConfirm');
+  if (!box) return setToast('Restart is unavailable. Try again.');
+  box.innerHTML = `<div class="confirm restart-confirm">
+    <div class="section-kicker redtext">restart covenant</div>
+    <h3>Restart this Covenant?</h3>
+    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
+    <div class="grid2 restart-grid">
+      <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
+    </div>
+    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Erase Run & Restart</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
+  </div>`;
+  document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
+  document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
+    const region = document.querySelector('#restartRegion')?.value || state.region;
+    const severity = 'cursed';
+    const button = document.querySelector('#confirmRestart');
+    if (button) { button.disabled = true; button.textContent = 'Restarting…'; }
+
+    const buildFreshState = (latestState) => {
+      const fresh = initialRunState({
+        region,
+        severity,
+        includeDlc: Boolean(latestState?.includeDlc ?? state.includeDlc),
+        playerNames: latestState?.playerNames || state.playerNames || ['Tarnished One','Tarnished Two'],
+        createdBy: latestState?.createdBy || state.createdBy || playerName()
+      });
+      fresh.lastAction = `${playerName()} restarted the Covenant.`;
+      return fresh;
+    };
+
+    try {
+      const oldRun = run;
+      const restarted = await backend.restartRun(run.id, run.revision, buildFreshState(run.state));
+      if (!restarted?.success) {
+        run = {...oldRun, ...restarted, joinCode: restarted?.joinCode || oldRun?.joinCode};
+        renderRun();
+        setToast('The Covenant changed on the other phone before restart. Review the latest state first.');
+        return;
+      }
+      unsubscribe?.();
+      run = {...oldRun, ...restarted, joinCode: restarted?.joinCode || oldRun?.joinCode};
+      session = {runId:run.id, joinCode:run.joinCode || session?.joinCode, displayName:session?.displayName || playerName()};
+      saveSession(session);
+      pendingRevealId = null;
+      postBattleReport = null;
+      pendingRewardReveal = null;
+      acknowledgedChaos.clear();
+      ledgerView = 'remembrances';
+      uiScreen = 'sanctuary';
+      subscribe();
+      renderRun();
+      setToast('Covenant restarted. Same room, fresh run.');
+    } catch (error) {
+      console.error(error);
+      setToast(error.message || 'Restart failed. Try again.');
+      const retry = document.querySelector('#confirmRestart');
+      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
+    }
+  });
+}
+
+function showAppeal(which) {
+  const names = covenantNames(run?.state);
+  const labels = { chase: `${names[0]}’s weapon`, morgan: `${names[1]}’s weapon`, both: 'both weapons' };
+  const box = document.querySelector('#appealConfirm');
+  if (!box) return showAppealMenu();
+  box.innerHTML = `<div class="confirm">
+    <div class="section-kicker redtext">armament appeal</div>
+    <h3>Change ${h(labels[which] || 'assigned weapon')}?</h3>
+    <div class="rtext">You get a new region-legal weapon, then ${h(names[0])}, ${h(names[1])}, or both receive a severe random penalty. You do not see the penalty first.</div>
+    <div class="confirm-actions"><button id="accept" class="btn curse" type="button">Accept Penalty & Reroll</button><button id="cancel" class="btn ghost" type="button">Keep Current Weapon</button></div>
+  </div>`;
+  document.querySelector('#cancel')?.addEventListener('click',()=>{box.innerHTML='';});
+  document.querySelector('#accept')?.addEventListener('click',()=>commit(changeWeapons(run.state,playerName(),which)));
+}
+
+function renderHistory(state) {
+  if (!state.history?.length) return '<div class="empty-history">No encounters completed yet.</div>';
+  return state.history.slice(0,12).map((x)=>`<div class="history-row"><strong>${h(x.name)}</strong><span>${x.exit ? 'CAPSTONE' : 'dead'}</span></div>`).join('');
+}
+
+function renderRegionComplete() {
+  const state=run.state;setRegionTheme(state.region);
+  const choices=availableNextRegions(state),missing=missingRemembrances(state),seal=finalSealOpen(state);
+  app.innerHTML=`<section class="tc-screen">${screenTop('Region Complete')}<div class="tc-travel-hero"><div class="tc-conquered">region conquered</div><div class="tc-travel-region">${h(state.region)}</div><div class="tc-travel-sigil"></div></div><div class="tc-kicker gold" style="text-align:center;margin-bottom:10px">paths now open</div><div class="tc-paths">${choices.length?choices.map(r=>`<button class="tc-path" data-travel="${h(r)}"><span class="tc-path-art tc-path-photo" style="background-image:linear-gradient(90deg,rgba(5,5,4,.14),rgba(5,5,4,.34)),url('${actualRegionImage(r)}')"></span><span class="tc-path-copy"><span class="tc-path-name">${h(r)}</span><span class="tc-path-meta">${(state.clearedRegions||[]).includes(r)?'Return · unfinished remembrance remains':'Travel here next'}</span></span></button>`).join(''):`<div class="tc-panel"><div class="tc-muted">No new path is currently open.</div></div>`}</div><div class="tc-panel" style="margin-top:17px"><div class="tc-kicker gold">remembrance ledger</div><div class="tc-value">${requiredRemembrances(state).length-missing.length} / ${requiredRemembrances(state).length}</div><div class="tc-muted" style="margin-top:6px">${seal?'The final seal is open.':'The final seal remains closed. Claim every required Remembrance.'}</div></div><button id="share" class="btn ghost">Share Covenant</button></section>${navMarkup('sanctuary')}`;
+  bindNav();bindShare();document.querySelectorAll('[data-travel]').forEach(btn=>btn.addEventListener('click',()=>{const next=startNextRegion(state,playerName(),btn.dataset.travel,state.severity);uiScreen='sanctuary';pendingRevealId=null;tcPendingRegionContractEncounterId=next.current?.id||null;commit(next);}));
+}
+
+
+function renderRegionCompleteSafe(){
+  const state=run.state;
+  const choices=(typeof availableNextRegions==='function'?availableNextRegions(state):[])||[];
+  const done=(state.history||[]).length;
+  const capstone=(state.history||[]).find(x=>x?.exit && x?.region===state.region)?.name || 'Regional capstone';
+  const pathCards=choices.map((r,i)=>{
+    const image=typeof actualRegionImage==='function'?actualRegionImage(r):'';
+    const returnTrip=(state.clearedRegions||[]).includes(r);
+    return `<button class="tc-crossroad-card" data-safe-travel="${h(r)}">
+      <span class="tc-crossroad-art" style="background-image:linear-gradient(90deg,rgba(5,4,2,.18),rgba(5,4,2,.72)),url('${image}')"></span>
+      <span class="tc-crossroad-copy"><span class="tc-crossroad-number">0${i+1}</span><span class="tc-crossroad-name">${h(r)}</span><span class="tc-crossroad-meta">${returnTrip?'Return to unfinished business':'Open this path'} <b>→</b></span></span>
+    </button>`;
+  }).join('');
+  app.innerHTML=`<section class="tc-screen tc-safe-travel">${screenTop('Region Complete')}
+    <div class="tc-victory-banner">
+      <div class="tc-conquered">capstone felled</div>
+      <div class="tc-travel-region">${h(state.region||'Region')}</div>
+      <div class="tc-victory-mark"><span>✦</span></div>
+      <div class="tc-victory-name">${h(capstone)}</div>
+      <div class="tc-victory-copy">The road opens. Choose the Covenant’s next destination.</div>
+    </div>
+    <div class="tc-crossroads-head"><span>THE CROSSROADS</span><small>${choices.length} ${choices.length===1?'path':'paths'} available</small></div>
+    <div class="tc-crossroads">${pathCards||`<div class="tc-panel"><div class="tc-muted">No path is available yet. Your victory is still saved.</div></div>`}</div>
+    <div class="tc-victory-foot">
+      <div><span>Battle record</span><strong>${done}</strong><small>victories</small></div>
+      <button id="safeRefresh" class="tc-refresh-link">↻ Refresh app</button>
+    </div>
+  </section>${navMarkup('sanctuary')}`;
+  bindNav();
+  document.querySelector('#safeRefresh')?.addEventListener('click',()=>tcForceFreshNavigation());
+  document.querySelectorAll('[data-safe-travel]').forEach(btn=>btn.addEventListener('click',()=>{
+    try{
+      const next=startNextRegion(state,playerName(),btn.dataset.safeTravel,state.severity);
+      uiScreen='sanctuary';pendingRevealId=null;tcPendingRegionContractEncounterId=next.current?.id||null;commit(next);
+    }catch(error){console.error(error);setToast('Could not open that path. Refresh and try again.');}
+  }));
+}
+
+function renderRunComplete() {
+  const state = run.state;
+  setRegionTheme('Leyndell');
+  const total = requiredRemembrances(state).length + 1;
+  app.innerHTML = `${header(true)}
+    <section class="escape-screen">
+      <div class="tag">COVENANT COMPLETE</div>
+      <div class="escape-title">All Remembrances Claimed</div>
+      <div class="escape-copy">Radagon and the Elden Beast are defeated. ${total}/${total} required remembrance encounters complete.</div>
+    </section>
+    <div class="ornament"><span>✦</span></div>
+    <section class="menu-section stack">
+      <button id="share" class="btn ghost" type="button">Share Covenant</button>
+      <button id="restartRun" class="btn curse" type="button">Restart Covenant</button>
+      <div id="restartConfirm"></div>
+    </section>
+    <section class="history"><div class="section-kicker">encounter history</div>${renderHistory(state)}</section>`;
+  document.querySelector('#share').addEventListener('click',shareCovenant);
+  document.querySelector('#restartRun').addEventListener('click',showRestart);
+}
+
+async function shareCovenant() {
+  if (backend.mode !== 'shared') return setToast('shared mode unavailable');
+  const code = run.joinCode;
+  const base = config.APP_URL || `${location.origin}${location.pathname}`;
+  const url = new URL(base);
+  url.searchParams.set('join', code);
+  const text = `Join our Tarnished Covenant. Code: ${code}.`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title:'The Tarnished Covenant', text, url:url.toString() });
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(`${text}\n${url}`);
+    setToast('Link and code copied.');
+  } catch {
+    setToast(`code ${code} · ${url}`);
+  }
+}
+
+function pickOmen() { return omens[Math.floor(Math.random() * omens.length)]; }
+
+
+if (!window.__tcSmithingBound) {
+  window.__tcSmithingBound = true;
+  document.addEventListener('click', async (event) => {
+    const tab=event.target.closest('[data-ledger-view]');
+    if(tab){ledgerView=tab.dataset.ledgerView;uiScreen='ledger';renderRun();return;}
+    const el=event.target.closest('[data-smith-action]'); if(!el)return;
+    const action=el.dataset.smithAction;
+    if(action==='close-contract'){document.querySelector('#tcSmithOverlay')?.remove();return;}
+    if(action==='ledger'){ledgerView='smithing';uiScreen='ledger';renderRun();return;}
+    if(action==='open-contract'){renderSmithingContract();return;}
+    if(action==='commission'){const next=commissionSmithingContract(run.state);if(!next)return setToast('No Bell Bearing Contract is available yet.');if(await commit(next,{successToast:'Bell Bearing Contract commissioned.'}))renderSmithingContract();return;}
+    if(action==='fulfill-contract'){const next=fulfillSmithingContract(run.state);if(!next)return;if(await commit(next,{successToast:'Custodian sanctioned.'}))renderSmithingContract();return;}
+    if(action==='claim-bearing'){const next=claimSmithingBearing(run.state);if(!next)return;if(await commit(next,{successToast:'Bell Bearing claimed. +1 Masterwork.'})){document.querySelector('#tcSmithOverlay')?.remove();ledgerView='smithing';uiScreen='ledger';renderRun();}return;}
+    if(action==='favor-rite'){const next=claimForgeFavor(run.state,'rite');if(next)await commit(next,{successToast:'+1 Smithing Favor'});return;}
+    if(action==='favor-chaos'){const next=claimForgeFavor(run.state,'chaos');if(next)await commit(next,{successToast:'+1 Smithing Favor'});return;}
+    if(action==='masterwork'){const next=masterworkCurrent(run.state,el.dataset.slot);if(next)await commit(next,{successToast:'Hewg has done something useful.'});return;}
+  });
+}
+
+
+function navMarkup(active) {
+  return `<nav class="tc-bottom-nav">
+    <button data-screen="sanctuary" class="${active==='sanctuary'?'active':''}"><span class="nicon">⌂</span><span>Site of Grace</span></button>
+    <button data-screen="encounter" class="${active==='encounter'?'active':''}"><span class="nicon">✦</span><span>Encounter</span></button>
+    <button data-screen="ledger" class="${active==='ledger'?'active':''}"><span class="nicon">▤</span><span>Ledger</span></button>
+    <button data-screen="settings" class="${active==='settings'?'active':''}"><span class="nicon">⚙</span><span>Settings</span></button>
+  </nav>`;
+}
+function bindNav() {
+  document.querySelectorAll('[data-screen]').forEach(btn=>btn.addEventListener('click',()=>{
+    uiScreen = btn.dataset.screen;
+    pendingRevealId = null;
+    renderRun();
+  }));
+}
+
+async function startApp(){ backend = await createBackend(config); boot(); }
+startApp().catch(err=>{console.error(err); document.body.innerHTML=`<pre style="color:#eee;background:#080806;padding:24px;white-space:pre-wrap">App error: ${String(err?.message||err)}</pre>`;});
+
+if(!window.__tcBoonBound){
+  window.__tcBoonBound=true;
+  document.addEventListener('click',event=>{
+    const btn=event.target.closest('[data-use-boon]');
+    if(btn)useCovenantBoon(btn.dataset.useBoon);
+  });
+}
+
+
+/* --- Late information-architecture layer. Existing renderers still create and bind the controls. --- */
+let tcEncounterPanelIndex=0;
+let tcEncounterPanelId=null;
+let tcSanctuaryPanelIndex=0;
+function tcMakePanel(className,label,key,nodes){const panel=document.createElement('section');panel.className=className;panel.dataset.panel=key;const heading=document.createElement('div');heading.className='tc-panel-heading';heading.textContent=label;panel.appendChild(heading);nodes.filter(Boolean).forEach(node=>panel.appendChild(node));return panel;}
+function tcWirePanelTrack(track,tabs,count,getIndex,setIndex){
+  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));};
+  tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
+  let scrollTimer=null;track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));setIndex(i);tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));},70);},{passive:true});
+  requestAnimationFrame(()=>{track.scrollLeft=getIndex()*track.clientWidth;});
+}
+function tcEnhanceEncounterPanels(){
+  const screen=app.querySelector('.tc-screen');const complete=screen?.querySelector('#complete');if(!screen||!complete||screen.classList.contains('tc-encounter-shell'))return;
+  const c=run.state?.current;if(!c)return;if(tcEncounterPanelId!==c.id){tcEncounterPanelId=c.id;tcEncounterPanelIndex=0;}screen.classList.add('tc-encounter-shell');
+  const top=screen.querySelector('.tc-topline'),brief=screen.querySelector('.tc-brief-head'),art=screen.querySelector('.tc-boss-art'),defer=screen.querySelector('.tc-capstone-defer,.tc-capstone-deferral,.tc-capstone-defer-card'),debt=screen.querySelector('.tc-feature.debt');
+  const loadouts=screen.querySelector('.tc-loadouts'),weaponsHeading=loadouts?.previousElementSibling?.classList?.contains('tc-kicker')?loadouts.previousElementSibling:null,penalties=screen.querySelector('.tc-penalty-summary'),chaos=screen.querySelector('.tc-feature.chaos'),rite=screen.querySelector('.tc-feature.rite'),earned=screen.querySelector('.tc-earned-refreshes'),actions3=screen.querySelector('.tc-actions-3'),appealConfirm=screen.querySelector('#appealConfirm');
+  const sticky=document.createElement('div');sticky.className='tc-encounter-sticky';sticky.innerHTML=`<strong>${h(c.target?.name||'Current Encounter')}</strong><span>CHAOS · ${h(personalizePlayers(c.chaosTrigger||'No active trigger',run.state))}</span>`;top?.after(sticky);
+  const tabs=document.createElement('div');tabs.className='tc-encounter-tabs';['Boss','Weapons','Chaos','Rite'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcEncounterPanelIndex)b.classList.add('active');tabs.appendChild(b);});sticky.after(tabs);
+  const track=document.createElement('div');track.className='tc-encounter-track';const overviewNodes=[brief,art,defer,debt],weaponNodes=[loadouts,penalties],chaosNodes=[chaos],riteNodes=[rite,earned];
+  const claimed=new Set([top,sticky,tabs,brief,art,defer,debt,weaponsHeading,loadouts,penalties,chaos,rite,earned,complete,actions3,appealConfirm].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)riteNodes.push(node);});
+  const bossPanel=tcMakePanel('tc-encounter-panel','Target','boss',overviewNodes);const weaponPanel=tcMakePanel('tc-encounter-panel','Assigned Weapons','weapons',weaponNodes);track.append(bossPanel,weaponPanel,tcMakePanel('tc-encounter-panel','Chaos Decree','chaos',chaosNodes),tcMakePanel('tc-encounter-panel','Rite & Amendments','rite',riteNodes));tabs.after(track);weaponsHeading?.remove();
+  const hint=document.createElement('div');hint.className='tc-encounter-hint';hint.textContent='Swipe between briefing panels';track.after(hint);
+  const bar=document.createElement('div');bar.className='tc-encounter-actions tc-boss-victory-actions';bar.appendChild(complete);bossPanel.appendChild(bar);
+  const appealBar=document.createElement('div');appealBar.className='tc-encounter-actions tc-weapon-appeal-actions';if(actions3)appealBar.appendChild(actions3);if(appealConfirm)appealBar.appendChild(appealConfirm);if(actions3||appealConfirm)weaponPanel.appendChild(appealBar);tcMountWeaponRecall(weaponPanel);
+  tcWirePanelTrack(track,tabs,4,()=>tcEncounterPanelIndex,i=>{tcEncounterPanelIndex=i;});
+}
+const tcRenderEncounterBeforeIA=renderEncounter;renderEncounter=function(){tcRenderEncounterBeforeIA();tcEnhanceEncounterPanels();};
+
+function tcEnhanceSanctuaryPanels(){
+  const screen=app.querySelector('.tc-screen');if(!screen||screen.querySelector('#complete')||screen.classList.contains('tc-sanctuary-shell'))return;
+  const top=screen.querySelector('.tc-topline'),rune=screen.querySelector('.tc-rune'),title=screen.querySelector('.tc-title'),subtitle=screen.querySelector('.tc-subtitle'),art=screen.querySelector('.tc-grace-art'),hub=screen.querySelector('.tc-hub-grid'),forge=screen.querySelector('.tc-forge-notice,.tc-forge-favor'),code=screen.querySelector('.tc-code-row'),quick=screen.querySelector('.tc-quick');
+  if(!top||!title||!hub)return;screen.classList.add('tc-sanctuary-shell');
+  const tabs=document.createElement('div');tabs.className='tc-sanctuary-tabs';['Grace','Progress','Covenant'].forEach((name,i)=>{const b=document.createElement('button');b.type='button';b.textContent=name;if(i===tcSanctuaryPanelIndex)b.classList.add('active');tabs.appendChild(b);});top.after(tabs);
+  const track=document.createElement('div');track.className='tc-sanctuary-track';
+  const graceNodes=[rune,title,subtitle,art],progressNodes=[hub],covenantNodes=[forge,code,quick];
+  const claimed=new Set([top,tabs,rune,title,subtitle,art,hub,forge,code,quick].filter(Boolean));[...screen.children].forEach(node=>{if(!claimed.has(node)&&node!==track)covenantNodes.push(node);});
+  track.append(tcMakePanel('tc-sanctuary-panel','At the Grace','grace',graceNodes),tcMakePanel('tc-sanctuary-panel','Run Progress','progress',progressNodes),tcMakePanel('tc-sanctuary-panel','Covenant Office','covenant',covenantNodes));tabs.after(track);
+  const hint=document.createElement('div');hint.className='tc-sanctuary-hint';hint.textContent='Swipe between Site of Grace panels';track.after(hint);
+  tcWirePanelTrack(track,tabs,3,()=>tcSanctuaryPanelIndex,i=>{tcSanctuaryPanelIndex=i;});
+}
+const tcRenderSanctuaryBeforeIA=renderSanctuary;renderSanctuary=function(){tcRenderSanctuaryBeforeIA();tcEnhanceSanctuaryPanels();};
+
+let tcPendingRegionContractEncounterId=null;
+
+function tcMandatoryContractEligible(state){
+  if(!state?.current)return false;
+  const safeTransition=pendingRevealId===state.current.id||tcPendingRegionContractEncounterId===state.current.id;
+  if(!safeTransition)return false;
+  const sm=smithingData(state);
+  if(sm.activeContract)return false;
+  return availableBellBearings(state).some(b=>sm.favor>=smithingContractCost(b));
+}
+function renderCorporateContractNotice(){
+  const state=run.state,sm=smithingData(state),available=availableBellBearings(state),preview=available[0];
+  app.innerHTML=`<section class="tc-corporate-screen"><div class="tc-corporate-letter"><div class="tc-corporate-stamp">Action<br>Required</div><div class="tc-corporate-overline">Notice From Upper Management</div><h1>Corporate Has Forwarded A Matter</h1><div class="tc-corporate-copy">Your recent performance has attracted administrative attention. A Bell Bearing Contract is now mandatory before normal encounter scheduling may resume.</div><div class="tc-corporate-meta"><strong>${sm.favor} Smithing Favor on file</strong><br>${preview?`${h(preview.region)} procurement is currently actionable.`:'An eligible procurement matter has been identified.'}</div><button id="tcReviewMandatoryContract" class="btn gold">Review Mandatory Contract</button><div class="tc-corporate-foot">Hewg has been CC’d. This meeting could not have been an email.</div></div></section>`;
+  document.querySelector('#tcReviewMandatoryContract')?.addEventListener('click',async()=>{const btn=document.querySelector('#tcReviewMandatoryContract');if(btn)btn.disabled=true;const next=commissionSmithingContract(run.state);if(!next){renderRun();return;}await commit(next,{successToast:'Upper Management has assigned a Bell Bearing Contract.'});renderSmithingContract();});
+}
+const tcRenderRunBeforeIA=renderRun;renderRun=function(){const state=run.state;if(!pendingRewardReveal?.rewards?.length&&!postBattleReport&&tcMandatoryContractEligible(state))return renderCorporateContractNotice();return tcRenderRunBeforeIA();};
+const tcSmithingHubBeforeIA=smithingHubMarkup;smithingHubMarkup=function(state){const sm=smithingData(state);if(!sm.activeContract&&sm.favor>=3&&availableBellBearings(state).length){return `<div class="tc-forge-notice quiet tc-corporate-pending"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">upper management review pending</div><div class="tc-forge-title">${sm.favor} Smithing Favor Has Been Noticed</div><div class="tc-muted">Corporate will forward an actionable Bell Bearing matter at the next safe transition.</div></div><span class="tc-forge-arrow">…</span></div>`;}return tcSmithingHubBeforeIA(state);};
+
+function tcCompendiumFlavor(entry,index){const lines=['Filed under: avoidable administrative violence.','The Covenant remembers. Unfortunately.','Armaments, rites, and poor judgment preserved for audit.','A complete record of something that probably seemed sensible at the time.','Recorded for posterity and future liability.'];return lines[index%lines.length];}
+function tcOpenCompendiumEntry(entry,index,card){document.querySelector('#tcCompendiumOverlay')?.remove();const source=card?.querySelector('.tc-comp-body,.tc-comp-legacy');const overlay=document.createElement('div');overlay.id='tcCompendiumOverlay';overlay.className='tc-comp-sheet-overlay';overlay.innerHTML=`<div class="tc-comp-sheet"><div class="tc-comp-sheet-top"><button class="tc-comp-sheet-close" type="button">‹ Compendium</button><span class="tc-comp-sheet-index">Entry ${String(Math.max(1,(run.state.history?.length||0)-index)).padStart(2,'0')}</span></div><div class="tc-comp-sheet-scroll"><div class="tc-comp-sheet-region">${h(entry.region||'Unknown Region')}</div><h2>${h(entry.name||'Unknown Foe')}</h2><div class="tc-comp-sheet-flavor">${h(tcCompendiumFlavor(entry,index))}</div>${source?source.outerHTML:`<div class="tc-comp-legacy">The Covenant retains only a partial record of this encounter.</div>`}</div></div>`;document.body.appendChild(overlay);overlay.querySelector('.tc-comp-sheet-close')?.addEventListener('click',()=>overlay.remove());}
+function tcEnhanceCompendium(){if(ledgerView!=='compendium')return;const list=app.querySelector('.tc-comp-list');if(!list||list.dataset.chronicle==='1')return;list.dataset.chronicle='1';const entries=Array.isArray(run.state.history)?run.state.history:[],cards=[...list.querySelectorAll('.tc-comp-card')];if(!cards.length)return;list.innerHTML='';const groups=new Map();cards.forEach((card,i)=>{const entry=entries[i]||{},region=entry.region||'Earlier Records';if(!groups.has(region))groups.set(region,[]);groups.get(region).push({card,entry,index:i});});groups.forEach((records,region)=>{const chapter=document.createElement('section');chapter.className='tc-comp-region';chapter.innerHTML=`<div class="tc-comp-region-head"><strong>${h(region)}</strong><span>${records.length} ${records.length===1?'record':'records'}</span></div><div class="tc-comp-region-cards"></div>`;const stack=chapter.querySelector('.tc-comp-region-cards');records.forEach(({card,entry,index})=>{try{card.style.setProperty('--tc-comp-art',`linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)), url("${actualBossImage(entry.name,entry.region||run.state.region)}")`);}catch{}card.open=false;const summary=card.querySelector('summary');summary?.addEventListener('click',e=>{e.preventDefault();card.open=false;tcOpenCompendiumEntry(entry,index,card);});stack.appendChild(card);});list.appendChild(chapter);});}
+const tcRenderLedgerBeforeIA=renderLedger;renderLedger=function(){tcRenderLedgerBeforeIA();tcEnhanceCompendium();};
+const tcIaExtra=document.createElement('style');tcIaExtra.textContent='.tc-battle-report{height:calc(100svh - 10px);min-height:0!important;overflow-y:auto;overscroll-behavior:contain}';document.head.appendChild(tcIaExtra);
+
+
+/* --- Covenant maintenance core: normalization, transitions, regressions --- */
+
+/* smithingData is the normalization boundary for all Covenant inventory. Keep
+   the persisted corporate-work marker whenever the object is cloned. */
+const tcSmithingDataBeforeHardening=smithingData;
+smithingData=function(state){
+  const base=tcSmithingDataBeforeHardening(state);
+  const raw=state?.smithing||{};
+  return {...base,pendingCorporateForEncounterId:raw.pendingCorporateForEncounterId||null};
+};
+
+/* One normalizer for state loaded from storage, received from the shared room,
+   or produced by a region transition. Keep this deliberately conservative:
+   normalize known optional collections without inventing gameplay state. */
+function tcNormalizeRunState(state){
+  if(!state)return state;
+  state.smithing=smithingData(state);
+  if(!Array.isArray(state.history))state.history=[];
+  if(!Array.isArray(state.clearedRegions))state.clearedRegions=[];
+  if(!Array.isArray(state.remembrances))state.remembrances=[];
+  return state;
+}
+
+function tcAffordableBellBearings(state){
+  if(!state)return [];
+  const sm=smithingData(state);
+  return availableBellBearings(state).filter(b=>sm.favor>=smithingContractCost(b));
+}
+
+/* Region travel used to rebuild a fresh state and silently discard all Smithing
+   Favor, Bell Bearings, Masterworks, and reward inventory. Preserve it. A newly
+   accessible affordable contract may become pending here because travel is a
+   safe transition before the region's first encounter. */
+const tcStartNextRegionBeforeHardening=startNextRegion;
+startNextRegion=function(state,actor,region,severity=state.severity){
+  const source=tcNormalizeRunState(state);
+  const next=tcStartNextRegionBeforeHardening(source,actor,region,severity);
+  next.smithing=structuredClone(source?.smithing||smithingData(source));
+  tcNormalizeRunState(next);
+  const affordable=tcAffordableBellBearings(next);
+  if(next.current&&!next.smithing.activeContract&&affordable.length){
+    next.smithing.pendingCorporateForEncounterId=next.current.id;
+  }else{
+    next.smithing.pendingCorporateForEncounterId=null;
+  }
+  return next;
+};
+
+/* Commissioning always consumes the persisted notice. This prevents a second
+   corporate interruption from resurfacing after the same contract is closed. */
+const tcCommissionBeforeHardening=commissionSmithingContract;
+commissionSmithingContract=function(state){
+  const next=tcCommissionBeforeHardening(tcNormalizeRunState(state));
+  if(next?.smithing)next.smithing.pendingCorporateForEncounterId=null;
+  return next;
+};
+
+/* Mandatory Corporate work is both affordability-based and explicitly tied to
+   the next encounter created at a safe transition. */
+tcMandatoryContractEligible=function(state){
+  if(!state?.current)return false;
+  const sm=smithingData(state);
+  return !sm.activeContract && sm.pendingCorporateForEncounterId===state.current.id && tcAffordableBellBearings(state).length>0;
+};
+
+renderCorporateContractNotice=function(){
+  const state=tcNormalizeRunState(run.state),sm=smithingData(state),affordable=tcAffordableBellBearings(state),preview=affordable[0];
+  if(!preview){renderRun();return;}
+  const cost=smithingContractCost(preview);
+  app.innerHTML=`<section class="tc-corporate-screen"><div class="tc-corporate-letter"><div class="tc-corporate-stamp">Action<br>Required</div><div class="tc-corporate-overline">Notice From Upper Management</div><h1>Corporate Has Forwarded A Matter</h1><div class="tc-corporate-copy">Your recent performance has attracted administrative attention. A Bell Bearing Contract is now mandatory before normal encounter scheduling may resume.</div><div class="tc-corporate-meta"><strong>${sm.favor} Smithing Favor on file</strong><br>${h(preview.region)} procurement is actionable · contracts currently start at ${cost} Favor.</div><button id="tcReviewMandatoryContract" class="btn gold">Review Mandatory Contract</button><div class="tc-corporate-foot">Hewg has been CC’d. This meeting could not have been an email.</div></div></section>`;
+  document.querySelector('#tcReviewMandatoryContract')?.addEventListener('click',async()=>{
+    const btn=document.querySelector('#tcReviewMandatoryContract');if(btn)btn.disabled=true;
+    const next=commissionSmithingContract(run.state);
+    if(!next){setToast('Corporate records changed. Rechecking the file.');renderRun();return;}
+    const spent=next.smithing?.activeContract?.cost;
+    const saved=await commit(next,{successToast:`Upper Management assigned a Bell Bearing Contract${spent?` · ${spent} Favor spent`:''}.`});
+    if(saved){tcPendingRegionContractEncounterId=null;renderSmithingContract();}else renderRun();
+  });
+};
+
+/* The Sanctuary only calls something "pending" when the persisted notice is
+   actually queued. Merely having enough Favor during a fight is not enough. */
+smithingHubMarkup=function(state){
+  const normalized=tcNormalizeRunState(state),sm=smithingData(normalized);
+  const affordable=tcAffordableBellBearings(normalized);
+  if(!sm.activeContract&&sm.pendingCorporateForEncounterId===normalized?.current?.id&&affordable.length){
+    const nextCost=Math.min(...affordable.map(smithingContractCost));
+    return `<div class="tc-forge-notice quiet tc-corporate-pending"><div class="tc-forge-glyph">◈</div><div><div class="tc-kicker ember">upper management review pending</div><div class="tc-forge-title">${sm.favor} Smithing Favor Has Been Noticed</div><div class="tc-muted">Corporate has an actionable Bell Bearing matter on file · ${nextCost} Favor minimum.</div></div><span class="tc-forge-arrow">…</span></div>`;
+  }
+  return tcSmithingHubBeforeIA(normalized);
+};
+
+/* Compendium snapshots store playerNames as an array. Read old object-shaped
+   snapshots too for compatibility, but never throw away custom Tarnished names. */
+compendiumNames=function(entry,state){
+  const current=typeof covenantNames==='function'?covenantNames(state):['Tarnished One','Tarnished Two'];
+  const saved=entry?.playerNames;
+  if(Array.isArray(saved))return {chase:saved[0]||current[0]||'Tarnished One',morgan:saved[1]||current[1]||'Tarnished Two'};
+  return {
+    chase:saved?.chase||saved?.player1||current[0]||'Tarnished One',
+    morgan:saved?.morgan||saved?.player2||current[1]||'Tarnished Two'
+  };
+};
+
+/* One authoritative answer to "what must the player finish before normal
+   navigation resumes?". Rendering remains owned by the existing specialized
+   screens, but lock/priority semantics live here. */
+function tcBlockingTransition(state=run?.state){
+  if(pendingRewardReveal?.rewards?.length)return 'reward';
+  if(postBattleReport?.encounterId===state?.current?.id)return 'post-battle';
+  if(tcMandatoryContractEligible(state))return 'corporate';
+  if(pendingRevealId && state?.current?.id===pendingRevealId)return 'encounter-reveal';
+  return null;
+}
+
+function tcTransitionIsLocked(){return !!tcBlockingTransition();}
+
+/* Bottom navigation is stable DOM chrome. Use one delegated listener instead of
+   re-querying and rebinding every nav button after each render. */
+let tcNavDelegationInstalled=false;
+bindNav=function(){
+  if(tcNavDelegationInstalled)return;
+  tcNavDelegationInstalled=true;
+  app.addEventListener('click',event=>{
+    const btn=event.target.closest?.('[data-screen]');
+    if(!btn||!app.contains(btn))return;
+    if(tcTransitionIsLocked()){
+      event.preventDefault();
+      setToast('Finish the current Covenant notice first.');
+      renderRun();
+      return;
+    }
+    /* --- Bottom nav returns primary sections to panel one --- */
+    if(btn.dataset.screen==='sanctuary' && typeof tcSanctuaryPanelIndex!=='undefined')tcSanctuaryPanelIndex=0;
+    if(btn.dataset.screen==='encounter' && typeof tcEncounterPanelIndex!=='undefined')tcEncounterPanelIndex=0;
+    uiScreen=btn.dataset.screen;
+    renderRun();
+  });
+};
+
+/* Avoid stacking duplicate modal sheets under fast taps. */
+const tcShowAppealMenuBeforeHardening=showAppealMenu;
+showAppealMenu=function(){
+  document.querySelector('#tcAppealOverlay')?.remove();
+  tcShowAppealMenuBeforeHardening();
+};
+
+/* Keep stale overlays from surviving a shared-state update or successful save,
+   normalize incoming state once, then enforce the authoritative transition
+   priority before normal screens. */
+const tcRenderRunBeforeHardening=renderRun;
+renderRun=function(){
+  document.querySelector('#tcAppealOverlay')?.remove();
+  /* Region-complete recovery must bypass the older wrapper chain entirely.
+     This state is already authoritative in Supabase; do not let transient
+     reward/UI wrappers prevent the player from choosing the next region. */
+  if(run?.state?.regionComplete && !pendingRewardReveal?.rewards?.length && !postBattleReport){
+    return renderRegionCompleteSafe();
+  }
+  if(run?.state)run.state=tcNormalizeRunState(run.state);
+  const transition=tcBlockingTransition(run?.state);
+  if(transition==='corporate')return renderCorporateContractNotice();
+  return tcRenderRunBeforeHardening();
+};
+
+
+/* --- Encounter interaction stabilization --- */
+function tcStablePanelTrack(track,tabs,count,getIndex,setIndex){
+  const setActive=i=>tabs.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const go=i=>{i=Math.max(0,Math.min(count-1,i));setIndex(i);track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});setActive(i);};
+  tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>go(i)));
+  let scrollTimer=null;
+  track.addEventListener('scroll',()=>{clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{const i=Math.max(0,Math.min(count-1,Math.round(track.scrollLeft/Math.max(1,track.clientWidth))));setIndex(i);setActive(i);},70);},{passive:true});
+  requestAnimationFrame(()=>{const prior=track.style.scrollBehavior;track.style.scrollBehavior='auto';const i=Math.max(0,Math.min(count-1,getIndex()));track.scrollLeft=i*track.clientWidth;setActive(i);requestAnimationFrame(()=>{track.style.scrollBehavior=prior;});});
+}
+if(typeof tcWirePanelTrack==='function')tcWirePanelTrack=tcStablePanelTrack;
+
+function tcRepairEncounterRefreshes(){
+  const screen=app.querySelector('.tc-encounter-shell');if(!screen)return;
+  const chaosBtn=screen.querySelector('[data-use-boon="chaos"]');
+  const riteBtn=screen.querySelector('[data-use-boon="rite"]');
+  const chaosPanel=screen.querySelector('.tc-encounter-panel[data-panel="chaos"]');
+  const ritePanel=screen.querySelector('.tc-encounter-panel[data-panel="rite"]');
+  const place=(btn,panel,label)=>{
+    if(!btn||!panel)return;
+    btn.type='button';
+    const oldBox=btn.closest('.tc-panel-refresh');
+    if(oldBox?.parentElement===panel)return;
+    const box=document.createElement('div');box.className='tc-panel-refresh';box.innerHTML=`<div class="tc-kicker">${label}</div>`;box.appendChild(btn);panel.appendChild(box);
+    if(oldBox&&!oldBox.querySelector('[data-use-boon]'))oldBox.remove();
+  };
+  place(chaosBtn,chaosPanel,'Chaos reserve');
+  place(riteBtn,ritePanel,'Rite reserve');
+  screen.querySelectorAll('.tc-earned-refreshes').forEach(node=>{if(!node.querySelector('[data-use-boon]'))node.remove();});
+}
+const tcRenderEncounterBeforeInteractionStabilization=renderEncounter;
+renderEncounter=function(){tcRenderEncounterBeforeInteractionStabilization();tcRepairEncounterRefreshes();};
+
+if(!window.__tcForfeitBound){window.__tcForfeitBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-forfeit-boon]');if(b)tcForfeitBoon(b.dataset.forfeitBoon);});}
+
+
+
+
+
+
+
+
+
+/* --- Contextual Elden Ring wiki links --- */
+const TC_WIKI_BASE='https://eldenring.wiki.gg/wiki/';
+const TC_AR_CALCULATOR='https://www.tarnished.dev/weapon-calculator';
+const TC_GRACE_MEMOS=[
+  'Death remains an unexcused absence unless accompanied by a Site of Grace.',
+  'Finger guidance is advisory. Liability remains with the Tarnished.',
+  'Management has reviewed your rune loss and elected not to comment.',
+  'All demigod disputes must be resolved off company time.',
+  'Flasks are classified as personal protective equipment. Refill accordingly.',
+  'The Erdtree cannot currently accommodate your request for flexible scheduling.',
+  'Repeated exposure to Scarlet Rot may affect eligibility for remote work.',
+  'Please direct all complaints regarding gravity to the appropriate regional authority.',
+  'Rune recovery remains the sole responsibility of the employee.',
+  'Torrent is not approved for indoor use, regardless of operational urgency.',
+  'Grace has been extended as a courtesy and should not be interpreted as job security.',
+  'Any resemblance between this assignment and a reasonable workload is coincidental.'
+];
+function tcWikiTitle(name,kind='boss'){
+  let out=String(name||'').trim().replace(/[’‘]/g,"'").replace(/[–—]/g,'-');
+  if(kind==='boss')out=out.replace(/\s*\([^)]*\)\s*$/,'').trim();
+  return out;
+}
+function tcWikiUrl(name,kind='boss'){
+  const title=tcWikiTitle(name,kind);if(!title)return '';
+  return TC_WIKI_BASE+encodeURIComponent(title.replace(/\s+/g,'_'));
+}
+function tcWikiAnchor(name,kind,label){
+  const url=tcWikiUrl(name,kind);if(!url)return null;
+  const a=document.createElement('a');
+  a.className=`tc-wiki-link ${kind==='weapon'?'tc-wiki-weapon':'tc-wiki-boss'}`;
+  a.href=url;a.target='_blank';a.rel='noopener noreferrer external';a.textContent=`${label||'WIKI'} ↗`;
+  a.dataset.tcWiki='1';
+  a.addEventListener('click',e=>e.stopPropagation());
+  return a;
+}
+function tcCurrentWeaponNames(){
+  const c=run?.state?.current;
+  return [c?.chase?.name,c?.morgan?.name].filter(Boolean);
+}
+function tcBuildArTools(){
+  const weapons=tcCurrentWeaponNames();
+  const box=document.createElement('div');box.className='tc-grace-ar-tools';
+  const names=weapons.length?weapons.map(name=>`<span>${h(name)}</span>`).join(''):'<span>Current assigned weapons</span>';
+  box.innerHTML=`<div class="tc-grace-ar-title">pre-fight buildcraft</div><div class="tc-grace-ar-weapons">${names}</div><a class="tc-grace-ar-button" href="${TC_AR_CALCULATOR}" target="_blank" rel="noopener noreferrer external">Weapon AR Calculator ↗</a>`;
+  box.querySelector('a')?.addEventListener('click',e=>e.stopPropagation());
+  return box;
+}
+function tcGraceMemoForState(state){
+  const seed=String(state?.current?.id||state?.current?.target?.name||state?.region||'grace');
+  let hash=0;for(let i=0;i<seed.length;i++)hash=((hash<<5)-hash+seed.charCodeAt(i))|0;
+  return TC_GRACE_MEMOS[Math.abs(hash)%TC_GRACE_MEMOS.length];
+}
+function tcDecorateGraceOffice(gracePanel){
+  if(!gracePanel)return;
+  const text=tcGraceMemoForState(run?.state);
+  let memo=gracePanel.querySelector('.tc-grace-office-memo');
+  if(!memo){
+    memo=document.createElement('div');memo.className='tc-grace-office-memo';
+    const art=gracePanel.querySelector('.tc-grace-art');
+    if(art)art.insertAdjacentElement('beforebegin',memo);else gracePanel.appendChild(memo);
+  }
+  if(memo.dataset.memo!==text){
+    memo.dataset.memo=text;
+    memo.innerHTML=`<div class="tc-grace-office-label">Covenant Office Memorandum</div><div class="tc-grace-office-copy">${h(text)}</div>`;
+  }
+  gracePanel.scrollTop=0;
+}
+function tcDecorateGraceWiki(){
+  const target=run?.state?.current?.target?.name;if(!target)return;
+  const gracePanel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');
+  tcDecorateGraceOffice(gracePanel);
+  if(gracePanel&&!gracePanel.querySelector('.tc-grace-wiki-target')){
+    const box=document.createElement('div');box.className='tc-grace-wiki-target';
+    box.innerHTML=`<div class="tc-kicker">current target</div><div class="tc-grace-wiki-name">${h(target)}</div>`;
+    const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)box.appendChild(a);
+    const art=gracePanel.querySelector('.tc-grace-art');(art||gracePanel.lastElementChild)?.insertAdjacentElement('afterend',box);
+  }
+  if(gracePanel&&!gracePanel.querySelector('.tc-grace-ar-tools')){
+    const targetBox=gracePanel.querySelector('.tc-grace-wiki-target');
+    const tools=tcBuildArTools();
+    (targetBox||gracePanel.lastElementChild)?.insertAdjacentElement('afterend',tools);
+  }
+  const dashboardName=document.querySelector('.tc-grace-target-name');
+  if(dashboardName&&!dashboardName.parentElement.querySelector(':scope > .tc-wiki-link')){
+    const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)dashboardName.insertAdjacentElement('afterend',a);
+  }
+  const dashboardPanel=dashboardName?.closest('.tc-sanctuary-panel,.tc-screen');
+  if(dashboardPanel&&!dashboardPanel.querySelector('.tc-grace-ar-tools')){
+    const tools=tcBuildArTools();dashboardName.closest('.tc-grace-target')?.insertAdjacentElement('afterend',tools);
+  }
+  if(!gracePanel){
+    const art=document.querySelector('.tc-screen .tc-grace-art');
+    if(art&&!art.parentElement.querySelector('.tc-grace-wiki-target')){
+      const box=document.createElement('div');box.className='tc-grace-wiki-target';
+      box.innerHTML=`<div class="tc-kicker">current target</div><div class="tc-grace-wiki-name">${h(target)}</div>`;
+      const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)box.appendChild(a);art.insertAdjacentElement('afterend',box);
+    }
+    const screen=art?.closest('.tc-screen');
+    if(screen&&!screen.querySelector('.tc-grace-ar-tools')){
+      const targetBox=screen.querySelector('.tc-grace-wiki-target');if(targetBox)targetBox.insertAdjacentElement('afterend',tcBuildArTools());
+    }
+  }
+}
+function tcDecorateEncounterWiki(){
+  const target=run?.state?.current?.target?.name;
+  const head=document.querySelector('.tc-encounter-panel[data-panel="boss"] .tc-brief-head,.tc-brief-head');
+  if(target&&head&&!head.querySelector('.tc-wiki-link')){
+    const a=tcWikiAnchor(target,'boss','Boss wiki');if(a)head.appendChild(a);
+  }
+  document.querySelectorAll('.tc-encounter-panel[data-panel="weapons"] .tc-loadout,.tc-loadout').forEach(card=>{
+    if(card.querySelector('.tc-wiki-link'))return;
+    const name=card.querySelector('.tc-loadout-name');if(!name)return;
+    const a=tcWikiAnchor(name.textContent,'weapon','Weapon wiki');if(a)name.insertAdjacentElement('afterend',a);
+  });
+}
+function tcDecorateCompendiumWiki(){
+  const sheet=document.querySelector('#tcCompendiumOverlay .tc-comp-sheet');if(!sheet)return;
+  const boss=sheet.querySelector('h2');
+  if(boss&&!boss.nextElementSibling?.classList?.contains('tc-wiki-link')){
+    const a=tcWikiAnchor(boss.textContent,'boss','Boss wiki');if(a)boss.insertAdjacentElement('afterend',a);
+  }
+  sheet.querySelectorAll('.tc-comp-weapons>div').forEach(box=>{
+    if(box.querySelector('.tc-wiki-link'))return;
+    const name=box.querySelector('strong');if(!name)return;
+    const a=tcWikiAnchor(name.textContent,'weapon','Weapon wiki');if(a)name.insertAdjacentElement('afterend',a);
+  });
+}
+let tcWikiDecorateQueued=false;
+function tcDecorateWikiLinks(){
+  tcWikiDecorateQueued=false;
+  try{tcDecorateGraceWiki();tcDecorateEncounterWiki();tcDecorateCompendiumWiki();}catch(error){console.warn('Wiki decoration failed',error);}
+}
+function tcQueueWikiDecoration(){if(tcWikiDecorateQueued)return;tcWikiDecorateQueued=true;requestAnimationFrame(tcDecorateWikiLinks);}
+const tcWikiObserver=new MutationObserver(tcQueueWikiDecoration);
+tcWikiObserver.observe(document.body,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.closest('.tc-comp-card,.tc-bottom-nav,[data-screen]'))setTimeout(tcQueueWikiDecoration,0);});
+setTimeout(tcQueueWikiDecoration,0);
+/* --- End contextual Elden Ring wiki links --- */
+
+
+
+/* --- Grace home-screen behavior --- */
+function tcComposeGraceHomeScreen(){
+  const panel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');
+  if(!panel)return;
+  const art=panel.querySelector('.tc-grace-art');
+  const target=panel.querySelector('.tc-grace-wiki-target');
+  const tools=panel.querySelector('.tc-grace-ar-tools');
+  if(art&&target&&target.parentElement!==art)art.appendChild(target);
+  if(art&&tools&&tools.previousElementSibling!==art)art.insertAdjacentElement('afterend',tools);
+  panel.scrollTop=0;
+}
+let tcGraceHomeQueued=false;
+function tcQueueGraceHomeScreen(){
+  if(tcGraceHomeQueued)return;tcGraceHomeQueued=true;
+  requestAnimationFrame(()=>{tcGraceHomeQueued=false;tcComposeGraceHomeScreen();});
+}
+const tcGraceHomeObserver=new MutationObserver(tcQueueGraceHomeScreen);
+tcGraceHomeObserver.observe(document.body,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.closest('.tc-bottom-nav,[data-screen],.tc-sanctuary-tabs'))setTimeout(tcQueueGraceHomeScreen,0);});
+setTimeout(tcQueueGraceHomeScreen,0);
+/* --- End Grace home-screen behavior --- */
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- Idle Site of Grace behavior --- */
+const TC_GRACE_FAVOR_ODDS=5000;
+const TC_GRACE_TAP_COOLDOWN_MS=100;
+let tcGraceLastTapAt=0;
+let tcGraceFavorBusy=false;
+
+function tcGraceFavorPaidForCurrentEncounter(){
+  const id=run?.state?.current?.id;
+  return Boolean(id && run?.state?.graceIdleFavorEncounterId===id);
+}
+function tcGraceIdleCaption(){
+  return tcGraceFavorPaidForCurrentEncounter()?'discretionary favor already issued':'touch grace';
+}
+function tcGraceTapPulse(btn){
+  btn.classList.remove('tc-tapped');void btn.offsetWidth;btn.classList.add('tc-tapped');
+  window.setTimeout(()=>btn.classList.remove('tc-tapped'),280);
+  for(let i=0;i<7;i++){
+    const spark=document.createElement('i');spark.className='tc-grace-idle-spark';
+    spark.style.setProperty('--tx',`${Math.round((Math.random()-.5)*92)}px`);
+    spark.style.setProperty('--ty',`${-22-Math.round(Math.random()*58)}px`);
+    btn.appendChild(spark);window.setTimeout(()=>spark.remove(),560);
+  }
+}
+async function tcTryGraceFavor(btn){
+  const now=Date.now();if(now-tcGraceLastTapAt<TC_GRACE_TAP_COOLDOWN_MS)return;
+  tcGraceLastTapAt=now;tcGraceTapPulse(btn);tcIncrementGraceTapCounter(btn);
+  const encounterId=run?.state?.current?.id;if(!encounterId)return;
+  if(tcGraceFavorPaidForCurrentEncounter()){
+    btn.classList.add('tc-paid');const cap=btn.querySelector('.tc-grace-idle-caption');if(cap)cap.textContent=tcGraceIdleCaption();return;
+  }
+  if(Math.floor(Math.random()*TC_GRACE_FAVOR_ODDS)!==0 || tcGraceFavorBusy)return;
+  tcGraceFavorBusy=true;
+  const next=smithingCopy(run.state);
+  if(next.graceIdleFavorEncounterId===encounterId){tcGraceFavorBusy=false;return;}
+  next.smithing.favor=Number(next.smithing.favor||0)+1;
+  next.graceIdleFavorEncounterId=encounterId;
+  next.lastAction='A Site of Grace produced an administrative anomaly. +1 Smithing Favor.';
+  next.updatedAt=new Date().toISOString();
+  try{
+    await commit(next,{
+      successToast:'Administrative anomaly detected. +1 Smithing Favor.',
+      retryBuilder:(latest)=>{
+        if(!latest?.current||latest.current.id!==encounterId||latest.graceIdleFavorEncounterId===encounterId)return null;
+        const rebased=smithingCopy(latest);
+        rebased.smithing.favor=Number(rebased.smithing.favor||0)+1;
+        rebased.graceIdleFavorEncounterId=encounterId;
+        rebased.lastAction='A Site of Grace produced an administrative anomaly. +1 Smithing Favor.';
+        rebased.updatedAt=new Date().toISOString();
+        return rebased;
+      }
+    });
+  }
+  finally{tcGraceFavorBusy=false;}
+}
+function tcGraceNativeMarkup(){
+  return `<span class="tc-grace-native-glow"></span>
+  <svg class="tc-grace-native-svg" viewBox="0 0 220 150" aria-hidden="true" focusable="false">
+    <ellipse class="tcg-pool outer" cx="110" cy="116" rx="58" ry="11"></ellipse>
+    <ellipse class="tcg-pool middle" cx="110" cy="116" rx="45" ry="8"></ellipse>
+    <ellipse class="tcg-pool inner" cx="110" cy="116" rx="30" ry="5"></ellipse>
+
+    <path class="tcg-flame-body" d="M110 115 C99 103 101 91 107 79 C100 65 103 51 111 36 C119 51 120 65 114 79 C122 91 121 104 110 115 Z"></path>
+    <path class="tcg-root root-left" d="M109 114 C99 112 88 114 77 120"></path>
+    <path class="tcg-root root-right" d="M111 114 C122 111 134 114 146 120"></path>
+    <path class="tcg-root root-curl" d="M109 113 C101 108 98 105 100 100"></path>
+
+    <path class="tcg-wisp ribbon far-left" d="M108 114 C87 103 80 91 88 79 C95 68 87 59 79 53"></path>
+    <path class="tcg-wisp left" d="M108 114 C94 102 91 90 98 78 C105 67 102 56 94 47"></path>
+    <path class="tcg-wisp fine inner-left" d="M109 113 C101 97 108 89 105 77 C101 66 106 57 102 49"></path>
+    <path class="tcg-wisp main" d="M110 114 C106 98 118 88 114 75 C109 62 116 53 113 42 C110 32 115 26 112 18"></path>
+    <path class="tcg-wisp fine inner-right" d="M111 113 C120 99 113 90 117 78 C121 67 116 58 121 49"></path>
+    <path class="tcg-wisp right" d="M112 114 C128 102 132 90 124 77 C118 67 122 57 132 47"></path>
+    <path class="tcg-wisp ribbon far-right" d="M112 114 C135 104 142 92 135 80 C128 69 136 61 145 55"></path>
+    <path class="tcg-wisp crown" d="M112 38 C102 33 103 26 110 22 C117 18 117 13 113 9"></path>
+    <path class="tcg-wisp crown crown-side" d="M112 43 C122 37 124 29 119 24"></path>
+
+    <circle class="tcg-core" cx="110" cy="115" r="3.4"></circle>
+    <circle class="tcg-mote m1" cx="89" cy="96" r="1.6"></circle>
+    <circle class="tcg-mote m2" cx="130" cy="91" r="1.25"></circle>
+    <circle class="tcg-mote m3" cx="103" cy="82" r="1.15"></circle>
+    <circle class="tcg-mote m4" cx="121" cy="104" r="1.4"></circle>
+    <circle class="tcg-mote m5" cx="82" cy="108" r="1.05"></circle>
+    <circle class="tcg-mote m6" cx="139" cy="101" r="1.1"></circle>
+  </svg>
+  <span class="tc-grace-idle-caption"></span><span class=\"tc-grace-tap-count\">${tcGraceTapCountLabel()}</span>`;
+}
+function tcEnsureIdleGrace(){
+  const panel=document.querySelector('.tc-sanctuary-panel[data-panel="grace"]');if(!panel)return;
+  const tools=panel.querySelector('.tc-grace-ar-tools');if(!tools)return;
+  let idle=panel.querySelector('.tc-grace-idle');
+  if(!idle){
+    idle=document.createElement('div');idle.className='tc-grace-idle';
+    idle.innerHTML=`<button type="button" class="tc-grace-idle-button" aria-label="Touch the Site of Grace">${tcGraceNativeMarkup()}</button>`;
+    tools.insertAdjacentElement('afterend',idle);
+    idle.querySelector('.tc-grace-idle-button')?.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
+  }else if(idle.previousElementSibling!==tools){tools.insertAdjacentElement('afterend',idle);}
+  const btn=idle.querySelector('.tc-grace-idle-button');const cap=idle.querySelector('.tc-grace-idle-caption');
+  if(btn && !btn.querySelector('.tc-grace-native-svg')){
+    btn.innerHTML=tcGraceNativeMarkup();
+    btn.addEventListener('click',e=>tcTryGraceFavor(e.currentTarget));
+  }
+  if(btn)btn.classList.toggle('tc-paid',tcGraceFavorPaidForCurrentEncounter());
+  const nextCaption=tcGraceIdleCaption();
+  if(cap&&cap.textContent!==nextCaption)cap.textContent=nextCaption;
+}
+let tcIdleGraceQueued=false;
+function tcQueueIdleGrace(){if(tcIdleGraceQueued)return;tcIdleGraceQueued=true;requestAnimationFrame(()=>{tcIdleGraceQueued=false;tcEnsureIdleGrace();});}
+const tcIdleGraceObserver=new MutationObserver(tcQueueIdleGrace);
+tcIdleGraceObserver.observe(document.body,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.closest('.tc-bottom-nav,.tc-sanctuary-tabs,[data-screen]'))setTimeout(tcQueueIdleGrace,0);});
+setTimeout(tcQueueIdleGrace,0);
+/* --- End Idle Site of Grace behavior --- */
+
+
+
+
+
+
+
+
+/* --- Grace tap counter behavior --- */
+const tcGraceTapMemory=new Map();
+let tcGraceTapPersistTimer=0;
+function tcGraceTapStorageKey(){
+  const encounterId=run?.state?.current?.id||'none';
+  const runId=run?.id||run?.runId||run?.joinCode||run?.join_code||'local';
+  return `tc-grace-taps:${runId}:${encounterId}`;
+}
+function tcReadGraceTapCount(){
+  const key=tcGraceTapStorageKey();
+  if(tcGraceTapMemory.has(key))return tcGraceTapMemory.get(key);
+  let count=0;
+  try{count=Math.max(0,Number(localStorage.getItem(key))||0);}catch(_){}
+  tcGraceTapMemory.set(key,count);return count;
+}
+function tcGraceTapCountLabel(){return `TAPS ${tcReadGraceTapCount().toLocaleString()}`;}
+function tcRenderGraceTapCount(btn,count=tcReadGraceTapCount()){
+  const out=btn?.querySelector('.tc-grace-tap-count');
+  if(out)out.textContent=`TAPS ${Number(count||0).toLocaleString()}`;
+}
+function tcIncrementGraceTapCounter(btn){
+  const key=tcGraceTapStorageKey();
+  const count=tcReadGraceTapCount()+1;
+  tcGraceTapMemory.set(key,count);tcRenderGraceTapCount(btn,count);
+  window.clearTimeout(tcGraceTapPersistTimer);
+  tcGraceTapPersistTimer=window.setTimeout(()=>{try{localStorage.setItem(key,String(count));}catch(_){}},350);
+}
+/* --- End Grace tap counter behavior --- */
+
+
+
+
+
+
+
+
+
+{{src/systems/shared-sync.js}}
+
+
+
+
+
+
+
+
+
+{{src/systems/world-clears.js}}
+
+{{src/systems/reward-draw.js}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{src/systems/weapons.js}}
+
+
+/* --- Shared reward reveal exit hardening --- */
+// A final reward acknowledgement is a shared CAS action, but leaving the local
+// reward screen must never depend on which phone wins that acknowledgement race.
+const tcRewardExitDismissedIds=new Set();
+
+const tcHydrateSharedRewardRevealBeforeExitHardening=tcHydrateSharedRewardReveal;
+tcHydrateSharedRewardReveal=function(state){
+  const id=state?.sharedRewardReveal?.id;
+  if(id&&tcRewardExitDismissedIds.has(id)){
+    pendingRewardReveal=null;
+    return;
+  }
+  return tcHydrateSharedRewardRevealBeforeExitHardening(state);
+};
+
+async function tcRewardExitAuthoritativeSync(){
+  if(backend?.mode!=='shared'||!run?.id)return false;
+  try{
+    const latest=await backend.getRun(run.id);
+    if(!latest?.state)return false;
+    return tcApplyAuthoritativeRun(latest,{source:'reward-exit-hardening'});
+  }catch(error){
+    console.warn('Reward-exit authoritative sync failed',error);
+    return false;
+  }
+}
+
+const tcAcknowledgeSharedRewardRevealBeforeExitHardening=tcAcknowledgeSharedRewardReveal;
+tcAcknowledgeSharedRewardReveal=async function(data){
+  const rewardId=data?.sharedId||run?.state?.sharedRewardReveal?.id||null;
+  if(rewardId)tcRewardExitDismissedIds.add(rewardId);
+  pendingRewardReveal=null;
+  renderRun();
+  try{
+    await tcAcknowledgeSharedRewardRevealBeforeExitHardening(data);
+  }finally{
+    await tcRewardExitAuthoritativeSync();
+    const remaining=run?.state?.sharedRewardReveal;
+    const seen=Array.isArray(remaining?.seenBy)?remaining.seenBy:[];
+    if(!remaining||remaining.id!==rewardId||seen.includes(playerName())){
+      if(rewardId)tcRewardExitDismissedIds.delete(rewardId);
+    }
+    pendingRewardReveal=null;
+    renderRun();
+  }
+};
+
+// iOS can receive a realtime render while the slot-machine timeout still owns a
+// detached button. The new button then stays disabled forever. A final-frame
+// watchdog always targets the CURRENT DOM button, never the detached one.
+function tcArmFinalRewardExitWatchdog(){
+  const data=pendingRewardReveal;
+  const btn=document.querySelector('#tcRewardContinue');
+  if(!btn||!data?.rewards?.length)return;
+  const finalIndex=data.rewards.length-1;
+  if(Number(data.index)!==finalIndex)return;
+  const rewardId=data.sharedId;
+  window.setTimeout(()=>{
+    const liveData=pendingRewardReveal;
+    const liveBtn=document.querySelector('#tcRewardContinue');
+    if(!liveBtn||!liveData?.rewards?.length||liveData.sharedId!==rewardId)return;
+    if(Number(liveData.index)!==liveData.rewards.length-1)return;
+    const result=document.querySelector('#tcRewardResult');
+    if(result&&!result.hidden){
+      liveBtn.disabled=false;
+      liveBtn.setAttribute('aria-disabled','false');
+      liveBtn.dataset.ready='1';
+    }
+  },1650);
+}
+
+const tcRenderRewardMachineBeforeExitHardening=renderRewardMachine;
+renderRewardMachine=function(){
+  const out=tcRenderRewardMachineBeforeExitHardening();
+  tcArmFinalRewardExitWatchdog();
+  return out;
+};
+
+async function tcRetryDismissedRewardAck(){
+  const shared=run?.state?.sharedRewardReveal;
+  if(!shared?.id||!tcRewardExitDismissedIds.has(shared.id)||pending||tcSharedRewardAckBusy)return;
+  const me=playerName();
+  const staged=tcBuildSharedRewardAck(run.state,shared.id,me);
+  if(staged){
+    await commit(staged,{retryBuilder:(latest)=>tcBuildSharedRewardAck(latest,shared.id,me)});
+  }
+  await tcRewardExitAuthoritativeSync();
+  const remaining=run?.state?.sharedRewardReveal;
+  if(!remaining||remaining.id!==shared.id||(remaining.seenBy||[]).includes(me))tcRewardExitDismissedIds.delete(shared.id);
+}
+window.addEventListener('online',()=>setTimeout(tcRetryDismissedRewardAck,250));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcRetryDismissedRewardAck,250);});
+/* --- End shared reward reveal exit hardening --- */
+
+
+{{src/systems/reward-reveal.js}}
+
+
+/* --- Live shared reward watch tracking --- */
+const TC_REWARD_OBSERVED_PREFIX='tc-shared-reward-observed:';
+function tcSharedRewardObservationKey(shared,identity=playerName()){
+  return shared?.id&&identity?`${TC_REWARD_OBSERVED_PREFIX}${shared.id}:${identity}`:'';
+}
+function tcSharedRewardObservedIndices(shared,identity=playerName()){
+  const key=tcSharedRewardObservationKey(shared,identity);
+  if(!key)return [];
+  try{
+    const raw=localStorage.getItem(key);
+    const parsed=raw?JSON.parse(raw):[];
+    const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+    return Array.from(new Set((Array.isArray(parsed)?parsed:[]).map(Number).filter(x=>Number.isInteger(x)&&x>=0&&x<total))).sort((a,b)=>a-b);
+  }catch{return [];}
+}
+function tcRememberSharedRewardObserved(shared,index,identity=playerName()){
+  const key=tcSharedRewardObservationKey(shared,identity),value=Number(index);
+  const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+  if(!key||!Number.isInteger(value)||value<0||value>=total)return;
+  try{
+    const seen=tcSharedRewardObservedIndices(shared,identity);
+    if(!seen.includes(value))seen.push(value);
+    localStorage.setItem(key,JSON.stringify(seen));
+  }catch{}
+}
+function tcSharedRewardObservedAll(shared,identity=playerName()){
+  const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+  if(total<1)return false;
+  const seen=new Set(tcSharedRewardObservedIndices(shared,identity));
+  for(let i=0;i<total;i++)if(!seen.has(i))return false;
+  return true;
+}
+function tcSharedRewardFirstMissingIndex(shared,identity=playerName()){
+  const total=Array.isArray(shared?.rewards)?shared.rewards.length:0;
+  const seen=new Set(tcSharedRewardObservedIndices(shared,identity));
+  for(let i=0;i<total;i++)if(!seen.has(i))return i;
+  return Math.max(0,total-1);
+}
+/* --- End live shared reward watch tracking --- */
+
+
+/* --- Sanctioned Boss Kill reward --- */
+function tcSanctionedBossKills(state){return Array.isArray(state?.sanctionedBossKills)?state.sanctionedBossKills:[];}
+function tcFreeBossEligibleRegions(state){
+  return Array.from(new Set([state?.region,...(state?.clearedRegions||[])]))
+    .filter(region=>region&&regions?.[region]);
+}
+function tcEligibleFreeBossChoices(state){
+  if(!state)return [];
+  const activeName=state.current?.target?.name||'';
+  const activeRegion=state.region;
+  const out=[];
+  for(const region of tcFreeBossEligibleRegions(state)){
+    const defeated=defeatedBossNames(state,region);
+    for(const name of (regions?.[region]?.bosses||[])){
+      if(defeated.has(name))continue;
+      if(region===activeRegion&&name===activeName)continue;
+      if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(name))continue;
+      if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,name))continue;
+      if(typeof tcBossRandomAccessible==='function'&&!tcBossRandomAccessible(state,name))continue;
+      out.push({region,name});
+    }
+  }
+  return out;
+}
+function tcBuildSanctionedBossKill(latest,region,name,actor){
+  const sm=smithingData(latest);
+  if(Number(sm.freeBossKills||0)<1)return null;
+  const eligible=tcEligibleFreeBossChoices(latest).some(x=>x.region===region&&x.name===name);
+  if(!eligible)return null;
+  const next=smithingCopy(latest);
+  next.smithing.freeBossKills=Math.max(0,Number(next.smithing.freeBossKills||0)-1);
+  next.sanctionedBossKills=[...tcSanctionedBossKills(next),{
+    region,name,claimedBy:actor,claimedAt:new Date().toISOString()
+  }];
+  next.lastAction=`${actor} redeemed a Sanctioned Boss Kill for ${name} in ${region}. It was removed from future Covenant encounter draws.`;
+  next.updatedAt=new Date().toISOString();
+  return next;
+}
+function tcCloseFreeBossKillPicker(){document.querySelector('#tcFreeBossOverlay')?.remove();}
+let tcFreeBossKillBusy=false;
+function tcOpenFreeBossKillPicker(){
+  tcCloseFreeBossKillPicker();
+  const state=run?.state,sm=smithingData(state||{});
+  if(Number(sm.freeBossKills||0)<1)return setToast('No Sanctioned Boss Kill available.');
+  const choices=tcEligibleFreeBossChoices(state);
+  if(!choices.length)return setToast('No eligible optional bosses are available in reached regions.');
+  const groups=tcFreeBossEligibleRegions(state).map(region=>{
+    const items=choices.map((x,i)=>({...x,i})).filter(x=>x.region===region);
+    if(!items.length)return '';
+    return `<optgroup label="${h(region)}">${items.map(x=>`<option value="${x.i}">${h(x.name)}</option>`).join('')}</optgroup>`;
+  }).join('');
+  const previous=tcSanctionedBossKills(state);
+  const overlay=document.createElement('div');
+  overlay.id='tcFreeBossOverlay';overlay.className='tc-freeboss-overlay';
+  overlay.innerHTML=`<div class="tc-freeboss-card" role="dialog" aria-modal="true" aria-labelledby="tcFreeBossTitle">
+    <div class="tc-kicker gold">Covenant Authorization</div><h2 id="tcFreeBossTitle">Sanctioned Boss Kill</h2>
+    <p>Kill one optional boss outside the current Covenant assignment, then record it here. Only the current region or regions already reached are eligible. The boss leaves the future draw pool, but this does not advance regional or capstone progress.</p>
+    <label class="label" for="tcFreeBossSelect">boss to sanction</label><select id="tcFreeBossSelect">${groups}</select>
+    <div class="tc-freeboss-actions"><button type="button" id="tcConfirmFreeBoss" class="btn gold">Mark Killed · Spend 1</button><button type="button" id="tcCancelFreeBoss" class="btn ghost">Cancel</button></div>
+    ${previous.length?`<div class="tc-freeboss-log">Already sanctioned: ${previous.slice(-4).map(x=>`${h(x.name)} · ${h(x.region)}`).join('<br>')}</div>`:''}
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)tcCloseFreeBossKillPicker();});
+  overlay.querySelector('#tcCancelFreeBoss')?.addEventListener('click',tcCloseFreeBossKillPicker);
+  overlay.querySelector('#tcConfirmFreeBoss')?.addEventListener('click',async()=>{
+    if(tcFreeBossKillBusy||pending)return;
+    const idx=Number(overlay.querySelector('#tcFreeBossSelect')?.value);
+    const choice=choices[idx];if(!choice)return;
+    const actor=playerName();
+    const staged=tcBuildSanctionedBossKill(run.state,choice.region,choice.name,actor);
+    if(!staged)return setToast('That boss is no longer eligible.');
+    tcFreeBossKillBusy=true;
+    const btn=overlay.querySelector('#tcConfirmFreeBoss');if(btn){btn.disabled=true;btn.textContent='Recording…';}
+    try{
+      const saved=await commit(staged,{
+        successToast:`${choice.name} removed from future Covenant draws.`,
+        retryBuilder:(latest)=>tcBuildSanctionedBossKill(latest,choice.region,choice.name,actor)
+      });
+      if(saved)tcCloseFreeBossKillPicker();
+    }finally{tcFreeBossKillBusy=false;}
+  });
+}
+
+// Extend the existing boon ledger with the shared kill authorization.
+covenantBoonMarkup=function(state){
+  const sm=smithingData(state),sanctioned=tcSanctionedBossKills(state);
+  return `<div class="tc-boon-ledger"><div class="tc-kicker ember">covenant boons</div><div class="tc-boon-grid">
+    <div><strong>${sm.appealWaivers}</strong><span>Appeal Waiver${sm.appealWaivers===1?'':'s'}</span></div>
+    <div><strong>${sm.chaosRefreshes}</strong><span>Chaos Refresh${sm.chaosRefreshes===1?'':'es'}</span></div>
+    <div><strong>${sm.riteRefreshes}</strong><span>Rite Refresh${sm.riteRefreshes===1?'':'es'}</span></div>
+    <div><strong>${sm.aviaryTickets}</strong><span>Dynasty Frequent Flier${sm.aviaryTickets===1?'':'s'}</span></div>
+    <div><strong>${sm.freeBossKills}</strong><span>Sanctioned Boss Kill${sm.freeBossKills===1?'':'s'}</span></div>
+  </div>${sm.freeBossKills>0?`<button type="button" class="btn ghost small tc-freeboss-btn" data-use-free-boss-kill>Redeem Sanctioned Boss Kill · ${sm.freeBossKills}</button>`:''}<div class="tc-muted">Waivers make the next weapon appeal penalty-free. Refreshes reroll a Rite or unopened Chaos decree. Frequent Fliers grant bird trips. Sanctioned Boss Kills remove an optional boss from future draws without advancing regional progress.${sanctioned.length?` · ${sanctioned.length} boss${sanctioned.length===1?' has':'es have'} been sanctioned.`:''}</div></div>`;
+};
+if(!window.__tcFreeBossKillBound){
+  window.__tcFreeBossKillBound=true;
+  document.addEventListener('click',e=>{if(e.target.closest('[data-use-free-boss-kill]'))tcOpenFreeBossKillPicker();});
+}
+/* --- End Sanctioned Boss Kill reward --- */
+
+
+/* --- Explicit Appeal Waiver choice --- */
+function tcCloseAppealOverlay(){document.querySelector('#tcAppealOverlay')?.remove();}
+async function tcResolveWeaponAppeal(which,useWaiver){
+  const sm=smithingData(run?.state||{});
+  if(useWaiver&&Number(sm.appealWaivers||0)<1)return setToast('No Appeal Waiver remains.');
+  tcCloseAppealOverlay();
+  const staged=changeWeapons(run.state,playerName(),which,Boolean(useWaiver));
+  await commit(staged,{
+    successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':which==='both'?'Weapon appeal granted. Two penalties accepted.':'Weapon appeal granted. Penalty accepted.'
+  });
+}
+function tcShowAppealWaiverChoice(which){
+  const overlay=document.querySelector('#tcAppealOverlay');
+  if(!overlay)return;
+  const sm=smithingData(run.state),count=Number(sm.appealWaivers||0);
+  const names=covenantNames(run.state);
+  const label=which==='both'?'both assigned weapons':`${which==='chase'?names[0]:names[1]}’s assigned weapon`;
+  const sheet=overlay.querySelector('.tc-sheet');
+  if(!sheet)return;
+  sheet.innerHTML=`<div class="tc-kicker red">armament appeal</div>
+    <div class="tc-value" style="margin:6px 0 4px">Appeal ${h(label)}?</div>
+    <div class="tc-muted">You have <strong>${count}</strong> Appeal Waiver${count===1?'':'s'}. A waiver prevents the severe random penalty, but spending it is optional.</div>
+    <div class="tc-panel soft" style="margin-top:14px"><div class="tc-kicker gold">Choose the price</div><div class="tc-muted" style="margin-top:6px">One waiver covers this entire appeal${which==='both'?', including both weapons':''}.</div></div>
+    <div class="tc-stack" style="margin-top:14px;display:grid;gap:8px">
+      <button id="tcSpendAppealWaiver" class="btn gold">Spend 1 Appeal Waiver · ${Math.max(0,count-1)} left</button>
+      <button id="tcTakeAppealPenalty" class="btn curse">Keep Waiver · Take Penalty</button>
+    </div>
+    <button id="closeAppeal" class="btn text-btn">Back</button>`;
+  sheet.querySelector('#tcSpendAppealWaiver')?.addEventListener('click',()=>tcResolveWeaponAppeal(which,true));
+  sheet.querySelector('#tcTakeAppealPenalty')?.addEventListener('click',()=>tcResolveWeaponAppeal(which,false));
+  sheet.querySelector('#closeAppeal')?.addEventListener('click',showAppealMenu);
+}
+function showAppealMenu(){
+  tcCloseAppealOverlay();
+  const state=run.state,c=state.current,sm=smithingData(state),waivers=Number(sm.appealWaivers||0);
+  document.body.insertAdjacentHTML('beforeend',`<div id="tcAppealOverlay" class="tc-overlay"><div class="tc-sheet"><div class="tc-kicker red">armament appeal</div><div class="tc-value" style="margin:6px 0 4px">Refuse the decree?</div><div class="tc-muted">Changing one assigned weapon creates one severe random penalty. Appealing both at once creates two penalties.${waivers>0?` You have ${waivers} Appeal Waiver${waivers===1?'':'s'} and may choose whether to spend one after selecting the appeal.`:''}</div><div class="tc-panel soft" style="margin-top:14px"><div class="tc-muted">${h(playerLabel('chase',state).toUpperCase())}</div><div>${h(c.chase.name)}</div><div class="tc-muted" style="margin-top:8px">${h(playerLabel('morgan',state).toUpperCase())}</div><div>${h(c.morgan.name)}</div></div><div class="tc-actions-3"><button class="btn curse" data-overlay-appeal="chase">${h(playerLabel('chase',state))}</button><button class="btn curse" data-overlay-appeal="morgan">${h(playerLabel('morgan',state))}</button><button class="btn curse" data-overlay-appeal="both">Both</button></div><button id="closeAppeal" class="btn text-btn">Cancel</button></div></div>`);
+  document.querySelector('#closeAppeal')?.addEventListener('click',tcCloseAppealOverlay);
+  document.querySelectorAll('[data-overlay-appeal]').forEach(btn=>btn.addEventListener('click',()=>{
+    const which=btn.dataset.overlayAppeal;
+    if(waivers>0)tcShowAppealWaiverChoice(which);
+    else void tcResolveWeaponAppeal(which,false);
+  }));
+}
+/* --- End Explicit Appeal Waiver choice --- */
+
+
+{{src/systems/boss-prerequisites.js}}
+
+
+
+/* --- Capstone prerequisite priority --- */
+function tcCapstonePrerequisiteDue(state){
+  if(!state?.region||state.region==='The Erdtree')return null;
+  const region=regions?.[state.region];
+  const exit=region?.exit;
+  if(!exit)return null;
+  const requirement=capstoneRequirement(state);
+  if(Number(state.cleared||0)<Number(requirement||0))return null;
+  return tcNextUnmetPrerequisite(state,exit);
+}
+
+// Preserve normal regional RNG. A prerequisite is substituted only when the
+// ordinary chooser actually rolls the capstone while its route is still blocked.
+const tcChooseTargetBeforeCapstonePrereqPriority=chooseTarget;
+chooseTarget=function(state){
+  const proposed=tcChooseTargetBeforeCapstonePrereqPriority(state);
+  if(!proposed?.exit)return proposed;
+  const due=tcCapstonePrerequisiteDue(state);
+  if(!due)return proposed;
+  const exit=regions?.[state.region]?.exit||proposed.name||'regional capstone';
+  return {name:tcPoolBossName(state.region,due),exit:false,required:true,prerequisiteFor:exit};
+};
+/* --- End capstone prerequisite priority --- */
+
+
+
+{{src/systems/reward-economy.js}}
+
+
+/* --- Double penalty for dual weapon appeal --- */
+const tcChangeWeaponsBeforeDoubleAppealPenalty=changeWeapons;
+changeWeapons=function(state,actor,which,useWaiver=false){
+  // One voluntarily spent waiver still covers the whole appeal, exactly as the
+  // explicit waiver-choice screen promises. Without a waiver, appealing both
+  // weapons is resolved as two individual appeals: one reroll + one penalty each.
+  if(which!=='both'||useWaiver){
+    return tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,which,useWaiver);
+  }
+  let next=tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,'chase',false);
+  next=tcChangeWeaponsBeforeDoubleAppealPenalty(next,actor,'morgan',false);
+  next.lastAction=`${actor} appealed both assigned weapons. Two penalties were added.`;
+  return next;
+};
+/* --- End double penalty for dual weapon appeal --- */
+
+
+/* --- Today systems audit hardening --- */
+function tcEncounterMutationLocked(state=run?.state){
+  const c=state?.current;if(!c)return false;
+  const clears=typeof tcWorldClears==='function'?tcWorldClears(c):(Array.isArray(c.worldClears)?c.worldClears:[]);
+  return clears.length>0;
+}
+function tcEncounterMutationLockMessage(){return 'Encounter terms lock after the first host-world victory. Finish the second world under the same decree.';}
+
+// Normal Weapon Appeals cannot change assignments after one world has already
+// been cleared. Re-check at both menu-open and final resolve time for stale UIs.
+const tcShowAppealMenuBeforeAudit=showAppealMenu;
+showAppealMenu=function(){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcShowAppealMenuBeforeAudit();
+};
+const tcResolveWeaponAppealBeforeAudit=tcResolveWeaponAppeal;
+tcResolveWeaponAppeal=async function(which,useWaiver){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcResolveWeaponAppealBeforeAudit(which,useWaiver);
+};
+
+// Rite/Chaos amendment and forfeit controls mutate encounter terms too. This
+// wrapper uses a distinct audit name so it cannot be confused with retired
+// busy-flag stabilization code.
+const tcAuditUseCovenantBoonCore=useCovenantBoon;
+useCovenantBoon=async function(kind){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcAuditUseCovenantBoonCore(kind);
+};
+const tcForfeitBoonBeforeAudit=tcForfeitBoon;
+tcForfeitBoon=async function(kind){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcForfeitBoonBeforeAudit(kind);
+};
+const tcEncounterBoonsBeforeAudit=tcEncounterBoons;
+tcEncounterBoons=function(state){
+  if(tcEncounterMutationLocked(state))return `<div class="tc-earned-refreshes"><div class="tc-kicker">encounter terms locked</div><div class="tc-muted">One host world is already cleared. Weapons, Rite, Chaos amendments, and forfeits stay fixed until the second victory.</div></div>`;
+  return tcEncounterBoonsBeforeAudit(state);
+};
+
+// Treasury actions that alter the current encounter obey the same lock. Their
+// builders also check latest shared state so a stale overlay cannot bypass it.
+const tcBuildClemencyBeforeAudit=tcBuildClemency;
+tcBuildClemency=function(latest,encounterId,key,actor){
+  if(tcEncounterMutationLocked(latest))return null;
+  return tcBuildClemencyBeforeAudit(latest,encounterId,key,actor);
+};
+const tcOpenClemencyBeforeAudit=tcOpenClemency;
+tcOpenClemency=function(){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcOpenClemencyBeforeAudit();
+};
+const tcBuildJointAppealBeforeAudit=tcBuildJointAppeal;
+tcBuildJointAppeal=function(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor){
+  if(tcEncounterMutationLocked(latest))return null;
+  return tcBuildJointAppealBeforeAudit(latest,encounterId,oldChase,oldMorgan,newChase,newMorgan,actor);
+};
+const tcOpenJointAppealBeforeAudit=tcOpenJointAppeal;
+tcOpenJointAppeal=function(){
+  if(tcEncounterMutationLocked())return setToast(tcEncounterMutationLockMessage());
+  return tcOpenJointAppealBeforeAudit();
+};
+
+// A Veto is for an optional assignment only: never a forced prerequisite, a
+// required Remembrance, a capstone, or a partially completed two-world encounter.
+const tcBossVetoEligibleBeforeAudit=tcBossVetoEligible;
+tcBossVetoEligible=function(state){
+  const c=state?.current;
+  if(!tcBossVetoEligibleBeforeAudit(state)||!c)return false;
+  if(c.target?.required||c.target?.prerequisiteFor)return false;
+  if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,c.target?.name))return false;
+  return true;
+};
+function tcBossVetoReplacementLegal(state,replacement,oldBoss){
+  if(!state?.current||!replacement?.name||replacement.exit)return false;
+  if(tcBossKey(replacement.name)===tcBossKey(oldBoss))return false;
+  if(replacement.required||replacement.prerequisiteFor)return false;
+  if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(replacement.name))return false;
+  if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,replacement.name))return false;
+  const available=availableRegionalBosses(state);
+  return available.some(name=>tcBossKey(name)===tcBossKey(replacement.name));
+}
+tcRollVetoReplacement=function(state){
+  if(!tcBossVetoEligible(state))return null;
+  const current=state.current.target.name;
+  const pool=availableRegionalBosses(state).filter(name=>{
+    if(tcBossKey(name)===tcBossKey(current))return false;
+    if(typeof tcIsProgressionGateBoss==='function'&&tcIsProgressionGateBoss(name))return false;
+    if(typeof tcIsRequiredRemembranceBoss==='function'&&tcIsRequiredRemembranceBoss(state,name))return false;
+    return true;
+  });
+  if(!pool.length)return null;
+  return {name:pick(pool),exit:false};
+};
+const tcBuildBossVetoBeforeAudit=tcBuildBossVeto;
+tcBuildBossVeto=function(latest,encounterId,oldBoss,replacement,actor,refreshKind){
+  if(!tcBossVetoReplacementLegal(latest,replacement,oldBoss))return null;
+  return tcBuildBossVetoBeforeAudit(latest,encounterId,oldBoss,replacement,actor,refreshKind);
+};
+
+// Make the Ledger accurately show which current-encounter actions are frozen.
+const tcCovenantBoonMarkupBeforeAudit=covenantBoonMarkup;
+covenantBoonMarkup=function(state){
+  let html=tcCovenantBoonMarkupBeforeAudit(state);
+  if(!tcEncounterMutationLocked(state))return html;
+  html=html.replace(/data-use-clemency(?![^>]*disabled)/g,'data-use-clemency disabled');
+  html=html.replace(/data-use-joint-appeal(?![^>]*disabled)/g,'data-use-joint-appeal disabled');
+  return html;
+};
+/* --- End today systems audit hardening --- */
+
+
+{{src/systems/battle-report.js}}
+
+
+{{src/systems/masterworks.js}}
+
+
+{{src/systems/ledger.js}}
+
+
+{{src/systems/smithing-presentation.js}}
+
+{{src/systems/erdtree-writs.js}}
+/* --- Appeal extra boss recording --- */
+function tcAppealPenaltyBossKills(state){return Array.isArray(state?.appealPenaltyBossKills)?state.appealPenaltyBossKills:[];}
+function tcPenanceNeedsBossRecord(p){const t=`${p?.name||''} ${p?.text||''}`.toLowerCase();return t.includes('boss')&&(t.includes('kill')||t.includes('defeat')||t.includes('slay'));}
+function tcPenanceBossRecord(state,p){return p?.bossRecord||tcAppealPenaltyBossKills(state).find(x=>x?.penanceId&&x.penanceId===p?.id)||null;}
+const tcDefeatedBossNamesBeforeAppealRecord=defeatedBossNames;
+defeatedBossNames=function(state,regionName=state.region){const out=tcDefeatedBossNamesBeforeAppealRecord(state,regionName);for(const x of tcAppealPenaltyBossKills(state)){if(x?.region===regionName&&x?.name)out.add(x.name);}return out;};
+const tcLegacyErdtreeClearIdsBeforeAppealRecord=tcLegacyErdtreeClearIds;
+tcLegacyErdtreeClearIds=function(state){const out=new Set(tcLegacyErdtreeClearIdsBeforeAppealRecord(state));for(const x of tcAppealPenaltyBossKills(state)){if(x?.erdtreeTargetId)out.add(x.erdtreeTargetId);}return [...out];};
+function tcAppealBossChoices(state){
+  const normal=(typeof tcEligibleFreeBossChoices==='function'?tcEligibleFreeBossChoices(state):[]).map(x=>({...x,type:'boss'}));
+  const sm=smithingData(state||{}),avatars=[];
+  if(Number(sm.erdtreeWrits||0)>0&&typeof TC_ERDTREE_TARGETS!=='undefined')for(const t of TC_ERDTREE_TARGETS){if(!tcErdtreeClearedIds(state).includes(t.id)&&tcErdtreeTargetAccessible(state,t))avatars.push({region:t.region,name:t.area,type:'erdtree',erdtreeTargetId:t.id,boss:t.boss});}
+  return [...normal,...avatars];
+}
+function tcBuildAppealBossRecord(latest,encounterId,penanceId,choice,actor){
+  const c=latest?.current;if(!c||c.id!==encounterId)return null;const i=(c.penances||[]).findIndex(p=>p.id===penanceId);if(i<0)return null;const p=c.penances[i];if(!tcPenanceNeedsBossRecord(p)||tcPenanceBossRecord(latest,p))return null;
+  let next;
+  if(choice.type==='erdtree'){
+    next=tcBuildErdtreeWritSpend(latest,choice.erdtreeTargetId,actor);if(!next)return null;
+  }else{
+    if(!tcAppealBossChoices(latest).some(x=>x.type==='boss'&&x.region===choice.region&&x.name===choice.name))return null;
+    next=smithingCopy(latest);
+  }
+  const record={penanceId,region:choice.region,name:choice.name,recordedBy:actor,recordedAt:new Date().toISOString(),source:'weapon-appeal',erdtreeTargetId:choice.erdtreeTargetId||null};
+  const j=(next.current.penances||[]).findIndex(x=>x.id===penanceId);if(j<0)return null;next.current.penances[j].bossRecord=record;next.appealPenaltyBossKills=[...tcAppealPenaltyBossKills(next),record];next.lastAction=`${actor} recorded ${choice.name} in ${choice.region} for a Weapon Appeal extra-boss penalty.`;next.updatedAt=new Date().toISOString();return next;
+}
+function tcOpenAppealBossPicker(penanceId){
+  const state=run?.state,c=state?.current,p=(c?.penances||[]).find(x=>x.id===penanceId);if(!p||!tcPenanceNeedsBossRecord(p))return;
+  if(tcPenanceBossRecord(state,p))return setToast('That Appeal penalty already has a boss on file.');
+  const choices=tcAppealBossChoices(state);if(!choices.length)return setToast('No eligible extra bosses are currently available.');
+  const opts=choices.map((x,i)=>`<option value="${i}">${h(x.name)} · ${h(x.region)}${x.type==='erdtree'?' · spends 1 Erdtree Writ':''}</option>`).join('');
+  const el=tcStrategicOverlay('Record Extra Boss Kill',`<p>Choose the boss actually killed to satisfy this Weapon Appeal penalty. Recording it removes that boss from future Covenant draws. Minor Erdtree Avatars require and consume an Erdtree Writ.</p><label class="label">boss killed</label><select id="tcAppealBossSelect">${opts}</select>`,`<div class="tc-strategy-actions"><button type="button" class="btn gold" id="tcConfirmAppealBoss">Record Boss</button></div>`);
+  el.querySelector('#tcConfirmAppealBoss')?.addEventListener('click',async e=>{const choice=choices[Number(el.querySelector('#tcAppealBossSelect')?.value)];if(!choice)return;const actor=playerName(),encounterId=c.id,build=latest=>tcBuildAppealBossRecord(latest,encounterId,penanceId,choice,actor),staged=build(run.state);if(!staged)return setToast('That boss or penalty is no longer eligible.');e.currentTarget.disabled=true;const saved=await commit(staged,{successToast:`${choice.name} recorded for the Appeal penalty.`,retryBuilder:build});if(saved)el.remove();});
+}
+penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.state;return `<section class="curse-section"><div class="section-kicker redtext">armament penalties</div><div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>${c.penances.map((p,i)=>{const needs=tcPenanceNeedsBossRecord(p),rec=tcPenanceBossRecord(state,p);return `<div class="penance-item"><div class="scope">${h(personalizePlayers(p.scope,state))} · penalty ${i+1}</div><div class="penance-name">${h(p.name)}</div><div class="penance-text">${h(personalizePlayers(p.text,state))}</div>${needs?`<div class="tc-penalty-boss-record">${rec?`<strong>Extra boss recorded</strong><span>${h(rec.name)} · ${h(rec.region)}</span>`:`<strong>Extra boss still unrecorded</strong><span>Once you kill the required extra boss, put the specific kill on file.</span><button type="button" class="btn ghost small" data-record-appeal-boss="${h(p.id)}">Record Extra Boss Kill</button>`}</div>`:''}</div>`}).join('')}<div class="subtext">Penalties stack until the current target is defeated.</div></section>`;};
+if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
+/* --- End appeal extra boss recording --- */
+/* --- Home Screen freshness guard --- */
+const TC_BUILD_ID='20260927-weapon-catalog-audit-4';
+let tcFreshnessCheckRunning=false;
+function tcForceFreshNavigation(){
+  const url=new URL(location.href);
+  url.searchParams.set('tcv',String(Date.now()));
+  location.replace(url.toString());
+}
+async function tcCheckForFreshBuild(){
+  if(tcFreshnessCheckRunning||!navigator.onLine)return;
+  tcFreshnessCheckRunning=true;
+  try{
+    const probe=new URL(location.href);
+    probe.searchParams.set('tc_probe',String(Date.now()));
+    const response=await fetch(probe.toString(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+    if(!response.ok)return;
+    const text=await response.text();
+    const match=text.match(/const TC_BUILD_ID='([^']+)'/);
+    if(match&&match[1]!==TC_BUILD_ID){
+      const fresh=new URL(location.href);
+      fresh.searchParams.set('tcv',match[1]);
+      location.replace(fresh.toString());
+    }
+  }catch(error){console.warn('Freshness check failed',error);}
+  finally{tcFreshnessCheckRunning=false;}
+}
+window.addEventListener('pageshow',()=>setTimeout(tcCheckForFreshBuild,350));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcCheckForFreshBuild,200);});
+/* --- End Home Screen freshness guard --- */
