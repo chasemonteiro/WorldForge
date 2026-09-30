@@ -6,6 +6,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: tarnished-covenant-build
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,178 +17,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: tarnished-covenant-assets
-      - name: Assemble page
-        run: cat tarnished-covenant/chunks/part{0,1,2,3,4,5,6}.txt > tarnished-covenant/index.html
-      - name: Patch app behavior
-        run: python tarnished-covenant/build-behavior.py
-      - name: Patch progression and Remembrances
-        run: python tarnished-covenant/build-progression.py
-      - name: Repair region table closure
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('tarnished-covenant/index.html');s=p.read_text();old="  }\n\n\nregions['Siofra River + Nokron']";new="  }\n};\n\nregions['Siofra River + Nokron']"
-          if old not in s: raise SystemExit('region closure repair target not found')
-          p.write_text(s.replace(old,new,1))
-          PY
-      - name: Apply spreadsheet regional pools
-        run: python tarnished-covenant/build-regional-pools.py
-      - name: Apply screen-based UI
-        run: python tarnished-covenant/build-ui.py
-      - name: Normalize Chaos render hook
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('tarnished-covenant/index.html');s=p.read_text();s=s.replace('if(state.runComplete) return renderRunComplete();','if (state.runComplete) return renderRunComplete();',1);p.write_text(s)
-          PY
-      - name: Apply ornate theme and expanded Chaos
-        run: python tarnished-covenant/build-chaos-theme.py
-      - name: Apply sourced promotional imagery
-        run: python tarnished-covenant/build-images.py
-      - name: Polish image crops and encounter entry
-        run: python tarnished-covenant/build-layout-polish.py
-      - name: Apply custom character names
-        run: python tarnished-covenant/build-character-names.py
-      - name: Polish Chaos reveal motion and readability
-        run: python tarnished-covenant/build-chaos-polish.py
-      - name: Apply Smithing Favor and Bell Bearing Contracts
-        run: python tarnished-covenant/build-smithing-system.py
-      - name: Expand risk pools and rebalance Favor
-        run: python tarnished-covenant/build-risk-rebalance-runner.py
-      - name: Make Chaos triggers objective
-        run: python tarnished-covenant/build-objective-chaos-triggers.py
-      - name: Add compendium encounter challenges
-        run: python tarnished-covenant/build-compendium-challenges.py
-      - name: Rebuild Chaos reveal and add Old Souls rules
-        run: python tarnished-covenant/build-chaos-redesign.py
-      - name: Escalate Chaos with run progress
-        run: python tarnished-covenant/build-escalating-chaos.py
-      - name: Run stability and regression pass
-        run: python tarnished-covenant/build-stability-pass.py
-      - name: Apply final navigation safety layer
-        run: python tarnished-covenant/build-nav-safety.py
-      - name: Apply compact one-screen Chaos layout
-        run: python tarnished-covenant/build-chaos-compact.py
-      - name: Move Favor bookkeeping to post-battle report
-        run: python tarnished-covenant/build-post-battle-runner.py
-      - name: Add in-app refresh control
-        run: python tarnished-covenant/build-refresh-button.py
-      - name: Make session persistence durable
-        run: python tarnished-covenant/build-durable-session.py
-      - name: Redesign Ledger as run compendium
-        run: python tarnished-covenant/build-ledger-compendium.py
-      - name: Randomize Covenant rewards and gate rerolls
-        run: python tarnished-covenant/build-random-rewards.py
-      - name: Apply challenge-first ruleset
-        run: python tarnished-covenant/build-challenge-ruleset.py
-      - name: Run release hardening and usability checks
-        run: python tarnished-covenant/build-release-hardening.py
-      - name: Enlarge and reflow phone UI
-        run: python tarnished-covenant/build-mobile-readability.py
-      - name: Fix capstone save transition
-        run: python tarnished-covenant/build-capstone-save-fix.py
-      - name: Animate Covenant reward draws
-        run: python tarnished-covenant/build-reward-slot.py
-      - name: Apply viewport navigation and mandatory corporate contracts
-        run: python tarnished-covenant/build-information-architecture.py
-      - name: Turn Site of Grace into run dashboard
-        run: python tarnished-covenant/build-sanctuary-dashboard.py
-      - name: Pair refreshes and illustrate Ledger
-        run: python tarnished-covenant/build-ledger-art-refresh-pairing.py
-      - name: Apply consolidated maintenance core
-        run: python tarnished-covenant/build-regression-hardening.py
-      - name: Keep fixed nav out of transformed screen context
-        run: python tarnished-covenant/build-fixed-nav-compositing.py
-      - name: Assert regression invariants
-        run: python tarnished-covenant/test-regression-invariants.py
-      - name: Return primary section nav to first panel
-        run: python tarnished-covenant/build-section-home-nav.py
-      - name: Assert section-home navigation
-        run: |
-          grep -q 'Bottom nav returns primary sections to panel one' tarnished-covenant/index.html
-          grep -q "tcSanctuaryPanelIndex=0" tarnished-covenant/index.html
-          grep -q "tcEncounterPanelIndex=0" tarnished-covenant/index.html
-      - name: Correct iOS Home Screen viewport
-        run: python tarnished-covenant/build-ios-standalone-shell.py
-      - name: Assert iOS standalone invariants
-        run: |
-          grep -q 'iOS standalone viewport correction' tarnished-covenant/index.html
-          grep -q 'height:100vh!important' tarnished-covenant/index.html
-          if grep -q 'Persistent Ledger DOM cache' tarnished-covenant/index.html; then exit 1; fi
-          if grep -q 'Standalone spacing + stable Ledger shell' tarnished-covenant/index.html; then exit 1; fi
-      - name: Add contextual Elden Ring wiki links
-        run: python tarnished-covenant/build-wiki-links.py
-      - name: Assert contextual wiki links
-        run: |
-          grep -q 'Contextual Elden Ring wiki links' tarnished-covenant/index.html
-          grep -q 'tcDecorateGraceWiki' tarnished-covenant/index.html
-          grep -q 'tcDecorateEncounterWiki' tarnished-covenant/index.html
-          grep -q 'tcDecorateCompendiumWiki' tarnished-covenant/index.html
-      - name: Compose Grace as a home screen
-        run: python tarnished-covenant/build-grace-home-screen.py
-      - name: Assert Grace home-screen composition
-        run: |
-          grep -q 'Grace home-screen composition' tarnished-covenant/index.html
-          grep -q 'tcComposeGraceHomeScreen' tarnished-covenant/index.html
-      - name: Add idle Site of Grace ritual
-        run: python tarnished-covenant/build-grace-idle.py
-      - name: Assert idle Grace ritual
-        run: |
-          grep -q 'Idle Site of Grace ritual' tarnished-covenant/index.html
-          grep -q 'TC_GRACE_FAVOR_ODDS=5000' tarnished-covenant/index.html
-          grep -q 'graceIdleFavorEncounterId' tarnished-covenant/index.html
-      - name: Stabilize idle Grace animation
-        run: python tarnished-covenant/build-grace-animation-stability.py
-      - name: Assert native Grace animation
-        run: |
-          grep -q 'Grace wisp tuning' tarnished-covenant/index.html
-          grep -q 'Grace fidget tuning' tarnished-covenant/index.html
-          grep -q 'tc-grace-tap-count' tarnished-covenant/index.html
-          grep -q 'TC_GRACE_TAP_COOLDOWN_MS=100' tarnished-covenant/index.html
-          if grep -q 'TC_GRACE_ART_FRAMES' tarnished-covenant/index.html; then exit 1; fi
-      - name: Apply final reward and archive hardening
-        run: python tarnished-covenant/build-final-release-hardening.py
-      - name: Apply multiplayer synchronization hardening
-        run: python tarnished-covenant/build-multiplayer-hardening.py
-      - name: Apply multiplayer synchronization hardening v2
-        run: python tarnished-covenant/build-multiplayer-hardening-v2.py
-      - name: Apply sequential visited-region Bell Bearing contracts
-        run: python tarnished-covenant/build-region-locked-contracts.py
-      - name: Repair final Covenant refresh handler
-        run: python tarnished-covenant/build-refresh-handler-final.py
-      - name: Apply co-op dual-world encounter completion
-        run: python tarnished-covenant/build-coop-world-clears.py
-      - name: Make reward payout one shared first-come draw
-        run: python tarnished-covenant/build-shared-reward-draw.py
-      - name: Finalize Home Screen build id
-        run: python tarnished-covenant/build-launch-refresh.py
-      - name: Assert final regression invariants
-        run: python tarnished-covenant/test-regression-invariants.py
-      - name: Assert final release invariants
-        run: python tarnished-covenant/test-final-release-invariants.py
-      - name: Assert multiplayer invariants
-        run: python tarnished-covenant/test-multiplayer-invariants.py
-      - name: Assert multiplayer v2 invariants
-        run: python tarnished-covenant/test-multiplayer-v2-invariants.py
-      - name: Assert Bell Bearing progression invariants
-        run: python tarnished-covenant/test-region-locked-contracts.py
-      - name: Assert co-op encounter invariants
-        run: python tarnished-covenant/test-coop-world-clears.py
-      - name: Assert shared reward draw invariants
-        run: python tarnished-covenant/test-shared-reward-draw.py
-      - name: Validate JavaScript syntax
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          html=Path('tarnished-covenant/index.html').read_text();scripts=re.findall(r'<script(?:[^>]*)>(.*?)</script>',html,flags=re.S)
-          if not scripts: raise SystemExit('No inline script found')
-          Path('/tmp/tarnished-covenant.js').write_text('\n'.join(scripts))
-          PY
-          node --check /tmp/tarnished-covenant.js
-      - name: Commit assembled page
+      - name: Assemble and verify the complete release offline
+        run: python tarnished-covenant/tools/build.py --test
+      - name: Commit generated output only
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add tarnished-covenant/index.html
-          if git diff --cached --quiet; then echo 'No changes to commit.'; else git commit -m 'Assemble Tarnished Covenant app'; git push origin HEAD:tarnished-covenant-assets; fi
+          git add tarnished-covenant/index.html tarnished-covenant/regional-pools.js
+          if git diff --cached --quiet; then
+            echo 'Verified release already matches its sources.'
+          else
+            git commit -m 'Build verified Tarnished Covenant release'
+            git push origin HEAD:tarnished-covenant-assets
+          fi
