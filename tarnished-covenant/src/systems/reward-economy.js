@@ -111,6 +111,55 @@ function tcOpenBossVeto(){
   el.querySelector('#tcConfirmVeto')?.addEventListener('click',async e=>{const replacement=tcRollVetoReplacement(run.state);if(!replacement)return setToast('No legal alternate boss is currently available.');const refreshKind=el.querySelector('#tcVetoRefresh').value,actor=playerName(),encounterId=c.id,oldBoss=c.target.name,build=latest=>tcBuildBossVeto(latest,encounterId,oldBoss,replacement,actor,refreshKind),staged=build(run.state);if(!staged)return setToast('The Veto cost or encounter changed on the other phone.');e.currentTarget.disabled=true;const saved=await commit(staged,{successToast:`Covenant Veto accepted · new target: ${replacement.name}.`,retryBuilder:build});if(saved)el.remove();});
 }
 
+// Dynasty tickets authorize farming visits; redeeming does not complete a boss.
+const TC_DYNASTY_VISITS_PER_TICKET=5;
+function tcDynastyFlierRedemptions(state){
+  return Array.isArray(state?.smithing?.dynastyFlierRedemptions)?state.smithing.dynastyFlierRedemptions:[];
+}
+function tcBuildDynastyFlierRedemption(latest,expectedTickets,redemptionId,actor){
+  if(!latest||!redemptionId)return null;
+  const tickets=Number(smithingData(latest).aviaryTickets||0);
+  if(!Number.isInteger(tickets)||tickets<1||tickets!==expectedTickets)return null;
+  if(tcDynastyFlierRedemptions(latest).some(record=>record?.id===redemptionId))return null;
+  if(tcSharedRewardDrawPending(latest)||tcSharedRewardUnresolved(latest))return null;
+  const next=smithingCopy(latest),now=new Date().toISOString();
+  next.smithing.aviaryTickets=tickets-1;
+  next.smithing.dynastyFlierRedemptions=[...tcDynastyFlierRedemptions(next),{
+    id:redemptionId,visits:TC_DYNASTY_VISITS_PER_TICKET,redeemedBy:actor,redeemedAt:now
+  }];
+  next.lastAction=`${actor} redeemed a Dynasty Frequent Flier for ${TC_DYNASTY_VISITS_PER_TICKET} Mohgwyn bird-farming visits.`;
+  next.updatedAt=now;
+  return next;
+}
+let tcDynastyFlierBusy=false;
+async function tcRedeemDynastyFlier(expectedTickets,redemptionId,button){
+  if(tcDynastyFlierBusy||pending)return false;
+  const actor=playerName(),build=latest=>tcBuildDynastyFlierRedemption(latest,expectedTickets,redemptionId,actor);
+  const staged=build(run?.state);
+  if(!staged){setToast('The ticket balance changed or a reward is still open. Review your Boons and try again.');return false;}
+  tcDynastyFlierBusy=true;
+  if(button){button.disabled=true;button.textContent='Redeeming…';}
+  try{
+    const saved=await commit(staged,{successToast:'Frequent Flier redeemed · 5 Mohgwyn bird-farming visits.',retryBuilder:build});
+    if(saved)document.querySelector('#tcStrategyOverlay')?.remove();
+    return saved;
+  }finally{
+    tcDynastyFlierBusy=false;
+    if(button?.isConnected){button.disabled=false;button.textContent='Redeem 1 Ticket · 5 Visits';}
+  }
+}
+function tcOpenDynastyFlierRedemption(){
+  if(pending||tcDynastyFlierBusy)return;
+  const expectedTickets=Number(smithingData(run?.state).aviaryTickets||0);
+  if(expectedTickets<1)return setToast('No Dynasty Frequent Flier available.');
+  const redemptionId=crypto.randomUUID();
+  const overlay=tcStrategicOverlay('Dynasty Frequent Flier',
+    `<p>Redeem one shared ticket for <strong>5 Mohgwyn bird-farming visits</strong>. Keep all runes and resources you earn.</p><p class="tc-muted">${expectedTickets} ticket${expectedTickets===1?'':'s'} available.</p>`,
+    '<div class="tc-strategy-actions"><button type="button" class="btn gold" id="tcConfirmDynastyFlier">Redeem 1 Ticket · 5 Visits</button></div>');
+  const button=overlay.querySelector('#tcConfirmDynastyFlier');
+  button?.addEventListener('click',()=>void tcRedeemDynastyFlier(expectedTickets,redemptionId,button));
+}
+
 // The expanded treasury stays in the Ledger rather than crowding every Encounter panel.
 covenantBoonMarkup=function(state){
   const sm=smithingData(state),c=state?.current,penalties=Array.isArray(c?.penances)?c.penances:[],sanctioned=typeof tcSanctionedBossKills==='function'?tcSanctionedBossKills(state):[];
@@ -122,13 +171,15 @@ covenantBoonMarkup=function(state){
     <div><strong>${sm.bossVetoes}</strong><span>Covenant Veto${sm.bossVetoes===1?'':'es'}</span></div><div><strong>${sm.clemencies}</strong><span>Letter${sm.clemencies===1?'':'s'} of Clemency</span></div>
     <div><strong>${sm.unionDiscounts}</strong><span>Union Discount${sm.unionDiscounts===1?'':'s'}</span></div><div><strong>${sm.jointAppeals}</strong><span>Joint Appeal${sm.jointAppeals===1?'':'s'}</span></div>
   </div><div class="tc-boon-actions">
+    <button type="button" class="btn ghost small" data-use-dynasty-flier ${sm.aviaryTickets>0?'':'disabled'}>Redeem Frequent Flier · 5 Bird Visits</button>
+    ${tcDynastyFlierRedemptions(state).length?`<div class="tc-muted">Last ticket redeemed by ${h(personalizePlayers(tcDynastyFlierRedemptions(state).at(-1).redeemedBy,state))} · 5 bird-farming visits.</div>`:''}
     ${sm.freeBossKills>0?`<button type="button" class="btn ghost small" data-use-free-boss-kill>Redeem Sanctioned Boss Kill · ${sm.freeBossKills}</button>`:''}
     ${sm.bossVetoes>0?`<button type="button" class="btn ghost small" data-use-boss-veto ${vetoReady?'':'disabled'}>Invoke Covenant Veto · ${sm.bossVetoes}</button>`:''}
     ${sm.clemencies>0?`<button type="button" class="btn ghost small" data-use-clemency ${penalties.length?'':'disabled'}>File Letter of Clemency · ${sm.clemencies}</button>`:''}
     ${sm.jointAppeals>0&&c?`<button type="button" class="btn ghost small" data-use-joint-appeal>Use Joint Appeal · ${sm.jointAppeals}</button>`:''}
     ${sm.blankAmendments>0?`<div class="tc-boon-actions two"><button type="button" class="btn ghost small" data-blank-to="chaos">Blank → Chaos · ${sm.blankAmendments}</button><button type="button" class="btn ghost small" data-blank-to="rite">Blank → Rite · ${sm.blankAmendments}</button></div>`:''}
-  </div><div class="tc-muted">Appeal Waivers are optional to spend. Blank Amendments convert into either Refresh. Union Discounts automatically reduce the next Bell Bearing Contract by 3 Favor. Joint Appeals reroll both weapons without a penalty. Covenant Vetoes require the additional treasury payment shown above.${sanctioned.length?` · ${sanctioned.length} boss${sanctioned.length===1?' has':'es have'} been sanctioned.`:''}</div></div>`;
+  </div><div class="tc-muted">Each Dynasty Frequent Flier grants 5 Mohgwyn bird-farming visits. Appeal Waivers are optional to spend. Blank Amendments convert into either Refresh. Union Discounts automatically reduce the next Bell Bearing Contract by 3 Favor. Joint Appeals reroll both weapons without a penalty. Covenant Vetoes require the additional treasury payment shown above.${sanctioned.length?` · ${sanctioned.length} boss${sanctioned.length===1?' has':'es have'} been sanctioned.`:''}</div></div>`;
 };
 
-if(!window.__tcExpandedRewardBound){window.__tcExpandedRewardBound=true;document.addEventListener('click',e=>{if(e.target.closest('[data-use-boss-veto]'))tcOpenBossVeto();else if(e.target.closest('[data-use-clemency]'))tcOpenClemency();else if(e.target.closest('[data-use-joint-appeal]'))tcOpenJointAppeal();else{const blank=e.target.closest('[data-blank-to]');if(blank)void tcConvertBlankAmendment(blank.dataset.blankTo);}});}
+if(!window.__tcExpandedRewardBound){window.__tcExpandedRewardBound=true;document.addEventListener('click',e=>{if(e.target.closest('[data-use-dynasty-flier]'))tcOpenDynastyFlierRedemption();else if(e.target.closest('[data-use-boss-veto]'))tcOpenBossVeto();else if(e.target.closest('[data-use-clemency]'))tcOpenClemency();else if(e.target.closest('[data-use-joint-appeal]'))tcOpenJointAppeal();else{const blank=e.target.closest('[data-blank-to]');if(blank)void tcConvertBlankAmendment(blank.dataset.blankTo);}});}
 /* --- End Expanded Covenant reward economy --- */
