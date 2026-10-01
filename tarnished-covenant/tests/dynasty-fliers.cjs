@@ -1,10 +1,10 @@
 const assert=require('node:assert/strict');
 const {runtime}=require('./runtime.cjs');
 (async()=>{
- const app=runtime();
+ const app=runtime();app.loadBuild();
  app.run(`let fixture=initialRunState({region:'Limgrave + Stormveil',severity:'standard'});
  fixture.smithing=smithingData(fixture);fixture.smithing.aviaryTickets=2;
- fixture.builds={chase:{level:83},morgan:{level:97}};fixture.extensionFromFuture={preserve:true};
+ fixture.builds={chase:testBuild.normalizeBuild({level:83,vig:40,str:35,weapon:{weaponName:'Claymore',variantName:'Heavy',upgrade:18},talismans:['Green Turtle Talisman']}),morgan:testBuild.normalizeBuild({level:97,vig:45,int:50,weapon:{weaponName:'Moonveil',upgrade:8},physickTears:['Magic-Shrouding Cracked Tear']})};fixture.extensionFromFuture={preserve:true};
  let original=structuredClone(fixture);let redeemed=tcBuildDynastyFlierRedemption(fixture,2,'redemption-1','Chase');`);
  assert.equal(app.run('redeemed.smithing.aviaryTickets'),1);
  assert.equal(app.run('redeemed.smithing.dynastyFlierRedemptions[0].visits'),5);
@@ -31,6 +31,9 @@ const {runtime}=require('./runtime.cjs');
  app.run(`let traveled=startNextRegion(redeemed,'Chase','Weeping Peninsula');`);
  assert.deepEqual(app.json('traveled.smithing.dynastyFlierRedemptions'),app.json('redeemed.smithing.dynastyFlierRedemptions'),'Redemption log survives region travel');
  assert.equal(app.run('traveled.smithing.aviaryTickets'),1,'Unspent ticket survives travel');
+ assert.deepEqual(app.json('traveled.builds'),app.json('redeemed.builds'),'Both complete character builds survive travel with Build Lab loaded');
+ app.run(`traveled.builds.chase.weapon.upgrade=20;`);
+ assert.equal(app.run('redeemed.builds.chase.weapon.upgrade'),18,'Travel cannot mutate previous build objects');
  const html=app.run('covenantBoonMarkup(fixture)');
  assert(html.includes('data-use-dynasty-flier'));
  assert(html.includes('Redeem Frequent Flier · 5 Bird Visits'));

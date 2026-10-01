@@ -3149,6 +3149,9 @@ function startNextRegion(state, actor, region, severity = state.severity) {
     playerNames: state.playerNames || ['Tarnished One','Tarnished Two'],
     createdBy: state.createdBy || actor
   });
+  // Character builds belong to the run, not the region. Copy before Build Lab
+  // normalization can replace a missing build with level-one defaults.
+  if (state.builds && typeof state.builds === 'object') next.builds = structuredClone(state.builds);
   next.history = [...(state.history || [])];
   next.clearedRegions = [...(state.clearedRegions || [])];
   next.lastAction = `${actor} entered ${region}.`;
@@ -8982,7 +8985,7 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261001-dynasty-flier-redemption-1';
+const TC_BUILD_ID='20261001-preserve-builds-on-travel-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
