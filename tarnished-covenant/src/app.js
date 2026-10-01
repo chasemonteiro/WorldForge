@@ -2059,6 +2059,7 @@ function smithingData(state) {
     chaosRefreshes: Number(raw.chaosRefreshes || 0),
     riteRefreshes: Number(raw.riteRefreshes || 0),
     aviaryTickets: Number(raw.aviaryTickets || 0),
+    ...(Array.isArray(raw.dynastyFlierRedemptions)?{dynastyFlierRedemptions:raw.dynastyFlierRedemptions}:{}),
     freeBossKills: Number(raw.freeBossKills || 0),
     bossVetoes: Number(raw.bossVetoes || 0),
     clemencies: Number(raw.clemencies || 0),
@@ -5163,7 +5164,7 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20260927-weapon-catalog-audit-4';
+const TC_BUILD_ID='20261001-dynasty-flier-redemption-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
