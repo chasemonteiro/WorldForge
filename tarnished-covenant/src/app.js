@@ -5166,8 +5166,10 @@ function tcOpenAppealBossPicker(penanceId){
 penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.state;return `<section class="curse-section"><div class="section-kicker redtext">armament penalties</div><div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>${c.penances.map((p,i)=>{const needs=tcPenanceNeedsBossRecord(p),rec=tcPenanceBossRecord(state,p);return `<div class="penance-item"><div class="scope">${h(personalizePlayers(p.scope,state))} · penalty ${i+1}</div><div class="penance-name">${h(p.name)}</div><div class="penance-text">${h(personalizePlayers(p.text,state))}</div>${needs?`<div class="tc-penalty-boss-record">${rec?`<strong>Extra boss recorded</strong><span>${h(rec.name)} · ${h(rec.region)}</span>`:`<strong>Extra boss still unrecorded</strong><span>Once you kill the required extra boss, put the specific kill on file.</span><button type="button" class="btn ghost small" data-record-appeal-boss="${h(p.id)}">Record Extra Boss Kill</button>`}</div>`:''}</div>`}).join('')}<div class="subtext">Penalties stack until the current target is defeated.</div></section>`;};
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
+{{src/systems/rykard-armaments.js}}
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261001-preserve-builds-on-travel-1';
+const TC_BUILD_ID='20261002-rykard-serpent-hunter-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
