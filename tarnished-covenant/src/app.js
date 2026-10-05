@@ -5169,7 +5169,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/rykard-armaments.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261002-rykard-serpent-hunter-1';
+const TC_BUILD_ID='20261005-restyle-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -5197,3 +5197,5 @@ async function tcCheckForFreshBuild(){
 window.addEventListener('pageshow',()=>setTimeout(tcCheckForFreshBuild,350));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcCheckForFreshBuild,200);});
 /* --- End Home Screen freshness guard --- */
+
+{{src/systems/restyle.js}}

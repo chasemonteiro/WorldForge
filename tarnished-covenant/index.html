@@ -1896,6 +1896,7 @@ html.tc-standalone .tc-encounter-panel[data-panel="weapons"] .tc-loadout + .tc-l
 </script>
 
   <link rel="stylesheet" href="./build-lab.css?v=13">
+  <link rel="preload" href="./assets/fonts/eb-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
   <main id="app" class="app-shell" aria-live="polite"></main>
@@ -9031,7 +9032,7 @@ tcBuildMasterworkRecall=function(latest,...args){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261002-rykard-serpent-hunter-1';
+const TC_BUILD_ID='20261005-restyle-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -9059,7 +9060,744 @@ async function tcCheckForFreshBuild(){
 window.addEventListener('pageshow',()=>setTimeout(tcCheckForFreshBuild,350));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(tcCheckForFreshBuild,200);});
 /* --- End Home Screen freshness guard --- */
+
+/* --- Covenant restyle: presentation-only markup adjustments ---------------
+   Everything here changes how existing screens are labelled or arranged.
+   Nothing reads from or writes to the saved run, and no handler, ID or
+   data-* hook used by gameplay is removed. Styling lives in src/theme.css. */
+
+// Bottom navigation: short labels, decorative glyphs hidden from screen readers.
+const tcNavMarkupBeforeRestyle=navMarkup;
+navMarkup=function(active){
+  return tcNavMarkupBeforeRestyle(active)
+    .replace('<nav class="tc-bottom-nav">','<nav class="tc-bottom-nav" aria-label="Main">')
+    .replace('<span>Site of Grace</span>','<span>Grace</span>')
+    .replace(/<span class="nicon">/g,'<span class="nicon" aria-hidden="true">');
+};
+// Ledger · Progress: each Remembrance shows where it is and whether that region
+// is reachable yet. Read-only: uses the same helpers the travel screen uses.
+function tcRemembranceStatus(state,name){
+  if(hasRemembrance(state,name))return {key:'done',label:'claimed'};
+  const region=REMEMBRANCE_REGION[name]||'';
+  if(region&&state?.region===region)return {key:'here',label:'this region'};
+  let open=false;try{open=Boolean(region&&regionUnlocked(state,region));}catch(_){open=false;}
+  return open?{key:'open',label:'open'}:{key:'locked',label:'locked'};
+}
+remembranceLedgerBody=function(state){
+  const req=requiredRemembrances(state),done=req.filter(x=>hasRemembrance(state,x));
+  const regionNames=Object.keys(regions).filter(r=>state.includeDlc||!r.includes('· DLC')).filter(r=>r!=='The Erdtree');
+  const ticks=req.map(name=>`<span class="${hasRemembrance(state,name)?'on':''}"></span>`).join('');
+  const rows=req.map(name=>{const st=tcRemembranceStatus(state,name);return `<div class="tc-rem ${st.key==='done'?'done':''} tc-rem-${st.key}" role="listitem"><i class="tc-rem-mark" aria-hidden="true"></i><span class="tc-rem-name">${h(name)}<small>${h(REMEMBRANCE_REGION[name]||'')}</small></span><span class="stamp">${h(st.label)}</span></div>`;}).join('');
+  return `<div class="tc-ledger-head"><div class="tc-ledger-count">${done.length}</div><div><div class="tc-ledger-of">of ${req.length} Remembrances</div><div class="tc-muted">The final seal opens only when the ledger is complete.</div></div></div>
+    <div class="tc-rem-ticks" aria-hidden="true" style="grid-template-columns:repeat(${Math.max(1,req.length)},minmax(0,1fr))">${ticks}</div>
+    <div class="tc-panel"><div class="tc-rem-grid" role="list">${rows}</div></div>
+    <div class="tc-kicker gold" style="margin-top:20px">world progress</div><div class="tc-region-list">${regionNames.map(r=>`<div class="tc-region-chip ${(state.clearedRegions||[]).includes(r)?'done':''}">${h(r)}${r===state.region?' · ACTIVE':(state.clearedRegions||[]).includes(r)?' · CLEARED':''}</div>`).join('')}</div>`;
+};
+
+// Ledger · Smithing: boon counters become a tappable grid with a one-line
+// explanation, replacing the long paragraph. Pure presentation; the counts
+// and every redeem button come from the existing markup unchanged.
+const TC_BOON_HELP=[
+  [/^appeal waiver/i,'Optional to spend: makes one Weapon Appeal penalty-free.'],
+  [/^chaos refresh/i,'Amend the current Chaos decree.'],
+  [/^rite refresh/i,'Amend the current Odd Rite.'],
+  [/^blank amendment/i,'Converts into either a Chaos or a Rite Refresh.'],
+  [/^dynasty frequent flier/i,'Each grants 5 Mohgwyn bird-farming visits.'],
+  [/^sanctioned boss kill/i,'Record one eligible optional boss in a reached region as killed.'],
+  [/^covenant veto/i,'Veto an optional assignment, with the extra treasury payment shown.'],
+  [/^letters? of clemency/i,'Strike one Weapon Appeal penalty from the current encounter.'],
+  [/^union discount/i,'Your next Bell Bearing Contract costs 3 less Favor.'],
+  [/^joint appeal/i,'Reroll both weapons without a penalty.']
+];
+let tcBoonHelpSelected='';
+function tcBoonHelpText(label){const hit=TC_BOON_HELP.find(([re])=>re.test(label));return hit?hit[1]:'';}
+function tcEnhanceBoonGrid(){
+  const ledger=document.querySelector('.tc-ledger-screen .tc-boon-ledger');
+  const grid=ledger?.querySelector('.tc-boon-grid');
+  if(!grid||grid.dataset.tcHelp)return;
+  grid.dataset.tcHelp='1';
+  const cells=[...grid.children].filter(el=>el.tagName==='DIV');
+  let preferred=null;
+  cells.forEach(cell=>{
+    const label=cell.querySelector('span')?.textContent?.trim()||'';
+    const count=Number(cell.querySelector('strong')?.textContent||0);
+    const btn=document.createElement('button');
+    btn.type='button';btn.className='tc-boon-cell'+(count>0?' held':'');
+    btn.dataset.boonHelp=label;btn.setAttribute('aria-pressed','false');
+    btn.innerHTML=cell.innerHTML;
+    cell.replaceWith(btn);
+    if(label===tcBoonHelpSelected)preferred=btn;
+    if(!preferred&&count>0)preferred=btn;
+  });
+  const note=document.createElement('p');note.className='tc-boon-help';note.setAttribute('aria-live','polite');
+  grid.after(note);
+  const longCopy=[...ledger.children].filter(el=>el.classList.contains('tc-muted')).at(-1);
+  if(longCopy){
+    const suffix=(longCopy.textContent.split(' · ').slice(1).join(' · ')||'').trim();
+    longCopy.hidden=true;
+    if(suffix){const extra=document.createElement('p');extra.className='tc-boon-extra';extra.textContent=suffix;note.after(extra);}
+  }
+  tcSelectBoonHelp(preferred||grid.querySelector('.tc-boon-cell'));
+}
+function tcSelectBoonHelp(btn){
+  if(!btn)return;
+  const grid=btn.closest('.tc-boon-grid'),note=grid?.nextElementSibling;
+  grid?.querySelectorAll('.tc-boon-cell').forEach(b=>{const on=b===btn;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',on?'true':'false');});
+  tcBoonHelpSelected=btn.dataset.boonHelp||'';
+  if(note?.classList.contains('tc-boon-help'))note.innerHTML=`<strong>${h(tcBoonHelpSelected)}</strong> · ${h(tcBoonHelpText(tcBoonHelpSelected))}`;
+}
+if(!window.__tcBoonHelpBound){
+  window.__tcBoonHelpBound=true;
+  document.addEventListener('click',event=>{const btn=event.target.closest?.('.tc-boon-cell');if(btn)tcSelectBoonHelp(btn);});
+}
+const tcRenderLedgerBeforeRestyle=renderLedger;
+renderLedger=function(){
+  tcRenderLedgerBeforeRestyle();
+  try{tcEnhanceBoonGrid();}catch(error){console.warn('Boon grid presentation skipped',error);}
+};
+/* --- End Covenant restyle markup adjustments --- */
+
 </script>
   <script src="./build-lab.js?v=18"></script>
+  <style id="tc-theme">/* --- Covenant restyle theme ---------------------------------------------
+   Presentation only. Loaded last (end of <body>) so it wins over the earlier
+   style passes and the runtime-injected sheet. No game state, saving, IDs or
+   handlers depend on anything in this file.
+   ------------------------------------------------------------------------- */
+
+/* Self-hosted EB Garamond (SIL Open Font License, assets/fonts/OFL.txt) --- */
+@font-face{font-family:'EB Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(./assets/fonts/eb-garamond-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'EB Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(./assets/fonts/eb-garamond-latin-400-italic.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'EB Garamond';font-style:normal;font-weight:500;font-display:swap;src:url(./assets/fonts/eb-garamond-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'EB Garamond';font-style:normal;font-weight:600;font-display:swap;src:url(./assets/fonts/eb-garamond-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'EB Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(./assets/fonts/eb-garamond-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'EB Garamond';font-style:italic;font-weight:400;font-display:swap;src:url(./assets/fonts/eb-garamond-latin-ext-400-italic.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+/* Tokens ----------------------------------------------------------------- */
+:root{
+  --serif:'EB Garamond',Garamond,'Iowan Old Style',Georgia,serif;
+  --bg:#0a0908;--bg2:#0d0c0a;--paper:#12100c;--paper2:#17140f;
+  --ink:#ede4d0;--ink-strong:#f2e9d6;--ink-soft:#c9bfa9;
+  --ash:#a39a86;--dim:#8f8775;--faint:#6f6858;
+  --gold:#cfa960;--gold-bright:#e9cd8c;
+  --red:#d97a66;--red-bright:#e9a493;--violet:#ad94c9;--violet-bright:#c4ade0;
+  --line:rgba(207,169,96,.16);--line-soft:rgba(207,169,96,.10);--line-strong:rgba(207,169,96,.34);
+  --glow:0 0 8px 2px rgba(233,205,140,.55);
+  --tc-label-size:15px;
+  font-family:var(--serif);
+}
+
+/* One typeface everywhere (SVG text keeps its own). Weight synthesis is off so
+   the old 800–850 weights are not faked into smeared bold; small caps are
+   still synthesized because the bundled font has no smcp feature. */
+html body,html body *:not(svg):not(svg *){font-family:var(--serif)!important;font-synthesis-weight:none;font-synthesis-small-caps:auto}
+html body{background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* Background: soft grain and vignette replace the scanlines and tiled pattern.
+   The per-region glow tokens from the base styles are kept. */
+body:before{opacity:1!important;mix-blend-mode:normal!important;background:
+  radial-gradient(120% 70% at 50% 118%,rgba(0,0,0,.85),transparent 62%),
+  radial-gradient(140% 60% at 50% -12%,rgba(207,169,96,.07),transparent 60%)!important}
+body:after{opacity:.075!important;mix-blend-mode:screen;background-size:180px 180px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")!important}
+
+/* Shared label voice: small caps instead of tiny bold sans --------------- */
+:is(#app,html) .eyebrow,
+:is(#app,html) .micro,
+:is(#app,html) .label,
+:is(#app,html) .tag,
+:is(#app,html) .section-kicker,
+:is(#app,html) .who,
+:is(#app,html) .weapon-type,
+:is(#app,html) .fate-title,
+:is(#app,html) .scope,
+:is(#app,html) .mode-pill,
+:is(#app,html) .status,
+:is(#app,html) .join-banner,
+:is(#app,html) .count,
+:is(#app,html) .share-chip,
+:is(#app,html) .weapon-stats dt,
+:is(#app,html) .seal-button,
+:is(#app,html) .chaos-bad,
+:is(#app,html) .tc-sync,
+:is(#app,html) .tc-subtitle,
+:is(#app,html) .tc-kicker,
+:is(#app,html) .tc-code-row,
+:is(#app,html) .tc-mini-stat b,
+:is(#app,html) .tc-seal-inline,
+:is(#app,html) .tc-penalty-summary summary,
+:is(#app,html) .tc-rem .stamp,
+:is(#app,html) .tc-settings-row .name,
+:is(#app,html) .tc-conquered,
+:is(#app,html) .tc-reveal .decree,
+:is(#app,html) .tc-chaos-label,
+:is(#app,html) .tc-report-kicker,
+:is(#app,html) .tc-report-stamp,
+:is(#app,html) .tc-report-total,
+:is(#app,html) .tc-comp-stats span,
+:is(#app,html) .tc-comp-number,
+:is(#app,html) .tc-comp-mark,
+:is(#app,html) .tc-comp-weapons span,
+:is(#app,html) .tc-comp-mod>span,
+:is(#app,html) .tc-comp-footer,
+:is(#app,html) .tc-boon-grid span,
+:is(#app,html) .tc-victory-banner .tc-conquered,
+:is(#app,html) .tc-crossroads-head span,
+:is(#app,html) .tc-crossroad-number,
+:is(#app,html) .tc-victory-foot span,
+:is(#app,html) .tc-refresh-link,
+:is(#app,html) .tc-reward-kicker,
+:is(#app,html) .tc-reward-type,
+:is(#app,html) .tc-panel-heading,
+:is(#app,html) .tc-comp-region-head span,
+:is(#app,html) .tc-comp-sheet-close,
+:is(#app,html) .tc-comp-sheet-index,
+:is(#app,html) .tc-comp-sheet-region,
+:is(#app,html) .tc-corporate-stamp,
+:is(#app,html) .tc-corporate-overline,
+:is(#app,html) .tc-wiki-link,
+:is(#app,html) .tc-grace-ar-title,
+:is(#app,html) .tc-grace-office-label,
+:is(#app,html) .tc-grace-idle-caption,
+:is(#app,html) .tc-grace-tap-count,
+:is(#app,html) .tc-world-clear-count,
+:is(#app,html) .tc-world-clear-wait,
+:is(#app,html) .tc-shared-draw-count,
+:is(#app,html) .tc-reward-sync-note,
+:is(#app,html) .tc-reward-catchup-note,
+:is(#app,html) .tc-report-sync,
+:is(#app,html) .tc-veteran-meta,
+:is(#app,html) .tc-veteran-status,
+:is(#app,html) .tc-archive-kicker,
+:is(#app,html) .tc-dossier-file,
+:is(#app,html) .tc-dossier-region,
+:is(#app,html) .tc-dossier-label,
+:is(#app,html) .tc-evidence-kicker,
+:is(#app,html) .tc-archive-facts span,
+:is(#app,html) .tc-dossier-stamp,
+:is(#app,html) .tc-dossier-weapon small,
+:is(#app,html) .tc-dossier-flag,
+:is(#app,html) .tc-reward-tag,
+:is(#app,html) .tc-evidence-favor span,
+:is(#app,html) .tc-erdtree-target em,
+:is(#app,html) .tc-build-section-head span,
+:is(#app,html) .tc-build-field label,
+:is(#app,html) .tc-weapon-option small,
+:is(#app,html) .tc-ar-card .mode,
+:is(#app,html) .tc-ar-card .shadow,
+:is(#app,html) .tc-spell-scaling span,
+:is(#app,html) .tc-spell-scaling small,
+:is(#app,html) .tc-weapon-slip>span,
+:is(#app,html) .tc-affinity-best span,
+:is(#app,html) .tc-affinity-row small,
+:is(#app,html) .tc-effective-stats em,
+:is(#app,html) .tc-effective-stats span small,
+:is(#app,html) .tc-ar-validity,
+:is(#app,html) .tc-bearing-kind,
+:is(#app,html) .tc-bearing-stamp,
+:is(#app,html) .tc-workbench-credit,
+:is(#app,html) .tc-erdtree-writ-head .tc-kicker{
+  font-family:var(--serif)!important;font-weight:400!important;font-style:normal;
+  font-size:var(--tc-label-size)!important;line-height:1.2!important;
+  font-variant-caps:all-small-caps!important;text-transform:none!important;letter-spacing:.13em!important}
+:is(#app,html) .tc-kicker{color:var(--ash)}
+:is(#app,html) .tc-kicker.gold,:is(#app,html) .tc-kicker.ember{color:var(--gold)!important}
+:is(#app,html) .tc-kicker.red{color:var(--red-bright)!important}
+:is(#app,html) .tc-kicker.violet{color:var(--violet-bright)!important}
+:is(#app,html) .tc-muted{color:var(--ash)!important;font-size:16px!important;line-height:1.35!important}
+
+/* Buttons: quiet hairlines; gold fill only for the one real action ------- */
+:is(#app,html) .btn{font-family:var(--serif)!important;font-weight:400!important;font-size:20px!important;line-height:1.15!important;
+  letter-spacing:.02em!important;text-transform:none!important;font-variant-caps:normal!important;
+  clip-path:none!important;border-radius:0!important;min-height:52px;
+  border:1px solid var(--line-strong)!important;background:rgba(207,169,96,.035)!important;color:var(--ink)!important;
+  box-shadow:none!important;text-shadow:none!important;transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}
+:is(#app,html) .btn:not(:disabled):active{background:rgba(207,169,96,.12)!important;border-color:var(--gold-bright)!important;box-shadow:0 0 18px rgba(233,205,140,.18)!important}
+:is(#app,html) .btn.gold{background:linear-gradient(180deg,rgba(207,169,96,.2),rgba(207,169,96,.1))!important;border-color:var(--gold)!important;color:var(--gold-bright)!important;box-shadow:0 0 22px rgba(233,205,140,.12)!important}
+:is(#app,html) .btn.curse{border-color:rgba(217,122,102,.55)!important;background:rgba(120,36,26,.14)!important;color:#ecab9b!important}
+:is(#app,html) .btn.ghost{background:transparent!important}
+:is(#app,html) .btn.small{font-size:18px!important;min-height:48px}
+:is(#app,html) .btn.text-btn{border:0!important;background:transparent!important;color:var(--ash)!important;font-size:18px!important;font-style:italic}
+:is(#app,html) .btn:disabled{opacity:1!important;color:var(--faint)!important;border-color:var(--line)!important;background:transparent!important}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:1px solid var(--gold-bright)!important;outline-offset:2px}
+
+/* Form fields ------------------------------------------------------------ */
+html body select,html body input:not([type=checkbox]):not([type=radio]){font-family:var(--serif)!important;font-size:19px!important;color:var(--ink-strong)!important;
+  background:var(--bg2)!important;border:1px solid var(--line-strong)!important;border-radius:0!important;box-shadow:none!important}
+html body input::placeholder{color:var(--dim)!important;font-style:italic}
+
+/* Screen header ---------------------------------------------------------- */
+.tc-topline{margin:4px 2px 0!important;padding:0 0 12px!important;border:0!important;position:relative;align-items:baseline!important}
+.tc-topline:after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(207,169,96,.45),transparent)}
+.tc-topline:before{content:"";position:absolute;left:50%;bottom:-3px;width:7px;height:7px;transform:translateX(-50%) rotate(45deg);background:var(--bg);border:1px solid rgba(207,169,96,.65);z-index:1}
+:is(#app,html) .tc-brand-small{font-family:var(--serif)!important;font-weight:400!important;font-size:17px!important;letter-spacing:.26em!important;text-transform:uppercase!important;font-variant-caps:normal!important;color:var(--gold)!important}
+:is(#app,html) .tc-sync{font-size:14px!important;font-style:italic;font-variant-caps:normal!important;letter-spacing:0!important;color:var(--ash)!important}
+
+/* Section tabs (Encounter, Grace, Ledger) --------------------------------- */
+.tc-encounter-tabs,.tc-sanctuary-tabs,.tc-ledger-tabs{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;gap:0!important;margin:4px 0 6px!important;padding:0!important}
+.tc-encounter-tabs button,.tc-sanctuary-tabs button,.tc-ledger-tabs button{
+  font-family:var(--serif)!important;font-weight:400!important;font-size:18px!important;font-variant-caps:all-small-caps!important;text-transform:none!important;letter-spacing:.14em!important;
+  min-height:50px!important;border:0!important;background:transparent!important;color:var(--ash)!important;box-shadow:none!important;clip-path:none!important;
+  display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:5px;position:relative;padding:0 2px!important}
+.tc-encounter-tabs button:after,.tc-sanctuary-tabs button:after,.tc-ledger-tabs button:after{content:"";position:static!important;display:block;width:4px;height:4px;border-radius:50%;background:transparent;border:0!important;inset:auto!important;transform:none!important}
+.tc-encounter-tabs button.active,.tc-sanctuary-tabs button.active,.tc-ledger-tabs button.active{color:var(--gold-bright)!important;background:transparent!important}
+.tc-encounter-tabs button.active:after,.tc-sanctuary-tabs button.active:after,.tc-ledger-tabs button.active:after{background:var(--gold-bright);box-shadow:var(--glow)}
+.tc-encounter-tabs button:before,.tc-sanctuary-tabs button:before,.tc-ledger-tabs button:before{display:none!important}
+.tc-encounter-hint,.tc-sanctuary-hint,.tc-swipe-hint{display:none!important}
+
+/* Bottom navigation with line icons ------------------------------------- */
+.tc-bottom-nav{height:auto!important;min-height:78px;padding:6px 6px calc(10px + env(safe-area-inset-bottom))!important;
+  background:linear-gradient(180deg,rgba(10,9,8,.82),#070605 40%)!important;border-top:1px solid var(--line)!important;box-shadow:none!important}
+.tc-bottom-nav:before,.tc-bottom-nav:after{display:none!important}
+:is(#app,html) .tc-bottom-nav button{font-family:var(--serif)!important;font-weight:400!important;font-size:15px!important;font-variant-caps:all-small-caps!important;text-transform:none!important;letter-spacing:.05em!important;white-space:nowrap;min-width:0;
+  color:var(--dim)!important;min-height:52px;gap:4px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.tc-bottom-nav button.active{color:var(--gold-bright)!important}
+.tc-bottom-nav button:before,.tc-bottom-nav button:after{display:none!important}
+.tc-bottom-nav .nicon,.tc-quick .tc-icon{display:block!important;font-size:0!important;line-height:0!important;width:24px!important;height:24px!important;margin:0 auto;
+  background:currentColor!important;color:inherit;text-shadow:none!important;box-shadow:none!important;border:0!important;
+  -webkit-mask:var(--tc-icon) center/24px 24px no-repeat;mask:var(--tc-icon) center/24px 24px no-repeat}
+.tc-bottom-nav button.active .nicon{filter:drop-shadow(0 0 5px rgba(233,205,140,.55))}
+[data-screen="sanctuary"]{--tc-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5c1.6 2.8-1.2 4.4.2 7.2.9-1 2.3-1.4 2.7.6.6 3-1.4 5.2-2.9 5.2-1.8 0-3.7-1.5-3.7-4.2 0-3.3 3.7-4.6 3.7-8.8z'/%3E%3Cpath d='M5 20c2.2-1.2 11.8-1.2 14 0'/%3E%3C/svg%3E")}
+[data-screen="encounter"]{--tc-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 4.5l9.5 9.5M19 4.5L9.5 14M7.5 13.5l3 3M16.5 13.5l-3 3M9 15l-3.5 3.5M15 15l3.5 3.5'/%3E%3C/svg%3E")}
+[data-screen="ledger"]{--tc-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5.5c2.8-1 5.6-.8 8 1 2.4-1.8 5.2-2 8-1v13c-2.8-1-5.6-.8-8 1-2.4-1.8-5.2-2-8-1z'/%3E%3Cpath d='M12 6.5v13'/%3E%3C/svg%3E")}
+[data-screen="build"]{--tc-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.5 6l3-3 5.5 5.5-3 3z'/%3E%3Cpath d='M14 10L5 19M3.5 21h6'/%3E%3C/svg%3E")}
+[data-screen="settings"]{--tc-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 6.5l5.5 5.5-5.5 5.5L6.5 12z'/%3E%3Ccircle cx='12' cy='12' r='1.6'/%3E%3C/svg%3E")}
+
+/* Panels and cards: fewer boxes, hairline dividers ----------------------- */
+:is(#app,html) .tc-panel:before,:is(#app,html) .tc-panel:after{display:none!important}
+:is(#app,html) .tc-panel{border:0!important;outline:0!important;border-top:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:12px 2px!important;margin:0!important}
+.tc-panel-heading{color:var(--ash)!important;text-align:center;border:0!important;background:transparent!important;margin:14px 0 4px!important;padding:0!important}
+.tc-panel-heading:before,.tc-panel-heading:after{display:none!important}
+.tc-value{font-family:var(--serif)!important;font-size:24px!important;line-height:1.1!important;color:var(--ink-strong)!important}
+.tc-value.big{font-size:40px!important}
+
+/* Toast ------------------------------------------------------------------ */
+:is(#app,html) .toast,:is(#app,html) #toast{font-family:var(--serif)!important;font-size:17px!important;font-variant-caps:normal!important;letter-spacing:0!important;text-transform:none!important;
+  color:var(--ink-soft)!important;background:#14110d!important;border:1px solid var(--line-strong)!important;box-shadow:0 10px 30px rgba(0,0,0,.5)!important;clip-path:none!important}
+
+/* Motion respects the system setting ------------------------------------ */
+@media (prefers-reduced-motion:reduce){
+  html body *,html body *:before,html body *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+/* --- End Covenant restyle theme foundation --- */
+
+/* Shared building blocks -------------------------------------------------- */
+:root{
+  --tc-seal:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='75' cy='75' r='68' stroke-width='1' stroke-opacity='.4'/%3E%3Ccircle cx='75' cy='75' r='61' stroke-width='7' stroke-opacity='.5' stroke-dasharray='1.2 7.5' stroke-linecap='butt'/%3E%3Ccircle cx='75' cy='75' r='54' stroke-width='1.4'/%3E%3Ccircle cx='75' cy='75' r='33' stroke-width='1.1'/%3E%3Cpath d='M75 42L93 75 75 108 57 75z' stroke-width='1.1'/%3E%3Cpath d='M75 21v12M75 117v12M21 75h12M117 75h12' stroke-width='1' stroke-opacity='.75'/%3E%3Ccircle cx='75' cy='75' r='4' fill='black' stroke='none'/%3E%3Cpath d='M101 17l-11 26 8 7-16 20' stroke-width='1.4'/%3E%3C/svg%3E");
+  --tc-sigil:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='65' cy='65' r='58' stroke-width='1' stroke-opacity='.4'/%3E%3Ccircle cx='65' cy='65' r='46' stroke-width='1' stroke-dasharray='2 5' stroke-opacity='.65'/%3E%3Cpath d='M65 14C68 52 78 62 116 65 78 68 68 78 65 116 62 78 52 68 14 65 52 62 62 52 65 14z' stroke-width='1.3'/%3E%3Cpath d='M65 40C66.5 59 71 63.5 90 65 71 66.5 66.5 71 65 90 63.5 71 59 66.5 40 65 59 63.5 63.5 59 65 40z' stroke-width='1' stroke-opacity='.75'/%3E%3Ccircle cx='65' cy='65' r='2.5' fill='black' stroke='none'/%3E%3C/svg%3E");
+}
+.tc-wiki-link,.tc-grace-ar-button,.tc-refresh-link{display:inline-flex!important;align-items:center;min-height:44px;color:var(--gold)!important;text-decoration:none!important;border:0!important;background:transparent!important;padding:0!important}
+.tc-wiki-link:after{content:none!important}
+/* Photographs: graded warm, faded into the page instead of framed. */
+:is(#app,html) .tc-photo{border:0!important;clip-path:none!important;box-shadow:none!important;border-radius:0!important;
+  filter:grayscale(.42) sepia(.32) contrast(1.06) brightness(.84)!important;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 70%,transparent 100%)}
+:is(#app,html) .tc-photo:after,:is(#app,html) .tc-photo:before{display:none!important}
+
+/* Encounter ------------------------------------------------------------- */
+.tc-encounter-sticky{border:0!important;background:transparent!important;box-shadow:none!important;padding:8px 2px 2px!important;margin:0!important;display:flex!important;flex-direction:column;gap:1px;text-align:left}
+.tc-encounter-sticky strong{font-weight:400!important;font-size:16px!important;line-height:1.2!important;color:var(--ash)!important;letter-spacing:0!important;text-transform:none!important}
+.tc-encounter-sticky span{font-size:14px!important;color:var(--red-bright)!important;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-encounter-panel{display:flex!important;flex-direction:column;padding:0 2px 14px!important}
+.tc-encounter-panel>.tc-encounter-actions,.tc-encounter-panel>.tc-panel-refresh{margin-top:auto!important}
+.tc-encounter-panel[data-panel="boss"] .tc-panel-heading{display:none!important}
+:is(#app,html) .tc-brief-head{padding:16px 0 0!important;text-align:center;border:0!important;background:transparent!important}
+:is(#app,html) .tc-brief-head .tc-kicker{color:var(--ash)!important}
+:is(#app,html) .tc-brief-boss{font-weight:400!important;font-size:clamp(40px,12.5vw,54px)!important;line-height:1!important;color:var(--ink-strong)!important;margin:6px 0 6px!important;text-wrap:balance;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-brief-region{font-size:17px!important;color:var(--ash)!important;font-style:italic}
+:is(#app,html) .tc-encounter-panel .tc-boss-art{height:auto!important;min-height:210px!important;max-height:30svh!important;margin:4px -14px 6px!important}
+:is(#app,html) .tc-encounter-actions{display:block!important;border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important}
+:is(#app,html) .tc-world-clear-card{border:0!important;border-top:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:14px 0 0!important}
+:is(#app,html) .tc-world-clear-card:before,:is(#app,html) .tc-world-clear-card:after{display:none!important}
+:is(#app,html) .tc-world-clear-head{align-items:baseline!important;margin-bottom:6px!important}
+:is(#app,html) .tc-world-clear-head strong{font-weight:400!important;font-size:23px!important;color:var(--ink-strong)!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-world-clear-note{font-size:15px!important;font-style:italic;color:var(--ash)!important;line-height:1.3!important;margin-top:2px}
+:is(#app,html) .tc-world-clear-count{color:var(--gold)!important;border:0!important;background:transparent!important;font-size:17px!important;padding:0!important}
+:is(#app,html) .tc-world-clear-grid{gap:10px!important;margin-top:10px!important}
+:is(#app,html) .tc-world-clear-btn{min-height:64px!important;font-size:18px!important;line-height:1.2!important;padding:8px 10px!important;white-space:normal!important}
+:is(#app,html) .tc-world-clear-btn.done{border-color:rgba(233,205,140,.75)!important;background:rgba(207,169,96,.12)!important;color:var(--gold-bright)!important;box-shadow:0 0 18px rgba(233,205,140,.16)!important}
+/* Weapons */
+:is(#app,html) .tc-loadouts{display:block!important;border:0!important;background:transparent!important;box-shadow:none!important;margin:0!important}
+:is(#app,html) .tc-loadout{padding:18px 0 14px!important;border:0!important;border-bottom:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important}
+:is(#app,html) .tc-loadout:before,:is(#app,html) .tc-loadout:after,:is(#app,html) .tc-loadouts:before,:is(#app,html) .tc-loadouts:after{display:none!important}
+:is(#app,html) .tc-loadout+.tc-loadout{border-left:0!important;border-top:0!important}
+:is(#app,html) .tc-loadout .tc-kicker{color:var(--gold)!important}
+:is(#app,html) .tc-loadout-name{font-weight:400!important;font-size:33px!important;line-height:1.05!important;color:var(--ink-strong)!important;margin:4px 0 2px!important;text-wrap:balance;letter-spacing:0!important}
+:is(#app,html) .tc-mini-stat{display:flex!important;align-items:baseline;gap:10px!important;font-size:18px!important;color:var(--ink-soft)!important;margin:0!important}
+:is(#app,html) .tc-mini-stat b{color:var(--ash)!important}
+:is(#app,html) .tc-mini-stat span{font-style:italic}
+:is(#app,html) .tc-weapon-appeal-actions{display:flex!important;flex-direction:column;gap:10px;padding-top:12px!important}
+:is(#app,html) .tc-weapon-appeal-actions .tc-actions-3{display:block!important;margin:0!important}
+:is(#app,html) .tc-weapon-appeal-actions #appealOpen{width:100%;min-height:60px!important;font-size:21px!important}
+:is(#app,html) .tc-weapon-appeal-actions [data-open-weapon-recall]{color:var(--ash)!important}
+/* Chaos and Rite: centred decree with a drawn seal or sigil */
+:is(#app,html) .tc-feature{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:8px 0 0!important;margin:0!important}
+:is(#app,html) .tc-feature:before,:is(#app,html) .tc-feature:after{display:none!important}
+:is(#app,html) .tc-feature-row{display:flex!important;flex-direction:column;align-items:center;text-align:center;gap:6px!important}
+:is(#app,html) .tc-feature-glyph{font-size:0!important;width:136px;height:136px;margin:4px auto 2px;background:currentColor;
+  -webkit-mask:var(--tc-seal) center/contain no-repeat;mask:var(--tc-seal) center/contain no-repeat}
+:is(#app,html) .tc-feature.chaos .tc-feature-glyph{color:var(--red)!important;filter:drop-shadow(0 0 14px rgba(217,122,102,.4))}
+:is(#app,html) .tc-feature.rite .tc-feature-glyph{color:var(--violet)!important;width:120px;height:120px;-webkit-mask-image:var(--tc-sigil);mask-image:var(--tc-sigil);filter:drop-shadow(0 0 14px rgba(173,148,201,.4))}
+:is(#app,html) .tc-feature.chaos{background:radial-gradient(60% 45% at 50% 30%,rgba(150,44,30,.2),transparent 70%)!important}
+:is(#app,html) .tc-feature.rite{background:radial-gradient(60% 45% at 50% 30%,rgba(98,68,130,.24),transparent 70%)!important}
+:is(#app,html) .tc-feature-title{font-weight:400!important;font-size:29px!important;line-height:1.15!important;color:var(--ink-strong)!important;text-wrap:balance;margin:4px 0!important}
+:is(#app,html) .tc-feature.chaos .tc-feature-title{font-variant-caps:all-small-caps;letter-spacing:.05em!important;font-size:32px!important}
+:is(#app,html) .tc-feature-text{font-size:19px!important;line-height:1.4!important;color:var(--ink-soft)!important;text-wrap:pretty}
+:is(#app,html) .tc-feature.chaos .tc-feature-row>div>.tc-feature-text:first-of-type{font-size:17px!important;font-style:italic;color:var(--ash)!important}
+:is(#app,html) #triggerChaos.tc-seal-inline{font-size:0!important;display:flex!important;align-items:center;justify-content:center;width:100%;min-height:60px;margin-top:16px!important;
+  border:1px solid var(--red)!important;background:#3d140f!important;color:#f6d3c8!important;font-variant-caps:normal!important;letter-spacing:.04em!important;
+  box-shadow:0 0 26px rgba(217,122,102,.22),inset 0 1px 0 rgba(255,190,170,.12)!important;padding:0!important}
+:is(#app,html) #triggerChaos.tc-seal-inline:after{content:'Break the seal';font-size:22px;letter-spacing:.04em}
+:is(#app,html) .tc-panel-refresh{border:0!important;background:transparent!important;box-shadow:none!important;padding:14px 0 0!important;display:flex!important;flex-direction:column;gap:6px}
+:is(#app,html) .tc-panel-refresh .btn{font-variant-caps:all-small-caps!important;letter-spacing:.08em!important;font-size:19px!important;color:var(--ash)!important}
+:is(#app,html) .tc-penalty-summary{background:rgba(120,36,26,.1)!important}
+:is(#app,html) .tc-penalty-summary .penance-name{font-size:21px!important}
+:is(#app,html) .tc-penalty-summary .penance-text{font-size:17px!important}
+
+/* Site of Grace --------------------------------------------------------- */
+:is(#app,html) .tc-grace-office-memo{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:12px 0 6px!important;display:flex!important;flex-direction:column;gap:2px;text-align:center}
+:is(#app,html) .tc-grace-office-label{color:var(--gold)!important}
+:is(#app,html) .tc-grace-office-copy{font-size:17px!important;font-style:italic;line-height:1.35!important;color:var(--ink-soft)!important;max-width:none!important}
+:is(#app,html) .tc-grace-art{height:auto!important;min-height:230px!important;margin:4px -14px 0!important;position:relative;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 20%)!important;mask-image:linear-gradient(180deg,transparent 0,#000 20%)!important;box-shadow:inset 0 -90px 70px -20px var(--bg)!important}
+:is(#app,html) .tc-grace-wiki-target{position:absolute;left:14px;right:14px;bottom:18px;background:transparent!important;border:0!important}
+:is(#app,html) .tc-grace-wiki-name{font-size:32px!important;font-weight:400!important;color:var(--ink-strong)!important;line-height:1.05!important}
+:is(#app,html) .tc-grace-ar-tools{border:0!important;border-top:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:12px 0!important;margin:0!important;align-items:center!important}
+:is(#app,html) .tc-grace-ar-weapons span{font-size:17px!important;color:var(--ink)!important}
+:is(#app,html) .tc-grace-ar-button{border:1px solid var(--line-strong)!important;padding:4px 12px!important;min-height:48px;font-size:15px!important;line-height:1.15!important;max-width:150px;text-align:center;justify-content:center}
+:is(#app,html) .tc-grace-ar-weapons span{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+:is(#app,html) .tc-grace-idle-caption{margin-top:14px!important;color:var(--ash)!important}
+:is(#app,html) .tc-grace-tap-count{color:var(--dim)!important;font-size:13px!important}
+:is(#app,html) .tc-hub-grid{gap:0!important}
+:is(#app,html) .tc-target-card{text-align:left;cursor:pointer}
+:is(#app,html) .tc-target-enter{font-size:15px!important;font-style:italic;color:var(--gold)!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-progress-line{height:4px!important;background:rgba(207,169,96,.16)!important;margin:10px 0 6px!important}
+:is(#app,html) .tc-forge-notice{border:0!important;border-top:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:14px 2px!important;margin:8px 0!important}
+:is(#app,html) .tc-forge-notice:before,:is(#app,html) .tc-forge-notice:after{display:none!important}
+:is(#app,html) .tc-forge-title{font-size:23px!important;font-weight:400!important;color:var(--ink-strong)!important}
+:is(#app,html) .tc-forge-glyph{color:var(--gold)!important}
+:is(#app,html) .tc-code-row{color:var(--gold)!important;font-size:17px!important}
+:is(#app,html) .tc-code-row strong{font-size:19px!important;letter-spacing:.18em}
+:is(#app,html) .tc-quick{gap:0!important;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+:is(#app,html) .tc-quick button{min-height:90px!important;border:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;background:transparent!important;clip-path:none!important;box-shadow:none!important;
+  color:var(--ink-soft)!important;font-family:var(--serif)!important;font-weight:400!important;font-size:16px!important;font-variant-caps:all-small-caps!important;letter-spacing:.12em!important;text-transform:none!important}
+:is(#app,html) .tc-quick button:before,:is(#app,html) .tc-quick button:after{display:none!important}
+:is(#app,html) .tc-quick .tc-icon{color:var(--gold)!important;width:28px!important;height:28px!important;-webkit-mask-size:28px 28px;mask-size:28px 28px}
+
+/* Ledger · Progress ------------------------------------------------------ */
+:is(#app,html) .tc-ledger-head{display:flex!important;align-items:flex-end!important;justify-content:flex-start!important;gap:14px!important;margin:16px 2px 10px!important}
+:is(#app,html) .tc-ledger-count{font-size:64px!important;line-height:.85!important;color:var(--gold-bright)!important;font-weight:400!important}
+:is(#app,html) .tc-ledger-of{font-size:20px;color:var(--ink-strong)}
+:is(#app,html) .tc-ledger-head .tc-muted{font-size:15px!important;font-style:italic}
+.tc-rem-ticks{display:grid;gap:4px;margin:0 2px 14px}
+.tc-rem-ticks span{height:4px;background:rgba(207,169,96,.18)}
+.tc-rem-ticks span.on{background:var(--gold-bright);box-shadow:0 0 8px rgba(233,205,140,.45)}
+:is(#app,html) .tc-ledger-screen .tc-panel{padding:0!important}
+:is(#app,html) .tc-rem-grid{gap:0!important}
+:is(#app,html) .tc-rem{display:grid!important;grid-template-columns:22px minmax(0,1fr) auto;align-items:center!important;gap:10px!important;min-height:58px;padding:6px 0!important;border:0!important;border-bottom:1px solid var(--line-soft)!important;background:transparent!important;font-size:19px!important;color:var(--ink-soft)!important}
+.tc-rem-mark{width:12px;height:12px;border-radius:50%;border:1px solid rgba(207,169,96,.35)}
+.tc-rem-name{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.tc-rem-name small{font-size:15px;color:var(--dim)}
+:is(#app,html) .tc-rem .stamp{color:var(--faint)!important}
+:is(#app,html) .tc-rem-here{color:var(--ink-strong)!important}
+.tc-rem-here .tc-rem-mark{border-color:var(--gold-bright)}
+:is(#app,html) .tc-rem-here .stamp{color:var(--gold-bright)!important}
+:is(#app,html) .tc-rem-open .stamp{color:var(--ash)!important}
+.tc-rem-done .tc-rem-mark{background:var(--gold-bright);border-color:var(--gold-bright);box-shadow:0 0 8px rgba(233,205,140,.5)}
+:is(#app,html) .tc-rem-done .stamp{color:var(--gold)!important}
+:is(#app,html) .tc-region-list{gap:6px!important}
+:is(#app,html) .tc-region-chip{border:1px solid var(--line)!important;background:transparent!important;font-size:15px!important;color:var(--dim)!important;padding:8px 10px!important;clip-path:none!important}
+:is(#app,html) .tc-region-chip.done{border-color:rgba(207,169,96,.4)!important;color:var(--ink)!important}
+
+/* Ledger · Compendium ---------------------------------------------------- */
+:is(#app,html) .tc-archive-cover{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:14px 2px 0!important;margin:0!important;text-align:left}
+:is(#app,html) .tc-archive-cover:before,:is(#app,html) .tc-archive-cover:after{display:none!important}
+:is(#app,html) .tc-archive-seal{display:none!important}
+:is(#app,html) .tc-archive-kicker{color:var(--ash)!important}
+:is(#app,html) .tc-archive-title{font-size:34px!important;font-weight:400!important;line-height:1.05!important;color:var(--ink-strong)!important;margin:2px 0 0!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-archive-copy{display:none!important}
+:is(#app,html) .tc-archive-facts{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));margin:14px 0 0!important;border-top:1px solid var(--line);border-bottom:1px solid var(--line);gap:0!important;padding:0!important}
+:is(#app,html) .tc-archive-facts i{display:none!important}
+:is(#app,html) .tc-archive-facts span{display:flex!important;flex-direction:column;align-items:center;padding:10px 0!important;color:var(--ash)!important;border-left:1px solid var(--line-soft)}
+:is(#app,html) .tc-archive-facts span:first-child{border-left:0}
+:is(#app,html) .tc-archive-facts span:nth-of-type(5){display:none!important}
+:is(#app,html) .tc-archive-facts strong{font-size:30px!important;line-height:1!important;font-weight:400!important;color:var(--gold-bright)!important;font-variant-caps:normal;letter-spacing:0}
+:is(#app,html) .tc-dossier-stack{gap:0!important;margin-top:14px!important}
+:is(#app,html) .tc-dossier{border:0!important;border-bottom:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;margin:0!important}
+:is(#app,html) .tc-dossier:before,:is(#app,html) .tc-dossier:after,:is(#app,html) .tc-dossier-fold{display:none!important}
+:is(#app,html) .tc-dossier summary{display:grid!important;grid-template-columns:44px minmax(0,1fr);gap:0 12px;padding:12px 0!important;background:transparent!important}
+:is(#app,html) .tc-dossier-spine{display:flex!important;flex-direction:column!important;align-items:center;gap:6px;border:0!important;background:transparent!important;writing-mode:horizontal-tb!important;padding:2px 0 0!important}
+:is(#app,html) .tc-dossier-file{writing-mode:horizontal-tb!important;transform:none!important;color:var(--gold)!important;font-size:14px!important;text-align:center;line-height:1.1!important}
+:is(#app,html) .tc-dossier-stamp{writing-mode:horizontal-tb!important;transform:none!important;border:0!important;color:var(--gold)!important;font-size:13px!important;padding:0!important}
+:is(#app,html) .tc-dossier-cover{padding:0!important;background:transparent!important;border:0!important}
+:is(#app,html) .tc-dossier-meta{color:var(--ash)!important}
+:is(#app,html) .tc-dossier-region{color:var(--ash)!important}
+:is(#app,html) .tc-dossier-date{font-size:15px!important;color:var(--ash)!important;font-style:normal!important}
+:is(#app,html) .tc-dossier-boss{font-size:28px!important;font-weight:400!important;line-height:1.1!important;color:var(--ink-strong)!important;margin:2px 0 6px!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-dossier-pair{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}
+:is(#app,html) .tc-dossier-cross{display:none!important}
+:is(#app,html) .tc-dossier-weapon small{color:var(--ash)!important}
+:is(#app,html) .tc-dossier-weapon strong{font-size:17px!important;font-weight:400!important;line-height:1.2!important;color:var(--ink)!important}
+:is(#app,html) .tc-dossier-flags{gap:4px 12px!important;margin-top:8px!important}
+:is(#app,html) .tc-dossier-flag{border:0!important;background:transparent!important;padding:0!important;color:var(--ink-soft)!important}
+:is(#app,html) .tc-dossier-flag.gold{color:var(--gold)!important}
+:is(#app,html) .tc-dossier-flag.violet{color:var(--violet-bright)!important}
+:is(#app,html) .tc-dossier-flag.red{color:var(--red-bright)!important}
+:is(#app,html) .tc-evidence{border:0!important;border-top:1px solid var(--line-soft)!important;background:transparent!important;box-shadow:none!important;padding:10px 0 12px 56px!important}
+:is(#app,html) .tc-evidence-head em{font-size:15px!important;color:var(--dim)!important}
+:is(#app,html) .tc-armament-slip,:is(#app,html) .tc-evidence-slip{border:0!important;border-bottom:1px solid var(--line-soft)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:8px 0!important}
+:is(#app,html) .tc-armament-slip strong,:is(#app,html) .tc-evidence-slip strong{font-size:18px!important;font-weight:400!important;color:var(--ink)!important}
+:is(#app,html) .tc-armament-slip em,:is(#app,html) .tc-evidence-slip em,:is(#app,html) .tc-evidence-slip p{font-size:16px!important;color:var(--ink-soft)!important}
+
+/* Ledger · Smithing ------------------------------------------------------ */
+:is(#app,html) .tc-forge-favor{display:flex!important;align-items:flex-end!important;gap:14px!important;border:0!important;border-bottom:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:16px 2px 12px!important;margin:0!important}
+:is(#app,html) .tc-forge-favor:before,:is(#app,html) .tc-forge-favor:after,:is(#app,html) .tc-forge-mark{display:none!important}
+:is(#app,html) .tc-forge-favor>div:first-of-type{display:flex;flex-direction:column-reverse}
+:is(#app,html) .tc-forge-favor strong{font-size:60px!important;line-height:.85!important;font-weight:400!important;color:var(--gold-bright)!important}
+:is(#app,html) .tc-forge-favor .tc-muted{font-size:15px!important;font-style:italic}
+:is(#app,html) .tc-boon-ledger{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:14px 0 0!important;margin:0!important}
+:is(#app,html) .tc-boon-ledger:before,:is(#app,html) .tc-boon-ledger:after{display:none!important}
+:is(#app,html) .tc-boon-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:0!important;margin-top:8px!important;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+:is(#app,html) .tc-boon-grid>*{border:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;background:transparent!important;clip-path:none!important;box-shadow:none!important;min-height:74px;padding:6px 4px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;color:inherit;font:inherit}
+:is(#app,html) .tc-boon-grid strong{font-size:26px!important;line-height:1!important;font-weight:400!important;color:var(--faint)!important}
+:is(#app,html) .tc-boon-grid span{font-size:14px!important;line-height:1.15!important;letter-spacing:.06em!important;color:var(--dim)!important}
+:is(#app,html) .tc-boon-grid>.held strong{color:var(--gold-bright)!important}
+:is(#app,html) .tc-boon-grid>.held span{color:var(--ink-soft)!important}
+:is(#app,html) .tc-boon-grid>.selected{background:rgba(207,169,96,.1)!important}
+.tc-boon-cell{cursor:pointer}
+.tc-boon-help{margin:10px 2px 0;min-height:42px;font-size:16px;line-height:1.3;color:var(--ink-soft)}
+.tc-boon-help strong{font-weight:400;color:var(--gold-bright)}
+.tc-boon-extra{margin:4px 2px 0;font-size:15px;font-style:italic;color:var(--dim)}
+:is(#app,html) .tc-boon-actions{display:flex!important;flex-direction:column;gap:8px!important;margin-top:10px!important}
+:is(#app,html) .tc-boon-actions [data-use-dynasty-flier]:disabled{display:none!important}
+:is(#app,html) .tc-boon-actions .btn{color:var(--gold-bright)!important;border-color:rgba(207,169,96,.5)!important}
+:is(#app,html) .tc-boon-actions .btn:disabled{color:var(--faint)!important;border-color:var(--line)!important}
+:is(#app,html) .tc-erdtree-writ-card{border:0!important;border-top:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:12px 2px!important;margin:18px 0 0!important}
+:is(#app,html) .tc-erdtree-writ-card:before,:is(#app,html) .tc-erdtree-writ-card:after{display:none!important}
+:is(#app,html) .tc-erdtree-writ-head strong{font-size:22px!important;font-weight:400!important;color:var(--ink-strong)!important}
+:is(#app,html) .tc-erdtree-writ-count{font-size:34px!important;font-weight:400!important;color:var(--gold-bright)!important;font-variant-caps:normal!important}
+:is(#app,html) .tc-erdtree-writ-card .btn{margin-top:8px}
+:is(#app,html) .tc-smith-ledger>.tc-kicker{margin:18px 2px 6px!important}
+:is(#app,html) .tc-bearing-grid{gap:0!important;border-top:1px solid var(--line-soft)}
+:is(#app,html) .tc-bearing{border:0!important;border-bottom:1px solid var(--line-soft)!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:8px 0!important;min-height:52px;align-items:center!important}
+:is(#app,html) .tc-bearing:before,:is(#app,html) .tc-bearing:after{display:none!important}
+:is(#app,html) .tc-bearing strong{font-size:17px!important;font-weight:400!important;color:var(--ink-soft)!important}
+:is(#app,html) .tc-bearing small{font-size:15px!important;color:var(--dim)!important}
+:is(#app,html) .tc-bearing .tc-bearing-kind{color:var(--gold)!important;font-size:13px!important}
+:is(#app,html) .tc-bearing.locked .tc-bearing-stamp{color:var(--faint)!important}
+:is(#app,html) .tc-bearing.available .tc-bearing-stamp,:is(#app,html) .tc-bearing.active .tc-bearing-stamp{color:var(--gold-bright)!important}
+:is(#app,html) .tc-bearing.done strong{color:var(--gold-bright)!important}
+:is(#app,html) .tc-workbench{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:16px 2px 0!important;margin:0!important}
+:is(#app,html) .tc-workbench:before,:is(#app,html) .tc-workbench:after{display:none!important}
+:is(#app,html) .tc-workbench-credit{color:var(--ash)!important;margin:8px 0!important;border:0!important}
+:is(#app,html) .tc-workbench-credit strong{color:var(--gold-bright)!important;font-size:20px;font-weight:400}
+:is(#app,html) .tc-master-list span{font-size:16px!important}
+:is(#app,html) .tc-contract-mini{border:1px solid rgba(207,169,96,.4)!important;background:rgba(207,169,96,.05)!important;clip-path:none!important;box-shadow:none!important}
+:is(#app,html) .tc-contract-mini strong{font-size:20px!important;font-weight:400!important}
+:is(#app,html) .tc-contract-mini span{font-size:15px!important}
+
+/* Build ------------------------------------------------------------------ */
+:is(#app,html) .tc-build-hero{display:none!important}
+:is(#app,html) .tc-build-player-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important;margin:12px 0 0!important;border:0!important;background:transparent!important}
+:is(#app,html) .tc-build-player-tabs button{min-height:56px!important;border:0!important;border-bottom:1px solid rgba(207,169,96,.22)!important;background:transparent!important;clip-path:none!important;box-shadow:none!important;
+  display:flex!important;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:1px;padding:4px 2px 8px!important;text-align:left;color:var(--ash)!important;
+  font-family:var(--serif)!important;font-weight:400!important;font-size:21px!important;font-variant-caps:normal!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-build-player-tabs button small{font-size:15px;font-variant-caps:all-small-caps;letter-spacing:.12em;color:var(--dim)}
+:is(#app,html) .tc-build-player-tabs button.active{color:var(--ink-strong)!important;border-bottom-color:var(--gold-bright)!important;background:linear-gradient(180deg,transparent,rgba(207,169,96,.08))!important;box-shadow:0 6px 12px -10px rgba(233,205,140,.7)!important}
+:is(#app,html) .tc-build-player-tabs button.active small{color:var(--gold)}
+.tc-build-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:4px 0 0;border-bottom:1px solid transparent;position:relative}
+.tc-build-tabs:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(207,169,96,.4),transparent)}
+.tc-build-tabs button{min-height:48px;border:0;background:transparent;color:var(--ash);font-family:var(--serif);font-size:18px;font-variant-caps:all-small-caps;letter-spacing:.14em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer}
+.tc-build-tabs button:after{content:"";width:4px;height:4px;border-radius:50%;background:transparent}
+.tc-build-tabs button.active{color:var(--gold-bright)}
+.tc-build-tabs button.active:after{background:var(--gold-bright);box-shadow:var(--glow)}
+.tc-build-screen[data-build-tab="weapon"] [data-build-pane]:not([data-build-pane="weapon"]),
+.tc-build-screen[data-build-tab="stats"] [data-build-pane]:not([data-build-pane="stats"]),
+.tc-build-screen[data-build-tab="gear"] [data-build-pane]:not([data-build-pane="gear"]){display:none!important}
+:is(#app,html) .tc-build-section{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:0!important;margin:0!important}
+:is(#app,html) .tc-build-section:before,:is(#app,html) .tc-build-section:after{display:none!important}
+:is(#app,html) .tc-build-section-head{display:flex!important;justify-content:space-between;align-items:baseline;gap:10px;margin:18px 0 8px!important;padding:0!important;border:0!important}
+:is(#app,html) .tc-build-section-head h2{font-size:23px!important;font-weight:400!important;color:var(--ink-strong)!important;margin:0!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-build-section-head span{color:var(--dim)!important;text-align:right}
+:is(#app,html) .tc-build-section[data-build-pane="weapon"] .tc-build-section-head{display:none!important}
+:is(#app,html) .tc-build-field{gap:4px!important}
+:is(#app,html) .tc-build-field label{color:var(--ash)!important}
+:is(#app,html) .tc-build-field select,:is(#app,html) .tc-build-field input{min-height:46px!important;height:46px;padding:0 10px!important}
+:is(#app,html) .tc-build-origin small,:is(#app,html) .tc-build-helper{font-size:15px!important;font-style:italic;line-height:1.35!important;color:var(--dim)!important}
+:is(#app,html) .tc-build-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin-top:12px!important}
+:is(#app,html) .tc-number-stepper{grid-template-columns:44px minmax(0,1fr) 44px!important;height:46px!important;border:1px solid rgba(207,169,96,.24)!important;background:var(--bg2)!important}
+:is(#app,html) .tc-number-stepper button{background:transparent!important;color:var(--gold)!important;font-family:var(--serif)!important;font-size:22px!important}
+:is(#app,html) .tc-number-stepper input{border:0!important;background:transparent!important;font-size:22px!important;height:44px!important;min-height:44px!important;text-align:center}
+:is(#app,html) .tc-build-status{margin-top:14px!important}
+:is(#app,html) .tc-build-status-line{border:0!important;background:transparent!important;padding:0!important}
+:is(#app,html) .tc-build-status-line strong{font-size:18px!important;font-weight:400!important;color:var(--ink)!important}
+:is(#app,html) .tc-build-status-line span{font-size:15px!important;font-style:italic;color:var(--dim)!important}
+:is(#app,html) .tc-level-check{border:1px solid rgba(233,205,140,.35)!important;background:rgba(207,169,96,.06)!important;padding:8px 10px 8px 14px!important;margin:10px 0!important;font-size:16px!important;display:flex!important;align-items:center;justify-content:space-between;gap:10px}
+:is(#app,html) .tc-level-check.ok{border-color:var(--line)!important;background:transparent!important;color:var(--ash)!important;font-style:italic}
+:is(#app,html) .tc-level-check button{min-height:44px!important;border:1px solid var(--gold)!important;background:transparent!important;color:var(--gold-bright)!important;font-family:var(--serif)!important;font-size:16px!important;font-variant-caps:all-small-caps!important;letter-spacing:.12em!important;padding:0 12px!important;flex:none}
+:is(#app,html) .tc-effective-stats{display:flex!important;flex-wrap:wrap;gap:4px 14px!important;align-items:baseline;border:0!important;background:transparent!important;padding:0!important}
+:is(#app,html) .tc-effective-stats span{border:0!important;background:transparent!important;padding:0!important;font-size:16px!important;color:var(--ink-soft)!important;font-variant-caps:all-small-caps;letter-spacing:.08em}
+:is(#app,html) .tc-effective-stats span b{font-size:18px;font-weight:400;color:var(--ink-strong);font-variant-caps:normal}
+:is(#app,html) .tc-build-talismans{display:flex!important;flex-direction:column;gap:10px!important}
+/* Weapon pane */
+:is(#app,html) .tc-weapon-controls{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;margin-top:14px!important}
+:is(#app,html) .tc-affinity-field{display:none!important}
+:is(#app,html) .tc-weapon-name input{font-size:24px!important;height:54px!important;min-height:54px!important}
+:is(#app,html) .tc-upgrade-field{display:flex!important;flex-direction:row!important;align-items:center;justify-content:space-between}
+:is(#app,html) .tc-upgrade-field .tc-number-stepper{width:170px}
+:is(#app,html) .tc-weapon-picker{border:1px solid var(--line-strong)!important;background:#0c0b09!important;box-shadow:0 12px 30px rgba(0,0,0,.5)!important}
+:is(#app,html) .tc-weapon-option{min-height:48px!important;font-size:19px!important;border:0!important;border-bottom:1px solid var(--line-soft)!important;background:transparent!important;color:var(--ink)!important;padding:0 12px!important}
+:is(#app,html) .tc-weapon-option.active{color:var(--gold-bright)!important}
+:is(#app,html) .tc-weapon-search-state{font-size:15px!important;font-style:italic;color:var(--ash)!important}
+.tc-affinity-chips{display:flex;gap:8px;overflow-x:auto;margin:14px -14px 0;padding:2px 14px 10px;scrollbar-width:none}
+.tc-affinity-chips::-webkit-scrollbar{display:none}
+.tc-affinity-chip{flex:none;min-height:52px;padding:4px 13px;border:1px solid rgba(207,169,96,.22);background:transparent;color:var(--ink-soft);font-family:var(--serif);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.tc-affinity-chip span{font-size:17px;white-space:nowrap}
+.tc-affinity-chip small{font-size:14px;font-variant-caps:all-small-caps;letter-spacing:.1em;color:var(--dim)}
+.tc-affinity-chip.best small{color:var(--gold)}
+.tc-affinity-chip.current{border-color:var(--gold-bright);background:rgba(207,169,96,.12);color:var(--ink-strong)}
+.tc-affinity-chip.current small{color:var(--gold-bright)}
+:is(#app,html) .tc-ar-hero{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0!important;margin:8px 0 0!important;padding:14px 0 10px!important;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+:is(#app,html) .tc-ar-card{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:0 4px!important;text-align:center;display:flex!important;flex-direction:column;align-items:center}
+:is(#app,html) .tc-ar-card:before,:is(#app,html) .tc-ar-card:after{display:none!important}
+:is(#app,html) .tc-ar-card+.tc-ar-card{border-left:1px solid var(--line)!important}
+:is(#app,html) .tc-ar-card .mode{color:var(--ash)!important}
+:is(#app,html) .tc-ar-card strong{font-size:58px!important;line-height:1!important;font-weight:400!important;color:var(--gold-bright)!important;margin:2px 0!important}
+:is(#app,html) .tc-ar-card small{font-size:15px!important;font-style:italic;color:var(--ash)!important}
+:is(#app,html) .tc-ar-card.invalid strong{color:var(--red-bright)!important}
+:is(#app,html) .tc-ar-validity{border:0!important;background:transparent!important;padding:0!important;margin-top:2px!important;font-size:14px!important}
+:is(#app,html) .tc-ar-validity.ok{color:var(--dim)!important}
+:is(#app,html) .tc-ar-validity.bad{color:var(--red-bright)!important}
+.tc-affinity-tip{margin-top:12px;padding:10px 12px 10px 14px;border:1px solid rgba(233,205,140,.35);background:rgba(207,169,96,.06);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:16px;line-height:1.3;color:var(--ink)}
+.tc-affinity-tip b{font-weight:400;color:var(--gold-bright)}
+.tc-affinity-tip button{flex:none;min-height:44px;padding:0 12px;border:1px solid var(--gold);background:transparent;color:var(--gold-bright);font-family:var(--serif);font-size:16px;font-variant-caps:all-small-caps;letter-spacing:.12em;cursor:pointer}
+.tc-affinity-tip.best{border-color:var(--line);background:transparent;color:var(--ash);font-style:italic;justify-content:center}
+:is(#app,html) .tc-weapon-meta{display:flex!important;flex-direction:column;gap:14px!important;margin-top:14px!important}
+:is(#app,html) .tc-weapon-slip{border:0!important;background:transparent!important;box-shadow:none!important;clip-path:none!important;padding:0!important}
+:is(#app,html) .tc-weapon-slip>span{color:var(--ash)!important;display:block;margin-bottom:4px}
+:is(#app,html) .tc-damage-grid{display:flex!important;flex-wrap:wrap;gap:4px 16px!important}
+:is(#app,html) .tc-damage-grid>div{display:flex!important;gap:6px;align-items:baseline;border:0!important;padding:0!important;background:transparent!important}
+:is(#app,html) .tc-damage-grid span{font-size:15px!important;font-variant-caps:all-small-caps;letter-spacing:.1em;color:var(--ash)!important}
+:is(#app,html) .tc-damage-grid b{font-size:18px!important;font-weight:400!important;color:var(--ink-strong)!important}
+.tc-req-row{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 64px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line-soft);font-size:17px}
+.tc-req-row span{color:var(--ink);font-variant-caps:all-small-caps;letter-spacing:.1em}
+.tc-req-row b{font-weight:400;text-align:right;color:var(--ink-soft)}
+.tc-req-row b:last-child{color:var(--gold-bright)}
+.tc-req-row.head{border-top:0;font-size:15px;font-variant-caps:all-small-caps;letter-spacing:.1em;padding-bottom:2px}
+.tc-req-row.head span,.tc-req-row.head b{color:var(--dim)!important}
+.tc-req-row.unmet b:nth-of-type(2){color:var(--red-bright)}
+:is(#app,html) .tc-weapon-note{border:0!important;border-left:2px solid var(--line-strong)!important;background:transparent!important;padding:2px 0 2px 10px!important;margin:10px 0 0!important;font-size:15px!important;font-style:italic;line-height:1.35!important;color:var(--ash)!important}
+:is(#app,html) .tc-weapon-note.warn{border-left-color:var(--red)!important;color:var(--red-bright)!important}
+.tc-affinity-compare{margin-top:14px;border-top:1px solid var(--line)}
+.tc-affinity-compare>summary{list-style:none;min-height:48px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:var(--gold);font-size:17px;font-variant-caps:all-small-caps;letter-spacing:.14em}
+.tc-affinity-compare>summary::-webkit-details-marker{display:none}
+.tc-affinity-compare>summary:after{content:"";width:8px;height:8px;border-right:1.3px solid currentColor;border-bottom:1.3px solid currentColor;transform:rotate(45deg) translateY(-3px);transition:transform .15s}
+.tc-affinity-compare[open]>summary:after{transform:rotate(-135deg) translateY(-2px)}
+:is(#app,html) .tc-affinity-head{display:none!important}
+:is(#app,html) .tc-affinity-best{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important;margin:4px 0 8px!important}
+:is(#app,html) .tc-affinity-best>div{border:1px solid var(--line)!important;background:transparent!important;padding:8px 10px!important;display:grid!important;grid-template-columns:1fr auto;align-items:baseline}
+:is(#app,html) .tc-affinity-best span{grid-column:1/-1;color:var(--dim)!important}
+:is(#app,html) .tc-affinity-best b{font-size:18px!important;font-weight:400!important;color:var(--ink)!important}
+:is(#app,html) .tc-affinity-best strong{font-size:24px!important;font-weight:400!important;color:var(--gold-bright)!important}
+:is(#app,html) .tc-affinity-table{display:flex!important;flex-direction:column;gap:0!important}
+:is(#app,html) .tc-affinity-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto 46px 0 auto 46px!important;align-items:center;gap:0 6px!important;min-height:44px!important;padding:0!important;border:0!important;border-top:1px solid var(--line-soft)!important;background:transparent!important;color:var(--ink)!important;font-family:var(--serif)!important;font-size:18px!important;text-align:left}
+:is(#app,html) .tc-affinity-row small{font-size:13px!important;color:var(--dim)!important}
+:is(#app,html) .tc-affinity-row b{font-weight:400!important;text-align:right;font-size:18px!important;color:var(--ink-soft)!important}
+:is(#app,html) .tc-affinity-row.current{background:rgba(207,169,96,.1)!important;color:var(--gold-bright)!important}
+:is(#app,html) .tc-affinity-row.current b{color:var(--gold-bright)!important}
+:is(#app,html) .tc-affinity-foot{font-size:14px!important;font-style:italic;color:var(--dim)!important;margin-top:6px!important}
+:is(#app,html) .tc-spell-scaling{border:0!important;border-top:1px solid var(--line)!important;background:transparent!important;padding:10px 0 0!important}
+:is(#app,html) .tc-spell-scaling strong{font-size:34px!important;font-weight:400!important;color:var(--gold-bright)!important}
+:is(#app,html) .tc-spell-scaling p{font-size:15px!important;font-style:italic;color:var(--dim)!important}
+/* Save bar: a quiet status line pinned above the nav */
+:is(#app,html) .tc-build-save-row{bottom:calc(84px + env(safe-area-inset-bottom))!important;margin:16px 0 0!important;padding:6px 6px 6px 12px!important;border:1px solid var(--line)!important;background:rgba(10,9,8,.94)!important;clip-path:none!important;box-shadow:0 -8px 20px rgba(0,0,0,.4)!important}
+:is(#app,html) .tc-build-save-state{font-size:15px!important;font-style:italic;color:var(--ash)!important}
+:is(#app,html) .tc-build-save-state.dirty{color:var(--gold-bright)!important}
+:is(#app,html) .tc-build-save-row .btn{min-height:44px!important;min-width:0!important;width:auto!important;padding:0 14px!important;font-size:16px!important;font-variant-caps:all-small-caps!important;letter-spacing:.12em!important;background:transparent!important;border-color:var(--line-strong)!important;color:var(--gold-bright)!important;box-shadow:none!important}
+:is(#app,html) .tc-build-attribution{font-size:13px!important;font-style:italic;color:var(--faint)!important;margin:14px 0 0!important;line-height:1.35!important}
+
+/* Ledger polish ---------------------------------------------------------- */
+:is(#app,html) .tc-brand-small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;letter-spacing:.2em!important}
+:is(#app,html) .tc-sync{white-space:nowrap;flex:none}
+:is(#app,html) .tc-armament-slip,:is(#app,html) .tc-evidence-slip{border-left:0!important}
+:is(#app,html) .tc-armament-slip:before,:is(#app,html) .tc-evidence-slip:before,:is(#app,html) .tc-armament-slip:after,:is(#app,html) .tc-evidence-slip:after{display:none!important}
+:is(#app,html) .tc-region-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+:is(#app,html) .tc-master-list{border:0!important;background:transparent!important;padding:0!important}
+
+/* Opening screens --------------------------------------------------------- */
+:is(#app,html) .site-header h1{font-weight:400!important;font-size:clamp(40px,12vw,54px)!important;line-height:1!important;color:var(--ink-strong)!important;letter-spacing:0!important}
+:is(#app,html) .site-header .sigil{color:var(--gold)!important}
+:is(#app,html) .header-dumb{font-size:16px!important;font-style:italic;color:var(--ash)!important}
+:is(#app,html) .sub{font-size:19px!important;line-height:1.4!important;color:var(--ink-soft)!important}
+:is(#app,html) .menu-title{font-size:30px!important;font-weight:400!important;color:var(--ink-strong)!important}
+:is(#app,html) .menu-section .label{color:var(--ash)!important}
+:is(#app,html) .menu-section input,:is(#app,html) .menu-section select{min-height:52px!important;height:52px;padding:0 12px!important}
+:is(#app,html) .menu-section .status{font-size:16px!important;font-style:italic;color:var(--ash)!important;font-variant-caps:normal!important;letter-spacing:0!important;text-align:left}
+:is(#app,html) .new-run .status{text-transform:none!important}
+:is(#app,html) .ornament{color:var(--gold)!important}
+:is(#app,html) .mode-pill{color:var(--ash)!important;border-bottom-color:var(--line)!important}
+:is(#app,html) .join-banner{color:var(--gold)!important}
+
+/* Battle report ----------------------------------------------------------- */
+:is(#app,html) .tc-battle-report{text-align:center}
+:is(#app,html) .tc-report-kicker{color:var(--gold)!important}
+:is(#app,html) .tc-report-victory{font-weight:400!important;font-size:clamp(46px,14vw,62px)!important;letter-spacing:.14em!important;color:var(--gold-bright)!important;font-variant-caps:normal!important;text-shadow:0 0 30px rgba(233,205,140,.25)}
+:is(#app,html) .tc-report-boss{font-size:30px!important;font-weight:400!important;color:var(--ink-strong)!important;letter-spacing:0!important;text-transform:none!important}
+:is(#app,html) .tc-report-sync{color:var(--dim)!important}
+:is(#app,html) .tc-report-row{text-align:left;border:0!important;border-top:1px solid var(--line)!important;background:transparent!important;padding:14px 0!important;display:flex!important;flex-direction:column;gap:10px}
+:is(#app,html) .tc-report-detail{font-size:17px!important;line-height:1.4!important;color:var(--ink-soft)!important}
+:is(#app,html) .tc-report-choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}
+:is(#app,html) .tc-report-choices button{min-height:52px!important;border:1px solid var(--line-strong)!important;background:transparent!important;color:var(--ink-soft)!important;clip-path:none!important;
+  font-family:var(--serif)!important;font-weight:400!important;font-size:20px!important;font-variant-caps:normal!important;letter-spacing:.02em!important;text-transform:none!important}
+:is(#app,html) .tc-report-choices button.active.yes{border-color:var(--gold-bright)!important;background:rgba(207,169,96,.12)!important;color:var(--gold-bright)!important;box-shadow:0 0 18px rgba(233,205,140,.16)!important}
+:is(#app,html) .tc-report-choices button.active.no{border-color:rgba(217,122,102,.6)!important;background:rgba(120,36,26,.14)!important;color:#ecab9b!important}
+:is(#app,html) .tc-report-row.muted{opacity:1!important}
+:is(#app,html) .tc-report-row.muted .tc-report-detail{color:var(--dim)!important}
+:is(#app,html) .tc-report-stamp{color:var(--faint)!important;border:0!important}
+:is(#app,html) .tc-report-total{border:0!important;border-top:1px solid var(--line)!important;background:transparent!important;padding:12px 0!important;display:flex!important;justify-content:space-between;align-items:baseline;text-align:left}
+:is(#app,html) .tc-report-total strong{font-size:34px!important;font-weight:400!important;color:var(--gold-bright)!important}
+:is(#app,html) .tc-report-note{font-size:15px!important;font-style:italic;color:var(--dim)!important;line-height:1.4!important}
+:is(#app,html) #finishBattleReport{min-height:58px!important}
+
+/* Reward draw ------------------------------------------------------------- */
+:is(#app,html) .tc-reward-kicker{color:var(--gold)!important}
+:is(#app,html) .tc-reward-tag,:is(#app,html) .tc-reward-type{color:var(--ash)!important}
+
+/* New decree reveal ------------------------------------------------------- */
+:is(#app,html) .tc-reveal{align-content:start!important;min-height:0!important;padding-top:0!important}
+:is(#app,html) .tc-reveal .decree{display:none!important}
+:is(#app,html) .tc-reveal .new-boss{font-size:clamp(40px,12.5vw,54px)!important;font-weight:400!important;line-height:1!important;color:var(--ink-strong)!important;margin:28px 0 18px!important;text-wrap:balance}
+:is(#app,html) .tc-reveal-weapons{gap:0!important;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 0 6px!important}
+:is(#app,html) .tc-reveal-box{border:0!important;padding:14px 6px!important}
+:is(#app,html) .tc-reveal-box+.tc-reveal-box{border-left:1px solid var(--line)!important}
+:is(#app,html) .tc-reveal-box .tc-kicker{color:var(--gold)!important}
+:is(#app,html) .tc-reveal-box strong{font-size:22px!important;line-height:1.15!important;color:var(--ink-strong)!important}
+:is(#app,html) .tc-reveal .tc-feature{text-align:center;padding:16px 0 4px!important;border-bottom:1px solid var(--line-soft)!important}
+:is(#app,html) .tc-reveal .tc-feature.chaos .tc-feature-text{font-variant-caps:all-small-caps;letter-spacing:.05em!important;font-size:22px!important;color:var(--ink-strong)!important}
+:is(#app,html) .tc-reveal .tc-feature-title{font-size:27px!important}
+:is(#app,html) .tc-reveal #acceptDecree{margin-top:18px!important;min-height:58px!important}
+
+/* Chaos event ------------------------------------------------------------- */
+:is(#app,html) .tc-chaos-event{padding-bottom:calc(90px + env(safe-area-inset-bottom))!important}
+:is(#app,html) .tc-chaos-head strong{font-weight:400!important;letter-spacing:.22em!important;font-size:17px!important}
+:is(#app,html) .tc-chaos-head .favor{font-size:14px!important;font-variant-caps:all-small-caps;letter-spacing:.12em!important}
+
+/* Settings ---------------------------------------------------------------- */
+:is(#app,html) .tc-settings-row{min-height:64px;padding:12px 2px!important;border:0!important;border-bottom:1px solid var(--line-soft)!important;background:transparent!important;clip-path:none!important;width:100%;text-align:left;color:inherit}
+:is(#app,html) .tc-settings-row .name{color:var(--ash)!important}
+:is(#app,html) .tc-settings-row .desc{font-size:18px!important;line-height:1.3!important;color:var(--ink)!important;margin-top:2px!important}
+:is(#app,html) .tc-settings-row.danger .name,:is(#app,html) .tc-settings-row.danger .desc{color:var(--red-bright)!important}
+:is(#app,html) .tc-screen>.tc-kicker.gold{margin:18px 2px 0!important}
+:is(#app,html) .tc-screen>.tc-rune{opacity:.35}
+
+/* Sheets and overlays ----------------------------------------------------- */
+:is(#app,html) .tc-overlay{background:rgba(3,3,3,.8)!important}
+:is(#app,html) .tc-sheet{border:0!important;border-top:1px solid rgba(207,169,96,.45)!important;background:linear-gradient(180deg,#16130e,#0b0a08 50%)!important;clip-path:none!important;box-shadow:0 -18px 50px rgba(0,0,0,.6)!important;padding:20px 18px calc(18px + env(safe-area-inset-bottom))!important}
+:is(#app,html) .tc-sheet .tc-value{font-size:27px!important}
+:is(#app,html) .tc-sheet .tc-panel.soft{border-top:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;margin:12px 0!important}
+:is(#app,html) .tc-sheet .tc-actions-3{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px!important}
+:is(#app,html) .tc-strategy-item{border:0!important;border-bottom:1px solid var(--line-soft)!important;background:transparent!important;clip-path:none!important;min-height:52px;text-align:left;color:var(--ink)!important;font-family:var(--serif)!important;font-size:18px!important}
+:is(#app,html) .tc-strategy-item strong{font-weight:400!important;font-size:19px!important}
+:is(#app,html) .tc-strategy-list{border-top:1px solid var(--line-soft)}
+:is(#app,html) .tc-sheet p{font-size:17px!important;line-height:1.4!important;color:var(--ink-soft)!important}
+</style>
 </body>
 </html>

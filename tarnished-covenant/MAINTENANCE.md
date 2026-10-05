@@ -34,6 +34,9 @@ The generated `index.html` and `regional-pools.js` belong in the same commit as 
 | Two-world clears | `src/systems/world-clears.js` |
 | Battle reports, rewards, Masterworks | Named files in `src/systems/` |
 | Build UI and calculator | `build-lab.js`, `build-lab.css` |
+| App-wide visual theme (fonts, colours, icons, layout polish) | `src/theme.css` (loaded last, presentation only) |
+| Presentation-only markup tweaks (nav labels, Ledger rows, boon help) | `src/systems/restyle.js` |
+| Bundled typeface | `assets/fonts/` (EB Garamond, SIL OFL; see `THIRD_PARTY_NOTICES.md`) |
 | Official calculator records | `assets/build/weapon-data-v1.17.json.gz` |
 | Regression and functional tests | Root `test-*` files and `tests/*.cjs` |
 
@@ -48,6 +51,14 @@ Each weapon has a unique stable `id`, its existing display `name`, ordered regio
 IDs are authoring identifiers only. Existing saved runs continue to store their original names and shapes; this consolidation introduces no save migration. The two endgame regions still inherit authored pools in `src/app.js`; compatibility tests cover them alongside the 20 imported pools. Legacy restoration code remains in `systems/weapons.js` for compatibility. Weapon type/skill/infusion metadata and regulation calculation records have not yet been merged into the catalog.
 
 When adding a weapon: add its catalog record and region order, resolve its calculator reference, add a gate layout entry if gated, build, and run tests. Do not change IDs on a rename. For deliberate gameplay changes, update the release baseline only after reviewing the exact expected differences; never regenerate it merely to silence a failure.
+
+## Visual theme
+
+`src/theme.css` is the single place for the current look. It is included at the end of `<body>` so it wins over the older style passes in `src/styles.css`, `build-lab.css` and the one runtime-injected sheet. Its rules use the `:is(#app,html)` prefix, which matches every element but carries id-level weight, so it outranks older class-only rules without piling on more specificity. Nothing in it is read by gameplay code.
+
+`src/systems/restyle.js` only changes presentation: shorter nav labels, region and lock status on Remembrance rows, and the tap-to-explain boon grid. It reads state through existing helpers and never writes to the run.
+
+The Build screen's Weapon / Stats / Gear tabs only show or hide sections. Every field stays in the DOM, so drafts, autosave and class validation read exactly the same inputs.
 
 ## Saved-run safety
 
