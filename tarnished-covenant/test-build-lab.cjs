@@ -6,7 +6,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const js=fs.readFileSync(path.join(root,'build-lab.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'build-lab.css'),'utf8');
 assert(html.includes('./build-lab.css?v=13'),'Build lab stylesheet is linked');
-assert(html.includes('./build-lab.js?v=17'),'Build lab script is linked');
+assert(html.includes('./build-lab.js?v=18'),'Build lab script is linked');
 assert(js.includes("uiScreen==='build'"),'Build screen is routed');
 assert(js.includes('data-screen="build"'),'Build is present in bottom navigation');
 assert(js.includes('weapon-data-v1.17.json.gz'),'Current regulation data is loaded');
