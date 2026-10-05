@@ -67,7 +67,7 @@ async function tcClaimSharedRewardDraw(){
   tcSharedRewardDrawBusy=true;
   try{
     const saved=await commit(staged,{
-      successToast:`${drawer} drew the shared Covenant reward.`,
+      successToast:`${personalizePlayers(drawer,run?.state)} drew the shared Covenant reward.`,
       retryBuilder:(latest)=>tcBuildClaimedSharedReward(latest,draw,payload.rewards,payload.deltas,drawer)
     });
     if(!saved&&tcSharedRewardDrawPending(run?.state))renderSharedRewardDraw();

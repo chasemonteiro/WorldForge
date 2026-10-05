@@ -99,7 +99,7 @@ renderPostBattleReport=function(){
   const preview=tcBattleReportAwardPreview(state,postBattleReport);
   const guaranteedText='+1';
   const drawText=reportReady?String(preview.draws):'—';
-  const syncLine=postBattleReport.updatedBy?`Shared report · last updated by <strong>${h(postBattleReport.updatedBy)}</strong>`:'Shared report · either Tarnished may answer';
+  const syncLine=postBattleReport.updatedBy?`Shared report · last updated by <strong>${h(personalizePlayers(postBattleReport.updatedBy,run?.state))}</strong>`:'Shared report · either Tarnished may answer';
   app.innerHTML=`<section class="tc-battle-report">
     <div class="tc-report-kicker">Encounter Complete</div>
     <div class="tc-report-victory">VICTORY</div>
