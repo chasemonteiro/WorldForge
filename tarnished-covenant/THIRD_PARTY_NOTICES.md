@@ -24,3 +24,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## EB Garamond typeface
+
+The interface typeface is EB Garamond, bundled in `assets/fonts/` (Latin and
+Latin Extended subsets, WOFF2) so the app needs no third-party font request.
+
+Copyright 2017 The EB Garamond Project Authors (https://github.com/octaviopardo/EBGaramond12).
+
+Licensed under the SIL Open Font License, Version 1.1. The full license text is
+in `assets/fonts/OFL.txt`. The font files were taken unmodified from the
+`@fontsource/eb-garamond` 5.3.0 distribution.
