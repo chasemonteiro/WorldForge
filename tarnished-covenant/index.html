@@ -9033,7 +9033,7 @@ tcBuildMasterworkRecall=function(latest,...args){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261006-restyle-5';
+const TC_BUILD_ID='20261006-restyle-6';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -10090,6 +10090,21 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 :is(#app,html) .tc-chaos-event #ackChaos{border:1px solid #e0806a!important;color:#f6d3c8!important;background:linear-gradient(180deg,#5a1b13,#2c0b08)!important;
   font-family:var(--display)!important;--tc-ff:var(--display);font-weight:600!important;font-size:15px!important;letter-spacing:.18em!important;text-transform:uppercase!important;
   animation:tcRiseIn .5s ease-out 1s both,tcButtonBreath 2.6s ease-in-out 1.5s infinite!important}
+
+/* === Bottom bar: where you are ============================================ */
+@keyframes tcNavMarkIn{from{opacity:0;scale:.2 1}to{opacity:1;scale:1 1}}
+@keyframes tcNavGlowIn{from{opacity:0;scale:.6}to{opacity:1;scale:1}}
+:is(#app,html) .tc-bottom-nav button{position:relative!important;color:var(--faint)!important;transition:color .25s ease}
+:is(#app,html) .tc-bottom-nav button.active{color:var(--gold-bright)!important;text-shadow:0 0 10px rgba(233,205,140,.45)}
+/* a lit bar with a small diamond on the bar's top edge, above the active tab */
+:is(#app,html) .tc-bottom-nav button.active:before{display:block!important;content:""!important;position:absolute!important;top:-6px!important;left:50%!important;width:42px;height:2px;margin-left:-21px;border:0!important;
+  background:linear-gradient(90deg,transparent,var(--gold-bright) 30%,var(--gold-bright) 70%,transparent)!important;box-shadow:0 0 10px 1px rgba(233,205,140,.6)!important;
+  animation:tcNavMarkIn .35s cubic-bezier(.2,.8,.2,1) both;bottom:auto!important;right:auto!important;transform:none}
+:is(#app,html) .tc-bottom-nav button.active:after{display:block!important;content:""!important;position:absolute!important;top:-8.5px!important;left:50%!important;width:7px;height:7px;margin-left:-3.5px;border:0!important;
+  background:var(--gold-bright)!important;rotate:45deg;box-shadow:0 0 8px rgba(233,205,140,.8)!important;animation:tcNavGlowIn .35s ease-out both;bottom:auto!important;right:auto!important;transform:none}
+/* soft grace-light pooled behind the active icon */
+:is(#app,html) .tc-bottom-nav button.active .nicon{filter:drop-shadow(0 0 6px rgba(233,205,140,.7))!important}
+:is(#app,html) .tc-bottom-nav button.active{background:radial-gradient(42px 30px at 50% 32%,rgba(233,205,140,.16),transparent 72%)!important}
 </style>
 </body>
 </html>
