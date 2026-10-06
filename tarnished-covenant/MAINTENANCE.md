@@ -36,7 +36,7 @@ The generated `index.html` and `regional-pools.js` belong in the same commit as 
 | Build UI and calculator | `build-lab.js`, `build-lab.css` |
 | App-wide visual theme (fonts, colours, icons, layout polish) | `src/theme.css` (loaded last, presentation only) |
 | Presentation-only markup tweaks (nav labels, Ledger rows, boon help) | `src/systems/restyle.js` |
-| Bundled typeface | `assets/fonts/` (EB Garamond, SIL OFL; see `THIRD_PARTY_NOTICES.md`) |
+| Bundled typefaces | `assets/fonts/` (EB Garamond and Cinzel, SIL OFL; see `THIRD_PARTY_NOTICES.md`) |
 | Official calculator records | `assets/build/weapon-data-v1.17.json.gz` |
 | Regression and functional tests | Root `test-*` files and `tests/*.cjs` |
 
@@ -55,6 +55,10 @@ When adding a weapon: add its catalog record and region order, resolve its calcu
 ## Visual theme
 
 `src/theme.css` is the single place for the current look. It is included at the end of `<body>` so it wins over the older style passes in `src/styles.css`, `build-lab.css` and the one runtime-injected sheet. Its rules use the `:is(#app,html)` prefix, which matches every element but carries id-level weight, so it outranks older class-only rules without piling on more specificity. Nothing in it is read by gameplay code.
+
+Two faces: Cinzel (`--display`) for titles, labels, tabs and the nav; EB Garamond (`--serif`) for reading text and buttons. One global rule sets every element to `var(--tc-ff, var(--serif))`, and any rule that picks a face also sets `--tc-ff`, so children inherit their container's face. To switch a block's face, set both `font-family` and `--tc-ff`. Link arrows are drawn by `<span class="tc-arrow">` (iOS turns the ↗ character into an emoji).
+
+On the Site of Grace and Encounter screens the page reserves exactly the nav's height (`padding-bottom` ≈ 64px + safe area). If the nav changes height, change that padding and `.tc-build-save-row`'s `bottom` with it.
 
 `src/systems/restyle.js` only changes presentation: shorter nav labels, region and lock status on Remembrance rows, and the tap-to-explain boon grid. It reads state through existing helpers and never writes to the run.
 

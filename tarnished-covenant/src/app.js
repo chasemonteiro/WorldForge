@@ -2419,7 +2419,7 @@ function renderSanctuary() {
       <div class="tc-panel" style="grid-column:1/-1"><div class="tc-kicker">regional progress</div><div class="tc-progress-line"><span style="width:${hubProgressPct(state)}%"></span></div><div class="tc-muted">${capstoneRequirement(state)>state.cleared?`${capstoneRequirement(state)-state.cleared} more before the capstone can appear`:'capstone eligible'}</div></div>
     </div>
     ${smithingHubMarkup(state)}
-    <div class="tc-code-row">CODE <strong>${h(run.joinCode||'LOCAL')}</strong><button id="share">SHARE ↗</button></div>
+    <div class="tc-code-row">CODE <strong>${h(run.joinCode||'LOCAL')}</strong><button id="share">SHARE <span class="tc-arrow" aria-hidden="true"></span></button></div>
     <div class="tc-quick"><button data-screen="encounter"><span class="tc-icon">✦</span>Encounter</button><button data-screen="ledger"><span class="tc-icon">▤</span>Ledger</button><button data-screen="settings"><span class="tc-icon">⚙</span>Settings</button></div>
   </section>${navMarkup('sanctuary')}`;
   bindNav();bindShare();
@@ -3217,7 +3217,7 @@ function tcWikiAnchor(name,kind,label){
   const url=tcWikiUrl(name,kind);if(!url)return null;
   const a=document.createElement('a');
   a.className=`tc-wiki-link ${kind==='weapon'?'tc-wiki-weapon':'tc-wiki-boss'}`;
-  a.href=url;a.target='_blank';a.rel='noopener noreferrer external';a.textContent=`${label||'WIKI'} ↗`;
+  a.href=url;a.target='_blank';a.rel='noopener noreferrer external';a.textContent=`${label||'WIKI'} `;const tcArrow=document.createElement('span');tcArrow.className='tc-arrow';tcArrow.setAttribute('aria-hidden','true');a.appendChild(tcArrow);
   a.dataset.tcWiki='1';
   a.addEventListener('click',e=>e.stopPropagation());
   return a;
@@ -3230,7 +3230,7 @@ function tcBuildArTools(){
   const weapons=tcCurrentWeaponNames();
   const box=document.createElement('div');box.className='tc-grace-ar-tools';
   const names=weapons.length?weapons.map(name=>`<span>${h(name)}</span>`).join(''):'<span>Current assigned weapons</span>';
-  box.innerHTML=`<div class="tc-grace-ar-title">pre-fight buildcraft</div><div class="tc-grace-ar-weapons">${names}</div><a class="tc-grace-ar-button" href="${TC_AR_CALCULATOR}" target="_blank" rel="noopener noreferrer external">Weapon AR Calculator ↗</a>`;
+  box.innerHTML=`<div class="tc-grace-ar-title">pre-fight buildcraft</div><div class="tc-grace-ar-weapons">${names}</div><a class="tc-grace-ar-button" href="${TC_AR_CALCULATOR}" target="_blank" rel="noopener noreferrer external">Weapon AR Calculator <span class="tc-arrow" aria-hidden="true"></span></a>`;
   box.querySelector('a')?.addEventListener('click',e=>e.stopPropagation());
   return box;
 }
@@ -5169,7 +5169,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/rykard-armaments.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261005-restyle-1';
+const TC_BUILD_ID='20261006-restyle-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
