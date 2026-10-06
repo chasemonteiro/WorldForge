@@ -92,4 +92,32 @@ renderLedger=function(){
   tcRenderLedgerBeforeRestyle();
   try{tcEnhanceBoonGrid();}catch(error){console.warn('Boon grid presentation skipped',error);}
 };
+/* Swipe paging for the Grace and Encounter screens. The tracks no longer pan
+   under the finger (CSS sets touch-action:pan-y and hides horizontal
+   overflow); a clear sideways flick turns exactly one page by pressing the
+   neighbouring tab, so index, tab state and saving follow the existing path. */
+if(!window.__tcSwipePagingBound){
+  window.__tcSwipePagingBound=true;
+  let tcSwipe=null;
+  const tcSwipeTrackOf=el=>el?.closest?.('.tc-encounter-track,.tc-sanctuary-track');
+  document.addEventListener('touchstart',event=>{
+    const track=tcSwipeTrackOf(event.target);
+    if(!track||event.touches.length!==1||event.target.closest('input,select,textarea')){tcSwipe=null;return;}
+    const t=event.touches[0];tcSwipe={track,x:t.clientX,y:t.clientY,at:Date.now()};
+  },{passive:true});
+  document.addEventListener('touchend',event=>{
+    const s=tcSwipe;tcSwipe=null;
+    if(!s||!document.contains(s.track))return;
+    const t=event.changedTouches[0];if(!t)return;
+    const dx=t.clientX-s.x,dy=t.clientY-s.y;
+    if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.3||Date.now()-s.at>900)return;
+    const tabs=s.track.parentElement?.querySelector('.tc-encounter-tabs,.tc-sanctuary-tabs');
+    const buttons=tabs?[...tabs.querySelectorAll('button')]:[];
+    if(!buttons.length)return;
+    const current=Math.round(s.track.scrollLeft/Math.max(1,s.track.clientWidth));
+    const next=Math.max(0,Math.min(buttons.length-1,current+(dx<0?1:-1)));
+    if(next!==current)buttons[next].click();
+  },{passive:true});
+  document.addEventListener('touchcancel',()=>{tcSwipe=null;},{passive:true});
+}
 /* --- End Covenant restyle markup adjustments --- */
