@@ -92,32 +92,59 @@ renderLedger=function(){
   tcRenderLedgerBeforeRestyle();
   try{tcEnhanceBoonGrid();}catch(error){console.warn('Boon grid presentation skipped',error);}
 };
-/* Swipe paging for the Grace and Encounter screens. The tracks no longer pan
-   under the finger (CSS sets touch-action:pan-y and hides horizontal
-   overflow); a clear sideways flick turns exactly one page by pressing the
-   neighbouring tab, so index, tab state and saving follow the existing path. */
+/* Swipe paging for the Grace and Encounter screens. The tracks never pan
+   under the finger (CSS: touch-action:pan-y, horizontal overflow hidden, no
+   native snapping). A sideways swipe turns exactly one page by pressing the
+   neighbouring tab, so index, tab state and saving follow the existing path.
+   The page turn itself is animated here frame by frame, because iOS Safari
+   does not reliably run smooth scrollTo on a container it cannot pan. */
+function tcPagingTabs(track){return track?.parentElement?.querySelector('.tc-encounter-tabs,.tc-sanctuary-tabs')||null;}
+function tcAnimateTrackTo(track,index){
+  if(!track)return;
+  const target=Math.max(0,index)*track.clientWidth,from=track.scrollLeft,dist=target-from;
+  cancelAnimationFrame(track.__tcPageAnim||0);
+  if(Math.abs(dist)<1){track.scrollLeft=target;return;}
+  const start=performance.now(),dur=300;
+  const step=now=>{const t=Math.min(1,(now-start)/dur),e=1-Math.pow(1-t,3);track.scrollLeft=from+dist*e;
+    if(t<1)track.__tcPageAnim=requestAnimationFrame(step);else{track.scrollLeft=target;track.dispatchEvent(new Event('scroll'));}};
+  track.__tcPageAnim=requestAnimationFrame(step);
+}
 if(!window.__tcSwipePagingBound){
   window.__tcSwipePagingBound=true;
   let tcSwipe=null;
-  const tcSwipeTrackOf=el=>el?.closest?.('.tc-encounter-track,.tc-sanctuary-track');
-  document.addEventListener('touchstart',event=>{
-    const track=tcSwipeTrackOf(event.target);
-    if(!track||event.touches.length!==1||event.target.closest('input,select,textarea')){tcSwipe=null;return;}
-    const t=event.touches[0];tcSwipe={track,x:t.clientX,y:t.clientY,at:Date.now()};
-  },{passive:true});
-  document.addEventListener('touchend',event=>{
-    const s=tcSwipe;tcSwipe=null;
-    if(!s||!document.contains(s.track))return;
-    const t=event.changedTouches[0];if(!t)return;
-    const dx=t.clientX-s.x,dy=t.clientY-s.y;
-    if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.3||Date.now()-s.at>900)return;
-    const tabs=s.track.parentElement?.querySelector('.tc-encounter-tabs,.tc-sanctuary-tabs');
-    const buttons=tabs?[...tabs.querySelectorAll('button')]:[];
+  const trackOf=el=>el?.closest?.('.tc-encounter-track,.tc-sanctuary-track');
+  const turn=(track,dir)=>{
+    const buttons=[...(tcPagingTabs(track)?.querySelectorAll('button')||[])];
     if(!buttons.length)return;
-    const current=Math.round(s.track.scrollLeft/Math.max(1,s.track.clientWidth));
-    const next=Math.max(0,Math.min(buttons.length-1,current+(dx<0?1:-1)));
+    const current=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));
+    const next=Math.max(0,Math.min(buttons.length-1,current+dir));
     if(next!==current)buttons[next].click();
-  },{passive:true});
-  document.addEventListener('touchcancel',()=>{tcSwipe=null;},{passive:true});
+  };
+  const decide=(touch,final)=>{
+    const s=tcSwipe;if(!s||s.done||!touch)return;
+    if(!document.contains(s.track)){tcSwipe=null;return;}
+    const dx=touch.clientX-s.x,dy=touch.clientY-s.y;
+    if(!final&&Math.abs(dy)>24&&Math.abs(dy)>Math.abs(dx)){s.done=true;return;}
+    if(Math.abs(dx)>=(final?40:56)&&Math.abs(dx)>Math.abs(dy)*1.25){s.done=true;turn(s.track,dx<0?1:-1);}
+  };
+  document.addEventListener('touchstart',event=>{
+    const track=trackOf(event.target);
+    if(!track||event.touches.length!==1||event.target.closest('input,select,textarea')){tcSwipe=null;return;}
+    const t=event.touches[0];tcSwipe={track,x:t.clientX,y:t.clientY,done:false};
+  },{passive:true,capture:true});
+  document.addEventListener('touchmove',event=>decide(event.touches[0],false),{passive:true,capture:true});
+  document.addEventListener('touchend',event=>{decide(event.changedTouches[0],true);tcSwipe=null;},{passive:true,capture:true});
+  document.addEventListener('touchcancel',event=>{decide(event.changedTouches?.[0],true);tcSwipe=null;},{passive:true,capture:true});
+  /* Every page change (tab tap or swipe) gets the frame-by-frame turn. Runs
+     after the app's own tab handler, which has already set the index. */
+  document.addEventListener('click',event=>{
+    const btn=event.target.closest?.('.tc-encounter-tabs button,.tc-sanctuary-tabs button');if(!btn)return;
+    const tabs=btn.parentElement,track=tabs?.parentElement?.querySelector('.tc-encounter-track,.tc-sanctuary-track');
+    tcAnimateTrackTo(track,[...tabs.querySelectorAll('button')].indexOf(btn));
+  });
+  /* No native snapping now, so keep the current page aligned on resize/rotate. */
+  window.addEventListener('resize',()=>{document.querySelectorAll('.tc-encounter-track,.tc-sanctuary-track').forEach(track=>{
+    const buttons=[...(tcPagingTabs(track)?.querySelectorAll('button')||[])],i=buttons.findIndex(b=>b.classList.contains('active'));
+    if(i>=0)track.scrollLeft=i*track.clientWidth;});},{passive:true});
 }
 /* --- End Covenant restyle markup adjustments --- */
