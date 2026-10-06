@@ -5169,7 +5169,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/rykard-armaments.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261006-restyle-3';
+const TC_BUILD_ID='20261006-restyle-4';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

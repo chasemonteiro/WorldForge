@@ -9033,7 +9033,7 @@ tcBuildMasterworkRecall=function(latest,...args){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261006-restyle-3';
+const TC_BUILD_ID='20261006-restyle-4';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -9975,6 +9975,94 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 :is(#app,html) .tc-encounter-panel[data-panel="boss"] .tc-boss-art{flex:1 1 0!important;min-height:80px!important;max-height:none!important}
 :is(#app,html) .tc-brief-head{padding:4px 0 0!important}
 :is(#app,html) .tc-brief-head .tc-wiki-link{min-height:36px!important}
+
+/* === Chaos & Rite: motion and menace ===================================== */
+/* All motion is transform/opacity on decorative layers and stops entirely
+   under "Reduce Motion" (rule near the top of this file). */
+@keyframes tcSealTurn{to{rotate:360deg}}
+@keyframes tcSealTurnBack{to{rotate:-360deg}}
+@keyframes tcEmberBreath{0%,100%{opacity:.45;scale:.92}50%{opacity:1;scale:1.06}}
+@keyframes tcSealStrain{0%,85%,100%{translate:0 0;scale:1;filter:drop-shadow(0 0 10px rgba(217,122,102,.55))}87%{translate:-4px 2px;scale:1.06;filter:drop-shadow(0 0 22px rgba(255,120,80,.95)) brightness(1.5)}88.5%{translate:5px -2px}90%{translate:-4px 0;scale:1.09;filter:drop-shadow(0 0 26px rgba(255,140,100,1)) brightness(1.7)}91.5%{translate:3px 2px}93%{translate:-1px -1px;scale:1.02;filter:drop-shadow(0 0 14px rgba(217,122,102,.7))}95%{translate:0 0;scale:1}}
+@keyframes tcStrainFlash{0%,86%,93%,100%{opacity:0}88%{opacity:.9}90%{opacity:.3}91%{opacity:.75}}
+@keyframes tcEmbersUp{from{background-position:0 0,0 0,0 0}to{background-position:0 -260px,0 -390px,0 -520px}}
+@keyframes tcHeat{0%,100%{text-shadow:0 0 18px rgba(217,90,60,.18)}50%{text-shadow:0 0 26px rgba(233,110,80,.42),0 0 2px rgba(255,190,160,.25)}}
+@keyframes tcButtonBreath{0%,100%{box-shadow:0 0 18px rgba(217,90,60,.18),inset 0 1px 0 rgba(255,190,170,.12)}50%{box-shadow:0 0 34px rgba(230,96,62,.45),0 0 4px rgba(255,150,120,.5),inset 0 1px 0 rgba(255,190,170,.2)}}
+@keyframes tcSweep{0%,72%{translate:-130% 0}100%{translate:130% 0}}
+@keyframes tcPressShake{0%,100%{translate:0}25%{translate:-3px}50%{translate:3px}75%{translate:-2px}}
+@keyframes tcSigilTwinkle{0%,100%{opacity:.35}50%{opacity:.9}}
+
+/* The decree card gets its frame and heat back */
+:is(#app,html) .tc-feature.chaos{position:relative!important;overflow:hidden!important;isolation:isolate;padding:14px 12px 16px!important;margin-top:4px!important;
+  border:1px solid rgba(217,122,102,.32)!important;
+  background:radial-gradient(70% 42% at 50% 24%,rgba(170,48,30,.34),transparent 72%),linear-gradient(180deg,rgba(48,13,10,.72),rgba(14,6,5,.88))!important;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.6)!important}
+/* corner brackets */
+:is(#app,html) .tc-feature.chaos:after{display:block!important;content:""!important;position:absolute;inset:6px;pointer-events:none;z-index:2;
+  background:
+    linear-gradient(var(--red),var(--red)) left top/14px 1px no-repeat,linear-gradient(var(--red),var(--red)) left top/1px 14px no-repeat,
+    linear-gradient(var(--red),var(--red)) right top/14px 1px no-repeat,linear-gradient(var(--red),var(--red)) right top/1px 14px no-repeat,
+    linear-gradient(var(--red),var(--red)) left bottom/14px 1px no-repeat,linear-gradient(var(--red),var(--red)) left bottom/1px 14px no-repeat,
+    linear-gradient(var(--red),var(--red)) right bottom/14px 1px no-repeat,linear-gradient(var(--red),var(--red)) right bottom/1px 14px no-repeat!important;opacity:.7}
+/* rising embers behind the content */
+:is(#app,html) .tc-feature.chaos:before{display:block!important;content:""!important;position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.85;
+  background-image:
+    radial-gradient(1.6px 1.6px at 18% 30%,rgba(255,150,100,.9),transparent),radial-gradient(1.2px 1.2px at 72% 60%,rgba(255,120,80,.8),transparent),radial-gradient(1px 1px at 44% 85%,rgba(255,190,140,.9),transparent)!important;
+  background-size:100% 130px,100% 195px,100% 260px!important;background-repeat:repeat!important;
+  animation:tcEmbersUp 14s linear infinite;-webkit-mask-image:linear-gradient(0deg,transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(0deg,transparent,#000 30%,#000 70%,transparent)}
+:is(#app,html) .tc-feature.chaos .tc-feature-row{position:relative}
+/* breathing ember glow and a slow counter-turning rune ring around the seal */
+:is(#app,html) .tc-feature.chaos .tc-feature-row:before,:is(#app,html) .tc-feature.chaos .tc-feature-row:after{content:"";position:absolute;left:50%;pointer-events:none;z-index:-1}
+:is(#app,html) .tc-feature.chaos .tc-feature-row:before{top:-38px;width:210px;height:210px;margin-left:-105px;border-radius:50%;
+  background:radial-gradient(circle,rgba(226,84,52,.38),rgba(160,40,24,.14) 42%,transparent 68%);animation:tcEmberBreath 3.4s ease-in-out infinite}
+:is(#app,html) .tc-feature.chaos .tc-feature-row:after{top:-9px;width:150px;height:150px;margin-left:-75px;border-radius:50%;
+  border:1px dashed rgba(217,122,102,.38);outline:1px solid rgba(217,122,102,.12);outline-offset:6px;animation:tcSealTurnBack 60s linear infinite}
+/* the seal itself turns slowly and strains against itself every few seconds */
+:is(#app,html) .tc-feature.chaos .tc-feature-glyph{position:relative;animation:tcSealTurn 90s linear infinite,tcSealStrain 7s ease-in-out infinite 1.5s}
+:is(#app,html) .tc-feature.chaos .tc-feature-title{color:#f3e2d6!important;animation:tcHeat 4.2s ease-in-out infinite}
+:is(#app,html) .tc-feature.chaos .tc-kicker.red{color:var(--red-bright)!important;text-shadow:0 0 10px rgba(217,90,60,.5)}
+/* Break the seal: breathing glow, a light sweep, and a shudder when pressed */
+:is(#app,html) #triggerChaos.tc-seal-inline{position:relative;overflow:hidden;border-color:#e0806a!important;
+  background:linear-gradient(180deg,#5a1b13,#2c0b08)!important;animation:tcButtonBreath 2.6s ease-in-out infinite}
+:is(#app,html) #triggerChaos.tc-seal-inline:before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 30%,rgba(255,200,170,.22) 50%,transparent 70%);animation:tcSweep 4.5s ease-in-out infinite 1s}
+:is(#app,html) #triggerChaos.tc-seal-inline:active{animation:tcPressShake .28s linear;scale:.985}
+:is(#app,html) #triggerChaos.tc-seal-inline:disabled{animation:none;opacity:.55}
+:is(#app,html) #triggerChaos.tc-seal-inline:disabled:before{display:none}
+
+/* Rite: a quieter violet counterpart */
+:is(#app,html) .tc-feature.rite{position:relative!important;overflow:hidden!important;isolation:isolate;padding:14px 12px 16px!important;margin-top:4px!important;
+  border:1px solid rgba(173,148,201,.28)!important;background:radial-gradient(70% 42% at 50% 24%,rgba(98,68,130,.34),transparent 72%),linear-gradient(180deg,rgba(30,22,40,.7),rgba(10,8,14,.88))!important;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.55)!important}
+:is(#app,html) .tc-feature.rite .tc-feature-row{position:relative}
+:is(#app,html) .tc-feature.rite .tc-feature-row:before{content:"";position:absolute;left:50%;top:-30px;width:180px;height:180px;margin-left:-90px;border-radius:50%;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle,rgba(173,148,201,.3),transparent 62%);animation:tcEmberBreath 5s ease-in-out infinite}
+:is(#app,html) .tc-feature.rite .tc-feature-glyph{animation:tcSealTurn 120s linear infinite}
+:is(#app,html) .tc-feature.rite:before{display:block!important;content:""!important;position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(1.4px 1.4px at 22% 26%,#d9c8ee,transparent),radial-gradient(1.2px 1.2px at 80% 40%,#c4ade0,transparent),radial-gradient(1px 1px at 60% 78%,#e6dcf3,transparent),radial-gradient(1.2px 1.2px at 12% 70%,#c4ade0,transparent)!important;
+  animation:tcSigilTwinkle 3.8s ease-in-out infinite}
+
+/* Chaos Unleashed: flash, slam and rising embers when the seal breaks */
+@keyframes tcFlash{0%{opacity:.85}100%{opacity:0}}
+@keyframes tcCardSlam{0%{opacity:0;scale:1.08}55%{opacity:1;scale:.985}75%{scale:1.01}100%{scale:1}}
+@keyframes tcCardQuake{0%,100%{translate:0 0}15%{translate:-6px 2px}30%{translate:5px -3px}45%{translate:-4px 1px}60%{translate:3px 2px}75%{translate:-2px -1px}}
+@keyframes tcSealBurst{0%{opacity:0;scale:.4;rotate:-120deg}70%{opacity:1;scale:1.08}100%{opacity:1;scale:1;rotate:0deg}}
+@keyframes tcTrackIn{0%{opacity:0;letter-spacing:.6em}100%{opacity:1;letter-spacing:.08em}}
+@keyframes tcRiseIn{0%{opacity:0;translate:0 12px}100%{opacity:1;translate:0 0}}
+@keyframes tcEmberRise{0%{opacity:0;translate:0 0;scale:1}10%{opacity:1}100%{opacity:0;translate:var(--drift,0px) -105vh;scale:.4}}
+:is(#app,html) .tc-chaos-event .tc-ember-field{pointer-events:none;overflow:hidden}
+:is(#app,html) .tc-chaos-event .tc-ember-field:after{content:"";position:fixed;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle at 50% 35%,rgba(255,170,130,.75),rgba(200,50,30,.55) 40%,rgba(80,10,5,.2) 75%);animation:tcFlash .9s ease-out both}
+:is(#app,html) .tc-chaos-event .tc-ember{position:absolute;bottom:-8px;left:var(--x);width:3px;height:3px;border-radius:50%;background:#ffb27f;box-shadow:0 0 6px 2px rgba(255,110,60,.65);
+  animation:tcEmberRise var(--dur,7s) linear infinite var(--delay,0s)!important}
+:is(#app,html) .tc-chaos-event .tc-chaos-card{animation:tcCardSlam .55s cubic-bezier(.2,.9,.25,1) both,tcCardQuake .45s linear .5s both!important}
+:is(#app,html) .tc-chaos-event .tc-chaos-art-wrap{animation:tcSealBurst .9s cubic-bezier(.2,.85,.25,1.05) .1s both!important}
+:is(#app,html) .tc-chaos-event .tc-chaos-halo{animation:tcSealTurn 40s linear infinite!important}
+:is(#app,html) .tc-chaos-event .tc-chaos-title{animation:tcTrackIn .9s cubic-bezier(.2,.8,.2,1) .35s both!important}
+:is(#app,html) .tc-chaos-event :is(.tc-chaos-event-name,.tc-chaos-reading){animation:tcRiseIn .5s ease-out .75s both!important}
+:is(#app,html) .tc-chaos-event :is(.tc-chaos-quip,#ackChaos){animation:tcRiseIn .5s ease-out 1s both!important}
+
+:is(#app,html) .tc-chaos-event #ackChaos{border:1px solid #e0806a!important;color:#f6d3c8!important;background:linear-gradient(180deg,#5a1b13,#2c0b08)!important;
+  font-family:var(--display)!important;--tc-ff:var(--display);font-weight:600!important;font-size:15px!important;letter-spacing:.18em!important;text-transform:uppercase!important;
+  animation:tcRiseIn .5s ease-out 1s both,tcButtonBreath 2.6s ease-in-out 1.5s infinite!important}
 </style>
 </body>
 </html>
