@@ -773,7 +773,7 @@ html.tc-standalone body:has(.tc-encounter-shell) .app-shell,html.tc-standalone b
   height:calc(100vh - env(safe-area-inset-top))!important;max-height:calc(100vh - env(safe-area-inset-top))!important;padding-top:18px!important}
 html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 /* Pages turn on a flick (restyle.js); the track never drifts under the finger */
-:is(#app,html) :is(.tc-encounter-track,.tc-sanctuary-track){overflow-x:hidden!important;touch-action:pan-y;overscroll-behavior:contain}
+:is(#app,html) :is(.tc-encounter-track,.tc-sanctuary-track){overflow-x:hidden!important;touch-action:pan-y;overscroll-behavior:contain;scroll-snap-type:none!important;scroll-behavior:auto!important}
 :is(#app,html) :is(.tc-encounter-panel,.tc-sanctuary-panel){touch-action:pan-y;overscroll-behavior:contain}
 /* Compact header stack */
 :is(#app,html) :is(.tc-encounter-shell,.tc-sanctuary-shell) .tc-topline{margin:0 2px 2px!important;padding:0 0 8px!important}

@@ -58,7 +58,7 @@ When adding a weapon: add its catalog record and region order, resolve its calcu
 
 Two faces: Cinzel (`--display`) for titles, labels, tabs and the nav; EB Garamond (`--serif`) for reading text and buttons. One global rule sets every element to `var(--tc-ff, var(--serif))`, and any rule that picks a face also sets `--tc-ff`, so children inherit their container's face. To switch a block's face, set both `font-family` and `--tc-ff`. Link arrows are drawn by `<span class="tc-arrow">` (iOS turns the ↗ character into an emoji).
 
-Grace and Encounter are one fixed screen: the page never scrolls, the tracks hide horizontal overflow, and `src/systems/restyle.js` turns one page per sideways flick by clicking the neighbouring tab. The header starts 18px below the status-bar inset to stay out of iOS's blurred top edge.
+Grace and Encounter are one fixed screen: the page never scrolls, the tracks hide horizontal overflow, and `src/systems/restyle.js` turns one page per sideways swipe (decided during the move, so an iOS touchcancel still counts) by clicking the neighbouring tab, then animates the turn frame by frame. Native scroll-snap is off on these tracks; iOS Safari did not reliably smooth-scroll a container it cannot pan. The header starts 18px below the status-bar inset to stay out of iOS's blurred top edge.
 
 On the Site of Grace and Encounter screens the page reserves exactly the nav's height (`padding-bottom` ≈ 64px + safe area). If the nav changes height, change that padding and `.tc-build-save-row`'s `bottom` with it.
 
