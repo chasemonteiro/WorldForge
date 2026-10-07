@@ -4405,6 +4405,18 @@
         "name": "Promised Consort Radahn",
         "region": "Enir-Ilim · DLC"
       }
+    ],
+    "Nox Flowing Hammer": [
+      {
+        "name": "Mimic Tear",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Greathorn Hammer": [
+      {
+        "name": "Mimic Tear",
+        "region": "Siofra River + Nokron"
+      }
     ]
   },
   "scenarios": {
@@ -5302,14 +5314,14 @@
           "exit": false
         },
         "chase": {
-          "name": "Greathorn Hammer",
+          "name": "Ghostflame Torch",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "counter-hit guy"
+          "role": "rune recovery intern"
         },
         "morgan": {
           "name": "Shotel",
@@ -5319,18 +5331,18 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "certified ankle menace"
+          "role": "rolling safety officer"
         },
-        "chaosTrigger": "WHEN ANY STATUS EFFECT PROCS ON THE BOSS",
+        "chaosTrigger": "WHEN THE BOSS USES A RANGED OR PROJECTILE ATTACK",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Three Strikes",
-          "text": "If the team wipes three times on this boss, both assigned weapons are condemned and must be rerolled before attempt four.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "Arena Survey Marker",
+          "text": "Place one Rainbow Stone somewhere inside or immediately beside the boss arena before victory.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "go beat his ass, probably.",
+        "flavor": "unfortunately he has health.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5360,35 +5372,35 @@
           "exit": false
         },
         "chase": {
-          "name": "Greathorn Hammer",
+          "name": "Ghostflame Torch",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "panic-roll coordinator"
+          "role": "close-range pressure"
         },
         "morgan": {
-          "name": "Clayman's Harpoon",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": false,
+          "name": "Horn Bow",
+          "type": "Bow",
+          "upgrade": "Smithing Stones",
+          "native": "Mighty Shot",
+          "infusable": true,
           "requires": "",
-          "affinity": "Fixed / unique",
-          "role": "unpaid boss inspector"
+          "affinity": "Flame Art",
+          "role": "stance-break goblin"
         },
-        "chaosTrigger": "60 SECONDS AFTER THE FIRST PLAYER DAMAGES THE BOSS",
+        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Three Strikes",
-          "text": "If the team wipes three times on this boss, both assigned weapons are condemned and must be rerolled before attempt four.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "Putrefaction Preventative",
+          "text": "Do not intentionally add Scarlet Rot sources during the encounter.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "source: the app said so.",
+        "flavor": "confidence currently unsupported.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5414,7 +5426,7 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000018",
         "target": {
-          "name": "Crucible Knight Siluria",
+          "name": "Fia's champions",
           "exit": false
         },
         "chase": {
@@ -5425,7 +5437,7 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "rune recovery intern"
+          "role": "accidental tank"
         },
         "morgan": {
           "name": "Horn Bow",
@@ -5434,19 +5446,19 @@
           "native": "Mighty Shot",
           "infusable": true,
           "requires": "",
-          "affinity": "Sacred",
-          "role": "heavy attack accountant"
+          "affinity": "Flame Art",
+          "role": "emergency aggro recipient"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
+        "chaosTrigger": "WHEN EITHER PLAYER SUCCESSFULLY PARRIES THE BOSS",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Exalted Flesh Situation",
-          "text": "One player must use Exalted Flesh immediately before the fight.",
-          "tier": "True",
-          "favor": 1
+          "name": "The Turtle Knows",
+          "text": "Bring a Pickled Turtle Neck. Both players bow to the carrier, then the carrier eats it immediately before entering.",
+          "tier": "Grand",
+          "favor": 2
         },
-        "flavor": "source: the app said so.",
+        "flavor": "current target.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5482,8 +5494,8 @@
           "native": "Native skill",
           "infusable": true,
           "requires": "",
-          "affinity": "Quality",
-          "role": "rolling safety officer"
+          "affinity": "Occult",
+          "role": "fog gate enthusiast"
         },
         "morgan": {
           "name": "Varre's Bouquet",
@@ -5493,18 +5505,18 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "close-range pressure"
+          "role": "designated aggro holder"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER USES A WEAPON SKILL / ASH OF WAR",
+        "chaosTrigger": "WHEN EITHER PLAYER SUCCESSFULLY PARRIES THE BOSS",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Perfumer’s Union",
-          "text": "Use two different Aromatics during the fight. They must be differently named items.",
+          "name": "Mana From The Heavens",
+          "text": "After your Cerulean Flasks are exhausted, FP recovery may only come from Starlight Shards for the rest of the encounter.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "current target.",
+        "flavor": "boss-shaped inconvenience.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5534,35 +5546,35 @@
           "exit": false
         },
         "chase": {
+          "name": "Great Stars",
+          "type": "Great Hammer",
+          "upgrade": "Smithing Stones",
+          "native": "Endure",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Magic",
+          "role": "close-range pressure"
+        },
+        "morgan": {
           "name": "Celebrant’s Sickle",
           "type": "Dagger",
           "upgrade": "Smithing Stones",
           "native": "Quickstep",
           "infusable": true,
           "requires": "",
-          "affinity": "Heavy",
-          "role": "certified ankle menace"
+          "affinity": "Lightning",
+          "role": "rolling safety officer"
         },
-        "morgan": {
-          "name": "Guardian’s Swordspear",
-          "type": "Halberd",
-          "upgrade": "Smithing Stones",
-          "native": "Spinning Slash",
-          "infusable": true,
-          "requires": "",
-          "affinity": "Flame Art",
-          "role": "close-range pressure"
-        },
-        "chaosTrigger": "WHEN EITHER PLAYER DRINKS ANY FLASK",
+        "chaosTrigger": "60 SECONDS AFTER THE FIRST PLAYER DAMAGES THE BOSS",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Performance Enhancement",
-          "text": "One player must use Uplifting Aromatic during the fight.",
+          "name": "QuikClot",
+          "text": "Do not intentionally add extra Hemorrhage sources. If your assigned weapon has innate bleed, that is allowed.",
           "tier": "True",
           "favor": 1
         },
-        "flavor": "unfortunately he has health.",
+        "flavor": "famous last words.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5598,8 +5610,8 @@
           "native": "Spinning Slash",
           "infusable": true,
           "requires": "",
-          "affinity": "Cold",
-          "role": "emergency aggro recipient"
+          "affinity": "Quality",
+          "role": "panic-roll coordinator"
         },
         "morgan": {
           "name": "Great Stars",
@@ -5608,19 +5620,19 @@
           "native": "Endure",
           "infusable": true,
           "requires": "",
-          "affinity": "Sacred",
-          "role": "stamina budget analyst"
+          "affinity": "Keen",
+          "role": "emergency aggro recipient"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
+        "chaosTrigger": "WHEN EITHER PLAYER IS KNOCKED DOWN OR STANCE-BROKEN",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Emissary of Insomnia",
-          "text": "Do not intentionally add Sleep sources during the encounter.",
-          "tier": "True",
-          "favor": 1
+          "name": "Panacea",
+          "text": "Do not intentionally add any status source beyond whatever your assigned weapon already has.",
+          "tier": "Grand",
+          "favor": 2
         },
-        "flavor": "this seems manageable. suspicious.",
+        "flavor": "go beat his ass, probably.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },

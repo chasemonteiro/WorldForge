@@ -22,7 +22,7 @@ const {runtime}=require('./runtime.cjs');
      }gateChecks++;
    }
  }`);
- assert.equal(app.run('gateChecks'),276);
+ assert.equal(app.run('gateChecks'),282);
  // Use actual world-clear handler and commit logic with an in-memory revisioned backend.
  app.run(`renderRun=()=>{};setToast=()=>{};
  let server={id:'synthetic-room',joinCode:'TEST00',revision:1,state:initialRunState({region:'Limgrave + Stormveil',severity:'standard'})};

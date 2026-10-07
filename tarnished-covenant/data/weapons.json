@@ -2267,6 +2267,12 @@
           "label": "Nox Flowing Hammer"
         }
       ],
+      "acquisition": [
+        {
+          "name": "Mimic Tear",
+          "region": "Siofra River + Nokron"
+        }
+      ],
       "calculatorName": "Nox Flowing Hammer"
     },
     {
@@ -2309,6 +2315,12 @@
           "name": "Deeproot Depths",
           "order": 4,
           "label": "Greathorn Hammer"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Mimic Tear",
+          "region": "Siofra River + Nokron"
         }
       ],
       "calculatorName": "Greathorn Hammer"
