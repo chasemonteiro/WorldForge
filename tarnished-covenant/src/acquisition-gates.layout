@@ -19,6 +19,8 @@ const TC_WEAPON_ACQUISITION_GATES={
   "Lusat's Glintstone Staff":{{gate:lusat-s-glintstone-staff}},
   "Moonveil":{{gate:moonveil}},
   "Nox Flowing Sword":{{gate:nox-flowing-sword}},
+  "Nox Flowing Hammer":{{gate:nox-flowing-hammer}},
+  "Greathorn Hammer":{{gate:greathorn-hammer}},
   "Regalia of Eochaid":{{gate:regalia-of-eochaid}},
   "Ruins Greatsword":{{gate:ruins-greatsword}},
   "Death's Poker":{{gate:death-s-poker}},

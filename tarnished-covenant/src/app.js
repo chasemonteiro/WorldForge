@@ -5167,9 +5167,10 @@ penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.stat
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
 /* --- End appeal extra boss recording --- */
 {{src/systems/rykard-armaments.js}}
+{{src/systems/assignment-repair.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261007-chaosfit-2';
+const TC_BUILD_ID='20261007-armory-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
