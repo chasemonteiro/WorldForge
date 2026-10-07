@@ -9033,7 +9033,7 @@ tcBuildMasterworkRecall=function(latest,...args){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261007-chaosfit-1';
+const TC_BUILD_ID='20261007-chaosfit-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -10119,6 +10119,22 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 :is(#app,html) .tc-chaos-event .tc-chaos-quip{display:block!important;font-size:14px!important;margin:6px 0 10px!important}
 :is(#app,html) .tc-chaos-event #ackChaos{display:block!important;position:sticky!important;bottom:8px!important;z-index:4;width:100%!important;min-height:54px!important;margin:8px 0 0!important;box-shadow:0 -10px 24px 6px rgba(8,5,4,.92),0 0 26px rgba(217,90,60,.3)!important}
 :is(#app,html) .tc-chaos-event{padding-bottom:calc(68px + env(safe-area-inset-bottom))!important}
+
+/* === Chaos tab once a decree is in force ================================== */
+/* The card never shrinks inside the panel (the panel scrolls instead), and
+   with the seal broken it compacts so the full decree text fits. */
+/* Nothing inside a Grace/Encounter page may be squeezed to fit; the page scrolls
+   vertically instead (only the boss photo flexes, rule below wins). */
+:is(#app,html) :is(.tc-encounter-panel,.tc-sanctuary-panel)>*{flex-shrink:0!important}
+:is(#app,html) .tc-encounter-panel[data-panel="boss"]>.tc-boss-art{flex-shrink:1!important}
+:is(#app,html) .tc-feature.chaos:not(:has(#triggerChaos)) .tc-feature-glyph{width:64px!important;height:64px!important;margin:0 auto!important}
+:is(#app,html) .tc-feature.chaos:not(:has(#triggerChaos)) .tc-feature-row:after{top:-8px;width:80px;height:80px;margin-left:-40px}
+:is(#app,html) .tc-feature.chaos:not(:has(#triggerChaos)) .tc-feature-row:before{top:-40px;width:150px;height:150px;margin-left:-75px}
+:is(#app,html) .tc-feature.chaos:not(:has(#triggerChaos)) .tc-feature-title{font-size:17px!important;line-height:1.3!important}
+:is(#app,html) .tc-feature.chaos:not(:has(#triggerChaos)) .tc-feature-text:first-of-type{font-size:15px!important}
+:is(#app,html) .tc-feature.chaos .tc-feature-title~.tc-feature-text{font-size:16px!important;line-height:1.4!important;font-style:normal!important;color:#f0c9bf!important;text-align:center;
+  margin-top:10px!important;padding-top:10px!important;border-top:1px solid rgba(217,122,102,.3)}
+:is(#app,html) .tc-feature.chaos .tc-feature-title~.tc-feature-text:before{content:"Decree in force";display:block;margin-bottom:6px;font-family:var(--display);font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red-bright);text-shadow:0 0 10px rgba(217,90,60,.5)}
 </style>
 </body>
 </html>
