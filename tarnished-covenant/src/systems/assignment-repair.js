@@ -7,9 +7,18 @@
    latest state, a no-op if the other phone already fixed it). No penalty, no
    favor change, nothing else in the run is touched. */
 const tcAssignmentRepairTried=new Set();
+function tcAssignmentRepairBlocked(state){
+  // Terms are fixed once a world is cleared, and reward/report screens must
+  // not be re-rendered or have their buttons blocked by a background save.
+  if(typeof tcEncounterMutationLocked==='function'&&tcEncounterMutationLocked(state))return true;
+  if(typeof postBattleReport!=='undefined'&&postBattleReport)return true;
+  if(typeof tcSharedRewardDrawPending==='function'&&tcSharedRewardDrawPending(state))return true;
+  if(typeof tcSharedRewardUnresolved==='function'&&tcSharedRewardUnresolved(state))return true;
+  return false;
+}
 function tcUnobtainableAssignedSlots(state){
   const current=state?.current;
-  if(!current||state.runComplete||state.regionComplete)return [];
+  if(!current||state.runComplete||state.regionComplete||tcAssignmentRepairBlocked(state))return [];
   return ['chase','morgan'].filter(slot=>current[slot]?.name&&!tcWeaponAcquisitionUnlocked(state,current[slot]));
 }
 function tcRepairUnobtainableAssignments(state){
@@ -31,12 +40,19 @@ const tcRenderRunBeforeAssignmentRepair=renderRun;
 renderRun=function(){
   tcRenderRunBeforeAssignmentRepair();
   try{
-    const state=run?.state,id=state?.current?.id;
-    if(!id||tcAssignmentRepairTried.has(id)||pending)return;
-    if(!tcUnobtainableAssignedSlots(state).length)return;
-    tcAssignmentRepairTried.add(id);
-    const next=tcRepairUnobtainableAssignments(state);
-    if(!next)return;
-    setTimeout(()=>{commit(next,{retryBuilder:latest=>tcRepairUnobtainableAssignments(latest),successToast:next.lastAction});},0);
+    const id=run?.state?.current?.id;
+    if(!id||tcAssignmentRepairTried.has(id)||!tcUnobtainableAssignedSlots(run.state).length)return;
+    setTimeout(async()=>{
+      // Rebuild from whatever is current at save time, never from a snapshot
+      // taken during render; wait out any other save instead of colliding.
+      if(pending||tcAssignmentRepairTried.has(id)||run?.state?.current?.id!==id)return;
+      const next=tcRepairUnobtainableAssignments(run.state);
+      if(!next)return;
+      tcAssignmentRepairTried.add(id);
+      let toast=next.lastAction;
+      const saved=await commit(next,{quiet:true,retryBuilder:latest=>{const rebuilt=tcRepairUnobtainableAssignments(latest);if(rebuilt)toast=rebuilt.lastAction;return rebuilt;}});
+      if(saved&&toast)setToast(toast);
+      if(!saved)tcAssignmentRepairTried.delete(id);
+    },60);
   }catch(error){console.warn('Armory correction skipped',error);}
 };

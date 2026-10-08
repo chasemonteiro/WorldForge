@@ -39,7 +39,8 @@ function tcBuildClaimedSharedReward(latest,draw,rewards,deltas,drawer){
     seenBy:[]
   };
   if(!next.regionComplete&&!next.runComplete&&next.current){
-    const affordable=availableBellBearings(next).filter(b=>sm.favor>=smithingContractCost(b));
+    const cost=b=>typeof tcEffectiveSmithingContractCost==='function'?tcEffectiveSmithingContractCost(next,b):smithingContractCost(b);
+    const affordable=availableBellBearings(next).filter(b=>sm.favor>=cost(b));
     if(!sm.activeContract&&affordable.length)sm.pendingCorporateForEncounterId=next.current.id;
   }
   next.lastAction=`${drawer} drew the shared Covenant reward.`;

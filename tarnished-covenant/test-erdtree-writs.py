@@ -31,7 +31,7 @@ for tear in [
 for needle in [
     'const TC_ERDTREE_WRIT_CHANCE=0.07;',
     'function tcLegacyErdtreeClearIds(state)',
-    'return Math.max(0,TC_ERDTREE_TARGETS.length-tcLegacyErdtreeClearIds(state).length);',
+    'return Math.max(0,TC_ERDTREE_TARGETS.length-tcHistoryOnlyErdtreeClearIds(state).length);',
     'return Math.max(0,tcErdtreeWritIssueCap(state)-Number(sm.erdtreeWritsAwarded||0));',
     'sm.erdtreeWrits=Number(sm.erdtreeWrits||0)+1;',
     'sm.erdtreeWritsAwarded=Number(sm.erdtreeWritsAwarded||0)+1;',

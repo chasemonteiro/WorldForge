@@ -1357,7 +1357,7 @@
         },
         {
           "name": "Mt. Gelmir",
-          "order": 17,
+          "order": 16,
           "label": "Hoslow's Petal Whip"
         }
       ],
@@ -2702,7 +2702,7 @@
         },
         {
           "name": "Mt. Gelmir",
-          "order": 16,
+          "order": 15,
           "label": "Great Club"
         }
       ],
@@ -3299,8 +3299,8 @@
       "name": "Troll's Hammer",
       "regions": [
         {
-          "name": "Mt. Gelmir",
-          "order": 12,
+          "name": "Altus Plateau + Leyndell",
+          "order": 39,
           "label": "Troll's Hammer"
         }
       ],
@@ -3312,7 +3312,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 13,
+          "order": 12,
           "label": "Family Heads"
         }
       ],
@@ -3330,7 +3330,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 14,
+          "order": 13,
           "label": "Ghiza's Wheel"
         }
       ],
@@ -3342,7 +3342,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 15,
+          "order": 14,
           "label": "Godskin Stitcher"
         }
       ],
@@ -3360,7 +3360,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 18,
+          "order": 17,
           "label": "Inquisitor's Girandole"
         }
       ],
@@ -3378,7 +3378,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 19,
+          "order": 18,
           "label": "Blasphemous Blade"
         }
       ],
@@ -3396,7 +3396,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 20,
+          "order": 19,
           "label": "Pulley Bow"
         }
       ],
@@ -3408,7 +3408,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 21,
+          "order": 20,
           "label": "Magma Blade"
         }
       ],
@@ -3420,7 +3420,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 22,
+          "order": 21,
           "label": "Fallingstar Beast Jaw"
         }
       ],
@@ -3438,7 +3438,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 23,
+          "order": 22,
           "label": "Staff of the Guilty"
         }
       ],
@@ -3450,7 +3450,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 24,
+          "order": 23,
           "label": "Gelmir Glintstone Staff"
         }
       ],
@@ -3462,7 +3462,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 25,
+          "order": 24,
           "label": "Erdtree Seal"
         }
       ],
@@ -3474,7 +3474,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 26,
+          "order": 25,
           "label": "Magma Whip Candlestick"
         }
       ],
@@ -3486,7 +3486,7 @@
       "regions": [
         {
           "name": "Mt. Gelmir",
-          "order": 27,
+          "order": 26,
           "label": "Albinauric Staff"
         }
       ],
@@ -3844,6 +3844,12 @@
           "label": "Miquellan Knight's Sword"
         }
       ],
+      "acquisition": [
+        {
+          "name": "Loretta, Knight of the Haligtree",
+          "region": "Miquella’s Haligtree"
+        }
+      ],
       "calculatorName": "Miquellan Knight's Sword"
     },
     {
@@ -3854,6 +3860,12 @@
           "name": "Miquella’s Haligtree",
           "order": 2,
           "label": "Rotten Crystal Spear"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Loretta, Knight of the Haligtree",
+          "region": "Miquella’s Haligtree"
         }
       ],
       "calculatorName": "Rotten Crystal Spear"
@@ -3868,6 +3880,12 @@
           "label": "Rotten Crystal Sword"
         }
       ],
+      "acquisition": [
+        {
+          "name": "Loretta, Knight of the Haligtree",
+          "region": "Miquella’s Haligtree"
+        }
+      ],
       "calculatorName": "Rotten Crystal Sword"
     },
     {
@@ -3878,6 +3896,12 @@
           "name": "Miquella’s Haligtree",
           "order": 4,
           "label": "Rotten Staff"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Loretta, Knight of the Haligtree",
+          "region": "Miquella’s Haligtree"
         }
       ],
       "calculatorName": "Rotten Staff"
@@ -3902,6 +3926,12 @@
           "name": "Miquella’s Haligtree",
           "order": 12,
           "label": "Rotten Crystal Staff"
+        }
+      ],
+      "acquisition": [
+        {
+          "name": "Loretta, Knight of the Haligtree",
+          "region": "Miquella’s Haligtree"
         }
       ],
       "calculatorName": "Rotten Crystal Staff"

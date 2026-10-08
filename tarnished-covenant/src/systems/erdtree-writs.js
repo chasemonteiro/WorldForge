@@ -27,8 +27,13 @@ function tcErdtreeClearedIds(state){
   const sm=smithingData(state||{});
   return Array.from(new Set([...tcLegacyErdtreeClearIds(state),...(Array.isArray(sm.erdtreeAvatarClears)?sm.erdtreeAvatarClears:[])]));
 }
+// The cap only subtracts Avatars killed in ordinary fights. A later layer adds
+// Writ-paid Avatars recorded through an appeal to tcLegacyErdtreeClearIds; those
+// Writs are already counted in erdtreeWritsAwarded, so counting them here too
+// would shrink the remaining supply twice.
+const tcHistoryOnlyErdtreeClearIds=tcLegacyErdtreeClearIds;
 function tcErdtreeWritIssueCap(state){
-  return Math.max(0,TC_ERDTREE_TARGETS.length-tcLegacyErdtreeClearIds(state).length);
+  return Math.max(0,TC_ERDTREE_TARGETS.length-tcHistoryOnlyErdtreeClearIds(state).length);
 }
 function tcErdtreeWritStockRemaining(state){
   const sm=smithingData(state||{});

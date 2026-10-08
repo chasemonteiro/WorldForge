@@ -53,6 +53,12 @@ async function tcAdvanceSharedRewardReveal(data){
 // changes reward economy; it only lets the missing viewer see every result.
 tcHydrateSharedRewardReveal=function(state){
   const shared=state?.sharedRewardReveal;
+  // Keep the exit guard from app.js: once this phone pressed the final
+  // Continue, never rebuild that reward screen while the ack is saving.
+  if(shared?.id&&typeof tcRewardExitDismissedIds!=='undefined'&&tcRewardExitDismissedIds.has(shared.id)){
+    pendingRewardReveal=null;
+    return;
+  }
   if(!tcSharedRewardUnresolved(state)){
     if(pendingRewardReveal?.sharedId)pendingRewardReveal=null;
     return;

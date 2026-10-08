@@ -88,3 +88,13 @@ For changes users must download, update `TC_BUILD_ID` in the freshness-guard sou
 3. Unify picker, saving, locked-action, and confirmation presentation in a separately tested UI release.
 
 The first consolidation is intentionally behavior-preserving. It does not claim to have redesigned the UI or tested real-device interactions.
+
+## Bug pass notes (2026-10-08)
+
+- Region travel (`startNextRegion` hardening wrapper) carries every run-level record (Sanctioned/appeal boss kills, appeal cooldown, Chaos debt, an unfinished shared reward, unknown future fields) and rolls the region's first encounter after history is copied in.
+- An invite link on a phone with no saved identity goes to the join screen instead of auto-joining as "Tarnished"; a shared reward reveal also clears once two different identities have seen it.
+- `assignment-repair.js` never runs once a world is cleared or while a report/reward is open, rebuilds from the latest state at save time, and saves quietly (`commit(..., {quiet:true})`).
+- Build Lab autosave is queued per player slot; saves merge only fields changed since the screen loaded; the field being typed is never rewritten; stats are whole numbers; picking a class keeps higher entered values.
+- Weapon data: Elphael weapons wait for Loretta; Troll's Hammer belongs to the Altus Plateau. Baseline seeded scenarios shift from the first changed region onward because the seeded random stream shifts.
+- `tests/bugfix-pass.cjs` covers the logic fixes.
+
