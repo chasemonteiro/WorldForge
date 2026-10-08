@@ -71,7 +71,10 @@ function tcBuildSharedRewardAck(latest,rewardId,identity){
   const seen=Array.from(new Set([...(Array.isArray(shared.seenBy)?shared.seenBy:[]),identity]));
   if((shared.seenBy||[]).includes(identity))return null;
   const next=structuredClone(latest);
-  if(['Chase','Morgan'].every(name=>seen.includes(name)))next.sharedRewardReveal=null;
+  // Two different phones have seen it. Identities other than Chase/Morgan (an
+  // old 'Tarnished' join) must not leave the reveal, and the world clears it
+  // gates, stuck forever.
+  if(['Chase','Morgan'].every(name=>seen.includes(name))||seen.length>=2)next.sharedRewardReveal=null;
   else next.sharedRewardReveal={...structuredClone(shared),seenBy:seen};
   next.updatedAt=new Date().toISOString();
   return next;

@@ -89,7 +89,37 @@
   };
 
   let tcBuildTab='weapon',tcAffinityCompareOpen=false;
-  let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false,tcBuildAutosaveTimer=null,tcBuildAutosaveDraft=null,tcBuildAutosaveSlot=null,tcBuildChangeSeq=0;
+  let tcWeaponData=null,tcWeaponDataPromise=null,tcBuildSlot=null,tcBuildDirty=false,tcBuildRenderSeq=0;
+  /* Two phones can edit the same player's build. A save writes only the fields
+     this phone changed since its screen loaded, on top of the latest saved
+     build, so the other phone's edits to other fields survive. */
+  const tcBuildBaseline={};
+  let tcBuildRedrawPending=false;
+  function tcBuildInUse(){
+    const a=document.activeElement,picker=document.querySelector('#tcWeaponPicker');
+    return Boolean((a&&a.closest?.('.tc-build-screen')&&a.matches?.('input,select,textarea'))||(picker&&!picker.hidden));
+  }
+  function tcBuildRedrawIfIdle(){
+    if(!tcBuildRedrawPending||uiScreen!=='build'||tcBuildDirty||tcBuildInUse()||!document.querySelector('.tc-build-screen'))return;
+    tcBuildRedrawPending=false;
+    // Partner tab summaries update in place.
+    for(const other of ['chase','morgan']){const small=document.querySelector(`.tc-build-player-tabs [data-build-slot="${other}"] small`);if(small&&other!==selectedSlot())small.textContent=buildSummary(buildFor(other));}
+    // Redraw only if the saved build for this tab differs from what is shown,
+    // i.e. the other phone changed it; our own save matches and is left alone.
+    if(JSON.stringify(buildFor(selectedSlot()))!==JSON.stringify(currentDraft()))renderBuild();
+  }
+  function tcMergeBuildEdit(latest,draft,baseline){
+    if(!baseline)return structuredClone(draft);
+    const out=normalizeBuild(latest),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+    for(const key of Object.keys(draft)){
+      if(key==='weapon'){for(const k of Object.keys(draft.weapon||{}))if(!same(draft.weapon[k],baseline.weapon?.[k]))out.weapon[k]=structuredClone(draft.weapon[k]);continue;}
+      if(!same(draft[key],baseline[key]))out[key]=structuredClone(draft[key]);
+    }
+    return normalizeBuild(out);
+  }
+  /* Autosave queue per player slot, so editing one player never cancels the
+     other player's pending or retrying save. */
+  const tcBuildQueue={};const buildQueue=slot=>tcBuildQueue[slot]||(tcBuildQueue[slot]={timer:null,draft:null,seq:0});
   const graphCache=new Map();
 
   function blankBuild(){return {startingClass:'',level:1,vig:10,mind:10,end:10,str:10,dex:10,int:10,fai:10,arc:10,scadu:0,talismans:['','','',''],physickTears:['',''],weapon:{weaponName:'',variantName:'',upgrade:0}};}
@@ -137,19 +167,19 @@
   function normalizeBuild(value){
     const base=blankBuild(),src=value&&typeof value==='object'?value:{};
     base.startingClass=classPreset(src.startingClass)?src.startingClass:'';
-    for(const key of CORE_ATTRS)base[key]=Math.max(1,Math.min(99,Number(src[key]??base[key])||base[key]));
+    for(const key of CORE_ATTRS)base[key]=Math.max(1,Math.min(99,Math.round(Number(src[key]??base[key]))||base[key]));
     const preset=classPreset(base.startingClass);
     if(preset){
       for(const key of CORE_ATTRS)base[key]=Math.max(preset[key],base[key]);
-      base.level=Math.max(preset.level,Math.min(713,Number(src.level??preset.level)||preset.level));
+      base.level=Math.max(preset.level,Math.min(713,Math.round(Number(src.level??preset.level))||preset.level));
     }else{
-      base.level=Math.max(1,Math.min(713,Number(src.level??base.level)||base.level));
+      base.level=Math.max(1,Math.min(713,Math.round(Number(src.level??base.level))||base.level));
     }
-    base.scadu=Math.max(0,Math.min(20,Number(src.scadu)||0));
+    base.scadu=Math.max(0,Math.min(20,Math.round(Number(src.scadu))||0));
     base.talismans=normalizeTalismanSlots(src.talismans,4);
     base.physickTears=normalizePhysickSlots(src.physickTears,2);
     base.weapon={...base.weapon,...(src.weapon&&typeof src.weapon==='object'?src.weapon:{})};
-    base.weapon.weaponName=String(base.weapon.weaponName||'');base.weapon.variantName=String(base.weapon.variantName||'');base.weapon.upgrade=Math.max(0,Number(base.weapon.upgrade)||0);
+    base.weapon.weaponName=String(base.weapon.weaponName||'');base.weapon.variantName=String(base.weapon.variantName||'');base.weapon.upgrade=Math.max(0,Math.round(Number(base.weapon.upgrade))||0);
     return base;
   }
   function ensureBuilds(state){
@@ -177,11 +207,11 @@
     for(const key of CORE_ATTRS){
       const field=document.querySelector(`[data-build-field="${key}"]`);if(!field)continue;
       const min=preset?Number(preset[key]):1;field.min=String(min);
-      if(field.value!==''){const numeric=Number(field.value);if(!Number.isFinite(numeric)||numeric<min)field.value=String(min);else if(numeric>Number(field.max||99))field.value=String(field.max||99);}
+      if(field.value!==''&&field!==document.activeElement){const numeric=Number(field.value);if(!Number.isFinite(numeric)||numeric<min)field.value=String(min);else if(numeric>Number(field.max||99))field.value=String(field.max||99);}
     }
     if(level){
       level.min=String(preset?Number(preset.level):1);
-      if(Number(level.value)<Number(level.min))level.value=level.min;
+      if(level!==document.activeElement&&Number(level.value)<Number(level.min))level.value=level.min;
       level.readOnly=false;level.removeAttribute('aria-readonly');
       document.querySelectorAll('[data-step-field="level"]').forEach(b=>b.disabled=false);
     }
@@ -219,21 +249,21 @@
   function currentDraft(){
     const base=buildFor();
     base.startingClass=document.querySelector('#tcBuildClass')?.value||'';
-    document.querySelectorAll('[data-build-field]').forEach(el=>{const key=el.dataset.buildField;base[key]=Math.max(Number(el.min)||0,Math.min(Number(el.max)||999,Number(el.value)||0));});
+    document.querySelectorAll('[data-build-field]').forEach(el=>{const key=el.dataset.buildField;if(el.value==='')return;base[key]=Math.max(Number(el.min)||0,Math.min(Number(el.max)||999,Math.round(Number(el.value))||0));});
     base.talismans=Array.from(document.querySelectorAll('[data-talisman]')).map(el=>el.value.trim()).slice(0,4);
     base.physickTears=Array.from(document.querySelectorAll('[data-physick]')).map(el=>el.value.trim()).slice(0,2);
     const weaponInput=document.querySelector('#tcBuildWeaponName');
     const weaponName=weaponInput?.dataset.selectedWeapon||'';
     const affinityValue=document.querySelector('#tcBuildAffinity')?.value||'';
     const variantName=tcWeaponData&&variantsFor(weaponName).some(w=>w.name===affinityValue)?affinityValue:base.weapon.variantName;
-    const upgrade=Math.max(0,Number(document.querySelector('#tcBuildUpgrade')?.value)||0);
+    const upgrade=Math.max(0,Math.round(Number(document.querySelector('#tcBuildUpgrade')?.value))||0);
     base.weapon={weaponName,variantName,upgrade};return normalizeBuild(base);
   }
   function scheduleBuildSave(){
-    clearTimeout(tcBuildAutosaveTimer);
-    const changeSeq=++tcBuildChangeSeq;
-    tcBuildAutosaveSlot=selectedSlot();tcBuildAutosaveDraft=currentDraft();markDirty(true);
-    tcBuildAutosaveTimer=setTimeout(()=>{const draft=tcBuildAutosaveDraft,slot=tcBuildAutosaveSlot;tcBuildAutosaveTimer=null;if(draft&&slot)saveBuild({slot,draft,automatic:true,changeSeq});},650);
+    const slot=selectedSlot(),q=buildQueue(slot);clearTimeout(q.timer);
+    const changeSeq=++q.seq;
+    q.draft=currentDraft();markDirty(true);
+    q.timer=setTimeout(()=>{q.timer=null;if(q.draft)saveBuild({slot,draft:q.draft,automatic:true,changeSeq});},650);
   }
   function loadWeaponData(){
     if(tcWeaponData)return Promise.resolve(tcWeaponData);
@@ -245,7 +275,7 @@
         return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).json();
       }
       return JSON.parse(new TextDecoder().decode(bytes));
-    }).then(data=>tcWeaponData=data);
+    }).then(data=>tcWeaponData=data).catch(error=>{tcWeaponDataPromise=null;throw error;});
     return tcWeaponDataPromise;
   }
   function evaluateGraph(stages){
@@ -363,6 +393,8 @@
   function slotSummary(slot){return buildSummary(buildFor(slot));}
   function renderBuild(){
     ensureBuilds(run.state);const slot=selectedSlot(),build=buildFor(slot),names=covenantNames(run.state);
+    // What this screen started from; a save applies only fields changed since.
+    if(!tcBuildDirty||!tcBuildBaseline[slot])tcBuildBaseline[slot]=structuredClone(build);
     app.innerHTML=`<section class="tc-screen tc-build-screen" data-build-tab="${buildTab()}">${screenTop('Tarnished Build')}
       <div class="tc-build-hero"><div class="tc-kicker gold">living character sheet</div><h1>Build</h1><p>Keep both Tarnished current, test every weapon, and stop leaving damage on the table.</p></div>
       <div class="tc-build-player-tabs"><button type="button" data-build-slot="chase" class="${slot==='chase'?'active':''}" aria-pressed="${slot==='chase'}"><span class="tc-build-player-name">${h(names[0])}</span><small>${h(slotSummary('chase'))}</small></button><button type="button" data-build-slot="morgan" class="${slot==='morgan'?'active':''}" aria-pressed="${slot==='morgan'}"><span class="tc-build-player-name">${h(names[1])}</span><small>${h(slotSummary('morgan'))}</small></button></div>
@@ -383,30 +415,32 @@
       <div class="tc-build-attribution">Weapon calculations and v1.17 regulation data adapted from Tom Clark’s MIT-licensed Elden Ring Weapon Calculator. Conditional buffs are listed separately from menu AR.</div>
     </section>${navMarkup('build')}`;
     bindNav();applyClassConstraintsToInputs();refreshTalismanAvailability();refreshPhysickAvailability();refreshBuildStatus(build);refreshWeaponSearchState();markDirty(false);
-    loadWeaponData().then(()=>{if(uiScreen!=='build')return;populateWeaponControls(build);refreshResults();}).catch(error=>{console.error(error);const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML='<div class="tc-weapon-error">The weapon records could not be opened. Refresh the app and try again.</div>';});
+    const renderToken=++tcBuildRenderSeq;loadWeaponData().then(()=>{if(uiScreen!=='build'||renderToken!==tcBuildRenderSeq)return;populateWeaponControls(build);refreshResults();}).catch(error=>{console.error(error);const host=document.querySelector('#tcWeaponResults');if(host)host.innerHTML='<div class="tc-weapon-error">The weapon records could not be opened. Refresh the app and try again.</div>';});
   }
-  async function saveBuild({slot=selectedSlot(),draft=null,automatic=false,changeSeq=tcBuildChangeSeq}={}){
-    clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;
+  async function saveBuild({slot=selectedSlot(),draft=null,automatic=false,changeSeq=buildQueue(slot).seq}={}){
+    const q=buildQueue(slot);clearTimeout(q.timer);q.timer=null;
     draft=normalizeBuild(draft||currentDraft());
     if(automatic&&pending){
       const status=document.querySelector('.tc-build-save-state');if(status){status.textContent='Waiting to save after current Covenant action…';status.classList.add('dirty');}
-      tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;
-      tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),900);
+      q.draft=draft;
+      q.timer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),900);
       return false;
     }
-    const buildState=latest=>{const next=structuredClone(latest);ensureBuilds(next);next.builds[slot]=structuredClone(draft);next.lastAction=`${playerName()} updated ${playerLabel(slot,next)}’s build.`;next.updatedAt=new Date().toISOString();return next;};
+    const buildState=latest=>{const next=structuredClone(latest);ensureBuilds(next);next.builds[slot]=tcMergeBuildEdit(next.builds[slot],draft,tcBuildBaseline[slot]);next.lastAction=`${playerName()} updated ${playerLabel(slot,next)}’s build.`;next.updatedAt=new Date().toISOString();return next;};
     const button=document.querySelector('#tcSaveBuild'),status=document.querySelector('.tc-build-save-state');if(button&&!automatic){button.disabled=true;button.textContent='Saving…';}if(status)status.textContent='Saving…';
     const saved=await commit(buildState(run.state),{successToast:automatic?'':`${playerLabel(slot,run.state)}’s build saved.`,retryBuilder:buildState});
     if(button&&!automatic){button.disabled=false;button.textContent='Save Now';}
     if(saved){
-      if(changeSeq===tcBuildChangeSeq){
-        tcBuildAutosaveDraft=null;tcBuildAutosaveSlot=null;
+      tcBuildBaseline[slot]=normalizeBuild(run.state?.builds?.[slot]);
+      setTimeout(tcBuildRedrawIfIdle,0);
+      if(changeSeq===q.seq){
+        q.draft=null;
         if(selectedSlot()===slot)markDirty(false);
       }
-    }else if(automatic&&changeSeq===tcBuildChangeSeq){
-      tcBuildAutosaveDraft=draft;tcBuildAutosaveSlot=slot;
+    }else if(automatic&&changeSeq===q.seq){
+      q.draft=draft;
       if(status){status.textContent='Save interrupted · retrying…';status.classList.add('dirty');}
-      tcBuildAutosaveTimer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),1400);
+      q.timer=setTimeout(()=>saveBuild({slot,draft,automatic:true,changeSeq}),1400);
     }else if(!automatic){
       if(button){button.disabled=false;button.textContent='Save Now';}
       if(status){status.textContent='Not saved · try again';status.classList.add('dirty');}
@@ -421,27 +455,31 @@
   renderRun=function(){
     if(run?.state)ensureBuilds(run.state);
     if(uiScreen==='build'){
-      if(tcBuildDirty&&document.querySelector('.tc-build-screen')){
+      if(document.querySelector('.tc-build-screen')&&(tcBuildDirty||tcBuildInUse())){
+        // Never redraw under the player's fingers (it drops the keyboard and
+        // the weapon search); redraw once they are done instead.
+        tcBuildRedrawPending=true;
         const status=document.querySelector('.tc-build-save-state');
-        if(status)status.textContent='Saving local edits · partner sync received';
+        if(status&&tcBuildDirty)status.textContent='Saving local edits · partner sync received';
         return;
       }
+      tcBuildRedrawPending=false;
       return renderBuild();
     }
     return renderBefore();
   };
 
-  if(!window.__tcBuildLabBound){window.__tcBuildLabBound=true;document.addEventListener('click',event=>{
+  if(!window.__tcBuildLabBound){window.__tcBuildLabBound=true;document.addEventListener('focusout',event=>{if(event.target.closest?.('.tc-build-screen'))setTimeout(tcBuildRedrawIfIdle,350);});document.addEventListener('click',event=>{
     const weaponPick=event.target.closest('[data-weapon-pick]');if(weaponPick){setWeaponSelection(weaponPick.dataset.weaponPick);return;}
     const tabPick=event.target.closest('[data-build-tab-pick]');if(tabPick){setBuildTab(tabPick.dataset.buildTabPick);return;}
     const upStep=event.target.closest('[data-upgrade-step]');if(upStep){const field=document.querySelector('#tcBuildUpgrade');if(field){const min=Number(field.min)||0,max=Number(field.max)||25;field.value=String(Math.max(min,Math.min(max,(Number(field.value)||0)+Number(upStep.dataset.upgradeStep||0))));refreshResults();scheduleBuildSave();}return;}
-    const slot=event.target.closest('[data-build-slot]');if(slot){const nextSlot=slot.dataset.buildSlot,currentSlot=selectedSlot();if(nextSlot===currentSlot)return;if(tcBuildDirty){const draft=currentDraft(),changeSeq=tcBuildChangeSeq;clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;saveBuild({slot:currentSlot,draft,automatic:true,changeSeq});}tcBuildSlot=nextSlot;tcBuildDirty=false;renderBuild();return;}
+    const slot=event.target.closest('[data-build-slot]');if(slot){const nextSlot=slot.dataset.buildSlot,currentSlot=selectedSlot();if(nextSlot===currentSlot)return;if(tcBuildDirty){const draft=currentDraft(),q=buildQueue(currentSlot),changeSeq=++q.seq;clearTimeout(q.timer);q.timer=null;q.draft=draft;saveBuild({slot:currentSlot,draft,automatic:true,changeSeq});}tcBuildSlot=nextSlot;tcBuildDirty=false;renderBuild();return;}
     const stepper=event.target.closest('[data-step-field]');if(stepper){const field=document.querySelector(`[data-build-field="${stepper.dataset.stepField}"]`);if(field){const min=Number(field.min)||0,max=Number(field.max)||999;field.value=Math.max(min,Math.min(max,(Number(field.value)||0)+Number(stepper.dataset.step||0)));refreshResults();scheduleBuildSave();}return;}
     if(event.target.closest('#tcSaveBuild')){saveBuild();return;}
     const syncLevel=event.target.closest('[data-sync-build-level]');if(syncLevel){const field=document.querySelector('[data-build-field="level"]');if(field){field.value=String(Math.max(Number(field.min)||1,Math.min(Number(field.max)||713,Number(syncLevel.dataset.syncBuildLevel)||1)));refreshResults();scheduleBuildSave();}return;}
     const affinity=event.target.closest('[data-affinity-pick]');if(affinity){const select=document.querySelector('#tcBuildAffinity');if(select){select.value=affinity.dataset.affinityPick;refreshResults();scheduleBuildSave();}return;}
     if(!event.target.closest('.tc-weapon-name'))closeWeaponPicker();
-  });document.addEventListener('toggle',event=>{if(event.target.matches?.('.tc-affinity-compare'))tcAffinityCompareOpen=event.target.open;},true);document.addEventListener('focusin',event=>{if(event.target.matches('#tcBuildWeaponName'))renderWeaponPicker();});document.addEventListener('keydown',event=>{if(!event.target.matches('#tcBuildWeaponName'))return;if(event.key==='Escape'){closeWeaponPicker({restore:true});event.target.blur();return;}if(event.key==='Enter'){event.preventDefault();const value=event.target.value.trim(),names=weaponNames(),exact=names.find(n=>n.toLowerCase()===value.toLowerCase()),first=exact||names.find(n=>n.toLowerCase().includes(value.toLowerCase()));if(first)setWeaponSelection(first);}});document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName')){renderWeaponPicker(event.target.value);return;}if(event.target.matches('[data-build-field],#tcBuildUpgrade')){if(event.target.value===''){clearTimeout(tcBuildAutosaveTimer);tcBuildAutosaveTimer=null;markDirty(true);return;}refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){const min=Number(event.target.min)||0,max=Number(event.target.max)||999,n=Number(event.target.value);event.target.value=String(Math.max(min,Math.min(max,Number.isFinite(n)?n:min)));refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset)for(const key of ['level','vig','mind','end','str','dex','int','fai','arc']){const field=document.querySelector(`[data-build-field="${key}"]`);if(field)field.value=preset[key];}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildWeaponName')){const value=event.target.value.trim(),exact=weaponNames().find(n=>n.toLowerCase()===value.toLowerCase());if(exact){setWeaponSelection(exact);return;}if(!value){event.target.dataset.selectedWeapon='';closeWeaponPicker();refreshResults();scheduleBuildSave();return;}const openPicker=document.querySelector('#tcWeaponPicker');if(openPicker&&!openPicker.hidden)return;/* Already showing these results; rebuilding here would swallow the tap on a result. */renderWeaponPicker(value);return;}if(event.target.matches('[data-talisman],[data-physick]')){const isTalisman=event.target.matches('[data-talisman]'),selector=isTalisman?'[data-talisman]':'[data-physick]',value=event.target.value.trim();if(value){const others=[...document.querySelectorAll(selector)].filter(el=>el!==event.target&&el.value);if(isTalisman){const family=talismanFamilyKey(value);if(others.some(el=>talismanFamilyKey(el.value)===family)){event.target.value='';setToast('Those talismans are mutually exclusive in-game.');}}else{const key=itemKey(value);if(!PHYSICK_DUPLICATES_ALLOWED.has(key)&&others.some(el=>itemKey(el.value)===key)){event.target.value='';setToast('You only have one copy of that Crystal Tear.');}}}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
+  });document.addEventListener('toggle',event=>{if(event.target.matches?.('.tc-affinity-compare'))tcAffinityCompareOpen=event.target.open;},true);document.addEventListener('focusin',event=>{if(event.target.matches('#tcBuildWeaponName'))renderWeaponPicker();});document.addEventListener('keydown',event=>{if(!event.target.matches('#tcBuildWeaponName'))return;if(event.key==='Escape'){closeWeaponPicker({restore:true});event.target.blur();return;}if(event.key==='Enter'){event.preventDefault();if(!event.target.value.trim()){closeWeaponPicker();return;}const value=event.target.value.trim(),names=weaponNames(),exact=names.find(n=>n.toLowerCase()===value.toLowerCase()),first=exact||names.find(n=>n.toLowerCase().includes(value.toLowerCase()));if(first)setWeaponSelection(first);}});document.addEventListener('input',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('#tcBuildWeaponName')){renderWeaponPicker(event.target.value);return;}if(event.target.matches('[data-build-field],#tcBuildUpgrade')){if(event.target.value===''){const q=buildQueue(selectedSlot());clearTimeout(q.timer);q.timer=null;markDirty(true);return;}refreshResults();scheduleBuildSave();}});document.addEventListener('change',event=>{if(!event.target.closest('.tc-build-screen'))return;if(event.target.matches('[data-build-field],#tcBuildUpgrade')){const min=Number(event.target.min)||0,max=Number(event.target.max)||999,n=Math.round(Number(event.target.value));event.target.value=String(Math.max(min,Math.min(max,Number.isFinite(n)?n:min)));refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildClass')){const preset=STARTING_CLASSES[event.target.value];if(preset){const keys=['level','vig','mind','end','str','dex','int','fai','arc'],prev=STARTING_CLASSES[buildFor().startingClass]||null,blank=blankBuild(),val=k=>Number(document.querySelector(`[data-build-field="${k}"]`)?.value);const untouched=keys.every(k=>val(k)===Number(blank[k])||(prev&&val(k)===Number(prev[k])));for(const key of keys){const field=document.querySelector(`[data-build-field="${key}"]`);if(!field)continue;const cur=val(key);field.value=String(untouched||!Number.isFinite(cur)?preset[key]:Math.max(cur,preset[key]));}}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildWeaponName')){const value=event.target.value.trim(),exact=weaponNames().find(n=>n.toLowerCase()===value.toLowerCase());if(exact){setWeaponSelection(exact);return;}if(!value){event.target.dataset.selectedWeapon='';closeWeaponPicker();refreshResults();scheduleBuildSave();return;}const openPicker=document.querySelector('#tcWeaponPicker');if(openPicker&&!openPicker.hidden)return;/* Already showing these results; rebuilding here would swallow the tap on a result. */renderWeaponPicker(value);return;}if(event.target.matches('[data-talisman],[data-physick]')){const isTalisman=event.target.matches('[data-talisman]'),selector=isTalisman?'[data-talisman]':'[data-physick]',value=event.target.value.trim();if(value){const others=[...document.querySelectorAll(selector)].filter(el=>el!==event.target&&el.value);if(isTalisman){const family=talismanFamilyKey(value);if(others.some(el=>talismanFamilyKey(el.value)===family)){event.target.value='';setToast('Those talismans are mutually exclusive in-game.');}}else{const key=itemKey(value);if(!PHYSICK_DUPLICATES_ALLOWED.has(key)&&others.some(el=>itemKey(el.value)===key)){event.target.value='';setToast('You only have one copy of that Crystal Tear.');}}}refreshResults();scheduleBuildSave();return;}if(event.target.matches('#tcBuildAffinity')){refreshResults();scheduleBuildSave();}});}
   queueMicrotask(()=>{if(run&&!tcTransitionIsLocked())renderRun();});
 })();
 /* --- End persistent Tarnished build lab --- */

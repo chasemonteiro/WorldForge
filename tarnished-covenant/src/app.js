@@ -1623,7 +1623,10 @@ async function tcRecoverRememberedRun(){
 }
 
 async function boot(){
-  if(session?.runId||session?.joinCode||incomingCode){
+  /* An invite link on a phone that has never joined must go through the join
+     screen so the player picks who they are; auto-recovery would join as
+     "Tarnished", which no reward, recall or clear check recognizes. */
+  if(session?.runId||session?.joinCode||(incomingCode&&session?.displayName)){
     return tcRecoverRememberedRun();
   }
   renderHome();
@@ -1750,7 +1753,7 @@ function subscribe() {
   });
 }
 
-async function commit(nextState, { retryBuilder = null, successToast = '' } = {}) {
+async function commit(nextState, { retryBuilder = null, successToast = '', quiet = false } = {}) {
   if (pending) {
     setToast('One action is still saving.');
     return false;
@@ -1798,14 +1801,14 @@ async function commit(nextState, { retryBuilder = null, successToast = '' } = {}
       const rebuiltState = retryBuilder(run.state);
       if (!rebuiltState) {
         renderRun();
-        setToast('The run changed on the other phone. That action no longer applies.');
+        if (!quiet) setToast('The run changed on the other phone. That action no longer applies.');
         return false;
       }
       desiredState = rebuiltState;
     }
 
     renderRun();
-    setToast('Restart could not complete. Try again.');
+    if (!quiet) setToast('The run kept changing on the other phone. Try again.');
     return false;
   } catch (error) {
     console.error(error);
@@ -3017,7 +3020,23 @@ startNextRegion=function(state,actor,region,severity=state.severity){
   const source=tcNormalizeRunState(state);
   const next=tcStartNextRegionBeforeHardening(source,actor,region,severity);
   next.smithing=structuredClone(source?.smithing||smithingData(source));
+  /* Run-level records outlive a region: boss kills recorded by Sanctioned
+     Kills or appeals, the appeal cooldown, a Chaos debt rolled on the capstone,
+     and a shared reward the other phone may still be viewing. Unknown future
+     fields are carried too. */
+  for(const key of ['sanctionedBossKills','appealPenaltyBossKills','appealWeaponCooldown','pendingDebt','sharedRewardReveal','sharedRewardDraw']){
+    if(source?.[key]!==undefined&&source[key]!==null)next[key]=structuredClone(source[key]);
+  }
+  for(const [key,value] of Object.entries(source||{}))if(!(key in next))next[key]=structuredClone(value);
   tcNormalizeRunState(next);
+  /* The fresh state rolled its first encounter before history was copied in,
+     so it could pick an already-killed boss and ignore used weapons and gates.
+     Roll it again against the real history. */
+  if(next.current){
+    const debt=next.pendingDebt||null;
+    next.current=newEncounter(next);
+    if(debt){next.current.covenantDebt=debt;next.pendingDebt=null;}
+  }
   const affordable=tcAffordableBellBearings(next);
   if(next.current&&!next.smithing.activeContract&&affordable.length){
     next.smithing.pendingCorporateForEncounterId=next.current.id;
@@ -5161,7 +5180,7 @@ function tcOpenAppealBossPicker(penanceId){
   const choices=tcAppealBossChoices(state);if(!choices.length)return setToast('No eligible extra bosses are currently available.');
   const opts=choices.map((x,i)=>`<option value="${i}">${h(x.name)} · ${h(x.region)}${x.type==='erdtree'?' · spends 1 Erdtree Writ':''}</option>`).join('');
   const el=tcStrategicOverlay('Record Extra Boss Kill',`<p>Choose the boss actually killed to satisfy this Weapon Appeal penalty. Recording it removes that boss from future Covenant draws. Minor Erdtree Avatars require and consume an Erdtree Writ.</p><label class="label">boss killed</label><select id="tcAppealBossSelect">${opts}</select>`,`<div class="tc-strategy-actions"><button type="button" class="btn gold" id="tcConfirmAppealBoss">Record Boss</button></div>`);
-  el.querySelector('#tcConfirmAppealBoss')?.addEventListener('click',async e=>{const choice=choices[Number(el.querySelector('#tcAppealBossSelect')?.value)];if(!choice)return;const actor=playerName(),encounterId=c.id,build=latest=>tcBuildAppealBossRecord(latest,encounterId,penanceId,choice,actor),staged=build(run.state);if(!staged)return setToast('That boss or penalty is no longer eligible.');e.currentTarget.disabled=true;const saved=await commit(staged,{successToast:`${choice.name} recorded for the Appeal penalty.`,retryBuilder:build});if(saved)el.remove();});
+  el.querySelector('#tcConfirmAppealBoss')?.addEventListener('click',async e=>{const choice=choices[Number(el.querySelector('#tcAppealBossSelect')?.value)];if(!choice)return;const actor=playerName(),encounterId=c.id,build=latest=>tcBuildAppealBossRecord(latest,encounterId,penanceId,choice,actor),staged=build(run.state);if(!staged)return setToast('That boss or penalty is no longer eligible.');const btn=e.currentTarget;btn.disabled=true;const saved=await commit(staged,{successToast:`${choice.name} recorded for the Appeal penalty.`,retryBuilder:build});if(saved)el.remove();else btn.disabled=false;});
 }
 penanceMarkup=function(c){if(!c.penances?.length)return '';const state=run?.state;return `<section class="curse-section"><div class="section-kicker redtext">armament penalties</div><div class="curse-head"><span class="curse-glyphs">${'☠'.repeat(Math.min(c.penances.length,6))}</span><span>${c.penances.length} active ${c.penances.length===1?'punishment':'punishments'}</span></div>${c.penances.map((p,i)=>{const needs=tcPenanceNeedsBossRecord(p),rec=tcPenanceBossRecord(state,p);return `<div class="penance-item"><div class="scope">${h(personalizePlayers(p.scope,state))} · penalty ${i+1}</div><div class="penance-name">${h(p.name)}</div><div class="penance-text">${h(personalizePlayers(p.text,state))}</div>${needs?`<div class="tc-penalty-boss-record">${rec?`<strong>Extra boss recorded</strong><span>${h(rec.name)} · ${h(rec.region)}</span>`:`<strong>Extra boss still unrecorded</strong><span>Once you kill the required extra boss, put the specific kill on file.</span><button type="button" class="btn ghost small" data-record-appeal-boss="${h(p.id)}">Record Extra Boss Kill</button>`}</div>`:''}</div>`}).join('')}<div class="subtext">Penalties stack until the current target is defeated.</div></section>`;};
 if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;document.addEventListener('click',e=>{const b=e.target.closest('[data-record-appeal-boss]');if(b)tcOpenAppealBossPicker(b.dataset.recordAppealBoss);});}
@@ -5170,7 +5189,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/assignment-repair.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261007-armory-1';
+const TC_BUILD_ID='20261008-bugpass-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

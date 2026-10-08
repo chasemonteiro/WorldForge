@@ -1835,6 +1835,14 @@
           "native": "Native skill",
           "infusable": true,
           "requires": ""
+        },
+        {
+          "name": "Troll's Hammer",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
         }
       ]
     },
@@ -1942,14 +1950,6 @@
         },
         {
           "name": "Spiked Club",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": false,
-          "requires": ""
-        },
-        {
-          "name": "Troll's Hammer",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
@@ -3960,6 +3960,48 @@
         "region": "Caelid"
       }
     ],
+    "Nox Flowing Hammer": [
+      {
+        "name": "Mimic Tear",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Greathorn Hammer": [
+      {
+        "name": "Mimic Tear",
+        "region": "Siofra River + Nokron"
+      }
+    ],
+    "Miquellan Knight's Sword": [
+      {
+        "name": "Loretta, Knight of the Haligtree",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
+    "Rotten Crystal Spear": [
+      {
+        "name": "Loretta, Knight of the Haligtree",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
+    "Rotten Crystal Sword": [
+      {
+        "name": "Loretta, Knight of the Haligtree",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
+    "Rotten Crystal Staff": [
+      {
+        "name": "Loretta, Knight of the Haligtree",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
+    "Rotten Staff": [
+      {
+        "name": "Loretta, Knight of the Haligtree",
+        "region": "Miquella’s Haligtree"
+      }
+    ],
     "Regalia of Eochaid": [
       {
         "name": "Frenzied Duelist",
@@ -4405,18 +4447,6 @@
         "name": "Promised Consort Radahn",
         "region": "Enir-Ilim · DLC"
       }
-    ],
-    "Nox Flowing Hammer": [
-      {
-        "name": "Mimic Tear",
-        "region": "Siofra River + Nokron"
-      }
-    ],
-    "Greathorn Hammer": [
-      {
-        "name": "Mimic Tear",
-        "region": "Siofra River + Nokron"
-      }
     ]
   },
   "scenarios": {
@@ -4679,29 +4709,29 @@
           "native": "Native skill",
           "infusable": true,
           "requires": "",
-          "affinity": "Magic",
-          "role": "dodge timing consultant"
+          "affinity": "Fire",
+          "role": "one-more-hit optimist"
         },
         "morgan": {
-          "name": "Golden Order Seal",
+          "name": "Celebrant's Skull",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "scheduled maintenance hazard"
+          "role": "boss morale problem"
         },
-        "chaosTrigger": "WHEN THE TEAM LANDS A CRITICAL ATTACK",
+        "chaosTrigger": "WHEN EITHER PLAYER USES A WEAPON SKILL / ASH OF WAR",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Volcano Pot Incident",
-          "text": "Land a Volcano Pot on the boss before victory.",
-          "tier": "True",
-          "favor": 1
+          "name": "Deep Dish",
+          "text": "Both players must reach Heavy Load before the pull and keep it for the encounter.",
+          "tier": "Grand",
+          "favor": 2
         },
-        "flavor": "not sure what his deal is.",
+        "flavor": "regional target.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -4727,10 +4757,20 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000006",
         "target": {
-          "name": "Ulcerated Tree Spirit",
+          "name": "Abductor Virgins (Duo)",
           "exit": false
         },
         "chase": {
+          "name": "Serpent-Hunter",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "heavy attack specialist"
+        },
+        "morgan": {
           "name": "Great Omenkiller Cleaver",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
@@ -4738,28 +4778,18 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "flask break supervisor"
+          "role": "camera angle victim"
         },
-        "morgan": {
-          "name": "Magma Whip Candlestick",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": false,
-          "requires": "",
-          "affinity": "Fixed / unique",
-          "role": "dodge specialist"
-        },
-        "chaosTrigger": "WHEN EITHER PLAYER REACHES ZERO FP",
+        "chaosTrigger": "WHEN EITHER PLAYER TWO-HANDS THEIR ASSIGNED WEAPON",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Living Off The Land",
-          "text": "Before victory, each player must land damage with one crafted offensive item.",
-          "tier": "True",
-          "favor": 1
+          "name": "False Pilgrimage",
+          "text": "Use a Grace Mimic somewhere inconvenient, mark it with two Rainbow Stones, and perform a gesture before continuing.",
+          "tier": "Grand",
+          "favor": 2
         },
-        "flavor": "go beat his ass, probably.",
+        "flavor": "this seems manageable. suspicious.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -4785,39 +4815,39 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000007",
         "target": {
-          "name": "Ancient Hero of Zamor",
+          "name": "Godskin Apostle and Godskin Noble (Spiritcaller Snail)",
           "exit": false
         },
         "chase": {
-          "name": "Cranial Vessel Candlestand",
+          "name": "Eclipse Shotel",
+          "type": "Curved Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Death Flare",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "dodge timing consultant"
+        },
+        "morgan": {
+          "name": "Giant's Seal",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "unpaid boss inspector"
+          "role": "stamina budget analyst"
         },
-        "morgan": {
-          "name": "Rotten Battle Hammer",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": true,
-          "requires": "",
-          "affinity": "Occult",
-          "role": "poise research volunteer"
-        },
-        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
+        "chaosTrigger": "WHEN THE FIGHT REACHES THREE MINUTES",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Deep Dish",
-          "text": "Both players must reach Heavy Load before the pull and keep it for the encounter.",
+          "name": "Mana From The Heavens",
+          "text": "After your Cerulean Flasks are exhausted, FP recovery may only come from Starlight Shards for the rest of the encounter.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "unfortunately he has health.",
+        "flavor": "not sure what his deal is.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -4853,29 +4883,29 @@
           "native": "Native skill",
           "infusable": true,
           "requires": "",
-          "affinity": "Cold",
-          "role": "boss morale problem"
+          "affinity": "Heavy",
+          "role": "accidental tank"
         },
         "morgan": {
-          "name": "Envoy's Greathorn",
-          "type": "Colossal Weapon",
+          "name": "Cleanrot Spear",
+          "type": "Spear",
           "upgrade": "Somber Smithing Stones",
-          "native": "Great Oracular Bubble",
+          "native": "Sacred Phalanx",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "rolling safety officer"
+          "role": "fog gate enthusiast"
         },
         "chaosTrigger": "WHEN EITHER PLAYER LANDS A JUMP ATTACK",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "The Long Introduction",
-          "text": "Before attacking, both players gesture, use one consumable each, and circle the arena entrance once.",
+          "name": "Warming Stone Hostage Negotiation",
+          "text": "Place a Warming Stone during combat. Both players must touch its effect before either may heal again.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "famous last words.",
+        "flavor": "current target.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -4905,35 +4935,35 @@
           "exit": false
         },
         "chase": {
-          "name": "Banished Knight's Greatsword",
-          "type": "Greatsword",
-          "upgrade": "Smithing Stones",
-          "native": "Stamp (Upward Cut)",
-          "infusable": true,
-          "requires": "",
-          "affinity": "Keen",
-          "role": "fog gate enthusiast"
-        },
-        "morgan": {
-          "name": "Beastman's Cleaver",
-          "type": "Curved Greatsword",
+          "name": "Beastman's Curved Sword",
+          "type": "Curved Sword",
           "upgrade": "Smithing Stones",
           "native": "Spinning Slash",
           "infusable": true,
           "requires": "",
-          "affinity": "Keen",
-          "role": "stance-break goblin"
+          "affinity": "Heavy",
+          "role": "rune recovery intern"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER IS KNOCKED DOWN OR STANCE-BROKEN",
+        "morgan": {
+          "name": "Devourer's Scepter",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "support / utility"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER TAKES FALL DAMAGE DURING THE ENCOUNTER",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Perfumer’s Union",
-          "text": "Use two different Aromatics during the fight. They must be differently named items.",
+          "name": "The Liturgical Combo",
+          "text": "In order: gesture, thrown-item hit, charged heavy, weapon skill. Any player may perform each step, but do not break the order.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "go beat his ass, probably.",
+        "flavor": "this seems manageable. suspicious.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -4959,39 +4989,39 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000010",
         "target": {
-          "name": "Divine Beast Dancing Lion",
+          "name": "Ghostflame Dragon",
           "exit": false
         },
         "chase": {
-          "name": "Horned Warrior's Sword",
+          "name": "Poisoned Hand",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "close-range pressure"
+          "role": "panic-roll coordinator"
         },
         "morgan": {
-          "name": "Anvil Hammer",
-          "type": "Colossal Weapon",
-          "upgrade": "Somber Smithing Stones",
-          "native": "Smithing Art Spears",
+          "name": "Deadly Poison Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "rune recovery intern"
+          "role": "counter-hit guy"
         },
-        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
+        "chaosTrigger": "WHEN EITHER PLAYER DRINKS ANY FLASK",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "The Four Offices",
-          "text": "As a team, land a light attack, charged heavy, jump attack, and weapon skill before anyone uses a second Crimson Flask.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "Silver Tear Internship",
+          "text": "One randomly chosen player must wear Silver Tear Mask for the entire fight.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "current target.",
+        "flavor": "we have to kill this thing apparently.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5017,39 +5047,39 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000011",
         "target": {
-          "name": "Fallingstar Beast",
+          "name": "Black Knight Garrew",
           "exit": false
         },
         "chase": {
-          "name": "Ansbach's Longbow",
+          "name": "Smithscript Cirque",
+          "type": "Backhand Blade",
+          "upgrade": "Smithing Stones",
+          "native": "Blind Spot",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Occult",
+          "role": "one-more-hit optimist"
+        },
+        "morgan": {
+          "name": "Sword of Darkness",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "panic-roll coordinator"
+          "role": "dodge specialist"
         },
-        "morgan": {
-          "name": "Serpent Flail",
-          "type": "Flail",
-          "upgrade": "Somber Smithing Stones",
-          "native": "Flare, O Serpent",
-          "infusable": false,
-          "requires": "",
-          "affinity": "Fixed / unique",
-          "role": "hitbox dispute specialist"
-        },
-        "chaosTrigger": "WHEN THE BOSS REACHES 50% HEALTH",
+        "chaosTrigger": "WHEN EITHER PLAYER FALLS BELOW 20% HEALTH",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "The Wheel",
-          "text": "If one player dies three times while using the same assigned weapon on this encounter, that player must reroll it before the next serious attempt.",
+          "name": "Stonehenge, Unfortunately",
+          "text": "Place five Rainbow Stones in the arena or immediately outside it before victory.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "confidence currently unsupported.",
+        "flavor": "we have to kill this thing apparently.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5086,28 +5116,28 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "L2 button owner"
+          "role": "part-time floor ornament"
         },
         "morgan": {
-          "name": "Spirit Glaive",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
+          "name": "Spirit Sword",
+          "type": "Curved Sword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Rancor Slash",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "poise research volunteer"
+          "role": "dodge timing consultant"
         },
-        "chaosTrigger": "WHEN A PLAYER REACHES ZERO CRIMSON FLASKS",
+        "chaosTrigger": "WHEN THE BOSS REACHES 50% HEALTH",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "False Pilgrimage",
-          "text": "Use a Grace Mimic somewhere inconvenient, mark it with two Rainbow Stones, and perform a gesture before continuing.",
+          "name": "Against Better Judgment",
+          "text": "No Crimson Flask until both players land a charged heavy. Then use a Warming Stone before anyone takes their second flask.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "this seems manageable. suspicious.",
+        "flavor": "regional target.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5140,16 +5170,6 @@
           "exit": true
         },
         "chase": {
-          "name": "Frenzyflame Perfume Bottle",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": false,
-          "requires": "",
-          "affinity": "Fixed / unique",
-          "role": "panic-roll coordinator"
-        },
-        "morgan": {
           "name": "Nanaya's Torch",
           "type": "Torch",
           "upgrade": "Somber Smithing Stones",
@@ -5157,18 +5177,28 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "support / utility"
+          "role": "close-range pressure"
         },
-        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
+        "morgan": {
+          "name": "Frenzyflame Perfume Bottle",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "poise research volunteer"
+        },
+        "chaosTrigger": "WHEN BOTH PLAYERS ARE BELOW 50% HEALTH AT THE SAME TIME",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "No Aerial Budget",
-          "text": "Jump attacks are forbidden for the entire encounter. Normal jumping for traversal is allowed.",
-          "tier": "True",
-          "favor": 1
+          "name": "Rejuvenating Rocks",
+          "text": "After the first player drops below half health, Crimson Flasks are forbidden until someone stands in a Warming Stone effect.",
+          "tier": "Grand",
+          "favor": 2
         },
-        "flavor": "we have to kill this thing apparently.",
+        "flavor": "confidence currently unsupported.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5194,39 +5224,39 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000014",
         "target": {
-          "name": "Divine Beast Dancing Lion",
+          "name": "Rugalea the Great Red Bear",
           "exit": false
         },
         "chase": {
-          "name": "Smithscript Axe",
-          "type": "Axe",
-          "upgrade": "Smithing Stones",
-          "native": "Wild Strikes",
-          "infusable": true,
+          "name": "Falx",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
           "requires": "",
-          "affinity": "Lightning",
-          "role": "poise research volunteer"
+          "affinity": "Fixed / unique",
+          "role": "designated aggro holder"
         },
         "morgan": {
-          "name": "Smithscript Greathammer",
-          "type": "Great Hammer",
-          "upgrade": "Smithing Stones",
-          "native": "Endure",
-          "infusable": true,
+          "name": "Horned Warrior's Greatsword",
+          "type": "Curved Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Horn Calling: Storm",
+          "infusable": false,
           "requires": "",
-          "affinity": "Quality",
-          "role": "unpaid boss inspector"
+          "affinity": "Fixed / unique",
+          "role": "stamina budget analyst"
         },
-        "chaosTrigger": "WHEN THE FIGHT REACHES THREE MINUTES",
+        "chaosTrigger": "WHEN THE BOSS GRABS EITHER PLAYER",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Panacea",
-          "text": "Do not intentionally add any status source beyond whatever your assigned weapon already has.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "QuikClot",
+          "text": "Do not intentionally add extra Hemorrhage sources. If your assigned weapon has innate bleed, that is allowed.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "not sure what his deal is.",
+        "flavor": "regional target.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5256,35 +5286,35 @@
           "exit": false
         },
         "chase": {
-          "name": "Euporia",
-          "type": "Twinblade",
-          "upgrade": "Somber Smithing Stones",
-          "native": "Euporia Vortex",
-          "infusable": false,
-          "requires": "",
-          "affinity": "Fixed / unique",
-          "role": "fog gate enthusiast"
-        },
-        "morgan": {
-          "name": "Spiraltree Seal",
+          "name": "Bloodfiend's Sacred Spear",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "boss morale problem"
+          "role": "unpaid boss inspector"
         },
-        "chaosTrigger": "WHEN THE BOSS REACHES 75% HEALTH",
+        "morgan": {
+          "name": "Horned Warrior's Greatsword",
+          "type": "Curved Greatsword",
+          "upgrade": "Somber Smithing Stones",
+          "native": "Horn Calling: Storm",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "rune recovery intern"
+        },
+        "chaosTrigger": "WHEN EITHER PLAYER REACHES ZERO FP",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "The Four Offices",
-          "text": "As a team, land a light attack, charged heavy, jump attack, and weapon skill before anyone uses a second Crimson Flask.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "Polite Opening",
+          "text": "Both players must perform Polite Bow before either damages the boss.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "famous last words.",
+        "flavor": "confidence currently unsupported.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5310,7 +5340,7 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000016",
         "target": {
-          "name": "Ancestor Spirit",
+          "name": "Mimic Tear",
           "exit": false
         },
         "chase": {
@@ -5321,28 +5351,28 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "rune recovery intern"
+          "role": "dodge timing consultant"
         },
         "morgan": {
-          "name": "Shotel",
+          "name": "Clayman's Harpoon",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "rolling safety officer"
+          "role": "dodge specialist"
         },
-        "chaosTrigger": "WHEN THE BOSS USES A RANGED OR PROJECTILE ATTACK",
+        "chaosTrigger": "WHEN EITHER PLAYER FALLS BELOW 20% HEALTH",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Arena Survey Marker",
-          "text": "Place one Rainbow Stone somewhere inside or immediately beside the boss arena before victory.",
+          "name": "Original Flavor",
+          "text": "Use the assigned weapon exactly as issued: no changing affinity, no alternate Ash of War, no backup weapon.",
           "tier": "True",
           "favor": 1
         },
-        "flavor": "unfortunately he has health.",
+        "flavor": "source: the app said so.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5372,35 +5402,35 @@
           "exit": false
         },
         "chase": {
-          "name": "Ghostflame Torch",
+          "name": "Clayman's Harpoon",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "close-range pressure"
+          "role": "flask break supervisor"
         },
         "morgan": {
-          "name": "Horn Bow",
-          "type": "Bow",
-          "upgrade": "Smithing Stones",
-          "native": "Mighty Shot",
-          "infusable": true,
+          "name": "Shotel",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
           "requires": "",
-          "affinity": "Flame Art",
-          "role": "stance-break goblin"
+          "affinity": "Fixed / unique",
+          "role": "rolling safety officer"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER SPRINTS INTO MELEE RANGE AND ATTACKS",
+        "chaosTrigger": "WHEN EITHER PLAYER FALLS BELOW 20% HEALTH",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Putrefaction Preventative",
-          "text": "Do not intentionally add Scarlet Rot sources during the encounter.",
-          "tier": "True",
-          "favor": 1
+          "name": "Funeral Custom",
+          "text": "Use a Grace Mimic, place a Rainbow Stone beside it, perform Dejection, then walk away without resting.",
+          "tier": "Grand",
+          "favor": 2
         },
-        "flavor": "confidence currently unsupported.",
+        "flavor": "go beat his ass, probably.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5426,10 +5456,20 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000018",
         "target": {
-          "name": "Fia's champions",
+          "name": "Crucible Knight Siluria",
           "exit": false
         },
         "chase": {
+          "name": "Ghostflame Torch",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": "",
+          "affinity": "Fixed / unique",
+          "role": "heavy attack specialist"
+        },
+        "morgan": {
           "name": "Shotel",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
@@ -5437,28 +5477,18 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "accidental tank"
+          "role": "unpaid boss inspector"
         },
-        "morgan": {
-          "name": "Horn Bow",
-          "type": "Bow",
-          "upgrade": "Smithing Stones",
-          "native": "Mighty Shot",
-          "infusable": true,
-          "requires": "",
-          "affinity": "Flame Art",
-          "role": "emergency aggro recipient"
-        },
-        "chaosTrigger": "WHEN EITHER PLAYER SUCCESSFULLY PARRIES THE BOSS",
+        "chaosTrigger": "WHEN EITHER PLAYER APPLIES A SELF-BUFF",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "The Turtle Knows",
-          "text": "Bring a Pickled Turtle Neck. Both players bow to the carrier, then the carrier eats it immediately before entering.",
+          "name": "Dark Souls Department",
+          "text": "No jumping, no jump attacks, no Flask of Wondrous Physick, and no weapon skills until victory.",
           "tier": "Grand",
           "favor": 2
         },
-        "flavor": "current target.",
+        "flavor": "not sure what his deal is.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5488,16 +5518,6 @@
           "exit": true
         },
         "chase": {
-          "name": "Curved Club",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": true,
-          "requires": "",
-          "affinity": "Occult",
-          "role": "fog gate enthusiast"
-        },
-        "morgan": {
           "name": "Varre's Bouquet",
           "type": "Hammer",
           "upgrade": "Somber Smithing Stones",
@@ -5505,18 +5525,28 @@
           "infusable": false,
           "requires": "",
           "affinity": "Fixed / unique",
-          "role": "designated aggro holder"
+          "role": "overqualified distraction"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER SUCCESSFULLY PARRIES THE BOSS",
+        "morgan": {
+          "name": "Curved Great Club",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Flame Art",
+          "role": "panic-roll coordinator"
+        },
+        "chaosTrigger": "WHEN THE BOSS GRABS EITHER PLAYER",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Mana From The Heavens",
-          "text": "After your Cerulean Flasks are exhausted, FP recovery may only come from Starlight Shards for the rest of the encounter.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "No Free Crits",
+          "text": "On the first stance break, deliberately skip the critical attack and bow or crouch instead.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "boss-shaped inconvenience.",
+        "flavor": "regional target.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5546,13 +5576,13 @@
           "exit": false
         },
         "chase": {
-          "name": "Great Stars",
-          "type": "Great Hammer",
+          "name": "Guardian’s Swordspear",
+          "type": "Halberd",
           "upgrade": "Smithing Stones",
-          "native": "Endure",
+          "native": "Spinning Slash",
           "infusable": true,
           "requires": "",
-          "affinity": "Magic",
+          "affinity": "Occult",
           "role": "close-range pressure"
         },
         "morgan": {
@@ -5562,19 +5592,19 @@
           "native": "Quickstep",
           "infusable": true,
           "requires": "",
-          "affinity": "Lightning",
-          "role": "rolling safety officer"
+          "affinity": "Blood",
+          "role": "accidental tank"
         },
-        "chaosTrigger": "60 SECONDS AFTER THE FIRST PLAYER DAMAGES THE BOSS",
+        "chaosTrigger": "WHEN THE BOSS LANDS A CRITICAL / RIPOSTE-LIKE HIT ON A PLAYER",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "QuikClot",
-          "text": "Do not intentionally add extra Hemorrhage sources. If your assigned weapon has innate bleed, that is allowed.",
+          "name": "Off The Sauce",
+          "text": "Do not use the Flask of Wondrous Physick for this encounter.",
           "tier": "True",
           "favor": 1
         },
-        "flavor": "famous last words.",
+        "flavor": "go beat his ass, probably.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
@@ -5604,35 +5634,35 @@
           "exit": true
         },
         "chase": {
-          "name": "Guardian’s Swordspear",
-          "type": "Halberd",
-          "upgrade": "Smithing Stones",
-          "native": "Spinning Slash",
-          "infusable": true,
-          "requires": "",
-          "affinity": "Quality",
-          "role": "panic-roll coordinator"
-        },
-        "morgan": {
           "name": "Great Stars",
           "type": "Great Hammer",
           "upgrade": "Smithing Stones",
           "native": "Endure",
           "infusable": true,
           "requires": "",
-          "affinity": "Keen",
-          "role": "emergency aggro recipient"
+          "affinity": "Blood",
+          "role": "accidental tank"
         },
-        "chaosTrigger": "WHEN EITHER PLAYER IS KNOCKED DOWN OR STANCE-BROKEN",
+        "morgan": {
+          "name": "Guardian’s Swordspear",
+          "type": "Halberd",
+          "upgrade": "Smithing Stones",
+          "native": "Spinning Slash",
+          "infusable": true,
+          "requires": "",
+          "affinity": "Lightning",
+          "role": "stance-break goblin"
+        },
+        "chaosTrigger": "WHEN A PLAYER REACHES ZERO CRIMSON FLASKS",
         "chaosTriggered": false,
         "chaosConsequence": "",
         "weirdness": {
-          "name": "Panacea",
-          "text": "Do not intentionally add any status source beyond whatever your assigned weapon already has.",
-          "tier": "Grand",
-          "favor": 2
+          "name": "Stealth Technology",
+          "text": "Use Mimic’s Veil before approaching the boss arena. Remain disguised for at least five seconds.",
+          "tier": "True",
+          "favor": 1
         },
-        "flavor": "go beat his ass, probably.",
+        "flavor": "confidence currently unsupported.",
         "penances": [],
         "createdAt": "2026-09-30T00:00:00.000Z"
       },
