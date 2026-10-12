@@ -10,7 +10,7 @@ required=[
     'function showAppealMenu()',
     'Spend 1 Appeal Waiver',
     'Keep Waiver · Take Penalty',
-    'changeWeapons(run.state,playerName(),which,Boolean(useWaiver))',
+    'changeWeapons(latest,playerName(),which,Boolean(useWaiver))',
     'if(waivers>0)tcShowAppealWaiverChoice(which)',
     "else void tcResolveWeaponAppeal(which,false);",
     "successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':which==='both'?'Weapon appeal granted. Two penalties accepted.':'Weapon appeal granted. Penalty accepted.'",
