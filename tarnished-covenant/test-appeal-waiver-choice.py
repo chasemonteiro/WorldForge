@@ -8,7 +8,7 @@ required=[
     'function tcLegacyShowAppealMenu()',
     'function tcShowAppealWaiverChoice(which)',
     'function showAppealMenu()',
-    'Spend 1 Appeal Waiver',
+    'Spend 1 of your',
     'Keep Waiver · Take Penalty',
     'changeWeapons(latest,playerName(),which,Boolean(useWaiver))',
     'if(waivers>0)tcShowAppealWaiverChoice(which)',
