@@ -67,3 +67,12 @@ assert.equal(app.run("tcWeaponAcquisitionUnlocked({history:[{name:'Loretta, Knig
 assert.ok(app.run("regions['Altus Plateau + Leyndell'].weapons.some(w=>(w.name||w)===\"Troll's Hammer\")"));
 assert.ok(!app.run("regions['Mt. Gelmir'].weapons.some(w=>(w.name||w)===\"Troll's Hammer\")"));
 console.log('Bug pass regressions: travel records, return trips, reward ack, writ cap, armory lock, gate data PASS');
+
+// An Appeal Waiver only halves a two-weapon appeal when one is actually held.
+app.run(`var aw=initialRunState({region:'Mt. Gelmir',severity:'standard'});aw.smithing=smithingData(aw);aw.smithing.appealWaivers=0;
+var noWaiver=changeWeapons(aw,'Chase','both',true);
+var held=structuredClone(aw);held.smithing.appealWaivers=1;var withWaiver=changeWeapons(held,'Chase','both',true);`);
+assert.equal(app.run('noWaiver.current.penances.length'),2,'No waiver held: both weapons cost two penalties');
+assert.equal(app.run('withWaiver.current.penances.length'),0);
+assert.equal(app.run('smithingData(withWaiver).appealWaivers'),0);
+console.log('Appeal waiver guard PASS');

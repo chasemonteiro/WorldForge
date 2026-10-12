@@ -9,7 +9,7 @@ def require(needle,msg=None):
 # each refusal produces its own reroll and its own normal penalty.
 for needle in [
     'const tcChangeWeaponsBeforeDoubleAppealPenalty=changeWeapons;',
-    "if(which!=='both'||useWaiver)",
+    "if(which!=='both'||(useWaiver&&hasWaiver))",
     "let next=tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,'chase',false);",
     "next=tcChangeWeaponsBeforeDoubleAppealPenalty(next,actor,'morgan',false);",
     'Two penalties were added.',
@@ -21,7 +21,7 @@ for needle in [
 # covers the whole appeal. Joint Appeal remains better because it rerolls both
 # without any penalty AND without consuming a waiver.
 for needle in [
-    "if(which!=='both'||useWaiver)",
+    "if(which!=='both'||(useWaiver&&hasWaiver))",
     'One waiver covers this entire appeal',
     'Joint Appeal',
     'Both weapons were reassigned with no penalty.',

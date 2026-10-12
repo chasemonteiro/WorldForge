@@ -4934,8 +4934,16 @@ async function tcResolveWeaponAppeal(which,useWaiver){
   const sm=smithingData(run?.state||{});
   if(useWaiver&&Number(sm.appealWaivers||0)<1)return setToast('No Appeal Waiver remains.');
   tcCloseAppealOverlay();
-  const staged=changeWeapons(run.state,playerName(),which,Boolean(useWaiver));
+  const encounterId=run?.state?.current?.id;
+  const build=latest=>{
+    if(latest?.current?.id!==encounterId)return null;
+    if(useWaiver&&Number(smithingData(latest).appealWaivers||0)<1)return null;
+    return changeWeapons(latest,playerName(),which,Boolean(useWaiver));
+  };
+  const staged=build(run.state);
+  if(!staged)return setToast('No Appeal Waiver remains.');
   await commit(staged,{
+    retryBuilder:build,
     successToast:useWaiver?'Weapon appeal granted. Appeal Waiver spent.':which==='both'?'Weapon appeal granted. Two penalties accepted.':'Weapon appeal granted. Penalty accepted.'
   });
 }
@@ -5013,8 +5021,11 @@ changeWeapons=function(state,actor,which,useWaiver=false){
   // One voluntarily spent waiver still covers the whole appeal, exactly as the
   // explicit waiver-choice screen promises. Without a waiver, appealing both
   // weapons is resolved as two individual appeals: one reroll + one penalty each.
-  if(which!=='both'||useWaiver){
-    return tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,which,useWaiver);
+  // A waiver only counts if one is actually held; otherwise this is a normal
+  // two-penalty appeal (a stale "spend waiver" tap must not halve the price).
+  const hasWaiver=Number(smithingData(state||{}).appealWaivers||0)>0;
+  if(which!=='both'||(useWaiver&&hasWaiver)){
+    return tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,which,useWaiver&&hasWaiver);
   }
   let next=tcChangeWeaponsBeforeDoubleAppealPenalty(state,actor,'chase',false);
   next=tcChangeWeaponsBeforeDoubleAppealPenalty(next,actor,'morgan',false);
@@ -5189,7 +5200,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/assignment-repair.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261008-bugpass-1';
+const TC_BUILD_ID='20261012-appeal-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
