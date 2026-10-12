@@ -7801,10 +7801,10 @@ function tcShowAppealWaiverChoice(which){
   if(!sheet)return;
   sheet.innerHTML=`<div class="tc-kicker red">armament appeal</div>
     <div class="tc-value" style="margin:6px 0 4px">Appeal ${h(label)}?</div>
-    <div class="tc-muted">You have <strong>${count}</strong> Appeal Waiver${count===1?'':'s'}. A waiver prevents the severe random penalty, but spending it is optional.</div>
+    <div class="tc-muted">You have <strong>${count}</strong> Appeal Waiver${count===1?'':'s'}${count===1?' (your last one)':''}. A waiver prevents the severe random penalty, but spending it is optional.</div>
     <div class="tc-panel soft" style="margin-top:14px"><div class="tc-kicker gold">Choose the price</div><div class="tc-muted" style="margin-top:6px">One waiver covers this entire appeal${which==='both'?', including both weapons':''}.</div></div>
     <div class="tc-stack" style="margin-top:14px;display:grid;gap:8px">
-      <button id="tcSpendAppealWaiver" class="btn gold">Spend 1 Appeal Waiver · ${Math.max(0,count-1)} left</button>
+      <button id="tcSpendAppealWaiver" class="btn gold" ${count<1?'disabled':''}>Spend 1 of your ${count} Appeal Waiver${count===1?'':'s'}</button>
       <button id="tcTakeAppealPenalty" class="btn curse">Keep Waiver · Take Penalty</button>
     </div>
     <button id="closeAppeal" class="btn text-btn">Back</button>`;
@@ -9144,7 +9144,7 @@ renderRun=function(){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261012-appeal-1';
+const TC_BUILD_ID='20261012-appeal-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
