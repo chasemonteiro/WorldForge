@@ -1022,3 +1022,4 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
   :is(#app,html) #toast,html.tc-saving :is(#app,html) .tc-sync{animation:none!important}
 }
 :is(#app,html) .tc-panel-refresh .tc-why{margin:0!important;font-size:13px!important}
+:is(#app,html) button.tc-fit-wrap{overflow-wrap:anywhere;word-break:break-word;white-space:normal!important}

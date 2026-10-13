@@ -107,3 +107,4 @@ All in `src/systems/restyle.js` (end) and the last section of `src/theme.css`; p
 - `commit` is wrapped to set `html.tc-saving` / `html.tc-saved` (the `.tc-sync` label pulses, then shows a check). Return value and options pass through untouched.
 - `.tc-why` notes explain disabled buttons (`tcWhyScan`); hidden buttons get no note.
 - Build number fields get `pattern="[0-9]*"`, `step=1`, and a `beforeinput` filter for non-digits.
+- Button labels fit (`tcFitButtons`): a label wider than its button, or a single word with under 8px air per side, steps its font down to 70%; buttons sharing a row share the smallest size; past 70% the word may break. Tab bars and icon buttons are skipped.

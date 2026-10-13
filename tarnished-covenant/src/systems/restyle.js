@@ -446,10 +446,54 @@ if(!window.__tcIntFieldsBound){
     if(event.data&&/[^0-9]/.test(event.data))event.preventDefault();
   },true);
 }
+// Long names: a button whose label is wider than the button shrinks its text
+// (down to 70%) until it fits; past that it may break inside a long word
+// instead of spilling out. Measured in batches so layout is read once per pass.
+function tcFitButtons(){
+  const pending=[];
+  document.querySelectorAll('button').forEach(btn=>{
+    const label=btn.textContent;
+    if(btn.dataset.tcFit===label||!label.trim()||!btn.getClientRects().length)return;
+    if(btn.querySelector('svg,img,canvas')||getComputedStyle(btn).textOverflow==='ellipsis')return;
+    if(btn.closest('.tc-bottom-nav,.tc-encounter-tabs,.tc-sanctuary-tabs,.tc-ledger-tabs,.tc-build-tabs'))return;
+    pending.push(btn);
+  });
+  if(!pending.length)return;
+  // Reset earlier fits on buttons whose label changed.
+  pending.forEach(btn=>{if(btn.dataset.tcFit!==undefined){btn.style.removeProperty('font-size');btn.classList.remove('tc-fit-wrap');}});
+  // Overflow, or a single word (a name) with no air left beside the border.
+  const range=document.createRange();
+  const tight=btn=>{
+    range.selectNodeContents(btn);
+    const cs=getComputedStyle(btn),text=range.getBoundingClientRect().width;
+    const room=btn.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);
+    if(text>room+.5)return true;
+    return btn.childElementCount===0&&!/\s/.test(btn.textContent.trim())&&text>btn.clientWidth-16;
+  };
+  let over=pending.filter(tight);
+  const base=new Map(over.map(btn=>[btn,parseFloat(getComputedStyle(btn).fontSize)||16])),scaleOf=new Map();
+  for(const scale of [.92,.85,.78,.7]){
+    if(!over.length)break;
+    over.forEach(btn=>{scaleOf.set(btn,scale);btn.style.setProperty('font-size',`${(base.get(btn)*scale).toFixed(1)}px`,'important');});
+    over=over.filter(tight);
+  }
+  // Buttons sharing a row share one size, so a row never looks uneven.
+  for(const [btn,scale] of scaleOf){
+    for(const sib of btn.parentElement?.children||[]){
+      if(sib===btn||sib.tagName!=='BUTTON'||!pending.includes(sib))continue;
+      const own=scaleOf.get(sib)||1;if(own<=scale)continue;
+      const size=base.get(sib)||parseFloat(getComputedStyle(sib).fontSize)||16;
+      if(!base.has(sib))base.set(sib,size);
+      scaleOf.set(sib,scale);sib.style.setProperty('font-size',`${(size*scale).toFixed(1)}px`,'important');
+    }
+  }
+  over.forEach(btn=>btn.classList.add('tc-fit-wrap'));
+  pending.forEach(btn=>{btn.dataset.tcFit=btn.textContent;});
+}
 if(!window.__tcPolishScanBound){
   window.__tcPolishScanBound=true;
   let queued=false;
-  const scan=()=>{queued=false;for(const fn of [tcCountScan,tcWhyScan,tcNumericFields]){try{fn();}catch(error){console.warn('Polish scan skipped',error);}}};
+  const scan=()=>{queued=false;for(const fn of [tcCountScan,tcWhyScan,tcNumericFields,tcFitButtons]){try{fn();}catch(error){console.warn('Polish scan skipped',error);}}};
   const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(scan);};
   const start=()=>{new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});schedule();};
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
