@@ -9351,6 +9351,8 @@ function tcBatteryScan(){
   if(observer)document.querySelectorAll('.tc-encounter-panel,.tc-sanctuary-panel').forEach(panel=>{if(!tcAnimObserved.has(panel)){tcAnimObserved.add(panel);observer.observe(panel);}});
   const seal=document.querySelector('#triggerChaos.tc-seal-inline');if(seal&&!seal.disabled)tcAddFxLayers(seal);
   const endure=document.querySelector('.tc-chaos-event #ackChaos');if(endure)tcAddFxLayers(endure);
+  const flame=document.querySelector('svg.tc-grace-native-svg:not([data-tc-layered])');
+  if(flame&&typeof CSSRule!=='undefined')tcLayerGraceFlame(flame);
   const row=document.querySelector('.tc-feature.chaos .tc-feature-row');
   if(row&&document.querySelector('#triggerChaos')&&!row.querySelector(':scope>.tc-seal-flare'))row.insertAdjacentHTML('afterbegin','<span class="tc-seal-flare" aria-hidden="true"></span>');
 }
@@ -9360,6 +9362,72 @@ if(!window.__tcBatteryBound){
   const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;try{tcBatteryScan();}catch(error){console.warn('Battery scan skipped',error);}});};
   const start=()=>{const host=document.querySelector('#app');if(host)new MutationObserver(schedule).observe(host,{childList:true,subtree:true});schedule();};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+  // A rotation or a size class change redraws the flame at the new scale.
+  window.addEventListener('resize',()=>{if(!tcGraceLayersStale())return;const btn=document.querySelector('.tc-grace-idle-button');if(btn&&typeof tcGraceNativeMarkup==='function'){btn.innerHTML=tcGraceNativeMarkup();if(typeof tcQueueIdleGrace==='function')tcQueueIdleGrace();schedule();}},{passive:true});
+}
+/* Battery: the Grace flame, layered. Each of the 24 animated pieces is moved
+   into its own small <svg> layer (same viewBox, stacked exactly over the
+   original), and its animation is moved onto that layer. Inside one SVG every
+   frame repaints the whole drawing; separate layers are only moved and faded
+   by the graphics chip. Every piece keeps its own timing, origin and path, so
+   the motion is the same. Pixel units in the keyframes are SVG units, so they
+   are rescaled to the drawn size. */
+const TC_GRACE_ANIMATED='.tcg-pool,.tcg-flame-body,.tcg-root,.tcg-wisp,.tcg-core,.tcg-mote';
+let tcGraceKeyframeSheet=null;const tcGraceKeyframesMade=new Set();
+function tcFindKeyframes(name){
+  let found=null;
+  for(const sheet of document.styleSheets){let rules;try{rules=sheet.cssRules;}catch(_){continue;}
+    for(const rule of rules)if(rule.type===CSSRule.KEYFRAMES_RULE&&rule.name===name)found=rule;}
+  return found;
+}
+function tcScaledKeyframesName(name,scale){
+  const key=`${name}__L${Math.round(scale*1000)}`;
+  if(tcGraceKeyframesMade.has(key))return key;
+  const source=tcFindKeyframes(name);if(!source)return null;
+  if(!tcGraceKeyframeSheet){tcGraceKeyframeSheet=document.createElement('style');tcGraceKeyframeSheet.id='tc-grace-layer-keyframes';document.head.appendChild(tcGraceKeyframeSheet);}
+  const body=[...source.cssRules].map(frame=>frame.cssText.replace(/(-?\d*\.?\d+)px/g,(_,n)=>`${(Number(n)*scale).toFixed(3)}px`)).join('');
+  tcGraceKeyframeSheet.textContent+=`@keyframes ${key}{${body}}`;
+  tcGraceKeyframesMade.add(key);return key;
+}
+function tcLayerGraceFlame(svg){
+  if(!svg||svg.dataset.tcLayered||!(svg instanceof SVGSVGElement))return;
+  const vb=svg.viewBox.baseVal;if(!vb||!vb.width)return;
+  const rect=svg.getBoundingClientRect();if(!rect.width||!rect.height)return;
+  const scale=Math.min(rect.width/vb.width,rect.height/vb.height),offX=(rect.width-vb.width*scale)/2,offY=(rect.height-vb.height*scale)/2;
+  const wrapper=document.createElement('div');
+  wrapper.className=svg.getAttribute('class')+' tcg-layered';wrapper.setAttribute('aria-hidden','true');wrapper.dataset.tcLayered='1';
+  const base=svg.cloneNode(false);base.removeAttribute('class');base.setAttribute('class','tcg-layer tcg-base');
+  const pieces=[...svg.querySelectorAll(TC_GRACE_ANIMATED)];
+  const plans=pieces.map(el=>{
+    const cs=getComputedStyle(el),names=cs.animationName.split(',').map(x=>x.trim());
+    let ux,uy;const [ox,oy]=cs.transformOrigin.split(' ').map(parseFloat);
+    if(cs.transformBox==='fill-box'){const b=el.getBBox();ux=b.x+ox;uy=b.y+oy;}else{ux=vb.x+ox;uy=vb.y+oy;}
+    const prev=el.style.animation;el.style.animation='none';const baseOpacity=getComputedStyle(el).opacity;el.style.animation=prev;
+    return {el,baseOpacity,anim:{names,duration:cs.animationDuration,delay:cs.animationDelay,timing:cs.animationTimingFunction,count:cs.animationIterationCount,direction:cs.animationDirection,fill:cs.animationFillMode},ux,uy};
+  });
+  // Static parts (defs, anything not animated) stay in a base layer.
+  for(const child of [...svg.childNodes]){if(child.nodeType===1&&child.matches(TC_GRACE_ANIMATED))continue;base.appendChild(child.cloneNode(true));}
+  wrapper.appendChild(base);
+  for(const plan of plans){
+    // Each layer is cropped to its own piece (plus room for the glow), so the
+    // graphics memory is a few small tiles rather than 24 full-size ones.
+    const m=14,b=plan.el.getBBox(),vx=b.x-m,vy=b.y-m,vw=b.width+2*m,vh=b.height+2*m;
+    const layer=svg.cloneNode(false);layer.removeAttribute('class');layer.setAttribute('class','tcg-layer');
+    layer.setAttribute('viewBox',`${vx} ${vy} ${vw} ${vh}`);layer.setAttribute('preserveAspectRatio','none');
+    const piece=plan.el.cloneNode(true);layer.appendChild(piece);
+    const names=plan.anim.names.map(n=>n==='none'?'none':(tcScaledKeyframesName(n,scale)||n));
+    const left=offX+(vx-vb.x)*scale,top=offY+(vy-vb.y)*scale,ox=((plan.ux-vx)*scale).toFixed(3),oy=((plan.uy-vy)*scale).toFixed(3);
+    layer.style.cssText=`left:${left.toFixed(3)}px;top:${top.toFixed(3)}px;width:${(vw*scale).toFixed(3)}px;height:${(vh*scale).toFixed(3)}px;opacity:${plan.baseOpacity};transform-origin:${ox}px ${oy}px;animation-name:${names.join(',')};animation-duration:${plan.anim.duration};animation-delay:${plan.anim.delay};animation-timing-function:${plan.anim.timing};animation-iteration-count:${plan.anim.count};animation-direction:${plan.anim.direction};animation-fill-mode:${plan.anim.fill};`;
+    wrapper.appendChild(layer);
+  }
+  wrapper.dataset.tcScale=String(scale);
+  svg.replaceWith(wrapper);
+}
+function tcGraceLayersStale(){
+  const wrapper=document.querySelector('.tc-grace-native-svg.tcg-layered');if(!wrapper)return false;
+  const layer=wrapper.querySelector('.tcg-layer');const vb=layer?.viewBox?.baseVal;const r=wrapper.getBoundingClientRect();
+  if(!vb||!r.width)return false;
+  return Math.abs(Math.min(r.width/vb.width,r.height/vb.height)-Number(wrapper.dataset.tcScale||0))>0.01;
 }
 /* --- End Covenant restyle markup adjustments --- */
 
@@ -10323,6 +10391,16 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 :is(#app,html) #triggerChaos.tc-seal-inline:active{animation:tcPressShake .28s linear!important}
 :is(#app,html) #triggerChaos.tc-seal-inline:disabled .tc-fx-glow,:is(#app,html) #triggerChaos.tc-seal-inline:disabled .tc-fx-sweep{display:none}
 .tc-chaos-event #ackChaos .tc-fx-sweep{display:none}
+
+/* Grace flame layers (restyle.js): stacked full-size SVG layers, each moved
+   and faded on its own by the graphics chip. Pieces inside a layer stay
+   still; the layer carries the piece's original animation. */
+.tc-grace-native-svg.tcg-layered{display:block}
+.tc-grace-native-svg.tcg-layered>.tcg-layer{position:absolute;overflow:visible;pointer-events:none;will-change:transform,opacity}
+.tc-grace-native-svg.tcg-layered>.tcg-base{inset:0;width:100%;height:100%;will-change:auto}
+.tc-grace-native-svg.tcg-layered .tcg-layer *{animation:none!important}
+.tc-grace-native-svg.tcg-layered .tcg-layer .tcg-mote{opacity:1!important}
+@media (prefers-reduced-motion:reduce){.tc-grace-native-svg.tcg-layered>.tcg-layer{animation:none!important}}
 </style>
 </body>
 </html>

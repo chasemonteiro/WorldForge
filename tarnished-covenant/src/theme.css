@@ -956,3 +956,13 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 :is(#app,html) #triggerChaos.tc-seal-inline:active{animation:tcPressShake .28s linear!important}
 :is(#app,html) #triggerChaos.tc-seal-inline:disabled .tc-fx-glow,:is(#app,html) #triggerChaos.tc-seal-inline:disabled .tc-fx-sweep{display:none}
 .tc-chaos-event #ackChaos .tc-fx-sweep{display:none}
+
+/* Grace flame layers (restyle.js): stacked full-size SVG layers, each moved
+   and faded on its own by the graphics chip. Pieces inside a layer stay
+   still; the layer carries the piece's original animation. */
+.tc-grace-native-svg.tcg-layered{display:block}
+.tc-grace-native-svg.tcg-layered>.tcg-layer{position:absolute;overflow:visible;pointer-events:none;will-change:transform,opacity}
+.tc-grace-native-svg.tcg-layered>.tcg-base{inset:0;width:100%;height:100%;will-change:auto}
+.tc-grace-native-svg.tcg-layered .tcg-layer *{animation:none!important}
+.tc-grace-native-svg.tcg-layered .tcg-layer .tcg-mote{opacity:1!important}
+@media (prefers-reduced-motion:reduce){.tc-grace-native-svg.tcg-layered>.tcg-layer{animation:none!important}}
