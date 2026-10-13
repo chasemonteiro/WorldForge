@@ -966,3 +966,19 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 .tc-grace-native-svg.tcg-layered .tcg-layer *{animation:none!important}
 .tc-grace-native-svg.tcg-layered .tcg-layer .tcg-mote{opacity:1!important}
 @media (prefers-reduced-motion:reduce){.tc-grace-native-svg.tcg-layered>.tcg-layer{animation:none!important}}
+
+/* === Smoothness ============================================================ */
+/* Screens glide in after a bottom-bar tap (compositor-only). */
+@keyframes tcScreenIn{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+#app.tc-screen-enter>*:not(.tc-bottom-nav){animation:tcScreenIn .24s cubic-bezier(.2,.8,.2,1) both}
+/* The gold marker slides from the previous tab instead of reappearing. */
+@keyframes tcNavSlide{from{translate:var(--tc-nav-from,0px) 0}to{translate:0 0}}
+:is(#app,html) .tc-bottom-nav.tc-nav-slide button.active:before,:is(#app,html) .tc-bottom-nav.tc-nav-slide button.active:after{animation:tcNavSlide .32s cubic-bezier(.22,.8,.24,1) both!important}
+/* Pages slide on their own layer while turning. */
+:is(.tc-encounter-track,.tc-sanctuary-track)>*{backface-visibility:hidden}
+/* Instant, tactile press feedback; no grey tap flash. */
+html{-webkit-tap-highlight-color:transparent}
+:is(#app,html) :is(button,.btn,a):not(.tc-grace-idle-button){touch-action:manipulation;transition:scale .12s ease-out}
+:is(#app,html) :is(button,.btn):not(.tc-grace-idle-button):not(:disabled):active{scale:.97;transition-duration:.04s}
+:is(#app,html) .tc-bottom-nav button:active{scale:.94}
+@media (prefers-reduced-motion:reduce){#app.tc-screen-enter>*{animation:none!important}}

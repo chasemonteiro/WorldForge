@@ -102,12 +102,14 @@ function tcPagingTabs(track){return track?.parentElement?.querySelector('.tc-enc
 function tcAnimateTrackTo(track,index){
   if(!track)return;
   const target=Math.max(0,index)*track.clientWidth,from=track.scrollLeft,dist=target-from;
-  cancelAnimationFrame(track.__tcPageAnim||0);
+  (track.__tcFlip||[]).forEach(anim=>{try{anim.cancel();}catch(_){}});track.__tcFlip=null;
   if(Math.abs(dist)<1){track.scrollLeft=target;return;}
-  const start=performance.now(),dur=300;
-  const step=now=>{const t=Math.min(1,(now-start)/dur),e=1-Math.pow(1-t,3);track.scrollLeft=from+dist*e;
-    if(t<1)track.__tcPageAnim=requestAnimationFrame(step);else{track.scrollLeft=target;track.dispatchEvent(new Event('scroll'));}};
-  track.__tcPageAnim=requestAnimationFrame(step);
+  // Jump the scroll position at once (the app reads its page index from it),
+  // then slide the pages from where they were with a transform, which the
+  // graphics chip runs on its own at the display's frame rate.
+  track.scrollLeft=target;track.dispatchEvent(new Event('scroll'));
+  if(!Element.prototype.animate||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  track.__tcFlip=[...track.children].map(panel=>panel.animate([{transform:`translate3d(${dist}px,0,0)`},{transform:'translate3d(0,0,0)'}],{duration:320,easing:'cubic-bezier(.22,.8,.24,1)'}));
 }
 if(!window.__tcSwipePagingBound){
   window.__tcSwipePagingBound=true;
@@ -207,10 +209,15 @@ function tcScaledKeyframesName(name,scale){
   tcGraceKeyframeSheet.textContent+=`@keyframes ${key}{${body}}`;
   tcGraceKeyframesMade.add(key);return key;
 }
+let tcGraceLayerCache=null;
 function tcLayerGraceFlame(svg){
   if(!svg||svg.dataset.tcLayered||!(svg instanceof SVGSVGElement))return;
   const vb=svg.viewBox.baseVal;if(!vb||!vb.width)return;
   const rect=svg.getBoundingClientRect();if(!rect.width||!rect.height)return;
+  // Same drawn size as last time: reuse the finished layers instead of
+  // measuring all 24 pieces again (that measuring is what made Grace slow to open).
+  const cacheKey=`${Math.round(rect.width*10)}x${Math.round(rect.height*10)}`;
+  if(tcGraceLayerCache?.key===cacheKey){const tpl=document.createElement('template');tpl.innerHTML=tcGraceLayerCache.html;svg.replaceWith(tpl.content.firstElementChild);return;}
   const scale=Math.min(rect.width/vb.width,rect.height/vb.height),offX=(rect.width-vb.width*scale)/2,offY=(rect.height-vb.height*scale)/2;
   const wrapper=document.createElement('div');
   wrapper.className=svg.getAttribute('class')+' tcg-layered';wrapper.setAttribute('aria-hidden','true');wrapper.dataset.tcLayered='1';
@@ -239,6 +246,7 @@ function tcLayerGraceFlame(svg){
     wrapper.appendChild(layer);
   }
   wrapper.dataset.tcScale=String(scale);
+  tcGraceLayerCache={key:cacheKey,html:wrapper.outerHTML};
   svg.replaceWith(wrapper);
 }
 function tcGraceLayersStale(){
@@ -246,5 +254,36 @@ function tcGraceLayersStale(){
   const layer=wrapper.querySelector('.tcg-layer');const vb=layer?.viewBox?.baseVal;const r=wrapper.getBoundingClientRect();
   if(!vb||!r.width)return false;
   return Math.abs(Math.min(r.width/vb.width,r.height/vb.height)-Number(wrapper.dataset.tcScale||0))>0.01;
+}
+/* Smoothness: when a bottom-bar tab is pressed, the next screen glides in
+   (opacity + a small rise, compositor-only) and the gold marker slides from
+   the old tab to the new one. Classes are set from a MutationObserver, which
+   runs before the browser paints the new screen, so there is no flash. */
+let tcScreenEnter=null;
+document.addEventListener('click',event=>{
+  const btn=event.target.closest?.('.tc-bottom-nav [data-screen]');if(!btn||btn.classList.contains('active'))return;
+  const nav=btn.closest('.tc-bottom-nav'),buttons=[...nav.querySelectorAll('button')],old=nav.querySelector('button.active');
+  // Measure now, while the old screen is laid out, so the new screen never
+  // has to be measured before its first paint.
+  const r=nav.getBoundingClientRect();
+  tcScreenEnter={at:performance.now(),navLeft:r.left,navWidth:r.width,count:buttons.length,fromIndex:old?buttons.indexOf(old):-1,screen:btn.dataset.screen};
+},true);
+function tcApplyScreenEnter(){
+  if(!tcScreenEnter||performance.now()-tcScreenEnter.at>1500){tcScreenEnter=null;return;}
+  const host=document.querySelector('#app'),nav=host?.querySelector('.tc-bottom-nav'),active=nav?.querySelector('button.active');
+  if(!host||!active)return;
+  const info=tcScreenEnter;tcScreenEnter=null;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  // The new screen's elements are fresh, so adding the class starts their
+  // glide without forcing a layout.
+  host.classList.add('tc-screen-enter');
+  clearTimeout(host.__tcEnterTimer);host.__tcEnterTimer=setTimeout(()=>host.classList.remove('tc-screen-enter'),400);
+  const buttons=[...nav.querySelectorAll('button')],toIndex=buttons.indexOf(active);
+  if(info.fromIndex>=0&&toIndex>=0&&buttons.length===info.count){const step=info.navWidth/info.count;nav.style.setProperty('--tc-nav-from',`${Math.round((info.fromIndex-toIndex)*step)}px`);nav.classList.add('tc-nav-slide');}
+}
+if(!window.__tcScreenEnterBound){
+  window.__tcScreenEnterBound=true;
+  const watch=()=>{const host=document.querySelector('#app');if(host)new MutationObserver(()=>{if(tcScreenEnter)tcApplyScreenEnter();}).observe(host,{childList:true});};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();
 }
 /* --- End Covenant restyle markup adjustments --- */
