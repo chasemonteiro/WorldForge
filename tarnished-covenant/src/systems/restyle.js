@@ -147,4 +147,36 @@ if(!window.__tcSwipePagingBound){
     const buttons=[...(tcPagingTabs(track)?.querySelectorAll('button')||[])],i=buttons.findIndex(b=>b.classList.contains('active'));
     if(i>=0)track.scrollLeft=i*track.clientWidth;});},{passive:true});
 }
+/* Battery: animations only run where they can be seen. Grace/Encounter pages
+   that are not the visible tab are paused (IntersectionObserver on the track),
+   and effect layers for the pulsing buttons/seal are added here so the CSS
+   can animate cheap opacity/transform layers instead of repainting. */
+const tcAnimObserved=new WeakSet();
+let tcAnimObserver=null;
+function tcAnimVisibilityObserver(){
+  if(tcAnimObserver||typeof IntersectionObserver==='undefined')return tcAnimObserver;
+  tcAnimObserver=new IntersectionObserver(entries=>{
+    for(const entry of entries)entry.target.classList.toggle('tc-anim-paused',!entry.isIntersecting||entry.intersectionRatio<0.02);
+  },{threshold:[0,0.02,0.5]});
+  return tcAnimObserver;
+}
+function tcAddFxLayers(button){
+  if(!button||button.querySelector(':scope>.tc-fx-glow'))return;
+  button.insertAdjacentHTML('afterbegin','<span class="tc-fx-glow" aria-hidden="true"></span><span class="tc-fx-sweep" aria-hidden="true"></span>');
+}
+function tcBatteryScan(){
+  const observer=tcAnimVisibilityObserver();
+  if(observer)document.querySelectorAll('.tc-encounter-panel,.tc-sanctuary-panel').forEach(panel=>{if(!tcAnimObserved.has(panel)){tcAnimObserved.add(panel);observer.observe(panel);}});
+  const seal=document.querySelector('#triggerChaos.tc-seal-inline');if(seal&&!seal.disabled)tcAddFxLayers(seal);
+  const endure=document.querySelector('.tc-chaos-event #ackChaos');if(endure)tcAddFxLayers(endure);
+  const row=document.querySelector('.tc-feature.chaos .tc-feature-row');
+  if(row&&document.querySelector('#triggerChaos')&&!row.querySelector(':scope>.tc-seal-flare'))row.insertAdjacentHTML('afterbegin','<span class="tc-seal-flare" aria-hidden="true"></span>');
+}
+if(!window.__tcBatteryBound){
+  window.__tcBatteryBound=true;
+  let queued=false;
+  const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;try{tcBatteryScan();}catch(error){console.warn('Battery scan skipped',error);}});};
+  const start=()=>{const host=document.querySelector('#app');if(host)new MutationObserver(schedule).observe(host,{childList:true,subtree:true});schedule();};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+}
 /* --- End Covenant restyle markup adjustments --- */
