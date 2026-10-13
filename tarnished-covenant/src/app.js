@@ -5200,7 +5200,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/assignment-repair.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261013-smooth-1';
+const TC_BUILD_ID='20261013-smooth-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

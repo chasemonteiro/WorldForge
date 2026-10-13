@@ -9151,7 +9151,7 @@ renderRun=function(){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261013-smooth-1';
+const TC_BUILD_ID='20261013-smooth-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -9291,7 +9291,16 @@ function tcAnimateTrackTo(track,index){
   // graphics chip runs on its own at the display's frame rate.
   track.scrollLeft=target;track.dispatchEvent(new Event('scroll'));
   if(!Element.prototype.animate||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  track.__tcFlip=[...track.children].map(panel=>panel.animate([{transform:`translate3d(${dist}px,0,0)`},{transform:'translate3d(0,0,0)'}],{duration:320,easing:'cubic-bezier(.22,.8,.24,1)'}));
+  // The page being left dims and sinks back a touch while the new one fades
+  // up as it slides in: a soft crossfade instead of a hard edge. Opacity and
+  // transform only, so the graphics chip does it without repainting.
+  const w=track.clientWidth||1,fromIndex=Math.round(from/w),toIndex=Math.round(target/w),opts={duration:340,easing:'cubic-bezier(.22,.8,.24,1)'};
+  track.__tcFlip=[...track.children].map((panel,i)=>{
+    const start=`translate3d(${dist}px,0,0)`,end='translate3d(0,0,0)';
+    if(i===fromIndex)return panel.animate([{transform:`${start} scale(1)`,opacity:1},{transform:`${end} scale(.96)`,opacity:.15}],opts);
+    if(i===toIndex)return panel.animate([{transform:`${start} scale(.985)`,opacity:.25},{transform:`${end} scale(1)`,opacity:1}],opts);
+    return panel.animate([{transform:start,opacity:.2},{transform:end,opacity:.2}],opts);
+  });
 }
 if(!window.__tcSwipePagingBound){
   window.__tcSwipePagingBound=true;
