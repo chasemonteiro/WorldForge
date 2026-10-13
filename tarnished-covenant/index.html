@@ -5608,8 +5608,15 @@ if(!window.__tcMultiplayerRecoveryBound){
       tcSyncAuthoritativeRun('resume');
     }
   });
+  // Realtime pushes changes as they happen; the 30s poll is only needed while
+  // that live link is down. When it is up, a slow 3-minute check remains as a
+  // safety net for a silently stalled socket.
+  let tcLastHeartbeatSync=Date.now();
   window.__tcMultiplayerHeartbeat=window.setInterval(()=>{
-    if(document.visibilityState==='visible')tcSyncAuthoritativeRun('heartbeat');
+    if(document.visibilityState!=='visible')return;
+    if(tcRealtimeStatus==='SUBSCRIBED'&&Date.now()-tcLastHeartbeatSync<180000)return;
+    tcLastHeartbeatSync=Date.now();
+    tcSyncAuthoritativeRun('heartbeat');
   },30000);
 }
 /* --- End multiplayer synchronization hardening --- */
@@ -9144,7 +9151,7 @@ renderRun=function(){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261012-appeal-2';
+const TC_BUILD_ID='20261013-battery-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -9322,6 +9329,38 @@ if(!window.__tcSwipePagingBound){
     const buttons=[...(tcPagingTabs(track)?.querySelectorAll('button')||[])],i=buttons.findIndex(b=>b.classList.contains('active'));
     if(i>=0)track.scrollLeft=i*track.clientWidth;});},{passive:true});
 }
+/* Battery: animations only run where they can be seen. Grace/Encounter pages
+   that are not the visible tab are paused (IntersectionObserver on the track),
+   and effect layers for the pulsing buttons/seal are added here so the CSS
+   can animate cheap opacity/transform layers instead of repainting. */
+const tcAnimObserved=new WeakSet();
+let tcAnimObserver=null;
+function tcAnimVisibilityObserver(){
+  if(tcAnimObserver||typeof IntersectionObserver==='undefined')return tcAnimObserver;
+  tcAnimObserver=new IntersectionObserver(entries=>{
+    for(const entry of entries)entry.target.classList.toggle('tc-anim-paused',!entry.isIntersecting||entry.intersectionRatio<0.02);
+  },{threshold:[0,0.02,0.5]});
+  return tcAnimObserver;
+}
+function tcAddFxLayers(button){
+  if(!button||button.querySelector(':scope>.tc-fx-glow'))return;
+  button.insertAdjacentHTML('afterbegin','<span class="tc-fx-glow" aria-hidden="true"></span><span class="tc-fx-sweep" aria-hidden="true"></span>');
+}
+function tcBatteryScan(){
+  const observer=tcAnimVisibilityObserver();
+  if(observer)document.querySelectorAll('.tc-encounter-panel,.tc-sanctuary-panel').forEach(panel=>{if(!tcAnimObserved.has(panel)){tcAnimObserved.add(panel);observer.observe(panel);}});
+  const seal=document.querySelector('#triggerChaos.tc-seal-inline');if(seal&&!seal.disabled)tcAddFxLayers(seal);
+  const endure=document.querySelector('.tc-chaos-event #ackChaos');if(endure)tcAddFxLayers(endure);
+  const row=document.querySelector('.tc-feature.chaos .tc-feature-row');
+  if(row&&document.querySelector('#triggerChaos')&&!row.querySelector(':scope>.tc-seal-flare'))row.insertAdjacentHTML('afterbegin','<span class="tc-seal-flare" aria-hidden="true"></span>');
+}
+if(!window.__tcBatteryBound){
+  window.__tcBatteryBound=true;
+  let queued=false;
+  const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;try{tcBatteryScan();}catch(error){console.warn('Battery scan skipped',error);}});};
+  const start=()=>{const host=document.querySelector('#app');if(host)new MutationObserver(schedule).observe(host,{childList:true,subtree:true});schedule();};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+}
 /* --- End Covenant restyle markup adjustments --- */
 
 </script>
@@ -9372,7 +9411,7 @@ html body{background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialias
 body:before{opacity:1!important;mix-blend-mode:normal!important;background:
   radial-gradient(120% 70% at 50% 118%,rgba(0,0,0,.85),transparent 62%),
   radial-gradient(140% 60% at 50% -12%,rgba(207,169,96,.07),transparent 60%)!important}
-body:after{opacity:.075!important;mix-blend-mode:screen;background-size:180px 180px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")!important}
+body:after{opacity:.07!important;mix-blend-mode:normal!important;background-size:180px 180px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")!important}
 
 /* Shared label voice: small caps instead of tiny bold sans --------------- */
 :is(#app,html) .eyebrow,
@@ -10120,11 +10159,13 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 @keyframes tcSealTurn{to{rotate:360deg}}
 @keyframes tcSealTurnBack{to{rotate:-360deg}}
 @keyframes tcEmberBreath{0%,100%{opacity:.45;scale:.92}50%{opacity:1;scale:1.06}}
-@keyframes tcSealStrain{0%,85%,100%{translate:0 0;scale:1;filter:drop-shadow(0 0 10px rgba(217,122,102,.55))}87%{translate:-4px 2px;scale:1.06;filter:drop-shadow(0 0 22px rgba(255,120,80,.95)) brightness(1.5)}88.5%{translate:5px -2px}90%{translate:-4px 0;scale:1.09;filter:drop-shadow(0 0 26px rgba(255,140,100,1)) brightness(1.7)}91.5%{translate:3px 2px}93%{translate:-1px -1px;scale:1.02;filter:drop-shadow(0 0 14px rgba(217,122,102,.7))}95%{translate:0 0;scale:1}}
+@keyframes tcSealStrain{0%,85%,100%{translate:0 0;scale:1}87%{translate:-4px 2px;scale:1.06}88.5%{translate:5px -2px}90%{translate:-4px 0;scale:1.09}91.5%{translate:3px 2px}93%{translate:-1px -1px;scale:1.02}95%{translate:0 0;scale:1}}
+/* the strain flare: opacity only, timed with the shudder */
+@keyframes tcStrainFlare{0%,85%,95%,100%{opacity:0}88%{opacity:.9}90%{opacity:1}92%{opacity:.5}}
 @keyframes tcStrainFlash{0%,86%,93%,100%{opacity:0}88%{opacity:.9}90%{opacity:.3}91%{opacity:.75}}
-@keyframes tcEmbersUp{from{background-position:0 0,0 0,0 0}to{background-position:0 -260px,0 -390px,0 -520px}}
-@keyframes tcHeat{0%,100%{text-shadow:0 0 18px rgba(217,90,60,.18)}50%{text-shadow:0 0 26px rgba(233,110,80,.42),0 0 2px rgba(255,190,160,.25)}}
-@keyframes tcButtonBreath{0%,100%{box-shadow:0 0 18px rgba(217,90,60,.18),inset 0 1px 0 rgba(255,190,170,.12)}50%{box-shadow:0 0 34px rgba(230,96,62,.45),0 0 4px rgba(255,150,120,.5),inset 0 1px 0 rgba(255,190,170,.2)}}
+@keyframes tcEmbersUp{from{translate:0 0}to{translate:0 -390px}}
+@keyframes tcHeat{0%,100%{opacity:.84}50%{opacity:1}}
+@keyframes tcButtonBreath{0%,100%{opacity:.35}50%{opacity:1}}
 @keyframes tcSweep{0%,72%{translate:-130% 0}100%{translate:130% 0}}
 @keyframes tcPressShake{0%,100%{translate:0}25%{translate:-3px}50%{translate:3px}75%{translate:-2px}}
 @keyframes tcSigilTwinkle{0%,100%{opacity:.35}50%{opacity:.9}}
@@ -10253,6 +10294,35 @@ html.tc-standalone .tc-encounter-actions{margin-bottom:0!important}
 /* Grid rows must size to their content; clipped cards (overflow:hidden) could
    otherwise be squeezed below it when the screen is short. */
 :is(#app,html) .tc-reveal{grid-template-rows:none!important;grid-auto-rows:max-content!important}
+
+
+/* === Battery: compositor-only effects, nothing animates off screen ========= */
+/* Panels outside the visible tab, and anything restyle.js marks hidden, hold
+   their animations still; they resume the moment they are in view. */
+.tc-anim-paused,.tc-anim-paused *,.tc-anim-paused *::before,.tc-anim-paused *::after{animation-play-state:paused!important}
+
+/* Embers: a taller layer that slides (translate) instead of repainting the
+   background position every frame. */
+:is(#app,html) .tc-feature.chaos:before{inset:0 0 auto 0!important;height:calc(100% + 390px)!important;-webkit-mask-image:none!important;mask-image:none!important;
+  background-size:100% 130px,100% 195px,100% 390px!important;will-change:translate}
+/* Decree text: static warm glow; the smoulder is an opacity flicker. */
+:is(#app,html) .tc-feature.chaos .tc-feature-title{text-shadow:0 0 22px rgba(225,100,70,.32),0 0 2px rgba(255,190,160,.18)}
+/* Seal flare rides on the ring layer (opacity), in step with the shudder. */
+:is(#app,html) .tc-feature.chaos .tc-seal-flare{position:absolute;left:50%;top:-6px;width:144px;height:144px;margin-left:-72px;border-radius:50%;pointer-events:none;z-index:1;opacity:0;
+  background:radial-gradient(circle,rgba(255,170,130,.55),rgba(240,100,60,.28) 38%,transparent 66%);animation:tcStrainFlare 7s ease-in-out infinite 1.5s}
+/* Pulsing buttons: a fixed glow layer whose opacity breathes; the light sweep
+   lives in its own clipped layer, so the button itself never repaints. */
+:is(#app,html) :is(#triggerChaos.tc-seal-inline,.tc-chaos-event #ackChaos){overflow:visible!important;isolation:isolate}
+:is(#app,html) #triggerChaos.tc-seal-inline{animation:none!important;box-shadow:0 0 18px rgba(217,90,60,.18),inset 0 1px 0 rgba(255,190,170,.12)!important}
+:is(#app,html) #triggerChaos.tc-seal-inline:before{content:none!important}
+:is(#app,html) .tc-chaos-event #ackChaos{animation:tcRiseIn .5s ease-out 1s both!important}
+.tc-fx-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;box-shadow:0 0 34px rgba(230,96,62,.45),0 0 4px rgba(255,150,120,.5);animation:tcButtonBreath 2.6s ease-in-out infinite;will-change:opacity}
+.tc-chaos-event .tc-fx-glow{animation-delay:1.5s}
+.tc-fx-sweep{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:inherit}
+.tc-fx-sweep:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,200,170,.22) 50%,transparent 70%);animation:tcSweep 4.5s ease-in-out infinite 1s;will-change:translate}
+:is(#app,html) #triggerChaos.tc-seal-inline:active{animation:tcPressShake .28s linear!important}
+:is(#app,html) #triggerChaos.tc-seal-inline:disabled .tc-fx-glow,:is(#app,html) #triggerChaos.tc-seal-inline:disabled .tc-fx-sweep{display:none}
+.tc-chaos-event #ackChaos .tc-fx-sweep{display:none}
 </style>
 </body>
 </html>

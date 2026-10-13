@@ -157,8 +157,15 @@ if(!window.__tcMultiplayerRecoveryBound){
       tcSyncAuthoritativeRun('resume');
     }
   });
+  // Realtime pushes changes as they happen; the 30s poll is only needed while
+  // that live link is down. When it is up, a slow 3-minute check remains as a
+  // safety net for a silently stalled socket.
+  let tcLastHeartbeatSync=Date.now();
   window.__tcMultiplayerHeartbeat=window.setInterval(()=>{
-    if(document.visibilityState==='visible')tcSyncAuthoritativeRun('heartbeat');
+    if(document.visibilityState!=='visible')return;
+    if(tcRealtimeStatus==='SUBSCRIBED'&&Date.now()-tcLastHeartbeatSync<180000)return;
+    tcLastHeartbeatSync=Date.now();
+    tcSyncAuthoritativeRun('heartbeat');
   },30000);
 }
 /* --- End multiplayer synchronization hardening --- */
