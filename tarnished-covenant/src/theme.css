@@ -982,3 +982,43 @@ html{-webkit-tap-highlight-color:transparent}
 :is(#app,html) :is(button,.btn):not(.tc-grace-idle-button):not(:disabled):active{scale:.97;transition-duration:.04s}
 :is(#app,html) .tc-bottom-nav button:active{scale:.94}
 @media (prefers-reduced-motion:reduce){#app.tc-screen-enter>*{animation:none!important}}
+
+/* --- Polish batch: sheets, toasts, counters, save signal, reasons --- */
+/* Sheets rise from the bottom while the backdrop darkens; they sink away on close. */
+@keyframes tcBackdropIn{from{opacity:0}to{opacity:1}}
+@keyframes tcBackdropOut{from{opacity:1}to{opacity:0}}
+@keyframes tcSheetUp{from{transform:translate3d(0,56px,0);opacity:.35}to{transform:none;opacity:1}}
+@keyframes tcSheetDown{0%{transform:none;opacity:1}55%{opacity:.85}100%{transform:translate3d(0,72px,0);opacity:0}}
+:is(#app,html) :is(.tc-overlay,.tc-freeboss-overlay,.tc-strategy-overlay){animation:tcBackdropIn .26s ease-out both}
+:is(#app,html) :is(.tc-overlay>.tc-sheet,.tc-freeboss-overlay>.tc-freeboss-card,.tc-strategy-overlay>.tc-strategy-card){animation:tcSheetUp .42s cubic-bezier(.2,.9,.25,1) both}
+:is(#app,html) .tc-sheet-instant,:is(#app,html) .tc-sheet-instant>*{animation:none!important}
+:is(#app,html) .tc-sheet-leaving{pointer-events:none!important;animation:tcBackdropOut .3s ease-in .04s both!important}
+:is(#app,html) .tc-sheet-leaving>*{animation:tcSheetDown .3s cubic-bezier(.4,0,.7,.4) both!important}
+:is(#app,html) .tc-comp-sheet-overlay.tc-sheet-leaving>*{animation:none!important}
+:is(#app,html) .tc-comp-sheet-overlay.tc-sheet-leaving{animation:tcSheetDown .26s ease-in both!important}
+
+/* Toasts ease up into place and drift back down when done. */
+@keyframes tcToastIn{from{transform:translate3d(0,14px,0);opacity:0}to{transform:none;opacity:1}}
+@keyframes tcToastOut{from{transform:none;opacity:1}to{transform:translate3d(0,10px,0);opacity:0}}
+:is(#app,html) #toast{position:fixed!important;left:16px;right:16px;bottom:calc(72px + env(safe-area-inset-bottom));margin:0 auto!important;z-index:90;animation:tcToastIn .28s cubic-bezier(.2,.9,.25,1) both}
+:is(#app,html) #app:not(:has(.tc-bottom-nav)) #toast{bottom:calc(16px + env(safe-area-inset-bottom))}
+:is(#app,html) #toast.tc-toast-out{animation:tcToastOut .26s ease-in both}
+
+/* Counting numbers glow briefly as they climb. */
+:is(#app,html) .tc-counting{color:var(--gold-bright,#f0d48a)!important;text-shadow:0 0 14px rgba(240,200,120,.45)}
+
+/* Save signal: pulse while saving, a quick check once saved. */
+@keyframes tcSavePulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes tcSavedTick{0%{opacity:0;transform:scale(.6)}25%{opacity:1;transform:scale(1.15)}40%{transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+html.tc-saving :is(#app,html) .tc-sync{animation:tcSavePulse 1s ease-in-out infinite;color:var(--gold,#c8a85b)!important}
+html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;margin-left:5px;font-style:normal;color:var(--gold,#c8a85b);animation:tcSavedTick 1.5s ease-out both}
+
+/* Why a button is greyed out. */
+:is(#app,html) .tc-why{margin:6px 2px 2px!important;font-size:14px!important;line-height:1.35;font-style:italic;color:var(--ash)!important;text-align:center;opacity:.92}
+
+@media (prefers-reduced-motion:reduce){
+  :is(#app,html) :is(.tc-overlay,.tc-freeboss-overlay,.tc-strategy-overlay),
+  :is(#app,html) :is(.tc-overlay>.tc-sheet,.tc-freeboss-overlay>.tc-freeboss-card,.tc-strategy-overlay>.tc-strategy-card),
+  :is(#app,html) #toast,html.tc-saving :is(#app,html) .tc-sync{animation:none!important}
+}
+:is(#app,html) .tc-panel-refresh .tc-why{margin:0!important;font-size:13px!important}

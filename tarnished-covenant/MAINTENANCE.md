@@ -98,3 +98,12 @@ The first consolidation is intentionally behavior-preserving. It does not claim 
 - Weapon data: Elphael weapons wait for Loretta; Troll's Hammer belongs to the Altus Plateau. Baseline seeded scenarios shift from the first changed region onward because the seeded random stream shifts.
 - `tests/bugfix-pass.cjs` covers the logic fixes.
 
+
+## Polish batch (2026-10-13)
+All in `src/systems/restyle.js` (end) and the last section of `src/theme.css`; presentation only.
+- Sheets: overlays rise in via CSS. On close the app still removes the real element at once; a body MutationObserver drops in a clone (ids, `data-*`, `name`, `for` stripped; inert) that slides away. A same-class overlay added in the same batch counts as a re-render: no exit, no re-entry (`.tc-sheet-instant`).
+- `setToast` is replaced (same API): fixed above the bottom bar, eases in and out.
+- Count-up: `TC_COUNT_TARGETS`; first sight only records, increases animate.
+- `commit` is wrapped to set `html.tc-saving` / `html.tc-saved` (the `.tc-sync` label pulses, then shows a check). Return value and options pass through untouched.
+- `.tc-why` notes explain disabled buttons (`tcWhyScan`); hidden buttons get no note.
+- Build number fields get `pattern="[0-9]*"`, `step=1`, and a `beforeinput` filter for non-digits.
