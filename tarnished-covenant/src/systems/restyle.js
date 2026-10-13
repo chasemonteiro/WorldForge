@@ -295,4 +295,163 @@ if(!window.__tcScreenEnterBound){
   const watch=()=>{const host=document.querySelector('#app');if(host)new MutationObserver(()=>{if(tcScreenEnter)tcApplyScreenEnter();}).observe(host,{childList:true});};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();
 }
+/* Polish batch: sheets that slide, toasts that ease, numbers that count,
+   a save signal, and reasons beside greyed-out buttons. Presentation only:
+   no state, storage or save behavior changes. Motion is transform/opacity
+   only and is skipped under reduced motion. */
+const tcReducedMotion=()=>Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+const TC_SHEET_SELECTOR='.tc-overlay,.tc-freeboss-overlay,.tc-strategy-overlay,.tc-comp-sheet-overlay';
+// 1. Sheets. Opening is pure CSS. Closing: the app removes the real element at
+// once (so its logic never sees a half-closed sheet); a look-alike copy with no
+// ids, no data hooks and no pointer events slides away in its place.
+function tcSheetGhost(node){
+  if(tcReducedMotion()||!document.body)return;
+  const ghost=node.cloneNode(true),from=[node,...node.querySelectorAll('*')],to=[ghost,...ghost.querySelectorAll('*')];
+  for(const el of to){
+    el.removeAttribute('id');
+    for(const attr of [...el.attributes])if(attr.name.startsWith('data-')||attr.name==='name'||attr.name==='for')el.removeAttribute(attr.name);
+  }
+  ghost.classList.add('tc-sheet-leaving');ghost.setAttribute('aria-hidden','true');ghost.inert=true;
+  document.body.appendChild(ghost);
+  from.forEach((el,i)=>{if(el.__tcScrollTop&&to[i])to[i].scrollTop=el.__tcScrollTop;});
+  const done=()=>ghost.remove();
+  ghost.addEventListener('animationend',event=>{if(event.target===ghost)done();});
+  setTimeout(done,700);
+}
+if(!window.__tcSheetsBound){
+  window.__tcSheetsBound=true;
+  document.addEventListener('scroll',event=>{const el=event.target;if(el?.nodeType===1&&el.closest?.(TC_SHEET_SELECTOR))el.__tcScrollTop=el.scrollTop;},{capture:true,passive:true});
+  const watch=()=>new MutationObserver(records=>{
+    const added=[],removed=[];
+    for(const r of records){
+      r.addedNodes.forEach(n=>{if(n.nodeType===1&&n.matches(TC_SHEET_SELECTOR)&&!n.classList.contains('tc-sheet-leaving'))added.push(n);});
+      r.removedNodes.forEach(n=>{if(n.nodeType===1&&n.matches(TC_SHEET_SELECTOR)&&!n.classList.contains('tc-sheet-leaving'))removed.push(n);});
+    }
+    for(const n of removed){
+      // Swapped for a fresh copy of the same sheet (a re-render): no exit, and
+      // the replacement appears in place instead of sliding in again.
+      const twin=added.find(a=>a.className===n.className&&a.isConnected);
+      if(twin){twin.classList.add('tc-sheet-instant');continue;}
+      if(!n.isConnected)tcSheetGhost(n);
+    }
+  }).observe(document.body,{childList:true});
+  if(document.body)watch();else document.addEventListener('DOMContentLoaded',watch);
+}
+// 2. Toasts ease in (CSS) and ease out before they are removed.
+setToast=function(message){
+  let el=document.querySelector('#toast');
+  if(!el){el=document.createElement('div');el.id='toast';el.className='toast';el.setAttribute('role','status');app.appendChild(el);}
+  else if(el.classList.contains('tc-toast-out'))el.classList.remove('tc-toast-out');
+  else if(el.textContent!==message&&!tcReducedMotion()&&el.animate)el.animate([{transform:'scale(.97)',opacity:.6},{transform:'none',opacity:1}],{duration:200,easing:'ease-out'});
+  el.textContent=message;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{
+    if(tcReducedMotion()){el.remove();return;}
+    el.classList.add('tc-toast-out');
+    toastTimer=setTimeout(()=>el.remove(),260);
+  },2800);
+};
+// 3. Numbers count up when they rise (Favor, remembrances, boon counts). The
+// first sight of a number only records it, so opening the app never animates.
+const tcCountSeen=new Map(),tcCounting=new WeakSet();
+const TC_COUNT_TARGETS=[
+  ['.tc-forge-favor strong',()=>'favor'],
+  ['.tc-ledger-count',()=>'ledger'],
+  ['.tc-boon-cell strong,.tc-boon-grid>div>strong',el=>'boon:'+(el.parentElement?.querySelector('span')?.textContent||'').trim()]
+];
+function tcCountUp(el,from,to){
+  tcCounting.add(el);
+  const start=performance.now(),span=to-from,ms=Math.min(900,420+span*90);
+  el.classList.add('tc-counting');
+  const tick=now=>{
+    if(!el.isConnected){tcCounting.delete(el);return;}
+    const t=Math.min(1,(now-start)/ms),eased=1-Math.pow(1-t,3);
+    const value=String(Math.round(from+span*eased));if(el.textContent!==value)el.textContent=value;
+    if(t<1)requestAnimationFrame(tick);else{tcCounting.delete(el);el.classList.remove('tc-counting');}
+  };
+  el.textContent=String(from);requestAnimationFrame(tick);
+}
+function tcCountScan(){
+  for(const [selector,keyOf] of TC_COUNT_TARGETS){
+    document.querySelectorAll(selector).forEach(el=>{
+      if(tcCounting.has(el))return;
+      const text=el.textContent.trim();if(!/^\d{1,4}$/.test(text))return;
+      const key=keyOf(el),value=Number(text),seen=tcCountSeen.get(key);
+      tcCountSeen.set(key,value);
+      if(seen===undefined||value<=seen||el.dataset.tcCounted===String(value))return;
+      el.dataset.tcCounted=String(value);
+      if(!tcReducedMotion()&&el.getClientRects().length)tcCountUp(el,seen,value);
+    });
+  }
+}
+// 4. Save signal: the corner label pulses while a save is in flight and shows
+// a brief check when it lands.
+let tcSaveDepth=0,tcSavedTimer=0;
+function tcSaveSignal(phase){
+  const root=document.documentElement;
+  if(phase==='start'){tcSaveDepth+=1;clearTimeout(tcSavedTimer);root.classList.remove('tc-saved');root.classList.add('tc-saving');return;}
+  tcSaveDepth=Math.max(0,tcSaveDepth-1);if(tcSaveDepth)return;
+  root.classList.remove('tc-saving');
+  if(phase==='ok'){root.classList.add('tc-saved');tcSavedTimer=setTimeout(()=>root.classList.remove('tc-saved'),1600);}
+}
+const tcCommitBeforeSignal=commit;
+commit=async function(nextState,options){
+  tcSaveSignal('start');let ok=false;
+  try{ok=await tcCommitBeforeSignal(nextState,options);return ok;}
+  finally{tcSaveSignal(ok?'ok':'fail');}
+};
+// 6. Greyed-out buttons say why, in one quiet line beneath them.
+function tcWhyNote(anchor,key,text){
+  const holder=anchor.parentElement;if(!holder)return;
+  let note=holder.querySelector(`:scope>.tc-why[data-why="${key}"]`);
+  // A hidden button needs no explanation.
+  if(!text||!anchor.getClientRects().length){note?.remove();return;}
+  if(!note){note=document.createElement('p');note.className='tc-why';note.dataset.why=key;anchor.after(note);}
+  if(note.textContent!==text)note.textContent=text;
+}
+function tcWhyScan(){
+  const state=typeof run!=='undefined'?run?.state:null;if(!state)return;
+  const sm=typeof smithingData==='function'?smithingData(state):null;
+  if(sm&&state.current&&typeof tcRefreshCost==='function'){
+    for(const [kind,label,have] of [['chaos','Chaos',sm.chaosRefreshes],['rite','Rite',sm.riteRefreshes]]){
+      document.querySelectorAll(`[data-use-boon="${kind}"]`).forEach(btn=>{
+        const cost=tcRefreshCost(state.current,kind);
+        tcWhyNote(btn,'refresh-'+kind,btn.disabled?`Needs ${cost} ${label} Refresh${cost===1?'':'es'} · you hold ${Number(have||0)}`:'');
+      });
+    }
+  }
+  const finish=document.querySelector('#finishBattleReport');
+  if(finish)tcWhyNote(finish,'report',finish.disabled?'Answer each question above to record the victory.':'');
+  const flier=document.querySelector('[data-use-dynasty-flier]');
+  if(flier)tcWhyNote(flier,'flier',flier.disabled?'No Frequent Flier tickets held yet.':'');
+  const veto=document.querySelector('[data-use-boss-veto]');
+  if(veto&&sm)tcWhyNote(veto,'veto',!veto.disabled?'':(typeof tcBossVetoEligible==='function'&&!tcBossVetoEligible(state))?'Required bosses, capstones and partly cleared encounters cannot be vetoed.':'A Veto also costs 2 Smithing Favor and 1 Chaos or Rite Refresh.');
+  const clem=document.querySelector('[data-use-clemency]');
+  if(clem)tcWhyNote(clem,'clemency',clem.disabled?'No Appeal penalties on file to clear.':'');
+  const confirmVeto=document.querySelector('#tcConfirmVeto');
+  if(confirmVeto)tcWhyNote(confirmVeto,'confirm-veto',confirmVeto.disabled?'You need 2 Smithing Favor and 1 Chaos or Rite Refresh to pay the cost.':'');
+  const masterwork=[...document.querySelectorAll('[data-report-masterwork]')];
+  if(masterwork.length){const last=masterwork.at(-1),any=masterwork.some(b=>b.disabled);tcWhyNote(last.parentElement,'masterwork',any?'Greyed out: that weapon is already a Masterwork, or there are not enough credits.':'');}
+}
+// 5. Build numbers: whole numbers only, with the digit keypad.
+function tcNumericFields(){
+  document.querySelectorAll('[data-build-field]:not([data-tc-int]),#tcBuildUpgrade:not([data-tc-int])').forEach(field=>{
+    field.dataset.tcInt='1';field.setAttribute('inputmode','numeric');field.setAttribute('pattern','[0-9]*');field.setAttribute('step','1');
+  });
+}
+if(!window.__tcIntFieldsBound){
+  window.__tcIntFieldsBound=true;
+  document.addEventListener('beforeinput',event=>{
+    const field=event.target;if(!field?.matches?.('[data-tc-int]'))return;
+    if(event.data&&/[^0-9]/.test(event.data))event.preventDefault();
+  },true);
+}
+if(!window.__tcPolishScanBound){
+  window.__tcPolishScanBound=true;
+  let queued=false;
+  const scan=()=>{queued=false;for(const fn of [tcCountScan,tcWhyScan,tcNumericFields]){try{fn();}catch(error){console.warn('Polish scan skipped',error);}}};
+  const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(scan);};
+  const start=()=>{new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});schedule();};
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+}
 /* --- End Covenant restyle markup adjustments --- */
