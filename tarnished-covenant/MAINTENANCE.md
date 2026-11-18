@@ -108,3 +108,6 @@ All in `src/systems/restyle.js` (end) and the last section of `src/theme.css`; p
 - `.tc-why` notes explain disabled buttons (`tcWhyScan`); hidden buttons get no note.
 - Build number fields get `pattern="[0-9]*"`, `step=1`, and a `beforeinput` filter for non-digits.
 - Button labels fit (`tcFitButtons`): a label wider than its button, or a single word with under 8px air per side, steps its font down to 70%; buttons sharing a row share the smallest size; past 70% the word may break. Tab bars and icon buttons are skipped.
+
+## Boss-pool correction (2026-11-17)
+Chief Bloodfiend (Rivermouth Cave) moved from Gravesite Plain to Ancient Ruins of Rauh: his cave is reached from the Rauh side. `assignment-repair.js` now also re-rolls an unstarted encounter whose boss is no longer in its region's pool (never capstones, required/prerequisite targets, or encounters with a world clear); weapons stay unless barred by the new boss. Covered by `tests/boss-pool-repair.cjs`.

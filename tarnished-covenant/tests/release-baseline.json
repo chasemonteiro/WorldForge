@@ -2450,7 +2450,6 @@
       "exit": "Rellana, Twin Moon Knight",
       "bosses": [
         "Blackgaol Knight",
-        "Chief Bloodfiend",
         "Demi-Human Swordmaster Onze",
         "Divine Beast Dancing Lion",
         "Ghostflame Dragon",
@@ -3045,7 +3044,8 @@
       "bosses": [
         "Death Knight",
         "Rugalea the Great Red Bear",
-        "Divine Beast Dancing Lion"
+        "Divine Beast Dancing Lion",
+        "Chief Bloodfiend"
       ],
       "weapons": [
         {
