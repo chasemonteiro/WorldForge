@@ -36,6 +36,56 @@ function tcRepairUnobtainableAssignments(state){
   next.lastAction=`Armory correction: ${changes.join(' · ')} (not obtainable yet).`;
   return next;
 }
+/* Boss-pool correction: when a boss is moved out of a region's pool after the
+   current encounter rolled it, the unstarted encounter gets a fresh legal boss
+   from the region (never the capstone). Weapons, Rite and Chaos stay unless a
+   weapon is barred by the new boss, in which case only that slot re-draws.
+   Required/prerequisite targets and capstones are never touched. */
+function tcTargetOutsidePool(state){
+  const current=state?.current,target=current?.target;
+  if(!current||!target?.name||target.exit||target.required||state.runComplete||state.regionComplete||tcAssignmentRepairBlocked(state))return false;
+  if((current.worldClears||[]).length)return false;
+  const pool=regions?.[state.region]?.bosses;
+  return Array.isArray(pool)&&pool.length>0&&!pool.includes(target.name);
+}
+function tcRepairOutOfPoolTarget(state){
+  if(!tcTargetOutsidePool(state))return null;
+  const next=structuredClone(state),current=next.current,old=current.target.name;
+  let target=null;
+  for(let i=0;i<60;i++){const t=chooseTarget(next);if(t?.name&&!t.exit&&t.name!==old&&(t.required||regions[next.region].bosses.includes(t.name))){target=structuredClone(t);break;}}
+  if(!target)return null;
+  current.target=target;current.worldClears=[];
+  const changes=[`${old} → ${target.name}`];
+  for(const slot of ['chase','morgan']){
+    const build=current[slot];
+    if(!build?.name||typeof weaponBlockedByTarget!=='function'||!weaponBlockedByTarget(build,target))continue;
+    const avoid=[current.chase?.name,current.morgan?.name].filter(Boolean);
+    let replacement=null;try{replacement=makeBuild(next.region,target,avoid,next);}catch(error){return null;}
+    if(!replacement?.name)return null;
+    changes.push(`${build.name} → ${replacement.name}`);current[slot]=replacement;
+  }
+  next.lastAction=`Boss correction: ${changes.join(' · ')} (${old} is no longer drawn in ${next.region}).`;
+  return next;
+}
+const tcBossPoolRepairTried=new Set();
+const tcRenderRunBeforeBossPoolRepair=renderRun;
+renderRun=function(){
+  tcRenderRunBeforeBossPoolRepair();
+  try{
+    const id=run?.state?.current?.id;
+    if(!id||tcBossPoolRepairTried.has(id)||!tcTargetOutsidePool(run.state))return;
+    setTimeout(async()=>{
+      if(pending||tcBossPoolRepairTried.has(id)||run?.state?.current?.id!==id)return;
+      const next=tcRepairOutOfPoolTarget(run.state);
+      if(!next)return;
+      tcBossPoolRepairTried.add(id);
+      let toast=next.lastAction;
+      const saved=await commit(next,{quiet:true,retryBuilder:latest=>{const rebuilt=tcRepairOutOfPoolTarget(latest);if(rebuilt)toast=rebuilt.lastAction;return rebuilt;}});
+      if(saved&&toast)setToast(toast);
+      if(!saved)tcBossPoolRepairTried.delete(id);
+    },90);
+  }catch(error){console.warn('Boss correction skipped',error);}
+};
 const tcRenderRunBeforeAssignmentRepair=renderRun;
 renderRun=function(){
   tcRenderRunBeforeAssignmentRepair();
