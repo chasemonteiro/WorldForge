@@ -111,3 +111,4 @@ All in `src/systems/restyle.js` (end) and the last section of `src/theme.css`; p
 
 ## Boss-pool correction (2026-11-17)
 Chief Bloodfiend (Rivermouth Cave) moved from Gravesite Plain to Ancient Ruins of Rauh: his cave is reached from the Rauh side. `assignment-repair.js` now also re-rolls an unstarted encounter whose boss is no longer in its region's pool (never capstones, required/prerequisite targets, or encounters with a world clear); weapons stay unless barred by the new boss. Covered by `tests/boss-pool-repair.cjs`.
+- Release check: after a merge, confirm a "pages build and deployment" run exists for the merge commit (`gh api repos/chasemonteiro/WorldForge/actions/runs`). PR #23's merge did not trigger one; a follow-up merge redeployed it.
