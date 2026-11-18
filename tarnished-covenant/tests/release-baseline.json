@@ -2453,7 +2453,6 @@
         "Demi-Human Swordmaster Onze",
         "Divine Beast Dancing Lion",
         "Ghostflame Dragon",
-        "Red Bear",
         "Death Knight"
       ],
       "weapons": [
@@ -3045,7 +3044,8 @@
         "Death Knight",
         "Rugalea the Great Red Bear",
         "Divine Beast Dancing Lion",
-        "Chief Bloodfiend"
+        "Chief Bloodfiend",
+        "Red Bear"
       ],
       "weapons": [
         {
@@ -4989,7 +4989,7 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000010",
         "target": {
-          "name": "Ghostflame Dragon",
+          "name": "Divine Beast Dancing Lion",
           "exit": false
         },
         "chase": {
