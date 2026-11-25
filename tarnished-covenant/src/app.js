@@ -5148,6 +5148,7 @@ covenantBoonMarkup=function(state){
 
 
 {{src/systems/battle-report.js}}
+{{src/systems/battle-report-style.js}}
 
 
 {{src/systems/masterworks.js}}
@@ -5207,7 +5208,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/encounter-style.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-encounter-1';
+const TC_BUILD_ID='20261125-report-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
