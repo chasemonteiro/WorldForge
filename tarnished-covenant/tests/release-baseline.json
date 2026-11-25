@@ -2631,13 +2631,11 @@
       "bosses": [
         "Black Knight Edredd",
         "Black Knight Garrew",
-        "Count Ymir, Mother of Fingers",
         "Curseblade Labirith",
         "Death Knight",
         "Dryleaf Dane",
         "Ghostflame Dragon",
         "Golden Hippopotamus",
-        "Metyr, Mother of Fingers",
         "Rakshasa",
         "Jori, Elder Inquisitor",
         "Ralva the Great Red Bear",
@@ -2808,22 +2806,6 @@
           "requires": ""
         },
         {
-          "name": "Maternal Staff",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": false,
-          "requires": ""
-        },
-        {
-          "name": "Sword of Night",
-          "type": "Regional weapon",
-          "upgrade": "Smithing path varies",
-          "native": "Native skill",
-          "infusable": false,
-          "requires": ""
-        },
-        {
           "name": "Queelign's Greatsword",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
@@ -2913,7 +2895,9 @@
         "Ghostflame Dragon",
         "Death Rite Bird",
         "Lamenter",
-        "Tibia Mariner"
+        "Tibia Mariner",
+        "Count Ymir, Mother of Fingers",
+        "Metyr, Mother of Fingers"
       ],
       "weapons": [
         {
@@ -2966,6 +2950,22 @@
         },
         {
           "name": "Velvet Sword of St. Trina",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Maternal Staff",
+          "type": "Regional weapon",
+          "upgrade": "Smithing path varies",
+          "native": "Native skill",
+          "infusable": false,
+          "requires": ""
+        },
+        {
+          "name": "Sword of Night",
           "type": "Regional weapon",
           "upgrade": "Smithing path varies",
           "native": "Native skill",
@@ -4365,21 +4365,21 @@
     "Maternal Staff": [
       {
         "name": "Metyr, Mother of Fingers",
-        "region": "Scadu Altus + Shadow Keep · DLC"
+        "region": "Cerulean Coast · DLC"
       },
       {
         "name": "Count Ymir, Mother of Fingers",
-        "region": "Scadu Altus + Shadow Keep · DLC"
+        "region": "Cerulean Coast · DLC"
       }
     ],
     "Sword of Night": [
       {
         "name": "Metyr, Mother of Fingers",
-        "region": "Scadu Altus + Shadow Keep · DLC"
+        "region": "Cerulean Coast · DLC"
       },
       {
         "name": "Count Ymir, Mother of Fingers",
-        "region": "Scadu Altus + Shadow Keep · DLC"
+        "region": "Cerulean Coast · DLC"
       }
     ],
     "Dancing Blade of Ranah": [
@@ -5105,7 +5105,7 @@
       "current": {
         "id": "00000000-0000-4000-8000-000000000012",
         "target": {
-          "name": "Lamenter",
+          "name": "Tibia Mariner",
           "exit": false
         },
         "chase": {

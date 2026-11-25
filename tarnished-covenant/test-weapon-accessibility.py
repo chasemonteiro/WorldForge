@@ -125,8 +125,8 @@ for good in ["Varre's Bouquet","Miquellan Knight's Sword",'Dancing Blade of Rana
 # Multi-stage quest rewards are not legal until every modeled boss requirement is met.
 for needle in [
     '"Maternal Staff":[',
-    "{name:'Metyr, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}",
-    "{name:'Count Ymir, Mother of Fingers',region:'Scadu Altus + Shadow Keep · DLC'}",
+    "{name:'Metyr, Mother of Fingers',region:'Cerulean Coast · DLC'}",
+    "{name:'Count Ymir, Mother of Fingers',region:'Cerulean Coast · DLC'}",
     '"Sword of Night":[',
 ]: require(needle)
 
