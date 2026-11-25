@@ -45,6 +45,13 @@ function tcDecorateWeaponResults(screen){
     const pct=Math.max(4,Math.min(100,y/99*100)),mark=n?Math.min(100,n/99*100):null;
     row.innerHTML=`<span class="tc-grade ${grade==='—'?'none':''}">${grade==='—'?'·':grade}</span><span class="tc-req-name">${label}</span><span class="tc-req-bar"><i style="width:${pct}%"></i>${mark!=null?`<em style="left:${mark}%"></em>`:''}</span><span class="tc-req-nums">${y}${n?`<small>needs ${n}</small>`:''}</span>`;
   });
+  // The "strongest affinity" slip disappears once you're already on the
+  // affinity its button would switch to (or on the strongest outright).
+  const tip=host.querySelector('.tc-affinity-tip');
+  if(tip){
+    const pick=tip.querySelector('[data-affinity-pick]')?.dataset.affinityPick,current=host.querySelector('.tc-affinity-chip.current')?.dataset.affinityPick;
+    tip.hidden=tip.classList.contains('best')||Boolean(pick&&current&&pick===current);
+  }
   const head=host.querySelector('.tc-req-row.head');if(head)head.remove();
   const reqTitle=host.querySelector('.tc-req-table>span');if(reqTitle&&!reqTitle.dataset.tcStyled){reqTitle.dataset.tcStyled='1';reqTitle.textContent='What it scales with';}
   host.querySelectorAll('.tc-weapon-note:not([data-tc-card])').forEach(note=>{
