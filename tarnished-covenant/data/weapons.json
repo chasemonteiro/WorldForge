@@ -4235,7 +4235,7 @@
         },
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 31,
+          "order": 29,
           "label": "Messmer Soldier's Spear"
         }
       ],
@@ -4558,19 +4558,19 @@
       "name": "Maternal Staff",
       "regions": [
         {
-          "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 20,
+          "name": "Cerulean Coast · DLC",
+          "order": 7,
           "label": "Maternal Staff"
         }
       ],
       "acquisition": [
         {
           "name": "Metyr, Mother of Fingers",
-          "region": "Scadu Altus + Shadow Keep · DLC"
+          "region": "Cerulean Coast · DLC"
         },
         {
           "name": "Count Ymir, Mother of Fingers",
-          "region": "Scadu Altus + Shadow Keep · DLC"
+          "region": "Cerulean Coast · DLC"
         }
       ],
       "calculatorName": "Maternal Staff"
@@ -4580,19 +4580,19 @@
       "name": "Sword of Night",
       "regions": [
         {
-          "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 21,
+          "name": "Cerulean Coast · DLC",
+          "order": 8,
           "label": "Sword of Night"
         }
       ],
       "acquisition": [
         {
           "name": "Metyr, Mother of Fingers",
-          "region": "Scadu Altus + Shadow Keep · DLC"
+          "region": "Cerulean Coast · DLC"
         },
         {
           "name": "Count Ymir, Mother of Fingers",
-          "region": "Scadu Altus + Shadow Keep · DLC"
+          "region": "Cerulean Coast · DLC"
         }
       ],
       "calculatorName": "Sword of Night"
@@ -4603,7 +4603,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 22,
+          "order": 20,
           "label": "Queelign's Greatsword"
         }
       ],
@@ -4615,7 +4615,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 23,
+          "order": 21,
           "label": "Fire Knight's Seal"
         }
       ],
@@ -4627,7 +4627,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 24,
+          "order": 22,
           "label": "Lightning Perfume Bottle"
         }
       ],
@@ -4639,7 +4639,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 25,
+          "order": 23,
           "label": "Dryleaf Seal"
         }
       ],
@@ -4651,7 +4651,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 26,
+          "order": 24,
           "label": "Rakshasa's Great Katana"
         }
       ],
@@ -4669,7 +4669,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 27,
+          "order": 25,
           "label": "Forked-Tongue Hatchet"
         }
       ],
@@ -4681,7 +4681,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 28,
+          "order": 26,
           "label": "Lizard Greatsword"
         }
       ],
@@ -4693,7 +4693,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 29,
+          "order": 27,
           "label": "Barbed Staff-Spear"
         }
       ],
@@ -4711,7 +4711,7 @@
       "regions": [
         {
           "name": "Scadu Altus + Shadow Keep · DLC",
-          "order": 30,
+          "order": 28,
           "label": "Carian Thrusting Shield"
         }
       ],

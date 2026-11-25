@@ -155,7 +155,7 @@ const regions = {
   },
   'Scadu Altus + Shadow Keep · DLC': {
     exit: 'Messmer the Impaler',
-    bosses: ['Golden Hippopotamus','Commander Gaius','Scadutree Avatar','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem','Metyr, Mother of Fingers'],
+    bosses: ['Golden Hippopotamus','Commander Gaius','Scadutree Avatar','Ralva the Great Red Bear','Ghostflame Dragon','Furnace Golem'],
     weapons: [
       W('Smithscript Cirque','Backhand Blade','Smithing Stones','Blind Spot'),
       W('Ancient Meteoric Ore Greatsword','Colossal Sword','Somber Smithing Stones','White Light Charge',false),
@@ -168,7 +168,7 @@ const regions = {
   },
   'Cerulean Coast · DLC': {
     exit: 'Putrescent Knight',
-    bosses: ['Ghostflame Dragon','Demi-Human Queen Marigga','Dancer of Ranah'],
+    bosses: ['Ghostflame Dragon','Demi-Human Queen Marigga','Dancer of Ranah','Metyr, Mother of Fingers'],
     weapons: [
       W('Spirit Sword','Curved Sword','Somber Smithing Stones','Rancor Slash',false),
       W('Chilling Perfume Bottle','Perfume Bottle','Somber Smithing Stones','Kick',false)
@@ -480,7 +480,7 @@ const REMEMBRANCE_REGION = {
   'Putrescent Knight': 'Cerulean Coast · DLC',
   'Commander Gaius': 'Scadu Altus + Shadow Keep · DLC',
   'Scadutree Avatar': 'Scadu Altus + Shadow Keep · DLC',
-  'Metyr, Mother of Fingers': 'Scadu Altus + Shadow Keep · DLC',
+  'Metyr, Mother of Fingers': 'Cerulean Coast · DLC',
   'Midra, Lord of Frenzied Flame': 'Abyssal Woods · DLC',
   'Messmer the Impaler': 'Scadu Altus + Shadow Keep · DLC',
   'Romina, Saint of the Bud': 'Ancient Ruins of Rauh · DLC',
@@ -5201,7 +5201,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/hewg-surplus.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261124-surplus-2';
+const TC_BUILD_ID='20261124-metyr-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
