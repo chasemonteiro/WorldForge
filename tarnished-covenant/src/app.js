@@ -5213,8 +5213,11 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 
 {{src/systems/build-style.js}}
 
+
+{{src/systems/settings-menu.js}}
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-build-2';
+const TC_BUILD_ID='20261125-settings-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
