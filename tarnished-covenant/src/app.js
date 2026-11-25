@@ -5201,7 +5201,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/hewg-surplus.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261124-surplus-1';
+const TC_BUILD_ID='20261124-surplus-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

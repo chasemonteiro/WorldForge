@@ -41,20 +41,10 @@ const TC_REMEMBRANCE_WEAPONS={
   'Romina, Saint of the Bud':['Poleblade of the Bud'],
   'Promised Consort Radahn':['Greatsword of Radahn (Lord)','Greatsword of Radahn (Light)']
 };
-// Weapons the regional pools don't carry still get a proper build card.
+// Weapons the regional pools don't carry get the same generic card the pools use
+// for unique weapons; only the one infusable weapon differs.
 const TC_REMEMBRANCE_WEAPON_META={
-  'Axe of Godfrey':{type:'Greataxe',native:'Regal Roar'},
-  'Rellana’s Twin Blades':{type:'Light Greatsword',native:'Moon-and-Fire Stance'},
-  'Putrescence Cleaver':{type:'Greataxe',native:'Spinning Slash'},
-  'Sword Lance':{type:'Great Spear',native:'Blinkbolt: Twinned Lances',infusable:true,upgrade:'Smithing Stones'},
-  'Shadow Sunflower Blossom':{type:'Colossal Weapon',native:'Shadow Sunflower Headbutt'},
-  'Staff of the Great Beyond':{type:'Glintstone Staff',native:'No Skill'},
-  'Gazing Finger':{type:'Colossal Weapon',native:'Kowtower’s Bow'},
-  'Greatsword of Damnation':{type:'Greatsword',native:'Golden Lightning Fortification'},
-  'Spear of the Impaler':{type:'Spear',native:'Messmer’s Assault'},
-  'Poleblade of the Bud':{type:'Halberd',native:'Euporia Vortex'},
-  'Greatsword of Radahn (Lord)':{type:'Colossal Sword',native:'Lightspeed Slash'},
-  'Greatsword of Radahn (Light)':{type:'Colossal Sword',native:'Lightspeed Slash'}
+  'Sword Lance':{infusable:true,upgrade:'Smithing Stones'}
 };
 // smithingData keeps only known fields, so the purchase log is added explicitly.
 const tcSmithingDataBeforeSurplus=smithingData;
@@ -85,7 +75,7 @@ function tcRegionalWeaponByName(name){
 }
 function tcRemembranceWeaponBuild(name){
   const base=tcRegionalWeaponByName(name),meta=TC_REMEMBRANCE_WEAPON_META[name]||{};
-  const weapon=base?{...base}:{name,type:meta.type||'Remembrance weapon',native:meta.native||'Native skill',upgrade:meta.upgrade||'Somber Smithing Stones',requires:'',infusable:Boolean(meta.infusable)};
+  const weapon=base?{...base}:{name,type:'Remembrance weapon',native:'Native skill',upgrade:meta.upgrade||'Smithing path varies',requires:'',infusable:Boolean(meta.infusable)};
   return buildFromWeapon(weapon);
 }
 function tcRemembranceWeaponChoices(state){
