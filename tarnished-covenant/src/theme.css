@@ -1358,3 +1358,47 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-enc-style .tc-world-seal{padding:4px 6px!important}
 :is(#app,html) .tc-enc-style .tc-seal-disc{width:64px;height:64px}
 :is(#app,html) .tc-enc-feature .tc-panel-refresh .tc-satchel-top{column-gap:22px!important}
+
+/* --- Battle report in the new style --- */
+:is(#app,html) .tc-report-new{padding:14px 16px 0!important;text-align:left!important;overflow-x:hidden}
+:is(#app,html) .tc-report-banner{position:relative;margin:0 0 14px;padding:120px 16px 16px;border-radius:3px;border:1px solid rgba(201,162,92,.3);background:linear-gradient(180deg,rgba(10,8,6,.05) 10%,rgba(10,8,6,.92) 80%),var(--tc-report-art,none) center 30%/cover,#1a140f}
+:is(#app,html) .tc-report-banner span{--tc-ff:var(--display);font-family:var(--display);font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:#ffd79a;text-shadow:0 0 12px rgba(255,190,110,.6)}
+:is(#app,html) .tc-report-banner h2{margin:4px 0 4px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:clamp(26px,8vw,32px);line-height:1.08;color:#f3e2bd;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+:is(#app,html) .tc-report-banner p{margin:0;font-size:14px;font-style:italic;color:#cdbfa6}
+:is(#app,html) .tc-rq{margin:0 0 12px;padding:14px;border-radius:3px;border:1px solid rgba(201,162,92,.28);background:linear-gradient(180deg,#1d1712,#120e0b)}
+:is(#app,html) .tc-rq.rite{border-color:rgba(185,154,224,.4);background:linear-gradient(180deg,#1c1622,#110e14)}
+:is(#app,html) .tc-rq.chaos{border-color:rgba(224,112,58,.42);background:linear-gradient(180deg,#24140e,#140c09)}
+:is(#app,html) .tc-rq.muted{opacity:.75}
+:is(#app,html) .tc-rq.open{box-shadow:0 0 0 1px rgba(255,200,130,.25),0 0 18px rgba(255,170,90,.12)}
+:is(#app,html) .tc-rq-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+:is(#app,html) .tc-rq-head span{--tc-ff:var(--display);font-family:var(--display);font-size:13px;letter-spacing:.08em;color:#e8c27a}
+:is(#app,html) .tc-rq.rite .tc-rq-head span{color:#d5c2f0}
+:is(#app,html) .tc-rq.chaos .tc-rq-head span{color:#f0a37a}
+:is(#app,html) .tc-rq-head em{font-size:12.5px;color:#a89880}
+:is(#app,html) .tc-rq strong{display:block;margin-top:6px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:19px;line-height:1.15;color:#f0ddb2}
+:is(#app,html) .tc-rq p{margin:4px 0 0;font-size:15px;line-height:1.35;color:#cdbfa6}
+:is(#app,html) .tc-rq-seals{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+:is(#app,html) .tc-rq-seal{display:grid;justify-items:center;gap:6px;padding:10px 6px;border:1px solid rgba(201,162,92,.25);border-radius:3px;background:rgba(0,0,0,.18);color:#cdbfa6;--tc-ff:var(--display);font-family:var(--display);font-size:14px;letter-spacing:.04em}
+:is(#app,html) .tc-rq-disc{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:18px;color:#5c4f3e;border:2px dashed rgba(201,162,92,.35);background:#16110d}
+:is(#app,html) .tc-rq-seal.yes.on{border-color:#e8c27a;color:#ffe2b0}
+:is(#app,html) .tc-rq-seal.yes.on .tc-rq-disc{border:2px solid #f3dfb4;color:#2a1a0c;background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);box-shadow:0 0 14px rgba(255,200,120,.5)}
+:is(#app,html) .tc-rq-seal.no.on{border-color:#d0675a;color:#f0b2a5}
+:is(#app,html) .tc-rq-seal.no.on .tc-rq-disc{border:2px solid #f0b2a5;color:#fbe3dc;background:radial-gradient(circle at 38% 32%,#b23a24,#6e1810 62%,#3d0c08)}
+:is(#app,html) .tc-receipt{margin:4px 0 6px;padding:12px 16px;background:linear-gradient(170deg,#d8c8a0,#c4ad7f 70%,#b59c6c);color:#2e2216;border-radius:1px;box-shadow:0 6px 14px rgba(0,0,0,.4)}
+:is(#app,html) .tc-receipt h4{margin:0 0 6px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.1em;color:#6a4a2a}
+:is(#app,html) .tc-receipt div{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed rgba(46,34,22,.35);padding:5px 0;font-size:15px}
+:is(#app,html) .tc-receipt b{--tc-ff:var(--display);font-family:var(--display);font-size:20px;font-weight:600;color:#2e2216}
+:is(#app,html) .tc-report-help{margin:0 0 10px;font-size:14px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-report-weapons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+:is(#app,html) .tc-report-weapon{display:grid;align-content:start;gap:4px;padding:12px;border:1px solid rgba(201,162,92,.28);border-radius:3px;background:linear-gradient(180deg,#1d1712,#120e0b);min-width:0}
+:is(#app,html) .tc-report-weapon span{font-size:13px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-report-weapon strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:16px;line-height:1.15;color:#f0ddb2}
+:is(#app,html) .tc-report-weapon em{font-size:13px;color:#8e806c;min-height:1.2em}
+:is(#app,html) .tc-report-weapon .tc-satchel-act{margin-top:6px}
+:is(#app,html) .tc-report-weapon small{font-size:12px;font-style:italic;color:#c98b5a}
+:is(#app,html) .tc-report-file{position:sticky;bottom:0;margin:16px -16px 0;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(13,10,8,0),#0d0a08 30%);z-index:3}
+:is(#app,html) .tc-report-file .btn{width:100%;min-height:52px}
+:is(#app,html) .tc-report-file p{margin:6px 0 0;text-align:center;font-size:13.5px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-report-file .tc-why{display:none!important}
+/* Toasts move to the top while the report is open so they never cover a button. */
+html:has(.tc-battle-report) #toast{top:calc(12px + env(safe-area-inset-top))!important;bottom:auto!important}

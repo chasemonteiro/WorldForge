@@ -32,6 +32,8 @@ if html.count('/* --- Shared post-battle report sync --- */') != 1:
 # Rite/Chaos answers determine bonus draws only.
 start=html.rfind('renderPostBattleReport=function(){')
 end=html.find('function tcBuildSharedBattleReportCompletion',start)
+# The styled renderer (battle-report-style.js) is the late one; it ends at its own marker.
+if end<0: end=html.find('/* --- End battle report style --- */',start)
 if start<0 or end<0: raise SystemExit('late shared report renderer missing')
 renderer=html[start:end]
 if "const guaranteedText='+1';" not in renderer:
