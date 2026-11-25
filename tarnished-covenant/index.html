@@ -9880,9 +9880,49 @@ const tcRenderLedgerBeforeDossiers=renderLedger;
 renderLedger=function(){tcRenderLedgerBeforeDossiers();try{tcApplyDossierFilter(app.querySelector('.tc-dossiers'));}catch(error){console.warn('Dossier filter skipped',error);}};
 /* --- End Dossiers --- */
 
+/* --- Ledger: Remembrances (the codex) ---
+   Every remembrance the run needs, grouped by the region it waits in, in run
+   order. Each card says whether it is claimed (and when), here, open or not
+   reached yet, and what Hewg will forge from it (TC_REMEMBRANCE_WEAPONS).
+   The road and the world map live on Site of Grace → Progress now. */
+function tcRemembranceClaim(state,name){
+  const key=n=>typeof tcBossKey==='function'?tcBossKey(n):String(n||'').toLowerCase();
+  const hit=(state.history||[]).find(x=>key(x?.name)===key(name));
+  if(!hit?.completedAt)return '';
+  return new Date(hit.completedAt).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+function tcRemembranceCard(state,name){
+  const st=tcRemembranceStatus(state,name),when=st.key==='done'?tcRemembranceClaim(state,name):'';
+  const status={done:when?`Claimed ${when}`:'Claimed',here:'Waiting in this region',open:'Its region is open',locked:'Region not reached yet'}[st.key];
+  const weapons=(typeof TC_REMEMBRANCE_WEAPONS!=='undefined'&&TC_REMEMBRANCE_WEAPONS[name])||[];
+  const forge=weapons.length?`Hewg forges: ${weapons.map(w=>h(w)).join(' · ')}`:'Spells only. Hewg has nothing to forge from it.';
+  return `<div class="tc-codex-card ${st.key}"><svg class="tc-codex-rune" viewBox="-14 -14 28 28" aria-hidden="true"><circle r="11"/><path d="M0-6v12M-5-2l5-4 5 4M-4 4h8"/></svg><div><strong>${h(name)}</strong><span class="tc-codex-status">${h(status)}</span><small>${forge}</small></div></div>`;
+}
+function tcRemembranceCodexMarkup(state){
+  const req=requiredRemembrances(state),done=req.filter(name=>hasRemembrance(state,name));
+  const order=Object.keys(regions);
+  const byRegion=new Map();
+  req.forEach(name=>{const r=REMEMBRANCE_REGION[name]||'Elsewhere';if(!byRegion.has(r))byRegion.set(r,[]);byRegion.get(r).push(name);});
+  const rank=r=>(r.includes('· DLC')?1000:0)+(order.indexOf(r)<0?999:order.indexOf(r));
+  const regionsInOrder=[...byRegion.keys()].sort((a,b)=>rank(a)-rank(b));
+  const here=req.filter(name=>!hasRemembrance(state,name)&&REMEMBRANCE_REGION[name]===state.region);
+  const ticks=req.map(name=>`<span class="${hasRemembrance(state,name)?'on':''}"></span>`).join('');
+  const groups=regionsInOrder.map(region=>{
+    const names=byRegion.get(region),got=names.filter(n=>hasRemembrance(state,n)).length,img=regions[region]?actualRegionImage(region):'';
+    return `<section class="tc-codex-region ${region===state.region?'here':''}"><h4><span class="tc-codex-medal" style="${img?`background-image:url('${img}')`:''}"></span>${h(region.replace(/ · DLC$/,''))}<em>${got} of ${names.length}</em></h4>${names.map(n=>tcRemembranceCard(state,n)).join('')}</section>`;
+  }).join('');
+  return `<div class="tc-codex">
+    <div class="tc-codex-head"><strong>${done.length}</strong><div><span>of ${req.length} remembrances claimed</span><p>The final seal opens when every one is claimed.</p></div></div>
+    <div class="tc-rem-ticks" aria-hidden="true" style="grid-template-columns:repeat(${Math.max(1,req.length)},minmax(0,1fr))">${ticks}</div>
+    ${here.length?`<p class="tc-codex-next">Waiting in ${h(state.region.replace(/ · DLC$/,''))}: ${here.map(n=>`<b>${h(n)}</b>`).join(', ')}.</p>`:''}
+    ${groups}
+  </div>`;
+}
+/* --- End Remembrances codex --- */
+
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-dossiers-1';
+const TC_BUILD_ID='20261125-codex-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -9934,6 +9974,7 @@ function tcRemembranceStatus(state,name){
   return open?{key:'open',label:'open'}:{key:'locked',label:'locked'};
 }
 remembranceLedgerBody=function(state){
+  if(typeof tcRemembranceCodexMarkup==='function')return tcRemembranceCodexMarkup(state);
   const req=requiredRemembrances(state),done=req.filter(x=>hasRemembrance(state,x));
   const regionNames=Object.keys(regions).filter(r=>state.includeDlc||!r.includes('· DLC')).filter(r=>r!=='The Erdtree');
   const ticks=req.map(name=>`<span class="${hasRemembrance(state,name)?'on':''}"></span>`).join('');
@@ -11687,6 +11728,35 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-dossiers[data-filter="capstone"] .tc-dossier-row:not([data-capstone]),
 :is(#app,html) .tc-dossiers[data-filter="chaos"] .tc-dossier-row:not([data-chaos]),
 :is(#app,html) .tc-dossiers[data-filter="penalty"] .tc-dossier-row:not([data-penalty]){display:none}
+
+/* --- Ledger: Remembrances codex --- */
+:is(#app,html) .tc-codex{padding-bottom:14px;overflow-x:hidden}
+:is(#app,html) .tc-codex-head{display:flex;align-items:center;gap:14px;margin:6px 0 10px}
+:is(#app,html) .tc-codex-head>strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:46px;line-height:1;color:#ffd79a;text-shadow:0 0 16px rgba(255,190,110,.35)}
+:is(#app,html) .tc-codex-head span{display:block;--tc-ff:var(--display);font-family:var(--display);font-size:16px;color:#f0ddb2}
+:is(#app,html) .tc-codex-head p{margin:2px 0 0;font-size:14px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-codex-next{margin:12px 0 4px;padding:10px 12px;border-left:2px solid #ffb867;background:rgba(255,200,130,.06);font-size:14.5px;line-height:1.35;color:#d9cbb2}
+:is(#app,html) .tc-codex-next b{font-weight:500;color:#ffe2b0}
+:is(#app,html) .tc-codex-region{margin-top:16px}
+:is(#app,html) .tc-codex-region h4{display:flex;align-items:center;gap:10px;margin:0 0 8px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:15px;color:#c9a25c}
+:is(#app,html) .tc-codex-region h4 em{margin-left:auto;font-family:var(--serif);font-size:13px;color:#8e806c}
+:is(#app,html) .tc-codex-medal{flex:none;width:28px;height:28px;border-radius:50%;background:#2a221b center/cover;border:1px solid rgba(201,162,92,.6)}
+:is(#app,html) .tc-codex-region.here h4{color:#ffd79a}
+:is(#app,html) .tc-codex-card{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;margin-bottom:6px;border:1px solid rgba(201,162,92,.18);border-radius:3px;background:linear-gradient(180deg,#18130f,#110d0a)}
+:is(#app,html) .tc-codex-rune{width:30px;height:30px;margin-top:2px}
+:is(#app,html) .tc-codex-rune circle{fill:#16110d;stroke:#4a3e30;stroke-width:1.4}
+:is(#app,html) .tc-codex-rune path{fill:none;stroke:#5c4f3e;stroke-width:1.6;stroke-linecap:round}
+:is(#app,html) .tc-codex-card.done .tc-codex-rune circle{fill:#3a2a14;stroke:#e8c27a}
+:is(#app,html) .tc-codex-card.done .tc-codex-rune path{stroke:#ffd79a}
+:is(#app,html) .tc-codex-card.done .tc-codex-rune{filter:drop-shadow(0 0 4px rgba(255,200,120,.5))}
+:is(#app,html) .tc-codex-card.here{border-color:#ffb867;background:linear-gradient(180deg,#221810,#140e0a)}
+:is(#app,html) .tc-codex-card.here .tc-codex-rune circle{stroke:#ffb867}
+:is(#app,html) .tc-codex-card.locked{opacity:.55}
+:is(#app,html) .tc-codex-card strong{display:block;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2;color:#f0ddb2}
+:is(#app,html) .tc-codex-status{display:block;font-size:13px;font-style:italic;color:#a89880;margin-top:1px}
+:is(#app,html) .tc-codex-card.done .tc-codex-status{color:#e8c27a}
+:is(#app,html) .tc-codex-card.here .tc-codex-status{color:#ffb867}
+:is(#app,html) .tc-codex-card small{display:block;margin-top:4px;font-size:13px;line-height:1.3;color:#8e806c}
 </style>
 </body>
 </html>

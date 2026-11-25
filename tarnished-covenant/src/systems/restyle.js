@@ -21,6 +21,7 @@ function tcRemembranceStatus(state,name){
   return open?{key:'open',label:'open'}:{key:'locked',label:'locked'};
 }
 remembranceLedgerBody=function(state){
+  if(typeof tcRemembranceCodexMarkup==='function')return tcRemembranceCodexMarkup(state);
   const req=requiredRemembrances(state),done=req.filter(x=>hasRemembrance(state,x));
   const regionNames=Object.keys(regions).filter(r=>state.includeDlc||!r.includes('· DLC')).filter(r=>r!=='The Erdtree');
   const ticks=req.map(name=>`<span class="${hasRemembrance(state,name)?'on':''}"></span>`).join('');
