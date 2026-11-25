@@ -1,0 +1,45 @@
+// Hewg's Surplus: gated on all Bell Bearings, charges once, keeps saves intact.
+// Synthetic states only; no room is opened.
+const assert=require('node:assert/strict');
+const {runtime}=require('./runtime.cjs');
+const app=runtime();
+app.run(`
+  var base=initialRunState({region:'Scadu Altus + Shadow Keep · DLC',severity:'standard',includeDlc:true});
+  base.smithing=Object.assign(smithingData(base),{favor:40,acquired:TC_BELL_BEARINGS.map(b=>b.id),masterworkRecalls:[{id:'mw-x',weapon:'Spear',owner:'chase',used:false,build:{name:'Spear',type:'Regional weapon',native:'Native skill',upgrade:'Smithing path varies',affinity:'Fixed / unique',requires:'',infusable:false},masterworkedAt:'2026-11-07T04:36:09.715Z',recalledAt:null,recalledEncounterId:null}]});
+  base.history=[{name:'Starscourge Radahn'},{name:'Messmer the Impaler'},{name:'Astel, Naturalborn of the Void'}];
+  var locked=structuredClone(base);locked.smithing.acquired=locked.smithing.acquired.slice(1);
+  var bought=tcBuildShopPurchase(structuredClone(base),'p1','masterwork','Chase');
+  var again=tcBuildShopPurchase(bought,'p1','masterwork','Chase');
+  var poor=structuredClone(base);poor.smithing.favor=11;
+  var choices=tcRemembranceWeaponChoices(base).map(x=>x.weapon);
+  var other=base.current.morgan.name;
+  var swap=tcBuildShopPurchase(structuredClone(base),'p2','remembrance','Chase',{slot:'chase',weapon:'Spear of the Impaler'});
+  var cleared=structuredClone(base);cleared.current.worldClears=['chase'];
+  var notEarned=tcBuildShopPurchase(structuredClone(base),'p3','remembrance','Chase',{slot:'chase',weapon:'Hand of Malenia'});
+  var draw=tcBuildShopPurchase(structuredClone(base),'p4','draw','Morgan');
+  var waiver=tcBuildShopPurchase(structuredClone(base),'p5','appeal','Morgan');
+  var normalized=tcNormalizeRunState(structuredClone(swap));
+`);
+assert.equal(app.run("tcShopOpen(base)"),true);
+assert.equal(app.run("tcShopOpen(locked)"),false);
+assert.equal(app.run("tcBuildShopPurchase(structuredClone(locked),'q','masterwork','Chase')"),null,'closed shop sells nothing');
+assert.equal(app.run('bought.smithing.favor'),28);
+assert.equal(app.run('bought.smithing.masterworkCredits'),1);
+assert.equal(app.run('again'),null,'the same purchase id never charges twice');
+assert.equal(app.run("tcBuildShopPurchase(poor,'q','masterwork','Chase')"),null,'cannot go below zero Favor');
+assert.deepEqual(app.json('choices'),['Starscourge Greatsword','Lion Greatbow','Spear of the Impaler'],'only felled remembrance bosses, and only real weapons');
+assert.equal(app.run('swap.current.chase.name'),'Spear of the Impaler');
+assert.equal(app.run('swap.current.morgan.name===other'),true,'partner keeps their weapon');
+assert.equal(app.run('swap.smithing.favor'),32);
+assert.equal(app.run('swap.current.remembranceSwaps.length'),1);
+assert.equal(app.run('swap.current.id===base.current.id&&swap.current.target.name===base.current.target.name'),true,'same fight, same boss');
+assert.equal(app.run("tcBuildShopPurchase(cleared,'q','remembrance','Chase',{slot:'chase',weapon:'Lion Greatbow'})"),null,'locked after a world victory');
+assert.equal(app.run('notEarned'),null,'unearned remembrance weapons are not sold');
+assert.equal(app.run('draw.smithing.favor<=40-3+3&&draw.smithing.shopLog.at(-1).reward.label.length>0'),true);
+assert.equal(app.run('waiver.smithing.appealWaivers'),Number(app.run('base.smithing.appealWaivers'))+1);
+assert.equal(app.run('normalized.smithing.shopLog.length'),1,'purchase log survives normalization');
+assert.equal(app.run('normalized.current.remembranceSwaps.length'),1,'swap record survives normalization');
+assert.equal(app.run('normalized.smithing.masterworkRecalls.length'),1,'existing records untouched');
+assert.ok(app.run('smithingLedgerMarkup(base).includes("Hewg’s Surplus")'));
+assert.ok(app.run('smithingLedgerMarkup(locked).includes("Opens once all 8")'));
+console.log('PASS tests/hewg-surplus.cjs');
