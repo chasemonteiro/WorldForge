@@ -5202,9 +5202,10 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/forge-tab.js}}
 {{src/systems/sanctuary-refresh.js}}
 {{src/systems/ledger-satchel.js}}
+{{src/systems/ledger-dossiers.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-satchel-1';
+const TC_BUILD_ID='20261125-dossiers-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

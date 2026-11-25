@@ -9804,9 +9804,85 @@ document.addEventListener('click',event=>{
 });
 /* --- End Satchel --- */
 
+/* --- Ledger: Dossiers (formerly Compendium) ---
+   The case files, grouped into one chapter per region (newest first), each
+   chapter under a strip of that region's painting. Rows are compact: date,
+   boss, both weapons on one line, and a few marks. Tapping a row still opens
+   the full evidence, which is lifted unchanged from the original dossier
+   markup. Filter chips narrow to capstones, Chaos breaches or penalties. */
+let tcDossierFilter='all';
+function tcDossierEvidence(entry,index,state){
+  const html=tcCompendiumDossierMarkup(entry,index,state);
+  const cut=html.indexOf('</summary>');
+  return cut<0?'':html.slice(cut+10).replace(/<\/details>\s*$/,'');
+}
+function tcDossierRow(entry,index,state){
+  const names=compendiumNames(entry,state);
+  const penalties=Array.isArray(entry?.penances)?entry.penances.length:0;
+  const favor=Math.max(0,Number(entry?.favorEarned||0));
+  const capstone=Boolean(entry?.exit),chaos=Boolean(entry?.chaosTriggered);
+  const rite=entry?.riteOutcome==='Honored'?'honored':entry?.oddRite?'failed':'';
+  const date=compendiumDate(entry?.completedAt);
+  const weapons=[entry?.chaseWeapon,entry?.morganWeapon].filter(Boolean).map(w=>h(w)).join(' <i>&amp;</i> ');
+  const marks=[
+    capstone?'<span class="m cap" title="Capstone">♛</span>':'',
+    chaos?'<span class="m chaos" title="Chaos broke loose">✶</span>':'',
+    rite?`<span class="m rite ${rite}" title="Odd Rite ${rite}">${rite==='honored'?'◆':'◇'}</span>`:'',
+    penalties?`<span class="m pen" title="${penalties} Appeal ${penalties===1?'penalty':'penalties'}">⚖${penalties}</span>`:'',
+    favor?`<span class="m favor" title="Favor earned">+${favor}</span>`:''
+  ].join('');
+  return `<details class="tc-dossier-row ${capstone?'capstone':''}" ${capstone?'data-capstone':''} ${chaos?'data-chaos':''} ${penalties?'data-penalty':''}>
+    <summary><span class="tc-dr-date">${h(date||'')}</span><span class="tc-dr-main"><strong>${h(entry?.name||'Unknown foe')}</strong><small>${weapons||'No weapons on record'}</small></span><span class="tc-dr-marks">${marks}</span></summary>
+    <div class="tc-dr-evidence">${tcDossierEvidence(entry,index,state)}</div>
+  </details>`;
+}
+function tcDossierChapters(state){
+  const entries=Array.isArray(state?.history)?state.history:[];
+  const order=[],groups=new Map();
+  entries.forEach((entry,index)=>{const r=entry?.region||'Earlier records';if(!groups.has(r)){groups.set(r,[]);order.push(r);}groups.get(r).push({entry,index});});
+  return order.map((region,i)=>{
+    const rows=groups.get(region),chaos=rows.filter(x=>x.entry?.chaosTriggered).length,cap=rows.find(x=>x.entry?.exit);
+    const art=regions?.[region]?actualRegionImage(region):'';
+    const summary=[`${rows.length} ${rows.length===1?'fight':'fights'}`,`${chaos} Chaos`,cap?`capstone: ${cap.entry.name}`:''].filter(Boolean).join(', ');
+    return `<details class="tc-chapter" ${i===0?'open':''}><summary class="tc-chapter-head" style="${art?`--tc-chapter-art:url('${art}')`:''}"><strong>${h(region.replace(/ · DLC$/,''))}</strong><span>${h(summary)}</span></summary>
+      <div class="tc-chapter-rows">${rows.map(x=>tcDossierRow(x.entry,x.index,state)).join('')}</div></details>`;
+  }).join('');
+}
+compendiumLedgerMarkup=function(state){
+  const entries=Array.isArray(state?.history)?state.history:[];
+  if(!entries.length)return `<div class="tc-archive-empty"><div class="tc-archive-empty-seal">◇</div><div class="tc-value">No case files yet.</div><div class="tc-muted">Your first recorded victory opens one here.</div></div>`;
+  const chaos=entries.filter(x=>x?.chaosTriggered).length,caps=entries.filter(x=>x?.exit).length,pen=entries.filter(x=>x?.penances?.length).length;
+  const favor=entries.reduce((sum,x)=>sum+Math.max(0,Number(x?.favorEarned||0)),0);
+  const chip=(id,label,n)=>`<button type="button" class="tc-dossier-chip ${tcDossierFilter===id?'on':''}" data-dossier-filter="${id}">${label}${n!=null?` <b>${n}</b>`:''}</button>`;
+  return `<div class="tc-dossiers" data-filter="${tcDossierFilter}">
+    <div class="tc-dossier-tally"><span><b>${entries.length}</b>fights</span><span><b>${caps}</b>capstones</span><span><b>${chaos}</b>Chaos</span><span><b>${favor}</b>Favor</span></div>
+    <div class="tc-dossier-chips">${chip('all','All')}${chip('capstone','Capstones',caps)}${chip('chaos','Chaos',chaos)}${chip('penalty','Penalties',pen)}</div>
+    <p class="tc-dossier-legend"><span class="m cap">♛</span> capstone <span class="m chaos">✶</span> Chaos broke <span class="m rite honored">◆</span> Rite honored <span class="m pen">⚖</span> penalties</p>
+    ${tcDossierChapters(state)}
+  </div>`;
+};
+function tcApplyDossierFilter(root){
+  if(!root)return;
+  root.dataset.filter=tcDossierFilter;
+  root.querySelectorAll('.tc-dossier-chip').forEach(c=>c.classList.toggle('on',c.dataset.dossierFilter===tcDossierFilter));
+  root.querySelectorAll('.tc-chapter').forEach((chapter,i)=>{
+    const rows=[...chapter.querySelectorAll('.tc-dossier-row')];
+    const hits=tcDossierFilter==='all'?rows.length:rows.filter(r=>r.hasAttribute('data-'+tcDossierFilter)).length;
+    chapter.hidden=!hits;
+    if(tcDossierFilter!=='all')chapter.open=true;else chapter.open=i===0;
+  });
+}
+document.addEventListener('click',event=>{
+  const chip=event.target.closest('[data-dossier-filter]');if(!chip)return;
+  event.preventDefault();tcDossierFilter=chip.dataset.dossierFilter;tcApplyDossierFilter(chip.closest('.tc-dossiers'));
+});
+const tcRenderLedgerBeforeDossiers=renderLedger;
+renderLedger=function(){tcRenderLedgerBeforeDossiers();try{tcApplyDossierFilter(app.querySelector('.tc-dossiers'));}catch(error){console.warn('Dossier filter skipped',error);}};
+/* --- End Dossiers --- */
+
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-satchel-1';
+const TC_BUILD_ID='20261125-dossiers-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -11568,6 +11644,49 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-trophy.current{border-color:#ffb867}
 :is(#app,html) .tc-trophy .tc-satchel-act{margin-top:4px;width:100%}
 :is(#app,html) .tc-satchel-empty{font-style:italic;color:#8e806c}
+
+/* --- Ledger: Dossiers --- */
+:is(#app,html) .tc-dossiers{padding-bottom:14px;overflow-x:hidden}
+:is(#app,html) .tc-dossier-tally{display:grid;grid-template-columns:repeat(4,1fr);margin:4px 0 12px;border-top:1px solid rgba(201,162,92,.22);border-bottom:1px solid rgba(201,162,92,.22)}
+:is(#app,html) .tc-dossier-tally span{display:grid;justify-items:center;padding:10px 2px;font-size:13px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-dossier-tally b{--tc-ff:var(--display);font-family:var(--display);font-style:normal;font-weight:500;font-size:24px;color:#f0ddb2;line-height:1.1}
+:is(#app,html) .tc-dossier-chips{display:flex;gap:6px;flex-wrap:wrap}
+:is(#app,html) .tc-dossier-chip{padding:6px 12px;border:1px solid rgba(201,162,92,.35);border-radius:999px;background:none;color:#cdbfa6;font-size:14px}
+:is(#app,html) .tc-dossier-chip b{font-weight:500;color:#e8c27a;margin-left:2px}
+:is(#app,html) .tc-dossier-chip.on{background:linear-gradient(180deg,rgba(255,190,110,.2),rgba(255,140,60,.08));border-color:#e8c27a;color:#ffe2b0}
+:is(#app,html) .tc-dossier-legend{margin:10px 2px 6px;font-size:12.5px;font-style:italic;color:#8e806c}
+:is(#app,html) .tc-dossier-legend .m{margin:0 2px 0 8px}
+:is(#app,html) .tc-dossier-legend .m:first-child{margin-left:0}
+:is(#app,html) .tc-chapter{margin-top:10px;border:1px solid rgba(201,162,92,.22);border-radius:3px;overflow:hidden;background:#110d0a}
+:is(#app,html) .tc-chapter-head{list-style:none;position:relative;display:grid;gap:2px;padding:26px 14px 10px;cursor:pointer;background:linear-gradient(180deg,rgba(10,8,6,.15),rgba(10,8,6,.92) 85%),var(--tc-chapter-art,none) center 40%/cover,#1a140f}
+:is(#app,html) .tc-chapter-head::-webkit-details-marker{display:none}
+:is(#app,html) .tc-chapter-head::after{content:'›';position:absolute;right:14px;bottom:10px;font-size:20px;color:#e8c27a;transition:transform .2s}
+:is(#app,html) .tc-chapter[open]>.tc-chapter-head::after{transform:rotate(90deg)}
+:is(#app,html) .tc-chapter-head strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:19px;color:#f3e2bd;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+:is(#app,html) .tc-chapter-head span{font-size:13.5px;font-style:italic;color:#cdbfa6;padding-right:24px}
+:is(#app,html) .tc-chapter-rows{display:grid}
+:is(#app,html) .tc-dossier-row{border-top:1px solid rgba(201,162,92,.12)}
+:is(#app,html) .tc-dossier-row>summary{list-style:none;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;cursor:pointer}
+:is(#app,html) .tc-dossier-row>summary::-webkit-details-marker{display:none}
+:is(#app,html) .tc-dossier-row[open]>summary{background:rgba(255,200,130,.05)}
+:is(#app,html) .tc-dr-date{font-size:12px;font-style:italic;color:#8e806c;line-height:1.2}
+:is(#app,html) .tc-dr-main{min-width:0}
+:is(#app,html) .tc-dr-main strong{display:block;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2;color:#f0ddb2}
+:is(#app,html) .tc-dossier-row.capstone .tc-dr-main strong{color:#ffd79a}
+:is(#app,html) .tc-dr-main small{display:block;font-size:13px;color:#a89880;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#app,html) .tc-dr-main small i{font-style:normal;color:#6f6352}
+:is(#app,html) .tc-dr-marks{display:flex;gap:6px;align-items:center;font-size:14px}
+:is(#app,html) .m{display:inline-block;line-height:1}
+:is(#app,html) .m.cap{color:#ffd079}
+:is(#app,html) .m.chaos{color:#e0703a}
+:is(#app,html) .m.rite.honored{color:#b99ae0}
+:is(#app,html) .m.rite.failed{color:#6f6352}
+:is(#app,html) .m.pen{color:#d0675a;font-size:12.5px}
+:is(#app,html) .m.favor{color:#e8c27a;font-size:12.5px;--tc-ff:var(--display);font-family:var(--display)}
+:is(#app,html) .tc-dr-evidence{padding:4px 12px 14px}
+:is(#app,html) .tc-dossiers[data-filter="capstone"] .tc-dossier-row:not([data-capstone]),
+:is(#app,html) .tc-dossiers[data-filter="chaos"] .tc-dossier-row:not([data-chaos]),
+:is(#app,html) .tc-dossiers[data-filter="penalty"] .tc-dossier-row:not([data-penalty]){display:none}
 </style>
 </body>
 </html>
