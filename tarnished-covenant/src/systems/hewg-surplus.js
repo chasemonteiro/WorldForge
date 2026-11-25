@@ -119,9 +119,12 @@ function tcBuildShopPurchase(latest,purchaseId,itemId,actor,options={}){
     entry.detail=`${playerLabel(slot,next)}: ${replaced} → ${choice.weapon}`;
     next.lastAction=`${actor} bought ${choice.weapon} from Hewg’s Surplus for ${playerLabel(slot,next)} (${item.cost} Favor). ${replaced} is set aside for this fight.`;
   }else if(item.id==='draw'){
-    const reward=drawCovenantReward(next);
-    entry.detail=reward.label;entry.reward={kind:reward.kind,label:reward.label,detail:reward.detail};
-    next.lastAction=`${actor} bought a Covenant Draw from Hewg’s Surplus (${item.cost} Favor): ${reward.label}.`;
+    // A sealed lot of one: opened through the same shared draw and reel as a
+    // fight's rewards. The reward is decided when the seal is broken.
+    next.sharedRewardDraw={id:`shop:${purchaseId}`,encounterId:next.current?.id||null,count:1,boss:'Hewg’s Surplus',filedBy:actor,source:'shop'};
+    next.sharedRewardReveal=null;
+    entry.detail='Sealed lot';
+    next.lastAction=`${actor} bought a Covenant Draw from Hewg’s Surplus (${item.cost} Favor).`;
   }else{
     item.grant(next.smithing);
     entry.detail=item.label;
@@ -129,6 +132,23 @@ function tcBuildShopPurchase(latest,purchaseId,itemId,actor,options={}){
   }
   tcShopRecord(next,entry);
   return next;
+}
+// Opening a shop lot must not touch fight history (a fight's lot writes its
+// rewards onto history[0]); it records the result on the purchase instead.
+if(typeof tcBuildClaimedSharedReward==='function'){
+  const tcBuildClaimedSharedRewardBeforeShop=tcBuildClaimedSharedReward;
+  tcBuildClaimedSharedReward=function(latest,draw,rewards,deltas,drawer){
+    if(latest?.sharedRewardDraw?.source!=='shop')return tcBuildClaimedSharedRewardBeforeShop(latest,draw,rewards,deltas,drawer);
+    const next=tcBuildClaimedSharedRewardBeforeShop(latest,draw,rewards,deltas,drawer);if(!next)return null;
+    next.history=structuredClone(latest.history);
+    next.sharedRewardReveal.source='shop';
+    const labels=(rewards||[]).map(r=>r.label).join(', ');
+    const purchaseId=String(draw.id||'').replace(/^shop:/,'');
+    const log=tcShopLog(next).map(e=>e?.id===purchaseId?{...e,detail:labels,reward:rewards?.[0]?{kind:rewards[0].kind,label:rewards[0].label,detail:rewards[0].detail}:undefined}:e);
+    next.smithing.shopLog=log;
+    next.lastAction=`${drawer} opened Hewg’s Covenant Draw: ${labels}.`;
+    return next;
+  };
 }
 function tcShopPurchaseId(){return 'shop-'+(crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2));}
 
