@@ -1023,3 +1023,21 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 }
 :is(#app,html) .tc-panel-refresh .tc-why{margin:0!important;font-size:13px!important}
 :is(#app,html) button.tc-fit-wrap{overflow-wrap:anywhere;word-break:break-word;white-space:normal!important}
+
+/* --- Hewg's Surplus --- */
+:is(#app,html) .tc-shop{padding:16px 2px 6px;border-bottom:1px solid var(--line)}
+:is(#app,html) .tc-shop.locked{opacity:.8}
+:is(#app,html) .tc-shop-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px}
+:is(#app,html) .tc-shop-purse{--tc-ff:var(--display);font-family:var(--display);font-size:20px;color:var(--gold-bright);white-space:nowrap}
+:is(#app,html) .tc-shop-list{display:grid;gap:7px}
+:is(#app,html) .tc-shop-item{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 12px;border:1px solid var(--line);background:linear-gradient(110deg,rgba(48,31,18,.45),rgba(11,9,7,.6));color:var(--ink)}
+:is(#app,html) .tc-shop-item:not(:disabled):active{border-color:var(--ember)}
+:is(#app,html) .tc-shop-item:disabled{opacity:.55}
+:is(#app,html) .tc-shop-glyph{font-size:18px;color:var(--ember);text-align:center}
+:is(#app,html) .tc-shop-text strong{display:block;--tc-ff:var(--display);font-family:var(--display);font-size:15px;letter-spacing:.02em}
+:is(#app,html) .tc-shop-text small{display:block;color:var(--ash);font-size:13px;line-height:1.3;margin-top:2px}
+:is(#app,html) .tc-shop-text em{display:block;color:var(--ash);font-size:12px;margin-top:3px}
+:is(#app,html) .tc-shop-price{--tc-ff:var(--display);font-family:var(--display);font-size:20px;color:var(--gold-bright);text-align:right;line-height:1}
+:is(#app,html) .tc-shop-price i{display:block;font-style:normal;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-top:3px}
+:is(#app,html) .tc-shop-log{margin-top:10px;display:grid;gap:3px;font-size:13px;color:var(--ash);font-style:italic}
+:is(#app,html) .tc-strategy-item span{font-size:13px!important;line-height:1.35}
