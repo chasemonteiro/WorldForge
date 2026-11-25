@@ -5204,9 +5204,10 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/ledger-satchel.js}}
 {{src/systems/ledger-dossiers.js}}
 {{src/systems/ledger-remembrances.js}}
+{{src/systems/encounter-style.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-codex-1';
+const TC_BUILD_ID='20261125-encounter-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
