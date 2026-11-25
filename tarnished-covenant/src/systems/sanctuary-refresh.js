@@ -9,7 +9,7 @@
 function tcGraceNextCard(state){
   const c=state.current;if(!c?.target)return '';
   const weapons=['chase','morgan'].map(slot=>c[slot]?.name?`<div class="tc-next-weapon"><span>${h(playerLabel(slot,state))}</span><strong>${h(c[slot].name)}</strong></div>`:'').join('');
-  const rite=c.weirdness?.name?`<div class="tc-next-line"><span>Rite</span><p>${h(c.weirdness.name)}</p></div>`:'';
+  const rite=c.weirdness?.name?`<div class="tc-next-line rite"><span>Rite</span><p>${h(c.weirdness.name)}</p></div>`:'';
   const chaos=c.chaosTrigger?`<div class="tc-next-line chaos"><span>Chaos</span><p>${h(personalizePlayers(c.chaosTrigger,state).toLowerCase().replace(/^\w/,m=>m.toUpperCase()))}</p></div>`:'';
   const wiki=tcWikiUrl(c.target.name,'boss');
   return `<div class="tc-grace-next" role="button" tabindex="0" aria-label="Open the encounter against ${h(c.target.name)}">
