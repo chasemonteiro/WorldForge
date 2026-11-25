@@ -49,6 +49,7 @@ function tcOpenRewardSatchel(){
 function tcDecorateRewardMachine(){
   const sec=app.querySelector('.tc-reward-machine');if(!sec||sec.dataset.tcStyled)return;
   sec.dataset.tcStyled='1';sec.classList.add('tc-reward-new');
+  if(run?.state?.sharedRewardReveal?.source==='shop'){const boss=sec.querySelector('.tc-reward-boss');if(boss)boss.textContent='From Hewg’s Surplus';}
   const title=sec.querySelector('.tc-reward-title'),m=(title?.textContent||'').match(/(\d+)\D+(\d+)/);
   if(title&&m)title.innerHTML=Number(m[2])>1?`Draw ${m[1]} <span>of ${m[2]}</span>`:'Your reward';
   sec.querySelectorAll('.tc-slot-reel span').forEach(span=>{const id=TC_REEL_GLYPHS[span.textContent.trim()];if(id)span.innerHTML=`<span class="tc-reel-sigil ${id==='tax'?'tax':''}">${tcRewardSigil(id==='flier'?'aviary':id)}</span>`;});
@@ -76,7 +77,7 @@ renderSharedRewardDraw=function(){
   app.innerHTML=`<section class="tc-shared-draw-screen tc-lot">
     <p class="tc-lot-kicker">Covenant Treasury</p>
     <h1>${count===1?'One sealed reward':`${count} sealed rewards`}</h1>
-    <p class="tc-lot-boss">For the fall of ${h(draw.boss||'the enemy')}</p>
+    <p class="tc-lot-boss">${draw.source==='shop'?'Bought from Hewg’s Surplus':`For the fall of ${h(draw.boss||'the enemy')}`}</p>
     <button type="button" id="tcOpenLot" class="tc-lot-envelope" aria-label="Break the seal and draw ${count===1?'the reward':`all ${count} rewards`}">
       <svg class="tc-lot-paper" viewBox="0 0 240 160" aria-hidden="true"><rect x="6" y="6" width="228" height="148" rx="4"/><path class="tc-lot-flap" d="M6 10l114 78 114-78"/><path d="M6 154l84-58M234 154l-84-58" opacity=".5"/></svg>
       <span class="tc-lot-wax"><span class="half l"></span><span class="half r"></span><span class="tc-lot-mark">${tcRewardSigil('favor')}</span></span>
