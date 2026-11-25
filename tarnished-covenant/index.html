@@ -9713,9 +9713,100 @@ document.addEventListener('keydown',event=>{
 });
 /* --- End Site of Grace refresh --- */
 
+/* --- Ledger: the Satchel (formerly Smithing) ---
+   Everything the Covenant holds, as one card per possession, grouped by where
+   it is spent. Cards reuse the existing action hooks (data-use-*, data-blank-to,
+   data-open-past-masterwork, data-masterwork-recall), so every spend still goes
+   through the original builders and their guards. Presentation only. */
+const TC_SATCHEL_SIGILS={
+  veto:'<path d="M14 40l6-22 12 10 12-10 6 22z"/><path d="M12 12l40 40"/>',
+  flier:'<path d="M10 34c10-2 16-10 22-20 4 10 10 16 22 18-10 2-16 8-22 16-4-8-12-12-22-14z"/><circle cx="32" cy="30" r="2"/>',
+  blank:'<path d="M18 10h28v44H18z"/><path d="M24 20h16M24 28h10" opacity=".35"/>',
+  writ:'<path d="M32 54V30"/><path d="M32 30c-12 0-18-8-14-16 6 4 10 2 14-6 4 8 8 10 14 6 4 8-2 16-14 16z"/>'
+};
+function tcSatchelSigil(id){
+  const paths=(typeof TC_FORGE_SIGILS!=='undefined'&&TC_FORGE_SIGILS[id])||TC_SATCHEL_SIGILS[id]||'';
+  return `<svg class="tc-forge-sigil" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${paths}</g></svg>`;
+}
+function tcSatchelItems(state){
+  const sm=smithingData(state),c=state?.current,locked=typeof tcEncounterMutationLocked==='function'&&tcEncounterMutationLocked(state);
+  const penalties=Array.isArray(c?.penances)?c.penances:[];
+  const vetoReady=typeof tcBossVetoEligible==='function'&&tcBossVetoEligible(state)&&tcBossVetoAffordable(state);
+  const writsLeft=typeof tcErdtreeClearedIds==='function'?`${tcErdtreeClearedIds(state).length} of ${TC_ERDTREE_TARGETS.length} Avatar sites done.`:'';
+  const flier=typeof tcDynastyFlierRedemptions==='function'?tcDynastyFlierRedemptions(state).at(-1):null;
+  const lockedWhy='Locked after the first world victory.';
+  return [
+    {id:'joint',where:'here',name:'Joint Appeal',count:sm.jointAppeals,line:'Reroll both weapons, no penalty.',actions:[{attr:'data-use-joint-appeal',label:'Reroll both weapons',why:!c?'No fight in progress.':locked?lockedWhy:''}]},
+    {id:'veto',where:'here',name:'Covenant Veto',count:sm.bossVetoes,line:'Send this boss back and draw another. Costs 2 Favor and a Chaos or Rite Refresh.',actions:[{attr:'data-use-boss-veto',label:'Veto this boss',why:vetoReady?'':(typeof tcBossVetoEligible==='function'&&!tcBossVetoEligible(state))?'This boss can’t be vetoed.':'Needs 2 Favor and a Refresh.'}]},
+    {id:'freeboss',where:'here',name:'Sanctioned Boss Kill',count:sm.freeBossKills,line:'Mark one optional boss as killed and drop it from future draws.',actions:[{attr:'data-use-free-boss-kill',label:'Choose a boss'}]},
+    {id:'clemency',where:'here',name:'Letter of Clemency',count:sm.clemencies,line:'Strike one Appeal penalty from this fight.',actions:[{attr:'data-use-clemency',label:'Strike a penalty',why:locked?lockedWhy:penalties.length?'':'No penalties to strike.'}]},
+    {id:'blank',where:'here',name:'Blank Amendment',count:sm.blankAmendments,line:'Turn it into a Chaos or a Rite Refresh.',actions:[{attr:'data-blank-to="chaos"',label:'Make Chaos'},{attr:'data-blank-to="rite"',label:'Make Rite'}]},
+    {id:'flier',where:'here',name:'Dynasty Frequent Flier',count:sm.aviaryTickets,line:flier?`Five bird-farming visits at Mohgwyn. Last used by ${personalizePlayers(flier.redeemedBy||'',state)}.`:'Five bird-farming visits at Mohgwyn.',actions:[{attr:'data-use-dynasty-flier',label:'Redeem 5 visits'}]},
+    {id:'writ',where:'here',name:'Erdtree Writ',count:sm.erdtreeWrits,line:`Claim a Minor Erdtree Avatar’s tears after you beat it. ${writsLeft}`,actions:[{attr:'data-use-erdtree-writ',label:'Choose an Avatar'}]},
+    {id:'appeal',where:'fight',name:'Appeal Waiver',count:sm.appealWaivers,line:'Make a Weapon Appeal penalty-free. Offered when you appeal.',go:{panel:1,label:'Go to Weapons'}},
+    {id:'chaos',where:'fight',name:'Chaos Refresh',count:sm.chaosRefreshes,line:'Rewrite the Chaos decree before it breaks loose.',go:{panel:2,label:'Go to Chaos'}},
+    {id:'rite',where:'fight',name:'Rite Refresh',count:sm.riteRefreshes,line:'Rewrite the Odd Rite.',go:{panel:3,label:'Go to Rite'}}
+  ];
+}
+function tcSatchelCard(item){
+  const buttons=item.actions?item.actions.map(a=>`<button type="button" class="tc-satchel-act" ${a.attr} ${a.why?'disabled':''}>${h(a.label)}</button>`).join(''):`<button type="button" class="tc-satchel-act go" data-satchel-go="${item.go.panel}">${h(item.go.label)}</button>`;
+  const why=(item.actions||[]).map(a=>a.why).find(Boolean);
+  return `<div class="tc-satchel-card ${item.where}">
+    <div class="tc-satchel-top"><span class="tc-forge-seal">${tcSatchelSigil(item.id)}<b>${item.count}</b></span><div><strong>${h(item.name)}</strong><p>${h(item.line)}</p></div></div>
+    ${why?`<em>${h(why)}</em>`:''}
+    <div class="tc-satchel-acts ${item.actions&&item.actions.length>1?'two':''}">${buttons}</div>
+  </div>`;
+}
+function tcSatchelTrophies(state){
+  const sm=smithingData(state),records=sm.masterworkRecalls||[],me=typeof tcMasterworkSlotForIdentity==='function'?tcMasterworkSlotForIdentity():'',c=state?.current;
+  const locked=typeof tcEncounterMutationLocked==='function'&&tcEncounterMutationLocked(state);
+  const named=new Set(records.map(r=>r.weapon));
+  const legacy=(sm.masterworks||[]).filter(n=>!named.has(n)).map(n=>({weapon:n,legacy:true}));
+  const all=[...records.filter(r=>!r.used),...records.filter(r=>r.used),...legacy];
+  if(!all.length)return '<p class="tc-satchel-empty">No Masterworks yet. Every claimed bearing and every Masterwork Token buys one.</p>';
+  return `<div class="tc-trophies">${all.map(r=>{
+    if(r.legacy)return `<div class="tc-trophy retired"><span class="tc-trophy-mark">⚒</span><strong>${h(r.weapon)}</strong><small>An old Masterwork, kept for the record.</small></div>`;
+    const isCurrent=String(c?.[r.owner]?.name||'')===r.weapon,canUse=Boolean(!r.used&&!locked&&c&&me===r.owner&&!isCurrent);
+    const status=r.used?'Recalled and retired':isCurrent?'In hand this fight':locked?'Recall locked this fight':'Recall ready';
+    return `<div class="tc-trophy ${r.used?'retired':isCurrent?'current':'ready'}"><span class="tc-trophy-mark">⚒</span><strong>${h(r.weapon)}</strong><small>${h(playerLabel(r.owner,state))} · ${h(status)}</small>${canUse?`<button type="button" class="tc-satchel-act" data-masterwork-recall="${h(r.id)}" data-owner="${r.owner}">Recall it</button>`:''}</div>`;
+  }).join('')}</div>`;
+}
+function tcSatchelMarkup(state){
+  const sm=smithingData(state),items=tcSatchelItems(state);
+  const held=items.filter(i=>i.count>0),empty=items.filter(i=>!i.count);
+  const here=held.filter(i=>i.where==='here'),fight=held.filter(i=>i.where==='fight');
+  return `<div class="tc-satchel">
+    <button type="button" class="tc-satchel-purse" data-forge-open><span><b>✦</b>${sm.favor}<i>Smithing Favor</i></span><span class="tc-satchel-purse-go">${typeof tcShopOpen==="function"&&tcShopOpen(state)?"Spend at the Forge":"Visit the Forge"}</span></button>
+    ${here.length?`<h4 class="tc-forge-h">Use it here</h4><div class="tc-satchel-grid">${here.map(tcSatchelCard).join('')}</div>`:''}
+    ${fight.length?`<h4 class="tc-forge-h">Use it in the fight</h4><div class="tc-satchel-grid">${fight.map(tcSatchelCard).join('')}</div>`:''}
+    ${empty.length?`<p class="tc-satchel-out">None held: ${empty.map(i=>h(i.name)).join(', ')}.</p>`:''}
+    <h4 class="tc-forge-h">Masterworks</h4>
+    <div class="tc-satchel-credits"><span><b>${sm.masterworkCredits}</b> ${sm.masterworkCredits===1?'credit':'credits'} to spend</span><button type="button" class="tc-satchel-act" data-open-past-masterwork ${sm.masterworkCredits>0?'':'disabled'}>Masterwork a past weapon</button></div>
+    ${tcSatchelTrophies(state)}
+  </div>`;
+}
+// The Satchel replaces the whole Smithing ledger body.
+smithingLedgerMarkup=function(state){return tcSatchelMarkup(state);};
+const TC_LEDGER_NAMES={remembrances:['Remembrances','Remembrances'],compendium:['Dossiers','Dossiers'],smithing:['Satchel','The Satchel']};
+const tcRenderLedgerBeforeNames=renderLedger;
+renderLedger=function(){
+  tcRenderLedgerBeforeNames();
+  try{
+    app.querySelectorAll('[data-ledger-view]').forEach(btn=>{const n=TC_LEDGER_NAMES[btn.dataset.ledgerView];if(n)btn.textContent=n[0];});
+    const title=app.querySelector('.tc-ledger-screen .tc-brand-small'),n=TC_LEDGER_NAMES[ledgerView];if(title&&n)title.textContent=n[1];
+  }catch(error){console.warn('Ledger names skipped',error);}
+};
+document.addEventListener('click',event=>{
+  const go=event.target.closest('[data-satchel-go]');if(!go)return;
+  event.preventDefault();
+  if(run?.state?.current){tcEncounterPanelId=run.state.current.id;tcEncounterPanelIndex=Number(go.dataset.satchelGo)||0;}
+  uiScreen='encounter';pendingRevealId=null;renderRun();
+});
+/* --- End Satchel --- */
+
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-grace-1';
+const TC_BUILD_ID='20261125-satchel-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -11439,6 +11530,44 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-run-facts strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;color:#f0ddb2;font-size:17px}
 @media (max-width:370px){:is(#app,html) .tc-run-row{grid-template-columns:140px 1fr}:is(#app,html) .tc-rune-ring svg{width:140px;height:140px}}
 @media (prefers-reduced-motion:reduce){:is(#app,html) .tc-road-stop.here .tc-road-medal::before{animation:none!important}}
+
+/* --- Ledger: the Satchel --- */
+:is(#app,html) .tc-satchel{display:block;padding-bottom:12px;overflow-x:hidden}
+:is(#app,html) .tc-satchel-purse{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin:4px 0 2px;border:1px solid rgba(255,160,80,.3);border-radius:3px;background:radial-gradient(120% 140% at 0% 100%,rgba(255,120,40,.18),transparent 60%),linear-gradient(180deg,#1d1610,#130e0a);color:var(--ink);text-align:left}
+:is(#app,html) .tc-satchel-purse>span:first-child{--tc-ff:var(--display);font-family:var(--display);font-size:30px;line-height:1;color:#ffd79a;display:flex;align-items:baseline;gap:8px;text-shadow:0 0 14px rgba(255,150,70,.4)}
+:is(#app,html) .tc-satchel-purse b{font-weight:400;font-size:18px;color:#ff9b4d}
+:is(#app,html) .tc-satchel-purse i{font-style:normal;font-family:var(--serif);--tc-ff:var(--serif);font-size:14px;color:#b8a688;text-shadow:none}
+:is(#app,html) .tc-satchel-purse-go{font-size:14px;color:#e8c27a;white-space:nowrap}
+:is(#app,html) .tc-satchel-purse-go::after{content:' ›'}
+:is(#app,html) .tc-satchel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+:is(#app,html) .tc-satchel-card{display:grid;grid-template-rows:1fr auto;gap:10px;padding:12px;border:1px solid rgba(201,162,92,.28);border-radius:3px;background:linear-gradient(180deg,#1d1712,#120e0b);min-width:0}
+:is(#app,html) .tc-satchel-card.fight{background:linear-gradient(180deg,#1a1614,#110e0c);border-style:dashed;border-color:rgba(201,162,92,.32)}
+:is(#app,html) .tc-satchel-top{display:grid;gap:8px;align-content:start}
+:is(#app,html) .tc-satchel-card .tc-forge-seal{position:relative;width:42px;height:42px}
+:is(#app,html) .tc-satchel-card .tc-forge-seal .tc-forge-sigil{width:24px;height:24px}
+:is(#app,html) .tc-satchel-card .tc-forge-seal b{position:absolute;right:-12px;bottom:-6px;min-width:24px;height:24px;padding:0 6px;border-radius:12px;display:grid;place-items:center;background:#f0d79e;color:#2a1a0c;--tc-ff:var(--display);font-family:var(--display);font-size:14px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.6)}
+:is(#app,html) .tc-satchel-card strong{display:block;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:15px;line-height:1.15;color:#f0ddb2}
+:is(#app,html) .tc-satchel-card p{margin:4px 0 0;font-size:13.5px;line-height:1.3;color:#b9a98f}
+:is(#app,html) .tc-satchel-card em{font-size:12.5px;font-style:italic;color:#c98b5a;line-height:1.25}
+:is(#app,html) .tc-satchel-acts{display:grid;gap:6px}
+:is(#app,html) .tc-satchel-acts.two{grid-template-columns:1fr 1fr}
+:is(#app,html) .tc-satchel-act{min-height:38px;padding:6px 8px;border:1px solid rgba(232,194,122,.55);border-radius:2px;background:linear-gradient(180deg,rgba(255,190,110,.12),rgba(255,140,60,.04));color:#f0d79e;--tc-ff:var(--display);font-family:var(--display);font-size:12.5px;letter-spacing:.04em;line-height:1.15}
+:is(#app,html) .tc-satchel-act.go{border-style:dashed;background:none;color:#d9c08a}
+:is(#app,html) .tc-satchel-act:disabled{opacity:.4}
+:is(#app,html) .tc-satchel-out{margin:12px 2px 0;font-size:14px;font-style:italic;color:#8e806c;line-height:1.35}
+:is(#app,html) .tc-satchel-credits{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+:is(#app,html) .tc-satchel-credits span{font-size:15px;color:#cdbfa6}
+:is(#app,html) .tc-satchel-credits b{--tc-ff:var(--display);font-family:var(--display);font-size:22px;font-weight:500;color:#ffd79a}
+:is(#app,html) .tc-satchel-credits .tc-satchel-act{flex:none}
+:is(#app,html) .tc-trophies{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+:is(#app,html) .tc-trophy{display:grid;gap:4px;align-content:start;padding:12px 10px;border-radius:3px;border:1px solid rgba(201,162,92,.35);background:radial-gradient(100% 80% at 50% 0%,rgba(255,200,120,.12),transparent 70%),linear-gradient(180deg,#201912,#14100c);text-align:center;justify-items:center;min-width:0}
+:is(#app,html) .tc-trophy-mark{font-size:20px;color:#ffc77a;text-shadow:0 0 10px rgba(255,170,90,.6)}
+:is(#app,html) .tc-trophy strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:14px;line-height:1.2;color:#f0ddb2}
+:is(#app,html) .tc-trophy small{font-size:12.5px;font-style:italic;color:#a89880;line-height:1.25}
+:is(#app,html) .tc-trophy.retired{filter:saturate(.25) brightness(.7);border-color:rgba(201,162,92,.15)}
+:is(#app,html) .tc-trophy.current{border-color:#ffb867}
+:is(#app,html) .tc-trophy .tc-satchel-act{margin-top:4px;width:100%}
+:is(#app,html) .tc-satchel-empty{font-style:italic;color:#8e806c}
 </style>
 </body>
 </html>
