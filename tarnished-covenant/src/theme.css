@@ -1402,3 +1402,80 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-report-file .tc-why{display:none!important}
 /* Toasts move to the top while the report is open so they never cover a button. */
 html:has(.tc-battle-report) #toast{top:calc(12px + env(safe-area-inset-top))!important;bottom:auto!important}
+
+/* --- Reward screens in the new style --- */
+/* The sealed lot */
+:is(#app,html) .tc-lot{flex-direction:column;gap:0;text-align:center;padding:24px 16px 96px!important;overflow-x:hidden}
+:is(#app,html) .tc-lot-kicker{margin:0;--tc-ff:var(--display);font-family:var(--display);font-size:12px;letter-spacing:.22em;color:#c9a25c}
+:is(#app,html) .tc-lot h1{margin:8px 0 4px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:clamp(26px,8vw,32px);line-height:1.1;color:#f0ddb2;text-transform:none;letter-spacing:.02em}
+:is(#app,html) .tc-lot-boss{margin:0 0 22px;font-size:16px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-lot-envelope{position:relative;display:block;width:min(280px,82vw);aspect-ratio:3/2;margin:0 auto;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:is(#app,html) .tc-lot-paper{display:block;width:100%;height:100%;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55))}
+:is(#app,html) .tc-lot-paper rect{fill:#cfbb8f;stroke:#8a6a3e;stroke-width:1.5}
+:is(#app,html) .tc-lot-paper path{fill:none;stroke:#8a6a3e;stroke-width:1.5;stroke-linejoin:round}
+:is(#app,html) .tc-lot-paper .tc-lot-flap{fill:#c3ab7c;transition:opacity .4s ease}
+:is(#app,html) .tc-lot-wax{position:absolute;left:50%;top:55%;width:72px;height:72px;margin:-36px 0 0 -36px}
+:is(#app,html) .tc-lot-wax::before{content:"";position:absolute;inset:-18px;border-radius:50%;background:radial-gradient(circle,rgba(255,170,90,.42),transparent 68%);animation:tcLotGlow 2.4s ease-in-out infinite}
+:is(#app,html) .tc-lot-wax .half{position:absolute;top:0;width:50%;height:100%;background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08);background-size:200% 100%;box-shadow:inset 0 0 0 3px rgba(0,0,0,.18);transition:transform .55s cubic-bezier(.2,.7,.3,1),opacity .55s ease}
+:is(#app,html) .tc-lot-wax .half.l{left:0;border-radius:36px 0 0 36px;background-position:0 0}
+:is(#app,html) .tc-lot-wax .half.r{right:0;border-radius:0 36px 36px 0;background-position:100% 0}
+:is(#app,html) .tc-lot-mark{position:absolute;inset:0;display:grid;place-items:center;transition:opacity .25s ease}
+:is(#app,html) .tc-lot-mark .tc-forge-sigil{width:36px;height:36px;color:#f2c9a8}
+:is(#app,html) .tc-lot-envelope.cracked .tc-lot-mark{opacity:0}
+:is(#app,html) .tc-lot-envelope.cracked .half.l{transform:translate(-18px,8px) rotate(-22deg);opacity:0}
+:is(#app,html) .tc-lot-envelope.cracked .half.r{transform:translate(18px,8px) rotate(22deg);opacity:0}
+:is(#app,html) .tc-lot-envelope.cracked .tc-lot-wax::before{animation:none;opacity:0}
+:is(#app,html) .tc-lot-envelope.cracked .tc-lot-flap{opacity:.25}
+:is(#app,html) .tc-lot-envelope:disabled{opacity:1!important;filter:none!important;cursor:default}
+:is(#app,html) .tc-lot-envelope:focus-visible{outline:2px solid #e8c27a;outline-offset:6px}
+:is(#app,html) .tc-lot-hint{margin:20px 0 6px;--tc-ff:var(--display);font-family:var(--display);font-size:15px;letter-spacing:.06em;color:#e8c27a}
+:is(#app,html) .tc-lot-note{margin:0 auto;max-width:30ch;font-size:14px;font-style:italic;line-height:1.4;color:#8e806c}
+@keyframes tcLotGlow{0%,100%{opacity:.35;transform:scale(.92)}50%{opacity:1;transform:scale(1.05)}}
+
+/* The reel, kept, in iron with a warm edge */
+:is(#app,html) .tc-reward-new .tc-reward-kicker{--tc-ff:var(--display);font-family:var(--display);font-weight:500;text-transform:none;letter-spacing:.22em;font-size:12px;color:#c9a25c!important}
+:is(#app,html) .tc-reward-new .tc-reward-title{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:clamp(24px,7.5vw,30px)!important;letter-spacing:.04em!important;color:#f0ddb2}
+:is(#app,html) .tc-reward-new .tc-reward-title span{font-size:.6em;letter-spacing:.04em;color:#a89880}
+:is(#app,html) .tc-reward-new .tc-reward-boss{margin:4px auto 14px}
+:is(#app,html) .tc-reward-new .tc-slot-frame{max-width:360px;gap:8px;padding:10px;border:1px solid rgba(232,170,100,.45);border-radius:4px;background:linear-gradient(180deg,#2a2622,#141210);box-shadow:inset 0 1px 0 rgba(255,220,170,.12),0 0 0 1px rgba(0,0,0,.6),0 0 22px rgba(255,150,70,.1)}
+:is(#app,html) .tc-reward-new .tc-slot-frame::before,:is(#app,html) .tc-reward-new .tc-slot-frame::after{display:none}
+:is(#app,html) .tc-reward-new .tc-slot-reel{height:88px;border:1px solid rgba(0,0,0,.7);border-radius:3px;background:linear-gradient(180deg,#0b0a09,#1e1b18 50%,#0b0a09);box-shadow:inset 0 0 0 1px rgba(232,170,100,.28),inset 0 10px 14px rgba(0,0,0,.6),inset 0 -10px 14px rgba(0,0,0,.6)}
+:is(#app,html) .tc-reward-new .tc-slot-reel span{height:88px;min-height:88px}
+:is(#app,html) .tc-reward-new .tc-slot-reel.spinning{animation:none}
+:is(#app,html) .tc-reward-new .tc-slot-reel.spinning>span{animation:tcSymbolsIron .42s linear infinite;animation-delay:var(--tc-spin-delay)}
+@keyframes tcSymbolsIron{from{transform:translateY(0)}to{transform:translateY(-264px)}}
+:is(#app,html) .tc-reel-sigil{display:grid;place-items:center;width:100%;height:100%}
+:is(#app,html) .tc-reel-sigil .tc-forge-sigil{width:42px;height:42px;color:#c9a25c}
+:is(#app,html) .tc-reel-sigil.tax .tc-forge-sigil{color:#c9665a}
+:is(#app,html) .tc-reward-new .tc-slot-reel .winner{position:relative;text-shadow:none}
+:is(#app,html) .tc-reward-new .tc-slot-reel .winner::before{content:"";position:absolute;inset:6px;border-radius:50%;background:radial-gradient(circle,rgba(255,205,130,.5),transparent 70%);animation:tcWinGlow .9s ease-out both}
+:is(#app,html) .tc-reward-new .tc-slot-reel .winner .tc-forge-sigil{position:relative;width:46px;height:46px;color:#ffe2a6}
+:is(#app,html) .tc-reward-new .tc-slot-reel .winner .tax .tc-forge-sigil{color:#f0a090}
+:is(#app,html) .tc-reward-new .tc-slot-reel .winner:has(.tax)::before{background:radial-gradient(circle,rgba(220,80,60,.5),transparent 70%)}
+@keyframes tcWinGlow{from{opacity:0;transform:scale(.5)}60%{opacity:1;transform:scale(1.08)}to{opacity:.75;transform:scale(1)}}
+
+/* The result card, in the Satchel's voice */
+:is(#app,html) .tc-reward-new .tc-reward-result:not([hidden]){display:grid;grid-template-columns:52px minmax(0,1fr);column-gap:14px;align-items:start;max-width:360px;margin:0 auto 12px;padding:14px;text-align:left;border:1px solid rgba(201,162,92,.32);border-radius:3px;background:linear-gradient(180deg,#1d1712,#120e0b)}
+:is(#app,html) .tc-reward-new .tc-reward-result.revealed{animation:tcRewardRise .45s cubic-bezier(.2,.7,.3,1) both}
+@keyframes tcRewardRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+:is(#app,html) .tc-reward-new .tc-reward-icon{grid-row:1/span 5;width:52px;height:52px;margin:0;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);box-shadow:0 2px 0 rgba(0,0,0,.5),inset 0 0 0 3px rgba(0,0,0,.15)}
+:is(#app,html) .tc-reward-new .tc-reward-icon .tc-forge-sigil{width:30px;height:30px;color:#3a240e}
+:is(#app,html) .tc-reward-new .tc-reward-result.tax{border-color:rgba(208,103,90,.5);background:linear-gradient(180deg,#24120e,#140a08)}
+:is(#app,html) .tc-reward-new .tc-reward-result.tax .tc-reward-icon{background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08)}
+:is(#app,html) .tc-reward-new .tc-reward-result.tax .tc-reward-icon .tc-forge-sigil{color:#f2c9a8}
+:is(#app,html) .tc-reward-new .tc-reward-type{font:italic 13px/1.2 var(--serif)!important;text-transform:none!important;letter-spacing:0!important;color:#a89880!important}
+:is(#app,html) .tc-reward-new .tc-reward-name{margin:3px 0 4px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:20px;line-height:1.15;color:#f0ddb2}
+:is(#app,html) .tc-reward-new .tc-reward-result.tax .tc-reward-name{color:#f0b2a5}
+:is(#app,html) .tc-reward-new .tc-reward-detail{margin:0;font-size:14.5px;line-height:1.4;color:#cdbfa6}
+:is(#app,html) .tc-reward-hold{margin:8px 0 0;padding-top:8px;border-top:1px dashed rgba(201,162,92,.25);font-size:14px;line-height:1.35;color:#e8c27a}
+:is(#app,html) .tc-reward-result.tax .tc-reward-hold{color:#f0a090;border-top-color:rgba(208,103,90,.3)}
+:is(#app,html) .tc-reward-satchel{justify-self:start;margin:6px 0 0;padding:4px 0;border:0;background:none;color:#c9a25c;font:italic 14px/1.3 var(--serif);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+:is(#app,html) .tc-reward-new #tcRewardContinue{max-width:360px}
+:is(#app,html) .tc-reward-new .tc-reward-quip{max-width:34ch}
+:is(#app,html) .tc-reward-satchel-view .tc-satchel-purse,:is(#app,html) .tc-reward-satchel-view .tc-satchel-acts:empty{display:none}
+:is(#app,html) .tc-reward-satchel-view .tc-satchel-card{grid-template-rows:auto}
+:is(#app,html) .tc-reward-help{margin:10px 0 0;font-size:14px;font-style:italic;color:#a89880}
+@media(prefers-reduced-motion:reduce){:is(#app,html) .tc-lot-wax::before,:is(#app,html) .tc-reward-new .tc-slot-reel .winner::before{animation:none}:is(#app,html) .tc-lot-wax .half{transition:none}}
+
+/* New Decree: weapon cards */
+:is(#app,html) .tc-reveal .tc-reveal-weapons.tc-decree-weapons{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;border:0!important;margin:0 0 10px!important;text-align:left}
