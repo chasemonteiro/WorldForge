@@ -1227,3 +1227,46 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-trophy.current{border-color:#ffb867}
 :is(#app,html) .tc-trophy .tc-satchel-act{margin-top:4px;width:100%}
 :is(#app,html) .tc-satchel-empty{font-style:italic;color:#8e806c}
+
+/* --- Ledger: Dossiers --- */
+:is(#app,html) .tc-dossiers{padding-bottom:14px;overflow-x:hidden}
+:is(#app,html) .tc-dossier-tally{display:grid;grid-template-columns:repeat(4,1fr);margin:4px 0 12px;border-top:1px solid rgba(201,162,92,.22);border-bottom:1px solid rgba(201,162,92,.22)}
+:is(#app,html) .tc-dossier-tally span{display:grid;justify-items:center;padding:10px 2px;font-size:13px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-dossier-tally b{--tc-ff:var(--display);font-family:var(--display);font-style:normal;font-weight:500;font-size:24px;color:#f0ddb2;line-height:1.1}
+:is(#app,html) .tc-dossier-chips{display:flex;gap:6px;flex-wrap:wrap}
+:is(#app,html) .tc-dossier-chip{padding:6px 12px;border:1px solid rgba(201,162,92,.35);border-radius:999px;background:none;color:#cdbfa6;font-size:14px}
+:is(#app,html) .tc-dossier-chip b{font-weight:500;color:#e8c27a;margin-left:2px}
+:is(#app,html) .tc-dossier-chip.on{background:linear-gradient(180deg,rgba(255,190,110,.2),rgba(255,140,60,.08));border-color:#e8c27a;color:#ffe2b0}
+:is(#app,html) .tc-dossier-legend{margin:10px 2px 6px;font-size:12.5px;font-style:italic;color:#8e806c}
+:is(#app,html) .tc-dossier-legend .m{margin:0 2px 0 8px}
+:is(#app,html) .tc-dossier-legend .m:first-child{margin-left:0}
+:is(#app,html) .tc-chapter{margin-top:10px;border:1px solid rgba(201,162,92,.22);border-radius:3px;overflow:hidden;background:#110d0a}
+:is(#app,html) .tc-chapter-head{list-style:none;position:relative;display:grid;gap:2px;padding:26px 14px 10px;cursor:pointer;background:linear-gradient(180deg,rgba(10,8,6,.15),rgba(10,8,6,.92) 85%),var(--tc-chapter-art,none) center 40%/cover,#1a140f}
+:is(#app,html) .tc-chapter-head::-webkit-details-marker{display:none}
+:is(#app,html) .tc-chapter-head::after{content:'›';position:absolute;right:14px;bottom:10px;font-size:20px;color:#e8c27a;transition:transform .2s}
+:is(#app,html) .tc-chapter[open]>.tc-chapter-head::after{transform:rotate(90deg)}
+:is(#app,html) .tc-chapter-head strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:19px;color:#f3e2bd;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+:is(#app,html) .tc-chapter-head span{font-size:13.5px;font-style:italic;color:#cdbfa6;padding-right:24px}
+:is(#app,html) .tc-chapter-rows{display:grid}
+:is(#app,html) .tc-dossier-row{border-top:1px solid rgba(201,162,92,.12)}
+:is(#app,html) .tc-dossier-row>summary{list-style:none;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;cursor:pointer}
+:is(#app,html) .tc-dossier-row>summary::-webkit-details-marker{display:none}
+:is(#app,html) .tc-dossier-row[open]>summary{background:rgba(255,200,130,.05)}
+:is(#app,html) .tc-dr-date{font-size:12px;font-style:italic;color:#8e806c;line-height:1.2}
+:is(#app,html) .tc-dr-main{min-width:0}
+:is(#app,html) .tc-dr-main strong{display:block;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2;color:#f0ddb2}
+:is(#app,html) .tc-dossier-row.capstone .tc-dr-main strong{color:#ffd79a}
+:is(#app,html) .tc-dr-main small{display:block;font-size:13px;color:#a89880;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#app,html) .tc-dr-main small i{font-style:normal;color:#6f6352}
+:is(#app,html) .tc-dr-marks{display:flex;gap:6px;align-items:center;font-size:14px}
+:is(#app,html) .m{display:inline-block;line-height:1}
+:is(#app,html) .m.cap{color:#ffd079}
+:is(#app,html) .m.chaos{color:#e0703a}
+:is(#app,html) .m.rite.honored{color:#b99ae0}
+:is(#app,html) .m.rite.failed{color:#6f6352}
+:is(#app,html) .m.pen{color:#d0675a;font-size:12.5px}
+:is(#app,html) .m.favor{color:#e8c27a;font-size:12.5px;--tc-ff:var(--display);font-family:var(--display)}
+:is(#app,html) .tc-dr-evidence{padding:4px 12px 14px}
+:is(#app,html) .tc-dossiers[data-filter="capstone"] .tc-dossier-row:not([data-capstone]),
+:is(#app,html) .tc-dossiers[data-filter="chaos"] .tc-dossier-row:not([data-chaos]),
+:is(#app,html) .tc-dossiers[data-filter="penalty"] .tc-dossier-row:not([data-penalty]){display:none}
