@@ -8631,7 +8631,7 @@ renderPostBattleReport=function(){
   const credits=Number(smithingData(state).masterworkCredits||0);
   const guaranteedText='+1';
   app.innerHTML=`<section class="tc-battle-report tc-report-new">
-    <div class="tc-report-banner" style="${art?`--tc-report-art:url('${art}')`:''}"><span>Victory</span><h2>${h(c.target?.name||'Enemy felled')}</h2><p>${who}</p></div>
+    <div class="tc-report-banner" style="${art?`--tc-report-art:url('${art}')`:''}"><span>Victory</span><h2>${h(c.target?.name||'Enemy felled')}</h2><p>${who}</p>${typeof tcReportQuip==='function'?tcQuip(tcReportQuip(c),'tc-report-quip'):''}</div>
     ${tcReportQuestion('rite','Odd Rite',c.weirdness?.name||'',c.weirdness?.text||'No Rite this fight.',riteDraws,true,postBattleReport.rite,['Honored','Broken'])}
     ${tcReportQuestion('chaos','Chaos',chaosAvailable?tcStableChaosName(c.chaosConsequence||''):'',chaosAvailable?personalizePlayers(c.chaosConsequence||'',state):'The seal never broke.',chaosDraws,chaosAvailable,postBattleReport.chaos,['Endured','Broken'])}
     <div class="tc-receipt"><h4>This fight pays</h4><div><span>Smithing Favor</span><b>${guaranteedText}</b></div><div><span>Reward draws${reportReady?'':' so far'}</span><b>${preview.draws}</b></div></div>
@@ -9826,7 +9826,7 @@ function tcSatchelTrophies(state){
   const named=new Set(records.map(r=>r.weapon));
   const legacy=(sm.masterworks||[]).filter(n=>!named.has(n)).map(n=>({weapon:n,legacy:true}));
   const all=[...records.filter(r=>!r.used),...records.filter(r=>r.used),...legacy];
-  if(!all.length)return '<p class="tc-satchel-empty">No Masterworks yet. Every claimed bearing and every Masterwork Token buys one.</p>';
+  if(!all.length)return `<p class="tc-satchel-empty">No Masterworks yet. Every claimed bearing and every Masterwork Token buys one.</p>${typeof tcQuip==='function'?tcQuip('Hewg has nothing of yours worth keeping. Yet.'):''}`;
   return `<div class="tc-trophies">${all.map(r=>{
     if(r.legacy)return `<div class="tc-trophy retired"><span class="tc-trophy-mark">⚒</span><strong>${h(r.weapon)}</strong><small>An old Masterwork, kept for the record.</small></div>`;
     const isCurrent=String(c?.[r.owner]?.name||'')===r.weapon,canUse=Boolean(!r.used&&!locked&&c&&me===r.owner&&!isCurrent);
@@ -9842,7 +9842,7 @@ function tcSatchelMarkup(state){
     <button type="button" class="tc-satchel-purse" data-forge-open><span><b>✦</b>${sm.favor}<i>Smithing Favor</i></span><span class="tc-satchel-purse-go">${typeof tcShopOpen==="function"&&tcShopOpen(state)?"Spend at the Forge":"Visit the Forge"}</span></button>
     ${here.length?`<h4 class="tc-forge-h">Use it here</h4><div class="tc-satchel-grid">${here.map(tcSatchelCard).join('')}</div>`:''}
     ${fight.length?`<h4 class="tc-forge-h">Use it in the fight</h4><div class="tc-satchel-grid">${fight.map(tcSatchelCard).join('')}</div>`:''}
-    ${empty.length?`<p class="tc-satchel-out">None held: ${empty.map(i=>h(i.name)).join(', ')}.</p>`:''}
+    ${empty.length?`<p class="tc-satchel-out">None held: ${empty.map(i=>h(i.name)).join(', ')}.</p>`:''}${!held.length&&typeof tcQuip==='function'?tcQuip('The satchel echoes.'):''}
     <h4 class="tc-forge-h">Masterworks</h4>
     <div class="tc-satchel-credits"><span><b>${sm.masterworkCredits}</b> ${sm.masterworkCredits===1?'credit':'credits'} to spend</span><button type="button" class="tc-satchel-act" data-open-past-masterwork ${sm.masterworkCredits>0?'':'disabled'}>Masterwork a past weapon</button></div>
     ${tcSatchelTrophies(state)}
@@ -9896,7 +9896,7 @@ function tcDossierRow(entry,index,state){
   ].join('');
   return `<details class="tc-dossier-row ${capstone?'capstone':''}" ${capstone?'data-capstone':''} ${chaos?'data-chaos':''} ${penalties?'data-penalty':''}>
     <summary><span class="tc-dr-date">${h(date||'')}</span><span class="tc-dr-main"><strong>${h(entry?.name||'Unknown foe')}</strong><small>${weapons||'No weapons on record'}</small></span><span class="tc-dr-marks">${marks}</span></summary>
-    <div class="tc-dr-evidence">${tcDossierEvidence(entry,index,state)}</div>
+    <div class="tc-dr-evidence">${typeof tcDossierRemark==='function'?tcQuip(tcDossierRemark(entry),'tc-dossier-remark'):''}${tcDossierEvidence(entry,index,state)}</div>
   </details>`;
 }
 function tcDossierChapters(state){
@@ -9913,7 +9913,7 @@ function tcDossierChapters(state){
 }
 compendiumLedgerMarkup=function(state){
   const entries=Array.isArray(state?.history)?state.history:[];
-  if(!entries.length)return `<div class="tc-archive-empty"><div class="tc-archive-empty-seal">◇</div><div class="tc-value">No case files yet.</div><div class="tc-muted">Your first recorded victory opens one here.</div></div>`;
+  if(!entries.length)return `<div class="tc-archive-empty"><div class="tc-archive-empty-seal">◇</div><div class="tc-value">No case files yet.</div><div class="tc-muted">Your first recorded victory opens one here.</div>${typeof tcQuip==='function'?tcQuip('The clerk sharpens a quill.'):''}</div>`;
   const chaos=entries.filter(x=>x?.chaosTriggered).length,caps=entries.filter(x=>x?.exit).length,pen=entries.filter(x=>x?.penances?.length).length;
   const favor=entries.reduce((sum,x)=>sum+Math.max(0,Number(x?.favorEarned||0)),0);
   const chip=(id,label,n)=>`<button type="button" class="tc-dossier-chip ${tcDossierFilter===id?'on':''}" data-dossier-filter="${id}">${label}${n!=null?` <b>${n}</b>`:''}</button>`;
@@ -10160,7 +10160,7 @@ renderSharedRewardDraw=function(){
   btn?.addEventListener('click',()=>{
     if(btn.dataset.opening||tcSharedRewardDrawBusy||pending)return;
     btn.dataset.opening='1';btn.classList.add('cracked');btn.disabled=true;
-    const hint=document.querySelector('.tc-lot-hint');if(hint)hint.textContent='Drawing…';
+    const hint=document.querySelector('.tc-lot-hint');if(hint)hint.textContent=typeof tcWaitLine==='function'?tcWaitLine('Drawing…'):'Drawing…';
     const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     window.setTimeout(()=>{void tcClaimSharedRewardDraw();},reduced?0:650);
   });
@@ -10361,13 +10361,14 @@ if(!window.__tcBuildStyleBound){
    shared run. The only shared writes here are renaming the players (a revision-
    checked commit) and the existing restart. Difficulty and ruleset stay fixed. */
 const TC_PREFS_KEY='tc-phone-prefs-v1';
-let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
+let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,quiet:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
 function tcSavePrefs(){try{localStorage.setItem(TC_PREFS_KEY,JSON.stringify(tcPrefs));}catch(_){}}
 function tcApplyPrefs(){
   const root=document.documentElement;
   root.classList.toggle('tc-pref-still',Boolean(tcPrefs.still));
   root.classList.toggle('tc-pref-large',Boolean(tcPrefs.large));
   root.classList.toggle('tc-pref-battery',Boolean(tcPrefs.battery));
+  root.classList.toggle('tc-pref-quiet',Boolean(tcPrefs.quiet));
   tcSyncAmbient();
   void tcUpdateWakeLock();
 }
@@ -10467,6 +10468,7 @@ renderSettings=function(){
       ${tcToggle('still','Reduce motion','Stops flames and embers; the reel lands at once.')}
       ${tcToggle('battery','Battery saver','Pauses background animation. The reel and seals still move.')}
       ${tcToggle('large','Larger text','Makes everything a little bigger.')}
+      <button type="button" class="tc-set-row toggle" role="switch" aria-checked="${!tcPrefs.quiet}" data-pref="quiet" data-pref-inverse><span><strong>Covenant commentary</strong><small>Small asides from the clerk, Hewg and the soapstone.</small></span><i class="tc-switch ${tcPrefs.quiet?'':'on'}" aria-hidden="true"></i></button>
     </div>
     <h4 class="tc-forge-h">The Covenant</h4>
     <div class="tc-set-group">
@@ -10495,15 +10497,23 @@ renderSettings=function(){
       <button type="button" class="tc-set-row" data-set="restart"><span><strong>Restart the Covenant</strong><small>Erases all progress${backend?.mode==='shared'?' for both of you':''}.</small></span></button>
       <div id="restartConfirm"></div>
     </div>
+    ${tcSettingsFooter(state)}
   </section>${navMarkup('settings')}`;
   bindNav();bindShare();
   document.querySelector('#refreshApp')?.addEventListener('click',()=>{const u=new URL(window.location.href);u.searchParams.set('_refresh',Date.now().toString());window.location.replace(u.toString());});
   app.querySelectorAll('[data-pref]').forEach(btn=>btn.addEventListener('click',()=>{
     const key=btn.dataset.pref;tcPrefs[key]=!tcPrefs[key];tcSavePrefs();tcApplyPrefs();
-    btn.setAttribute('aria-checked',String(tcPrefs[key]));btn.querySelector('.tc-switch')?.classList.toggle('on',tcPrefs[key]);
+    const shown=btn.hasAttribute('data-pref-inverse')?!tcPrefs[key]:tcPrefs[key];
+    btn.setAttribute('aria-checked',String(shown));btn.querySelector('.tc-switch')?.classList.toggle('on',shown);
   }));
   app.querySelectorAll('[data-set]').forEach(btn=>btn.addEventListener('click',()=>tcSettingsAction(btn.dataset.set,btn)));
 };
+function tcSettingsFooter(state){
+  const times=(state.history||[]).map(x=>Date.parse(x?.completedAt)).filter(Number.isFinite);
+  const start=times.length?Math.min(...times):Date.parse(state.current?.createdAt);
+  const est=Number.isFinite(start)?new Date(start).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'';
+  return `<p class="tc-quip tc-set-footer">Tarnished Covenant${est?` · est. ${h(est)}`:''} · no maidens were consulted</p>`;
+}
 async function tcRenamePlayers(one,two){
   const build=latest=>{if(!latest)return null;const next=structuredClone(latest);next.playerNames=[one,two];next.lastAction=`${playerName()} renamed the Tarnished.`;next.updatedAt=new Date().toISOString();return next;};
   const staged=build(run.state);if(!staged)return;
@@ -10539,7 +10549,7 @@ function tcSettingsAction(kind){
     });
   }else if(kind==='sync'){
     if(backend?.mode!=='shared')return;
-    setToast('Syncing…');
+    setToast(typeof tcWaitLine==='function'?tcWaitLine('Syncing…'):'Syncing…');
     Promise.resolve(typeof tcSyncAuthoritativeRun==='function'?tcSyncAuthoritativeRun('settings'):false).then(()=>{setToast('Up to date.');if(uiScreen==='settings')renderRun();});
   }else if(kind==='ruleset'){
     tcSettingsSheet(state.includeDlc?'Base game + Shadow of the Erdtree':'Base game',`<p class="tc-set-p">${state.includeDlc?'Every remembrance in the base game and in Shadow of the Erdtree is required, and the Realm of Shadow regions are in the draw.':'Every base-game remembrance is required. Shadow of the Erdtree regions are left out.'}</p><p class="tc-set-p muted">Chosen when the Covenant began. It stays fixed for the whole run.</p>`);
@@ -10565,8 +10575,175 @@ function tcSettingsAction(kind){
 /* --- End Settings --- */
 
 
+
+/* --- Personality: small lines that never get in the way ---
+   Three voices: the Covenant clerk (paperwork), Hewg (gruff, chained, never
+   drawn) and soapstone messages built from the game's message grammar.
+   Rules: one line per screen at most, small italic text, never on a button or
+   in a pop-up. Lines rotate once a day and are seeded by the run, so both
+   phones see the same line. Everything carries .tc-quip, which the Settings
+   switch "Covenant commentary" hides (html.tc-pref-quiet). Nothing here writes
+   shared state; the soapstone tally lives on each phone. */
+function tcQuipsOn(){return !(typeof tcPrefs!=='undefined'&&tcPrefs.quiet);}
+function tcQuipHash(text){let x=2166136261;for(const ch of String(text)){x^=ch.charCodeAt(0);x=Math.imul(x,16777619);}return x>>>0;}
+function tcDayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+function tcDaily(list,salt=''){if(!list?.length)return '';return list[tcQuipHash(`${tcDayKey()}|${run?.id||run?.joinCode||'local'}|${salt}`)%list.length];}
+function tcQuip(text,extra=''){return text?`<p class="tc-quip ${extra}">${h(text)}</p>`:'';}
+
+// Soapstone messages: the game's templates and words, plus a few about your boss.
+const TC_SOAPSTONE=[
+  'Try jumping','Likely hidden path','Behold, dog!','Try finger, but hole','Fort, night','Be wary of dragon',
+  'Visions of treasure…','Didn’t expect trap…','Praise the Tarnished','Time for rolling','Seek grace','Ahh, horse…',
+  'Could this be a mimic?','If only I had a shield…','Still no maiden…','Why is it always poison?','First off, two-handing',
+  'Offer rune','Let there be light','Weak foe ahead, therefore try attacking','Strong foe ahead','No item ahead',
+  'Liar ahead','Hidden path ahead, but hole','Try rolling, and then try rolling','Behold, giant!','Ahh, rot…',
+  'Didn’t expect ambush…','Praise the jump','Time for crab','Visions of victory…','If only I had a torch…',
+  'Be wary of left','Seek item, but hole','Fort, night, in short, fort','Praise the Erdtree, so to speak'
+];
+const TC_SOAPSTONE_BOSS=['{boss} ahead','Be wary of {boss}','{boss} ahead, therefore try fleeing','Didn’t expect {boss}…','Time for {boss}','Visions of {boss}…','{boss} ahead, but hole'];
+const TC_SOAP_KEY='tc-soapstone-tally-v1';
+function tcSoapTally(){try{return {good:0,poor:0,rated:{},...JSON.parse(localStorage.getItem(TC_SOAP_KEY)||'{}')};}catch(_){return {good:0,poor:0,rated:{}};}}
+function tcSoapstoneToday(){
+  const boss=run?.state?.current?.target?.name;
+  const useBoss=boss&&tcQuipHash(`${tcDayKey()}|boss`)%3===0;
+  return useBoss?tcDaily(TC_SOAPSTONE_BOSS,'soapboss').replace('{boss}',boss):tcDaily(TC_SOAPSTONE,'soap');
+}
+function tcSoapstoneMarkup(){
+  const msg=tcSoapstoneToday(),t=tcSoapTally(),mine=t.rated[`${tcDayKey()}|${msg}`];
+  const total=t.good+t.poor;
+  return `<div class="tc-quip tc-soapstone" data-soap="${h(msg)}"><p>${h(msg)}</p><div>${mine?`<em>You rated it ${mine==='good'?'Good':'Poor'}.${total>1?` ${total} messages appraised.`:''}</em>`:'<button type="button" data-soap-rate="good">Good</button><button type="button" data-soap-rate="poor">Poor</button>'}</div></div>`;
+}
+document.addEventListener('click',event=>{
+  const btn=event.target.closest('[data-soap-rate]');if(!btn)return;
+  const box=btn.closest('.tc-soapstone'),msg=box?.dataset.soap||'',t=tcSoapTally(),key=`${tcDayKey()}|${msg}`;
+  if(t.rated[key])return;
+  const kind=btn.dataset.soapRate==='poor'?'poor':'good';t[kind]+=1;t.rated[key]=kind;
+  // Keep the per-day record small.
+  const keys=Object.keys(t.rated);if(keys.length>60)keys.slice(0,keys.length-60).forEach(k=>delete t.rated[k]);
+  try{localStorage.setItem(TC_SOAP_KEY,JSON.stringify(t));}catch(_){}
+  box.outerHTML=tcSoapstoneMarkup();
+});
+
+// Run milestones, shown on the Covenant memo while they're fresh.
+function tcRunMilestone(state){
+  const history=Array.isArray(state?.history)?state.history:[];const n=history.length;
+  const counts={1:'First fight on the books. The clerk opened a fresh ledger.',10:'Ten fights filed. The clerk bought a second quill.',25:'Twenty-five fights. The Covenant has started a cabinet.',50:'Fifty fights. The clerk would like a raise.',75:'Seventy-five fights. The filing cabinet is full.',100:'One hundred fights. Someone tell Miyazaki.',150:'One hundred and fifty fights. The clerk has retired; his apprentice continues.'};
+  if(counts[n])return counts[n];
+  const here=history.filter(x=>x?.region===state.region).length;
+  if(here<=1){
+    const dlcBefore=history.some(x=>String(x?.region||'').includes('· DLC')&&x.region!==state.region);
+    if(String(state.region||'').includes('· DLC')&&!dlcBefore)return 'Welcome to the Realm of Shadow. The paperwork is the same here.';
+    const prev=history.find(x=>x?.region&&x.region!==state.region)?.region;
+    if(prev){const fights=history.filter(x=>x?.region===prev);if(fights.length>=3&&fights.every(x=>!(x?.penances||[]).length))return `Not one Appeal in ${prev.replace(/ · DLC$/,'')}. The Covenant is suspicious.`;}
+  }
+  return '';
+}
+function tcDecorateGraceQuips(){
+  const panel=app.querySelector('.tc-sanctuary-panel.tc-grace-refresh');if(!panel)return;
+  if(!panel.querySelector('.tc-soapstone')){const holder=document.createElement('div');holder.innerHTML=tcSoapstoneMarkup();panel.appendChild(holder.firstElementChild);}
+  const memo=panel.querySelector('.tc-grace-office-memo');
+  if(memo&&!memo.querySelector('.tc-milestone')){const text=tcRunMilestone(run.state);if(text)memo.insertAdjacentHTML('beforeend',tcQuip(text,'tc-milestone'));}
+}
+// Grace taps.
+const TC_TAP_LINES={10:'The grace is flattered.',50:'The grace has noticed you.',100:'The grace would like some space.',250:'The grace has filed a complaint.',500:'The grace is considering a restraining order.',1000:'The grace has given up.'};
+if(typeof tcIncrementGraceTapCounter==='function'){
+  const tcIncrementGraceTapBefore=tcIncrementGraceTapCounter;
+  tcIncrementGraceTapCounter=function(btn){
+    tcIncrementGraceTapBefore(btn);
+    try{
+      const line=TC_TAP_LINES[tcReadGraceTapCount()];if(!line||!btn)return;
+      btn.querySelector('.tc-tap-quip')?.remove();
+      btn.insertAdjacentHTML('beforeend',`<span class="tc-quip tc-tap-quip">${h(line)}</span>`);
+      const el=btn.querySelector('.tc-tap-quip');setTimeout(()=>el?.remove(),4500);
+    }catch(_){}
+  };
+}
+
+// Hewg, by the state of your purse.
+function tcHewgLine(state){
+  const sm=smithingData(state),open=typeof tcShopOpen==='function'&&tcShopOpen(state);
+  let set;
+  if(!sm.favor)set=['No Favor, no fire.','Empty purse. The anvil can tell.'];
+  else if(open&&sm.favor>=12)set=['You’re hoarding. I can smell it.','That much Favor and you’re just standing there?'];
+  else if(open)set=['Fine. The good stock’s out back.','Everything’s for sale. Except the chain.'];
+  else{
+    const cost=b=>typeof tcEffectiveSmithingContractCost==='function'?tcEffectiveSmithingContractCost(state,b):smithingContractCost(b);
+    const affordable=typeof availableBellBearings==='function'&&availableBellBearings(state).some(b=>sm.favor>=cost(b));
+    set=affordable?['You’ve Favor enough for a contract. Stop staring at me.','Bring me a bell and I’ll do the rest.']:['Bring me more Favor. The coals don’t eat promises.','Hammer’s hot. Talk fast.','Mind the anvil. It bites.'];
+  }
+  return `Hewg: “${tcDaily(set,'hewg')}”`;
+}
+function tcDecorateForgeQuip(){
+  const title=app.querySelector('.tc-forge-title');if(!title||!run?.state)return;
+  const line=tcHewgLine(run.state);let el=title.parentElement.querySelector('.tc-hewg');
+  if(!el){title.insertAdjacentHTML('afterend',tcQuip(line,'tc-hewg'));}
+  else if(el.textContent!==line)el.textContent=line;
+}
+
+// The battle report and the Dossiers.
+const TC_REPORT_LINES=['Filed in triplicate.','The lord’s estate is under review.','Victory noted. Celebration pending approval.','Another name struck from the ledger.','The Covenant acknowledges your violence.'];
+function tcReportQuip(current){
+  if(current?.target?.exit)return 'Capstone. The Covenant is, officially, impressed.';
+  return tcDaily(TC_REPORT_LINES,`report|${current?.id||''}`);
+}
+function tcDossierRemark(entry){
+  const pen=Array.isArray(entry?.penances)?entry.penances.length:0;
+  if(entry?.exit)return 'Capstone. Framed and hung in the hall.';
+  if(pen>=3)return 'The Covenant notes a pattern.';
+  if(entry?.chaosTriggered&&entry?.chaosOutcome==='Honored'&&entry?.riteOutcome==='Honored')return 'Remarkably compliant.';
+  if(entry?.oddRite&&entry?.riteOutcome&&entry.riteOutcome!=='Honored')return 'The Rite was… interpreted loosely.';
+  if(entry?.chaosTriggered&&entry?.chaosOutcome&&entry.chaosOutcome!=='Honored')return 'Chaos won this round. The clerk has made a note.';
+  if(Number(entry?.favorEarned||0)>=4)return 'A lucrative afternoon.';
+  if(pen)return `${pen===1?'An Appeal was':'Appeals were'} filed. The Covenant remembers.`;
+  if(!entry?.chaosTriggered)return 'Clean paperwork. Suspiciously clean.';
+  return 'Nothing further to report.';
+}
+
+// Build: a dry remark, only when there is something to say.
+function tcBuildRemark(screen){
+  const slot=screen.querySelector('.tc-build-player-tabs .active')?.dataset.buildSlot;const b=run?.state?.builds?.[slot];if(!b)return '';
+  const aff=screen.querySelector('.tc-affinity-chip.current span')?.textContent?.trim()||'';
+  if(screen.querySelector('#tcWeaponResults .tc-ar-validity.bad'))return 'Requirements unmet. The Covenant admires your confidence.';
+  if(aff==='Heavy'&&b.dex>b.str+5)return 'Heavy affinity on a Dexterity build. Bold.';
+  if(aff==='Keen'&&b.str>b.dex+5)return 'Keen affinity on a Strength build. Interesting.';
+  const info=window.tcBuildLabInfo;
+  if(info){const per={};(b.talismans||[]).forEach(t=>{const s=info.STAT_TALISMANS[info.itemKey(t)];if(s)Object.entries(s).forEach(([k,v])=>{if(v)per[k]=(per[k]||0)+1;});});const hit=Object.entries(per).find(([,n])=>n>=2);if(hit)return `Two talismans for ${TC_ATTR_NAMES?.[hit[0]]||hit[0]}. Committed.`;}
+  if(b.level>=80&&b.vig<30)return `Vigor ${b.vig} at level ${b.level}. Brave.`;
+  if(['Occult','Blood'].includes(aff)&&b.arc>=40)return 'Arcane, all the way down.';
+  const up=Number(b.weapon?.upgrade||0),max=Number((screen.querySelector('#tcUpgradeMax')?.textContent||'').replace(/\D/g,''))||0;
+  if(max&&up>=max)return 'Fully upgraded. Hewg approves, quietly.';
+  return '';
+}
+function tcDecorateBuildQuip(){
+  const screen=app.querySelector('.tc-build-screen');const plate=screen?.querySelector('#tcWeaponResults .tc-ar-hero');if(!plate)return;
+  const text=tcBuildRemark(screen);let el=screen.querySelector('.tc-build-quip');
+  if(!text){el?.remove();return;}
+  if(!el||el.previousElementSibling!==plate){el?.remove();plate.insertAdjacentHTML('afterend',tcQuip(text,'tc-build-quip'));}
+  else if(el.textContent!==text)el.textContent=text;
+}
+
+// Waiting moments.
+const TC_WAIT_LINES=['Consulting the Two Fingers…','Notarizing…','Filing in triplicate…','Stamping the seal…'];
+function tcWaitLine(plain){return tcQuipsOn()?TC_WAIT_LINES[Math.floor(Math.random()*TC_WAIT_LINES.length)]:plain;}
+
+function tcDecoratePersonality(){
+  if(!run?.state)return;
+  try{tcDecorateGraceQuips();}catch(_){}
+  try{tcDecorateForgeQuip();}catch(_){}
+  try{tcDecorateBuildQuip();}catch(_){}
+}
+if(!window.__tcPersonalityBound){
+  window.__tcPersonalityBound=true;
+  let queued=false;
+  const go=()=>{queued=false;tcDecoratePersonality();};
+  const start=()=>new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(go);}).observe(document.body,{childList:true,subtree:true});
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+}
+/* --- End personality --- */
+
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-settings-1';
+const TC_BUILD_ID='20261125-quips-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -12727,6 +12904,24 @@ html:has(.tc-battle-report) #toast{top:calc(12px + env(safe-area-inset-top))!imp
 /* Phone preferences */
 html.tc-pref-still *,html.tc-pref-still *::before,html.tc-pref-still *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
 html.tc-pref-large #app{zoom:1.1}
+
+/* --- Personality lines --- */
+:is(#app,html) .tc-quip{margin:6px 2px 0;font-family:var(--serif)!important;--tc-ff:var(--serif);font-size:13.5px!important;font-style:italic;line-height:1.4;letter-spacing:0!important;text-transform:none!important;font-variant-caps:normal!important;color:#8e806c!important;text-align:center}
+html.tc-pref-quiet .tc-quip{display:none!important}
+:is(#app,html) .tc-grace-refresh{grid-template-areas:"hero" "next" "memo" "soap"!important}
+:is(#app,html) .tc-soapstone{grid-area:soap;margin:0 6px 6px!important;padding:10px 12px;border:1px dashed rgba(232,150,80,.28);border-radius:3px;background:radial-gradient(ellipse at 50% 0,rgba(255,150,70,.08),transparent 70%)}
+:is(#app,html) .tc-soapstone p{margin:0;font-family:var(--serif);font-size:16px;font-style:italic;color:#f0b98a;text-shadow:0 0 10px rgba(255,140,60,.35)}
+:is(#app,html) .tc-soapstone div{display:flex;justify-content:center;gap:14px;margin-top:6px}
+:is(#app,html) .tc-soapstone button{min-height:36px;padding:6px 12px;border:0;background:none;color:#a89880;font:italic 13px/1.3 var(--serif);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+:is(#app,html) .tc-soapstone em{font-size:12.5px;color:#8e806c}
+:is(#app,html) .tc-grace-office-memo .tc-milestone{margin:8px 0 0;text-align:left;color:#7a5b3a!important}
+:is(#app,html) .tc-tap-quip{position:absolute;left:0;right:0;bottom:-2px;margin:0;font-size:12.5px!important;color:#e8c27a!important;animation:tcQuipFade 4.4s ease both}
+@keyframes tcQuipFade{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}
+:is(#app,html) .tc-hewg{margin:2px 2px 6px;text-align:left}
+:is(#app,html) .tc-report-quip{margin:4px 0 0;text-align:left;color:#cdbfa6!important;opacity:.85}
+:is(#app,html) .tc-dossier-remark{margin:0 0 8px;text-align:left}
+:is(#app,html) .tc-build-quip{margin:8px 2px 0}
+:is(#app,html) .tc-set-footer{margin:22px 0 6px!important;font-size:12.5px!important}
 </style>
 </body>
 </html>
