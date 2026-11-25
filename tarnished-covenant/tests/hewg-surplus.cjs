@@ -40,6 +40,8 @@ assert.equal(app.run('waiver.smithing.appealWaivers'),Number(app.run('base.smith
 assert.equal(app.run('normalized.smithing.shopLog.length'),1,'purchase log survives normalization');
 assert.equal(app.run('normalized.current.remembranceSwaps.length'),1,'swap record survives normalization');
 assert.equal(app.run('normalized.smithing.masterworkRecalls.length'),1,'existing records untouched');
-assert.ok(app.run('smithingLedgerMarkup(base).includes("Hewg’s Surplus")'));
+assert.ok(app.run('smithingLedgerMarkup(base).includes("data-forge-open")'),'ledger points to the Forge once open');
+assert.ok(app.run('tcForgeShopMarkup(base).includes("data-shop-item=\\"masterwork\\"")'),'Forge panel carries the shop once open');
+assert.ok(app.run('tcForgeHuntMarkup(locked).includes("7 of 8 Bearings Home")'),'Forge panel is the bearing hunt before that');
 assert.ok(app.run('smithingLedgerMarkup(locked).includes("Opens once all 8")'));
 console.log('PASS tests/hewg-surplus.cjs');

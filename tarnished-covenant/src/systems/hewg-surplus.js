@@ -132,7 +132,7 @@ function tcBuildShopPurchase(latest,purchaseId,itemId,actor,options={}){
 }
 function tcShopPurchaseId(){return 'shop-'+(crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2));}
 
-function tcShopMarkup(state){
+function tcShopMarkup(state,options={}){
   const sm=smithingData(state);
   if(!tcShopOpen(state)){
     const have=sm.acquired.filter(id=>TC_BELL_BEARINGS.some(b=>b.id===id)).length;
@@ -142,17 +142,17 @@ function tcShopMarkup(state){
   const rows=TC_SHOP_ITEMS.map(item=>{
     let why='';
     if(busy)why='Resolve the shared Covenant reward first.';
-    else if(sm.favor<item.cost)why=`Needs ${item.cost} Favor · you hold ${sm.favor}`;
+    else if(sm.favor<item.cost)why=options.bare?'':`Needs ${item.cost} Favor · you hold ${sm.favor}`;
     else if(item.id==='remembrance'&&swapBlock)why=swapBlock;
     else if(item.id==='remembrance'&&!choices.length)why='No remembrance weapons earned yet.';
-    return `<button type="button" class="tc-shop-item" data-shop-item="${item.id}" ${why?'disabled':''}>
+    return `<button type="button" class="tc-shop-item" data-shop-item="${item.id}" ${why||sm.favor<item.cost?'disabled':''}>
       <span class="tc-shop-glyph" aria-hidden="true">${item.glyph}</span>
       <span class="tc-shop-text"><strong>${h(item.label)}</strong><small>${h(item.detail)}</small>${why?`<em>${h(why)}</em>`:''}</span>
       <span class="tc-shop-price">${item.cost}<i>Favor</i></span>
     </button>`;
   }).join('');
   const last=tcShopLog(state).slice(-3).reverse();
-  return `<div class="tc-shop"><div class="tc-shop-head"><div><div class="tc-kicker ember">Hewg’s Surplus</div><div class="tc-muted">Every bearing is home. Hewg will sell nearly anything for Favor.</div></div><div class="tc-shop-purse">✦ ${sm.favor}</div></div>
+  return `<div class="tc-shop${options.bare?' bare':''}">${options.bare?'':`<div class="tc-shop-head"><div><div class="tc-kicker ember">Hewg’s Surplus</div><div class="tc-muted">Every bearing is home. Hewg will sell nearly anything for Favor.</div></div><div class="tc-shop-purse">✦ ${sm.favor}</div></div>`}
     <div class="tc-shop-list">${rows}</div>
     ${last.length?`<div class="tc-shop-log">${last.map(e=>`<div>${h(personalizePlayers(e.by||'',state))} · ${h(e.detail||tcShopItem(e.item)?.label||e.item)} · ${Number(e.cost)||0} Favor</div>`).join('')}</div>`:''}
   </div>`;
@@ -161,15 +161,17 @@ function tcShopMarkup(state){
 const tcSmithingLedgerBeforeSurplus=smithingLedgerMarkup;
 smithingLedgerMarkup=function(state){
   const html=tcSmithingLedgerBeforeSurplus(state);
-  // The shop sits just under the Favor total so the currency and its use read together.
+  // The shop itself lives on the Site of Grace Forge panel; the ledger points there.
   const marker='<div class="tc-kicker ember" style="margin-top:18px">bell bearing ledger</div>';
-  return html.includes(marker)?html.replace(marker,tcShopMarkup(state)+marker):html+tcShopMarkup(state);
+  const sm=smithingData(state);
+  const card=tcShopOpen(state)?`<button type="button" class="tc-forge-notice quiet tc-shop-link" data-forge-open><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s surplus</div><div class="tc-forge-title">Spend ${sm.favor} Favor at the Forge</div><div class="tc-muted">Site of Grace → Forge.</div></div><span class="tc-forge-arrow">›</span></button>`:tcShopMarkup(state);
+  return html.includes(marker)?html.replace(marker,card+marker):html+card;
 };
 const tcSmithingHubBeforeSurplus=smithingHubMarkup;
 smithingHubMarkup=function(state){
   const html=tcSmithingHubBeforeSurplus(state),sm=smithingData(state);
   if(!tcShopOpen(state)||sm.activeContract)return html;
-  return `<button class="tc-forge-notice quiet" data-smith-action="ledger" type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s surplus is open</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">Masterwork Tokens, remembrance weapons, Covenant documents and draws.</div></div><span class="tc-forge-arrow">›</span></button>`;
+  return `<button class="tc-forge-notice quiet" data-forge-open type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s surplus is open</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">Masterwork Tokens, remembrance weapons, Covenant documents and draws.</div></div><span class="tc-forge-arrow">›</span></button>`;
 };
 
 let tcShopBusyClick=false;

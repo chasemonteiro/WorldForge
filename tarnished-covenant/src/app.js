@@ -5199,9 +5199,10 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/rykard-armaments.js}}
 {{src/systems/assignment-repair.js}}
 {{src/systems/hewg-surplus.js}}
+{{src/systems/forge-tab.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261124-metyr-1';
+const TC_BUILD_ID='20261125-forge-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

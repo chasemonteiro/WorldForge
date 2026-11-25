@@ -9333,7 +9333,7 @@ function tcBuildShopPurchase(latest,purchaseId,itemId,actor,options={}){
 }
 function tcShopPurchaseId(){return 'shop-'+(crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2));}
 
-function tcShopMarkup(state){
+function tcShopMarkup(state,options={}){
   const sm=smithingData(state);
   if(!tcShopOpen(state)){
     const have=sm.acquired.filter(id=>TC_BELL_BEARINGS.some(b=>b.id===id)).length;
@@ -9343,17 +9343,17 @@ function tcShopMarkup(state){
   const rows=TC_SHOP_ITEMS.map(item=>{
     let why='';
     if(busy)why='Resolve the shared Covenant reward first.';
-    else if(sm.favor<item.cost)why=`Needs ${item.cost} Favor · you hold ${sm.favor}`;
+    else if(sm.favor<item.cost)why=options.bare?'':`Needs ${item.cost} Favor · you hold ${sm.favor}`;
     else if(item.id==='remembrance'&&swapBlock)why=swapBlock;
     else if(item.id==='remembrance'&&!choices.length)why='No remembrance weapons earned yet.';
-    return `<button type="button" class="tc-shop-item" data-shop-item="${item.id}" ${why?'disabled':''}>
+    return `<button type="button" class="tc-shop-item" data-shop-item="${item.id}" ${why||sm.favor<item.cost?'disabled':''}>
       <span class="tc-shop-glyph" aria-hidden="true">${item.glyph}</span>
       <span class="tc-shop-text"><strong>${h(item.label)}</strong><small>${h(item.detail)}</small>${why?`<em>${h(why)}</em>`:''}</span>
       <span class="tc-shop-price">${item.cost}<i>Favor</i></span>
     </button>`;
   }).join('');
   const last=tcShopLog(state).slice(-3).reverse();
-  return `<div class="tc-shop"><div class="tc-shop-head"><div><div class="tc-kicker ember">Hewg’s Surplus</div><div class="tc-muted">Every bearing is home. Hewg will sell nearly anything for Favor.</div></div><div class="tc-shop-purse">✦ ${sm.favor}</div></div>
+  return `<div class="tc-shop${options.bare?' bare':''}">${options.bare?'':`<div class="tc-shop-head"><div><div class="tc-kicker ember">Hewg’s Surplus</div><div class="tc-muted">Every bearing is home. Hewg will sell nearly anything for Favor.</div></div><div class="tc-shop-purse">✦ ${sm.favor}</div></div>`}
     <div class="tc-shop-list">${rows}</div>
     ${last.length?`<div class="tc-shop-log">${last.map(e=>`<div>${h(personalizePlayers(e.by||'',state))} · ${h(e.detail||tcShopItem(e.item)?.label||e.item)} · ${Number(e.cost)||0} Favor</div>`).join('')}</div>`:''}
   </div>`;
@@ -9362,15 +9362,17 @@ function tcShopMarkup(state){
 const tcSmithingLedgerBeforeSurplus=smithingLedgerMarkup;
 smithingLedgerMarkup=function(state){
   const html=tcSmithingLedgerBeforeSurplus(state);
-  // The shop sits just under the Favor total so the currency and its use read together.
+  // The shop itself lives on the Site of Grace Forge panel; the ledger points there.
   const marker='<div class="tc-kicker ember" style="margin-top:18px">bell bearing ledger</div>';
-  return html.includes(marker)?html.replace(marker,tcShopMarkup(state)+marker):html+tcShopMarkup(state);
+  const sm=smithingData(state);
+  const card=tcShopOpen(state)?`<button type="button" class="tc-forge-notice quiet tc-shop-link" data-forge-open><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s surplus</div><div class="tc-forge-title">Spend ${sm.favor} Favor at the Forge</div><div class="tc-muted">Site of Grace → Forge.</div></div><span class="tc-forge-arrow">›</span></button>`:tcShopMarkup(state);
+  return html.includes(marker)?html.replace(marker,card+marker):html+card;
 };
 const tcSmithingHubBeforeSurplus=smithingHubMarkup;
 smithingHubMarkup=function(state){
   const html=tcSmithingHubBeforeSurplus(state),sm=smithingData(state);
   if(!tcShopOpen(state)||sm.activeContract)return html;
-  return `<button class="tc-forge-notice quiet" data-smith-action="ledger" type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s surplus is open</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">Masterwork Tokens, remembrance weapons, Covenant documents and draws.</div></div><span class="tc-forge-arrow">›</span></button>`;
+  return `<button class="tc-forge-notice quiet" data-forge-open type="button"><div class="tc-forge-glyph">⚒</div><div><div class="tc-kicker ember">hewg’s surplus is open</div><div class="tc-forge-title">${sm.favor} Smithing Favor</div><div class="tc-muted">Masterwork Tokens, remembrance weapons, Covenant documents and draws.</div></div><span class="tc-forge-arrow">›</span></button>`;
 };
 
 let tcShopBusyClick=false;
@@ -9432,9 +9434,72 @@ document.addEventListener('click',event=>{
 });
 /* --- End Hewg's Surplus --- */
 
+/* --- Hewg's Forge: the third Site of Grace panel ---
+   Before every Miner's Bell Bearing is home it is the Bell Bearing Hunt hub
+   (contract call-to-action, bearings at a glance). Afterwards it becomes
+   Hewg's Surplus. The room code stays at the foot of the panel; the old quick
+   links (duplicates of the bottom bar) are dropped. Presentation only. */
+const TC_FORGE_ANVIL=`<svg class="tc-forge-anvil" viewBox="0 0 160 120" aria-hidden="true">
+  <defs><radialGradient id="tcForgeGlow" cx="50%" cy="62%" r="55%"><stop offset="0" stop-color="#ff9a3c" stop-opacity=".55"/><stop offset=".55" stop-color="#b4461a" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <linearGradient id="tcForgeIron" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b5a45"/><stop offset=".45" stop-color="#3a3026"/><stop offset="1" stop-color="#1c1712"/></linearGradient></defs>
+  <ellipse class="tc-forge-heat" cx="80" cy="74" rx="78" ry="46" fill="url(#tcForgeGlow)"/>
+  <path d="M30 52h86c8 0 16-4 22-10l4 2c-4 12-14 20-26 22H98l-6 12 10 14H58l10-14-6-12H40c-6 0-10-5-10-10z" fill="url(#tcForgeIron)" stroke="#c8a85b" stroke-opacity=".55" stroke-width="1.2"/>
+  <path d="M50 102h60v6H50z" fill="#2a221a" stroke="#c8a85b" stroke-opacity=".4"/>
+  <g class="tc-forge-hammer"><path d="M86 20l26-14 6 10-26 14z" fill="#4a3d30" stroke="#c8a85b" stroke-opacity=".6"/><path d="M98 22l-24 30" stroke="#8a6a3e" stroke-width="4" stroke-linecap="round"/></g>
+  <g class="tc-forge-sparks" fill="#ffb25a"><circle cx="76" cy="48" r="1.6"/><circle cx="84" cy="46" r="1.2"/><circle cx="70" cy="45" r="1"/><circle cx="90" cy="49" r="1.3"/><circle cx="80" cy="43" r="1"/></g>
+</svg>`;
+function tcForgeBearingCount(state){
+  const acquired=new Set(smithingData(state).acquired);
+  return TC_BELL_BEARINGS.filter(b=>acquired.has(b.id)).length;
+}
+function tcForgePurse(state){
+  const sm=smithingData(state);
+  return `<div class="tc-forge-purse"><div><span>Smithing Favor</span><strong>✦ ${sm.favor}</strong></div><div><span>Masterwork Credits</span><strong>⚒ ${sm.masterworkCredits}</strong></div></div>`;
+}
+function tcForgeHuntMarkup(state){
+  const sm=smithingData(state),acquired=new Set(sm.acquired),contract=sm.activeContract,have=tcForgeBearingCount(state);
+  const rows=TC_BELL_BEARINGS.map(b=>{
+    const got=acquired.has(b.id),active=contract?.bearingId===b.id,open=!got&&!active&&bellAccessible(state,b);
+    const status=got?'Home':active?(contract.status==='sanctioned'?'Sanctioned':'Contract'):open?`${smithingContractCost(b)} Favor`:'Locked';
+    const cls=got?'done':active?'active':open?'available':'locked';
+    return `<div class="tc-forge-bearing ${cls}"><span class="tc-forge-bell" aria-hidden="true">${got?'◆':active?'◈':'◇'}</span><div><strong>${h(b.name.replace(/ Miner’s Bell Bearing/,''))}</strong><small>${h(b.custodian)} · ${h(b.place)}</small></div><em>${h(status)}</em></div>`;
+  }).join('');
+  return `<div class="tc-forge-hero hunt"><img src="assets/bosses/bell-bearing-hunter.webp" alt="" loading="lazy" decoding="async"><div class="tc-forge-hero-copy"><div class="tc-kicker ember">The Bell Bearing Hunt</div><h3>${have} of ${TC_BELL_BEARINGS.length} Bearings Home</h3><p>Bring every Miner’s Bell Bearing home and Hewg opens his surplus stock.</p><div class="tc-forge-progress"><span style="width:${Math.round(have/TC_BELL_BEARINGS.length*100)}%"></span></div></div></div>
+    ${tcForgePurse(state)}
+    ${(()=>{const hub=smithingHubMarkup(state);return hub.includes('tc-forge-notice quiet')?'':hub;})()}
+    <div class="tc-kicker ember tc-forge-section">Bearings</div>
+    <div class="tc-forge-bearings">${rows}</div>`;
+}
+function tcForgeShopMarkup(state){
+  return `<div class="tc-forge-hero shop">${TC_FORGE_ANVIL}<div class="tc-forge-hero-copy"><div class="tc-kicker ember">Hewg’s Surplus</div><h3>Every Bearing Is Home</h3><p>“Favor, is it? Fine. I’ve a few things lying about.”</p></div></div>
+    ${tcForgePurse(state)}
+    ${tcShopMarkup(state,{bare:true})}`;
+}
+function tcMountForgePanel(){
+  const panel=app.querySelector('.tc-sanctuary-panel[data-panel="covenant"]');
+  if(!panel||panel.dataset.forge||!run?.state)return;
+  panel.dataset.forge='1';panel.classList.add('tc-forge-panel');
+  const open=tcShopOpen(run.state);
+  const tab=app.querySelectorAll('.tc-sanctuary-tabs button')[2];if(tab)tab.textContent='Forge';
+  const heading=panel.querySelector('.tc-panel-heading');if(heading)heading.textContent='Hewg’s Forge';
+  panel.querySelectorAll('.tc-quick,.tc-forge-notice,.tc-forge-favor').forEach(node=>node.remove());
+  const forge=document.createElement('div');forge.className='tc-forge';
+  forge.innerHTML=open?tcForgeShopMarkup(run.state):tcForgeHuntMarkup(run.state);
+  if(heading)heading.after(forge);else panel.prepend(forge);
+  const code=panel.querySelector('.tc-code-row');if(code){code.classList.add('tc-forge-code');panel.appendChild(code);}
+}
+const tcRenderSanctuaryBeforeForge=renderSanctuary;
+renderSanctuary=function(){tcRenderSanctuaryBeforeForge();try{tcMountForgePanel();}catch(error){console.warn('Forge panel skipped',error);}};
+function tcOpenForge(){uiScreen='sanctuary';tcSanctuaryPanelIndex=2;pendingRevealId=null;renderRun();}
+document.addEventListener('click',event=>{
+  const el=event.target.closest('[data-forge-open]');if(!el)return;
+  event.preventDefault();tcOpenForge();
+});
+/* --- End Hewg's Forge --- */
+
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261124-metyr-1';
+const TC_BUILD_ID='20261125-forge-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -11010,6 +11075,47 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-shop-price i{display:block;font-style:normal;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-top:3px}
 :is(#app,html) .tc-shop-log{margin-top:10px;display:grid;gap:3px;font-size:13px;color:var(--ash);font-style:italic}
 :is(#app,html) .tc-strategy-item span{font-size:13px!important;line-height:1.35}
+
+/* --- Hewg's Forge panel --- */
+:is(#app,html) .tc-forge{display:grid;gap:12px;padding-bottom:6px}
+:is(#app,html) .tc-forge-hero{position:relative;overflow:hidden;border:1px solid var(--line);min-height:150px;display:flex;align-items:flex-end;background:#0b0907}
+:is(#app,html) .tc-forge-hero.hunt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:55% 30%;opacity:.62}
+:is(#app,html) .tc-forge-hero.hunt::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,6,5,.05) 20%,rgba(8,6,5,.92) 88%)}
+:is(#app,html) .tc-forge-hero.shop{min-height:170px;background:radial-gradient(120% 90% at 50% 100%,rgba(120,46,16,.35),rgba(10,8,6,.9) 70%)}
+:is(#app,html) .tc-forge-hero-copy{position:relative;z-index:1;padding:14px 16px}
+:is(#app,html) .tc-forge-hero h3{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:22px;letter-spacing:.03em;margin:4px 0 4px;color:var(--ink)}
+:is(#app,html) .tc-forge-hero p{margin:0;color:var(--ash);font-style:italic;font-size:15px;line-height:1.35}
+:is(#app,html) .tc-forge-progress{margin-top:10px;height:3px;background:rgba(200,168,91,.18)}
+:is(#app,html) .tc-forge-progress span{display:block;height:100%;background:linear-gradient(90deg,var(--ember),var(--gold-bright))}
+:is(#app,html) .tc-forge-anvil{position:absolute;right:-6px;top:4px;width:62%;max-width:240px;height:auto}
+:is(#app,html) .tc-forge-hero.shop .tc-forge-hero-copy{max-width:62%}
+@keyframes tcForgeHeat{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes tcForgeSparks{0%{transform:translate3d(0,0,0);opacity:0}15%{opacity:1}100%{transform:translate3d(0,-26px,0);opacity:0}}
+@keyframes tcForgeStrike{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-14deg)}88%{transform:rotate(3deg)}}
+:is(#app,html) .tc-forge-heat{animation:tcForgeHeat 3.6s ease-in-out infinite}
+:is(#app,html) .tc-forge-sparks{animation:tcForgeSparks 2.4s ease-out infinite}
+:is(#app,html) .tc-forge-hammer{transform-box:fill-box;transform-origin:20% 100%;animation:tcForgeStrike 2.4s ease-in-out infinite}
+:is(#app,html) .tc-anim-paused .tc-forge-heat,:is(#app,html) .tc-anim-paused .tc-forge-sparks,:is(#app,html) .tc-anim-paused .tc-forge-hammer{animation-play-state:paused}
+:is(#app,html) .tc-forge-purse{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line)}
+:is(#app,html) .tc-forge-purse>div{padding:10px 12px;display:grid;gap:2px}
+:is(#app,html) .tc-forge-purse>div+div{border-left:1px solid var(--line)}
+:is(#app,html) .tc-forge-purse span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+:is(#app,html) .tc-forge-purse strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:24px;color:var(--gold-bright)}
+:is(#app,html) .tc-forge .tc-forge-notice{margin:0!important}
+:is(#app,html) .tc-forge-section{margin-top:4px}
+:is(#app,html) .tc-forge-bearings{display:grid;gap:6px}
+:is(#app,html) .tc-forge-bearing{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);background:rgba(14,11,8,.6)}
+:is(#app,html) .tc-forge-bearing strong{display:block;font-size:15px;font-weight:500}
+:is(#app,html) .tc-forge-bearing small{display:block;color:var(--ash);font-size:12.5px;line-height:1.3}
+:is(#app,html) .tc-forge-bearing em{font-style:normal;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+:is(#app,html) .tc-forge-bell{color:var(--ash);text-align:center}
+:is(#app,html) .tc-forge-bearing.done .tc-forge-bell,:is(#app,html) .tc-forge-bearing.done em{color:var(--gold-bright)}
+:is(#app,html) .tc-forge-bearing.active{border-color:var(--ember)}
+:is(#app,html) .tc-forge-bearing.active .tc-forge-bell,:is(#app,html) .tc-forge-bearing.active em,:is(#app,html) .tc-forge-bearing.available em{color:var(--ember)}
+:is(#app,html) .tc-forge-bearing.locked{opacity:.55}
+:is(#app,html) .tc-shop.bare{padding-top:0;border-bottom:0}
+:is(#app,html) .tc-forge-code{margin-top:14px!important;opacity:.85;font-size:13px!important}
+@media (prefers-reduced-motion:reduce){:is(#app,html) .tc-forge-heat,:is(#app,html) .tc-forge-sparks,:is(#app,html) .tc-forge-hammer{animation:none!important}}
 </style>
 </body>
 </html>
