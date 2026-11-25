@@ -5202,7 +5202,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/forge-tab.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-forge-1';
+const TC_BUILD_ID='20261125-forge-2';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
