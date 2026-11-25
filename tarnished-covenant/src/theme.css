@@ -1585,3 +1585,43 @@ html:has(.tc-battle-report) #toast{top:calc(12px + env(safe-area-inset-top))!imp
 .tc-pick-item:disabled small{color:#8e806c}
 @media(prefers-reduced-motion:reduce){.tc-pick-sheet,.tc-pick-sheet-wrap{transition:none}}
 :is(#app,html) .tc-build-new .tc-affinity-tip[hidden]{display:none!important}
+
+/* --- Settings menu --- */
+:is(#app,html) .tc-settings-new{overflow-x:hidden;padding-bottom:calc(84px + env(safe-area-inset-bottom))!important}
+:is(#app,html) .tc-settings-new .tc-forge-h{margin:20px 2px 8px}
+:is(#app,html) .tc-settings-new .tc-forge-h.danger{color:#e08a7a!important}
+:is(#app,html) .tc-set-group{border:1px solid rgba(201,162,92,.26);border-radius:4px;background:linear-gradient(180deg,#1b1511,#110d0a);overflow:hidden}
+:is(#app,html) .tc-set-group.danger{border-color:rgba(208,103,90,.4);background:linear-gradient(180deg,#1f110d,#120a08)}
+:is(#app,html) .tc-set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:62px;padding:12px 14px;border:0;border-top:1px solid rgba(201,162,92,.14);background:none;color:inherit;text-align:left;cursor:pointer;clip-path:none}
+:is(#app,html) .tc-set-group>.tc-set-row:first-child,:is(#app,html) .tc-set-group>:first-child{border-top:0}
+:is(#app,html) .tc-set-row:active{background:rgba(255,190,110,.06)}
+:is(#app,html) .tc-set-row>span{display:grid;gap:3px;min-width:0}
+:is(#app,html) .tc-set-row strong{font-family:var(--serif)!important;--tc-ff:var(--serif);font-weight:400;font-size:17.5px;line-height:1.2;color:#f0ddb2;text-transform:none;letter-spacing:0;font-variant-caps:normal}
+:is(#app,html) .tc-set-row small{font-size:13.5px;line-height:1.35;font-style:italic;color:#8e806c}
+:is(#app,html) .tc-set-row em{flex:none;font-style:normal;font-family:var(--display);--tc-ff:var(--display);font-size:12px;letter-spacing:.08em;color:#c9a25c}
+:is(#app,html) .tc-set-group.danger .tc-set-row strong{color:#f0b2a5}
+:is(#app,html) .tc-set-row:disabled{cursor:default;opacity:.55}
+:is(#app,html) .tc-switch{flex:none;position:relative;width:46px;height:28px;border-radius:14px;background:#2a231c;border:1px solid rgba(201,162,92,.3);transition:background .2s ease}
+:is(#app,html) .tc-switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#8e806c;transition:transform .2s ease,background .2s ease}
+:is(#app,html) .tc-switch.on{background:rgba(217,166,80,.35);border-color:#e8c27a}
+:is(#app,html) .tc-switch.on::after{transform:translateX(18px);background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 60%,#8a5a22)}
+:is(#app,html) .tc-set-code{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;padding:14px}
+:is(#app,html) .tc-set-code>span{grid-column:1/-1;font-size:13px;font-style:italic;color:#8e806c}
+:is(#app,html) .tc-set-code strong{font-family:var(--display);--tc-ff:var(--display);font-weight:500;font-size:26px;letter-spacing:.16em;color:#ffe2a6}
+:is(#app,html) .tc-set-code div{display:flex;gap:8px}
+:is(#app,html) .tc-set-code .tc-satchel-act{min-width:64px}
+:is(#app,html) .tc-settings-new #restartConfirm:empty{display:none}
+:is(#app,html) .tc-settings-new #restartConfirm{padding:12px 14px;border-top:1px solid rgba(208,103,90,.3)}
+.tc-set-sheet-body{overflow-y:auto;overscroll-behavior:contain;padding-bottom:6px}
+.tc-set-sheet-body .btn{width:100%;margin-top:14px}
+.tc-set-p{margin:0 0 10px;font-family:var(--serif);font-size:16px;line-height:1.45;color:#d9ccb2;text-transform:none;letter-spacing:0}
+.tc-set-p.muted{font-size:14px;font-style:italic;color:#8e806c}
+.tc-set-label{display:block;margin:10px 0 4px;font-size:13.5px;font-style:italic;color:#a89880}
+.tc-rules{display:grid;gap:0}
+.tc-rules>div{padding:10px 0;border-top:1px solid rgba(201,162,92,.14)}
+.tc-rules>div:first-child{border-top:0;padding-top:2px}
+.tc-rules strong{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.03em;color:#e8c27a}
+.tc-rules p{margin:3px 0 0;font-family:var(--serif);font-size:15.5px;line-height:1.45;color:#d9ccb2;text-transform:none}
+/* Phone preferences */
+html.tc-pref-still *,html.tc-pref-still *::before,html.tc-pref-still *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
+html.tc-pref-large #app{zoom:1.1}
