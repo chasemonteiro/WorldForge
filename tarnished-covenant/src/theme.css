@@ -1141,6 +1141,7 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-next-line{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:baseline}
 :is(#app,html) .tc-next-line span{--tc-ff:var(--display);font-family:var(--display);font-size:12px;letter-spacing:.06em;color:#c9a25c}
 :is(#app,html) .tc-next-line.chaos span{color:#e0703a}
+:is(#app,html) .tc-next-line.rite span{color:var(--violet-bright)}
 :is(#app,html) .tc-next-line p{margin:0;font-size:15px;line-height:1.3;color:#d9cbb2}
 :is(#app,html) .tc-next-links{display:flex;gap:16px;align-items:center;padding-top:8px;border-top:1px solid rgba(201,162,92,.16);font-size:14px}
 :is(#app,html) .tc-next-links a{color:#b9a98f;text-decoration:underline;text-decoration-color:rgba(201,162,92,.4);text-underline-offset:3px}
