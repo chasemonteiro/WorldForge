@@ -48,7 +48,7 @@ function tcSatchelTrophies(state){
   const named=new Set(records.map(r=>r.weapon));
   const legacy=(sm.masterworks||[]).filter(n=>!named.has(n)).map(n=>({weapon:n,legacy:true}));
   const all=[...records.filter(r=>!r.used),...records.filter(r=>r.used),...legacy];
-  if(!all.length)return '<p class="tc-satchel-empty">No Masterworks yet. Every claimed bearing and every Masterwork Token buys one.</p>';
+  if(!all.length)return `<p class="tc-satchel-empty">No Masterworks yet. Every claimed bearing and every Masterwork Token buys one.</p>${typeof tcQuip==='function'?tcQuip('Hewg has nothing of yours worth keeping. Yet.'):''}`;
   return `<div class="tc-trophies">${all.map(r=>{
     if(r.legacy)return `<div class="tc-trophy retired"><span class="tc-trophy-mark">⚒</span><strong>${h(r.weapon)}</strong><small>An old Masterwork, kept for the record.</small></div>`;
     const isCurrent=String(c?.[r.owner]?.name||'')===r.weapon,canUse=Boolean(!r.used&&!locked&&c&&me===r.owner&&!isCurrent);
@@ -64,7 +64,7 @@ function tcSatchelMarkup(state){
     <button type="button" class="tc-satchel-purse" data-forge-open><span><b>✦</b>${sm.favor}<i>Smithing Favor</i></span><span class="tc-satchel-purse-go">${typeof tcShopOpen==="function"&&tcShopOpen(state)?"Spend at the Forge":"Visit the Forge"}</span></button>
     ${here.length?`<h4 class="tc-forge-h">Use it here</h4><div class="tc-satchel-grid">${here.map(tcSatchelCard).join('')}</div>`:''}
     ${fight.length?`<h4 class="tc-forge-h">Use it in the fight</h4><div class="tc-satchel-grid">${fight.map(tcSatchelCard).join('')}</div>`:''}
-    ${empty.length?`<p class="tc-satchel-out">None held: ${empty.map(i=>h(i.name)).join(', ')}.</p>`:''}
+    ${empty.length?`<p class="tc-satchel-out">None held: ${empty.map(i=>h(i.name)).join(', ')}.</p>`:''}${!held.length&&typeof tcQuip==='function'?tcQuip('The satchel echoes.'):''}
     <h4 class="tc-forge-h">Masterworks</h4>
     <div class="tc-satchel-credits"><span><b>${sm.masterworkCredits}</b> ${sm.masterworkCredits===1?'credit':'credits'} to spend</span><button type="button" class="tc-satchel-act" data-open-past-masterwork ${sm.masterworkCredits>0?'':'disabled'}>Masterwork a past weapon</button></div>
     ${tcSatchelTrophies(state)}

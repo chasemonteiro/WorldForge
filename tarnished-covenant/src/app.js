@@ -5216,8 +5216,11 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 
 {{src/systems/settings-menu.js}}
 
+
+{{src/systems/personality.js}}
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-settings-1';
+const TC_BUILD_ID='20261125-quips-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

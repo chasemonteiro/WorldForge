@@ -7,13 +7,14 @@
    shared run. The only shared writes here are renaming the players (a revision-
    checked commit) and the existing restart. Difficulty and ruleset stay fixed. */
 const TC_PREFS_KEY='tc-phone-prefs-v1';
-let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
+let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,quiet:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
 function tcSavePrefs(){try{localStorage.setItem(TC_PREFS_KEY,JSON.stringify(tcPrefs));}catch(_){}}
 function tcApplyPrefs(){
   const root=document.documentElement;
   root.classList.toggle('tc-pref-still',Boolean(tcPrefs.still));
   root.classList.toggle('tc-pref-large',Boolean(tcPrefs.large));
   root.classList.toggle('tc-pref-battery',Boolean(tcPrefs.battery));
+  root.classList.toggle('tc-pref-quiet',Boolean(tcPrefs.quiet));
   tcSyncAmbient();
   void tcUpdateWakeLock();
 }
@@ -113,6 +114,7 @@ renderSettings=function(){
       ${tcToggle('still','Reduce motion','Stops flames and embers; the reel lands at once.')}
       ${tcToggle('battery','Battery saver','Pauses background animation. The reel and seals still move.')}
       ${tcToggle('large','Larger text','Makes everything a little bigger.')}
+      <button type="button" class="tc-set-row toggle" role="switch" aria-checked="${!tcPrefs.quiet}" data-pref="quiet" data-pref-inverse><span><strong>Covenant commentary</strong><small>Small asides from the clerk, Hewg and the soapstone.</small></span><i class="tc-switch ${tcPrefs.quiet?'':'on'}" aria-hidden="true"></i></button>
     </div>
     <h4 class="tc-forge-h">The Covenant</h4>
     <div class="tc-set-group">
@@ -141,15 +143,23 @@ renderSettings=function(){
       <button type="button" class="tc-set-row" data-set="restart"><span><strong>Restart the Covenant</strong><small>Erases all progress${backend?.mode==='shared'?' for both of you':''}.</small></span></button>
       <div id="restartConfirm"></div>
     </div>
+    ${tcSettingsFooter(state)}
   </section>${navMarkup('settings')}`;
   bindNav();bindShare();
   document.querySelector('#refreshApp')?.addEventListener('click',()=>{const u=new URL(window.location.href);u.searchParams.set('_refresh',Date.now().toString());window.location.replace(u.toString());});
   app.querySelectorAll('[data-pref]').forEach(btn=>btn.addEventListener('click',()=>{
     const key=btn.dataset.pref;tcPrefs[key]=!tcPrefs[key];tcSavePrefs();tcApplyPrefs();
-    btn.setAttribute('aria-checked',String(tcPrefs[key]));btn.querySelector('.tc-switch')?.classList.toggle('on',tcPrefs[key]);
+    const shown=btn.hasAttribute('data-pref-inverse')?!tcPrefs[key]:tcPrefs[key];
+    btn.setAttribute('aria-checked',String(shown));btn.querySelector('.tc-switch')?.classList.toggle('on',shown);
   }));
   app.querySelectorAll('[data-set]').forEach(btn=>btn.addEventListener('click',()=>tcSettingsAction(btn.dataset.set,btn)));
 };
+function tcSettingsFooter(state){
+  const times=(state.history||[]).map(x=>Date.parse(x?.completedAt)).filter(Number.isFinite);
+  const start=times.length?Math.min(...times):Date.parse(state.current?.createdAt);
+  const est=Number.isFinite(start)?new Date(start).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'';
+  return `<p class="tc-quip tc-set-footer">Tarnished Covenant${est?` · est. ${h(est)}`:''} · no maidens were consulted</p>`;
+}
 async function tcRenamePlayers(one,two){
   const build=latest=>{if(!latest)return null;const next=structuredClone(latest);next.playerNames=[one,two];next.lastAction=`${playerName()} renamed the Tarnished.`;next.updatedAt=new Date().toISOString();return next;};
   const staged=build(run.state);if(!staged)return;
@@ -185,7 +195,7 @@ function tcSettingsAction(kind){
     });
   }else if(kind==='sync'){
     if(backend?.mode!=='shared')return;
-    setToast('Syncing…');
+    setToast(typeof tcWaitLine==='function'?tcWaitLine('Syncing…'):'Syncing…');
     Promise.resolve(typeof tcSyncAuthoritativeRun==='function'?tcSyncAuthoritativeRun('settings'):false).then(()=>{setToast('Up to date.');if(uiScreen==='settings')renderRun();});
   }else if(kind==='ruleset'){
     tcSettingsSheet(state.includeDlc?'Base game + Shadow of the Erdtree':'Base game',`<p class="tc-set-p">${state.includeDlc?'Every remembrance in the base game and in Shadow of the Erdtree is required, and the Realm of Shadow regions are in the draw.':'Every base-game remembrance is required. Shadow of the Erdtree regions are left out.'}</p><p class="tc-set-p muted">Chosen when the Covenant began. It stays fixed for the whole run.</p>`);

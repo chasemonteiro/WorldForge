@@ -1625,3 +1625,21 @@ html:has(.tc-battle-report) #toast{top:calc(12px + env(safe-area-inset-top))!imp
 /* Phone preferences */
 html.tc-pref-still *,html.tc-pref-still *::before,html.tc-pref-still *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
 html.tc-pref-large #app{zoom:1.1}
+
+/* --- Personality lines --- */
+:is(#app,html) .tc-quip{margin:6px 2px 0;font-family:var(--serif)!important;--tc-ff:var(--serif);font-size:13.5px!important;font-style:italic;line-height:1.4;letter-spacing:0!important;text-transform:none!important;font-variant-caps:normal!important;color:#8e806c!important;text-align:center}
+html.tc-pref-quiet .tc-quip{display:none!important}
+:is(#app,html) .tc-grace-refresh{grid-template-areas:"hero" "next" "memo" "soap"!important}
+:is(#app,html) .tc-soapstone{grid-area:soap;margin:0 6px 6px!important;padding:10px 12px;border:1px dashed rgba(232,150,80,.28);border-radius:3px;background:radial-gradient(ellipse at 50% 0,rgba(255,150,70,.08),transparent 70%)}
+:is(#app,html) .tc-soapstone p{margin:0;font-family:var(--serif);font-size:16px;font-style:italic;color:#f0b98a;text-shadow:0 0 10px rgba(255,140,60,.35)}
+:is(#app,html) .tc-soapstone div{display:flex;justify-content:center;gap:14px;margin-top:6px}
+:is(#app,html) .tc-soapstone button{min-height:36px;padding:6px 12px;border:0;background:none;color:#a89880;font:italic 13px/1.3 var(--serif);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+:is(#app,html) .tc-soapstone em{font-size:12.5px;color:#8e806c}
+:is(#app,html) .tc-grace-office-memo .tc-milestone{margin:8px 0 0;text-align:left;color:#7a5b3a!important}
+:is(#app,html) .tc-tap-quip{position:absolute;left:0;right:0;bottom:-2px;margin:0;font-size:12.5px!important;color:#e8c27a!important;animation:tcQuipFade 4.4s ease both}
+@keyframes tcQuipFade{0%{opacity:0}10%,80%{opacity:1}100%{opacity:0}}
+:is(#app,html) .tc-hewg{margin:2px 2px 6px;text-align:left}
+:is(#app,html) .tc-report-quip{margin:4px 0 0;text-align:left;color:#cdbfa6!important;opacity:.85}
+:is(#app,html) .tc-dossier-remark{margin:0 0 8px;text-align:left}
+:is(#app,html) .tc-build-quip{margin:8px 2px 0}
+:is(#app,html) .tc-set-footer{margin:22px 0 6px!important;font-size:12.5px!important}

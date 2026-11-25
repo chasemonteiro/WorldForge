@@ -48,7 +48,7 @@ renderPostBattleReport=function(){
   const credits=Number(smithingData(state).masterworkCredits||0);
   const guaranteedText='+1';
   app.innerHTML=`<section class="tc-battle-report tc-report-new">
-    <div class="tc-report-banner" style="${art?`--tc-report-art:url('${art}')`:''}"><span>Victory</span><h2>${h(c.target?.name||'Enemy felled')}</h2><p>${who}</p></div>
+    <div class="tc-report-banner" style="${art?`--tc-report-art:url('${art}')`:''}"><span>Victory</span><h2>${h(c.target?.name||'Enemy felled')}</h2><p>${who}</p>${typeof tcReportQuip==='function'?tcQuip(tcReportQuip(c),'tc-report-quip'):''}</div>
     ${tcReportQuestion('rite','Odd Rite',c.weirdness?.name||'',c.weirdness?.text||'No Rite this fight.',riteDraws,true,postBattleReport.rite,['Honored','Broken'])}
     ${tcReportQuestion('chaos','Chaos',chaosAvailable?tcStableChaosName(c.chaosConsequence||''):'',chaosAvailable?personalizePlayers(c.chaosConsequence||'',state):'The seal never broke.',chaosDraws,chaosAvailable,postBattleReport.chaos,['Endured','Broken'])}
     <div class="tc-receipt"><h4>This fight pays</h4><div><span>Smithing Favor</span><b>${guaranteedText}</b></div><div><span>Reward draws${reportReady?'':' so far'}</span><b>${preview.draws}</b></div></div>

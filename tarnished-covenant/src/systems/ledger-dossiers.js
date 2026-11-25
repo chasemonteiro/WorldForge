@@ -27,7 +27,7 @@ function tcDossierRow(entry,index,state){
   ].join('');
   return `<details class="tc-dossier-row ${capstone?'capstone':''}" ${capstone?'data-capstone':''} ${chaos?'data-chaos':''} ${penalties?'data-penalty':''}>
     <summary><span class="tc-dr-date">${h(date||'')}</span><span class="tc-dr-main"><strong>${h(entry?.name||'Unknown foe')}</strong><small>${weapons||'No weapons on record'}</small></span><span class="tc-dr-marks">${marks}</span></summary>
-    <div class="tc-dr-evidence">${tcDossierEvidence(entry,index,state)}</div>
+    <div class="tc-dr-evidence">${typeof tcDossierRemark==='function'?tcQuip(tcDossierRemark(entry),'tc-dossier-remark'):''}${tcDossierEvidence(entry,index,state)}</div>
   </details>`;
 }
 function tcDossierChapters(state){
@@ -44,7 +44,7 @@ function tcDossierChapters(state){
 }
 compendiumLedgerMarkup=function(state){
   const entries=Array.isArray(state?.history)?state.history:[];
-  if(!entries.length)return `<div class="tc-archive-empty"><div class="tc-archive-empty-seal">◇</div><div class="tc-value">No case files yet.</div><div class="tc-muted">Your first recorded victory opens one here.</div></div>`;
+  if(!entries.length)return `<div class="tc-archive-empty"><div class="tc-archive-empty-seal">◇</div><div class="tc-value">No case files yet.</div><div class="tc-muted">Your first recorded victory opens one here.</div>${typeof tcQuip==='function'?tcQuip('The clerk sharpens a quill.'):''}</div>`;
   const chaos=entries.filter(x=>x?.chaosTriggered).length,caps=entries.filter(x=>x?.exit).length,pen=entries.filter(x=>x?.penances?.length).length;
   const favor=entries.reduce((sum,x)=>sum+Math.max(0,Number(x?.favorEarned||0)),0);
   const chip=(id,label,n)=>`<button type="button" class="tc-dossier-chip ${tcDossierFilter===id?'on':''}" data-dossier-filter="${id}">${label}${n!=null?` <b>${n}</b>`:''}</button>`;

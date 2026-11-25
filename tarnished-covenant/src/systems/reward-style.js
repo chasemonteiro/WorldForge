@@ -89,7 +89,7 @@ renderSharedRewardDraw=function(){
   btn?.addEventListener('click',()=>{
     if(btn.dataset.opening||tcSharedRewardDrawBusy||pending)return;
     btn.dataset.opening='1';btn.classList.add('cracked');btn.disabled=true;
-    const hint=document.querySelector('.tc-lot-hint');if(hint)hint.textContent='Drawing…';
+    const hint=document.querySelector('.tc-lot-hint');if(hint)hint.textContent=typeof tcWaitLine==='function'?tcWaitLine('Drawing…'):'Drawing…';
     const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     window.setTimeout(()=>{void tcClaimSharedRewardDraw();},reduced?0:650);
   });
