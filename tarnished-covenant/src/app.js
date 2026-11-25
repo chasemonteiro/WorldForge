@@ -5200,9 +5200,10 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/assignment-repair.js}}
 {{src/systems/hewg-surplus.js}}
 {{src/systems/forge-tab.js}}
+{{src/systems/sanctuary-refresh.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-forge-3';
+const TC_BUILD_ID='20261125-grace-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
