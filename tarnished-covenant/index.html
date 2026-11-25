@@ -9589,7 +9589,7 @@ document.addEventListener('click',event=>{
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-forge-2';
+const TC_BUILD_ID='20261125-forge-3';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -11168,10 +11168,11 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-strategy-item span{font-size:13px!important;line-height:1.35}
 
 /* --- Hewg's Forge panel --- */
-:is(#app,html) .tc-forge-panel{padding-top:2px}
+:is(#app,html) .tc-forge-panel{padding-top:2px;overflow-x:hidden!important;overscroll-behavior-x:none}
+:is(#app,html) .tc-forge{max-width:100%;overflow-x:clip}
 :is(#app,html) .tc-forge{display:block;padding-bottom:10px}
 /* The hearth is the one bold thing on the panel. */
-:is(#app,html) .tc-forge-hero{position:relative;margin:0 -16px;height:220px;overflow:hidden;background:#0d0a08}
+:is(#app,html) .tc-forge-hero{position:relative;margin:0;height:220px;overflow:hidden;background:#0d0a08;border-radius:2px}
 :is(#app,html) .tc-forge-scene{position:absolute;inset:0;width:100%;height:100%}
 :is(#app,html) .tc-forge-title{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-top:-6px;position:relative}
 :is(#app,html) .tc-forge-title h3{--tc-ff:var(--display);font-family:var(--display);font-weight:600;font-size:27px;line-height:1.05;letter-spacing:.02em;margin:0 0 6px;color:#f3dfb4;text-shadow:0 0 18px rgba(255,140,60,.45)}
