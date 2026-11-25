@@ -447,6 +447,8 @@
     }
   }
 
+  // Read-only lookup tables for the Build screen's presentation layer (src/systems/build-style.js).
+  window.tcBuildLabInfo=Object.freeze({STAT_TALISMANS,STAT_PHYSICK,PHYSICK_NOTES,CONDITIONAL_TALISMANS,itemKey});
   const normalizeBefore=tcNormalizeRunState;
   tcNormalizeRunState=function(state){const normalized=normalizeBefore(state);return ensureBuilds(normalized);};
   const navBefore=navMarkup;
