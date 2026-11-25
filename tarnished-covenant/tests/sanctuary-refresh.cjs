@@ -16,3 +16,10 @@ assert.ok(app.run("ring.includes('tc-rune-mark got')"),'claimed remembrances lig
 assert.ok(app.run("facts.includes('<strong>1</strong> fight won')"));
 assert.equal(app.run('JSON.stringify(st)===before'),true,'rendering never mutates the run');
 console.log('PASS tests/sanctuary-refresh.cjs');
+// Ledger codex and dossiers render from the same read-only state.
+app.run(`var codex=remembranceLedgerBody(st),doss=compendiumLedgerMarkup(st),satchel=smithingLedgerMarkup(st);`);
+assert.ok(app.run("codex.includes('tc-codex-card done')&&codex.includes('Hewg forges: Axe of Godrick')"));
+assert.ok(app.run("doss.includes('tc-chapter')&&doss.includes('Godrick the Grafted')"));
+assert.ok(app.run("satchel.includes('tc-satchel')"));
+assert.equal(app.run('JSON.stringify(st)===before'),true,'Ledger rendering never mutates the run');
+console.log('PASS ledger views');
