@@ -1189,3 +1189,41 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-run-facts strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;color:#f0ddb2;font-size:17px}
 @media (max-width:370px){:is(#app,html) .tc-run-row{grid-template-columns:140px 1fr}:is(#app,html) .tc-rune-ring svg{width:140px;height:140px}}
 @media (prefers-reduced-motion:reduce){:is(#app,html) .tc-road-stop.here .tc-road-medal::before{animation:none!important}}
+
+/* --- Ledger: the Satchel --- */
+:is(#app,html) .tc-satchel{display:block;padding-bottom:12px;overflow-x:hidden}
+:is(#app,html) .tc-satchel-purse{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;margin:4px 0 2px;border:1px solid rgba(255,160,80,.3);border-radius:3px;background:radial-gradient(120% 140% at 0% 100%,rgba(255,120,40,.18),transparent 60%),linear-gradient(180deg,#1d1610,#130e0a);color:var(--ink);text-align:left}
+:is(#app,html) .tc-satchel-purse>span:first-child{--tc-ff:var(--display);font-family:var(--display);font-size:30px;line-height:1;color:#ffd79a;display:flex;align-items:baseline;gap:8px;text-shadow:0 0 14px rgba(255,150,70,.4)}
+:is(#app,html) .tc-satchel-purse b{font-weight:400;font-size:18px;color:#ff9b4d}
+:is(#app,html) .tc-satchel-purse i{font-style:normal;font-family:var(--serif);--tc-ff:var(--serif);font-size:14px;color:#b8a688;text-shadow:none}
+:is(#app,html) .tc-satchel-purse-go{font-size:14px;color:#e8c27a;white-space:nowrap}
+:is(#app,html) .tc-satchel-purse-go::after{content:' ›'}
+:is(#app,html) .tc-satchel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+:is(#app,html) .tc-satchel-card{display:grid;grid-template-rows:1fr auto;gap:10px;padding:12px;border:1px solid rgba(201,162,92,.28);border-radius:3px;background:linear-gradient(180deg,#1d1712,#120e0b);min-width:0}
+:is(#app,html) .tc-satchel-card.fight{background:linear-gradient(180deg,#1a1614,#110e0c);border-style:dashed;border-color:rgba(201,162,92,.32)}
+:is(#app,html) .tc-satchel-top{display:grid;gap:8px;align-content:start}
+:is(#app,html) .tc-satchel-card .tc-forge-seal{position:relative;width:42px;height:42px}
+:is(#app,html) .tc-satchel-card .tc-forge-seal .tc-forge-sigil{width:24px;height:24px}
+:is(#app,html) .tc-satchel-card .tc-forge-seal b{position:absolute;right:-12px;bottom:-6px;min-width:24px;height:24px;padding:0 6px;border-radius:12px;display:grid;place-items:center;background:#f0d79e;color:#2a1a0c;--tc-ff:var(--display);font-family:var(--display);font-size:14px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.6)}
+:is(#app,html) .tc-satchel-card strong{display:block;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:15px;line-height:1.15;color:#f0ddb2}
+:is(#app,html) .tc-satchel-card p{margin:4px 0 0;font-size:13.5px;line-height:1.3;color:#b9a98f}
+:is(#app,html) .tc-satchel-card em{font-size:12.5px;font-style:italic;color:#c98b5a;line-height:1.25}
+:is(#app,html) .tc-satchel-acts{display:grid;gap:6px}
+:is(#app,html) .tc-satchel-acts.two{grid-template-columns:1fr 1fr}
+:is(#app,html) .tc-satchel-act{min-height:38px;padding:6px 8px;border:1px solid rgba(232,194,122,.55);border-radius:2px;background:linear-gradient(180deg,rgba(255,190,110,.12),rgba(255,140,60,.04));color:#f0d79e;--tc-ff:var(--display);font-family:var(--display);font-size:12.5px;letter-spacing:.04em;line-height:1.15}
+:is(#app,html) .tc-satchel-act.go{border-style:dashed;background:none;color:#d9c08a}
+:is(#app,html) .tc-satchel-act:disabled{opacity:.4}
+:is(#app,html) .tc-satchel-out{margin:12px 2px 0;font-size:14px;font-style:italic;color:#8e806c;line-height:1.35}
+:is(#app,html) .tc-satchel-credits{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+:is(#app,html) .tc-satchel-credits span{font-size:15px;color:#cdbfa6}
+:is(#app,html) .tc-satchel-credits b{--tc-ff:var(--display);font-family:var(--display);font-size:22px;font-weight:500;color:#ffd79a}
+:is(#app,html) .tc-satchel-credits .tc-satchel-act{flex:none}
+:is(#app,html) .tc-trophies{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+:is(#app,html) .tc-trophy{display:grid;gap:4px;align-content:start;padding:12px 10px;border-radius:3px;border:1px solid rgba(201,162,92,.35);background:radial-gradient(100% 80% at 50% 0%,rgba(255,200,120,.12),transparent 70%),linear-gradient(180deg,#201912,#14100c);text-align:center;justify-items:center;min-width:0}
+:is(#app,html) .tc-trophy-mark{font-size:20px;color:#ffc77a;text-shadow:0 0 10px rgba(255,170,90,.6)}
+:is(#app,html) .tc-trophy strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:14px;line-height:1.2;color:#f0ddb2}
+:is(#app,html) .tc-trophy small{font-size:12.5px;font-style:italic;color:#a89880;line-height:1.25}
+:is(#app,html) .tc-trophy.retired{filter:saturate(.25) brightness(.7);border-color:rgba(201,162,92,.15)}
+:is(#app,html) .tc-trophy.current{border-color:#ffb867}
+:is(#app,html) .tc-trophy .tc-satchel-act{margin-top:4px;width:100%}
+:is(#app,html) .tc-satchel-empty{font-style:italic;color:#8e806c}
