@@ -9920,9 +9920,93 @@ function tcRemembranceCodexMarkup(state){
 }
 /* --- End Remembrances codex --- */
 
+/* --- Encounter tabs in the Ledger/Forge style ---
+   Decorates the existing Encounter panels in place: every original element,
+   id and listener stays, so recording a world clear, appealing, recalling and
+   rewriting still run their own code. Idempotent; re-applied after each render
+   and whenever a decorator re-inserts its piece. */
+const TC_SEAL_SIGIL='<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 12v40"/><path d="M22 22l10-10 10 10"/><path d="M20 44h24"/></g></svg>';
+function tcSentence(text){const s=String(text||'').trim().toLowerCase();return s.replace(/^\w/,m=>m.toUpperCase());}
+function tcEncounterRecordLine(state,kind){
+  const history=Array.isArray(state?.history)?state.history:[];if(!history.length)return '';
+  if(kind==='chaos'){const n=history.filter(x=>x.chaosTriggered).length;return `Chaos has broken in ${n} of your ${history.length} fights.`;}
+  const n=history.filter(x=>x.riteOutcome==='Honored').length;return `You’ve honored ${n} of ${history.length} Odd Rites.`;
+}
+function tcDecorateEncounterStyle(){
+  const screen=app.querySelector('.tc-encounter-shell');const state=run?.state,c=state?.current;
+  if(!screen||!c)return;
+  screen.classList.add('tc-enc-style');
+  // Top strip: quiet, sentence-case Chaos line.
+  const strip=screen.querySelector('.tc-encounter-sticky span');
+  if(strip&&!strip.dataset.tcStyled){strip.dataset.tcStyled='1';strip.textContent=c.chaosTrigger?`Chaos: ${tcSentence(personalizePlayers(c.chaosTrigger,state))}`:'No Chaos decree';}
+  // Boss: art becomes the hero, the name sits on it.
+  const boss=screen.querySelector('.tc-encounter-panel[data-panel="boss"]');
+  if(boss)boss.classList.add('tc-enc-boss');
+  // World seals.
+  screen.querySelectorAll('.tc-world-clear-btn').forEach(btn=>{
+    if(btn.dataset.tcSeal)return;btn.dataset.tcSeal='1';
+    const slot=btn.dataset.worldClear,done=btn.classList.contains('done'),name=playerLabel(slot,state);
+    btn.classList.add('tc-world-seal');
+    btn.setAttribute('aria-label',done?`${name}’s world cleared`:`Record the victory in ${name}’s world`);
+    btn.innerHTML=`<span class="tc-seal-disc">${TC_SEAL_SIGIL}</span><span class="tc-seal-name">${h(name)}’s world</span><small>${done?'Cleared':'Tap when defeated'}</small>`;
+  });
+  const note=screen.querySelector('.tc-world-clear-note');
+  if(note&&!note.dataset.tcStyled){note.dataset.tcStyled='1';note.textContent='Beat the boss in both worlds. One reward pays out for the pair.';}
+  // Weapons: cards, provenance marks, a holdings line under each action.
+  const weapons=screen.querySelector('.tc-encounter-panel[data-panel="weapons"]');
+  if(weapons){
+    weapons.classList.add('tc-enc-weapons');
+    const sm=smithingData(state),swaps=Array.isArray(c.remembranceSwaps)?c.remembranceSwaps:[];
+    weapons.querySelectorAll('.tc-loadout').forEach((card,i)=>{
+      if(card.dataset.tcStyled)return;card.dataset.tcStyled='1';
+      const slot=i===0?'chase':'morgan',name=c[slot]?.name||'';
+      const marks=[];
+      if(sm.masterworks.includes(name))marks.push('<span class="tc-prov mw">⚒ Masterwork</span>');
+      if(swaps.some(s=>s.slot===slot&&s.weapon===name))marks.push('<span class="tc-prov shop">From Hewg’s shop</span>');
+      if(marks.length)card.querySelector('.tc-loadout-name')?.insertAdjacentHTML('afterend',`<div class="tc-prov-row">${marks.join('')}</div>`);
+    });
+    const summary=weapons.querySelector('.tc-penalty-summary>summary');
+    if(summary&&!summary.dataset.tcStyled){summary.dataset.tcStyled='1';const n=c.penances?.length||0;summary.textContent=`${n} Appeal ${n===1?'penalty':'penalties'} in force`;}
+    const appeal=weapons.querySelector('#appealOpen');
+    if(appeal&&!weapons.querySelector('.tc-enc-hold.appeal')){appeal.insertAdjacentHTML('afterend',`<p class="tc-enc-hold appeal">${sm.appealWaivers?`You hold ${sm.appealWaivers} Appeal ${sm.appealWaivers===1?'Waiver':'Waivers'}${sm.jointAppeals?` and ${sm.jointAppeals} Joint ${sm.jointAppeals===1?'Appeal':'Appeals'}`:''}.`:'No Appeal Waivers held, so an Appeal carries a penalty.'}</p>`);}
+    const recall=weapons.querySelector('[data-open-weapon-recall]');
+    if(recall&&!recall.dataset.tcStyled){recall.dataset.tcStyled='1';const n=Number((recall.textContent.match(/(\d+)\s*$/)||[])[1]||0);recall.textContent='Masterwork Recall';recall.insertAdjacentHTML('afterend',`<p class="tc-enc-hold">${n?`${n} of your Masterworks ${n===1?'is':'are'} ready to recall.`:'No Masterworks ready to recall.'}</p>`);if(!n)recall.disabled=true;}
+  }
+  // Chaos and Rite: reserve becomes a Satchel card, plus a line from the record.
+  [['chaos','Chaos Refresh','chaosRefreshes','Rewrite the Chaos decree. Costs 1 Refresh.'],['rite','Rite Refresh','riteRefreshes','Rewrite the Odd Rite. Costs 1 Refresh.']].forEach(([kind,label,key,line])=>{
+    const panel=screen.querySelector(`.tc-encounter-panel[data-panel="${kind}"]`);if(!panel)return;
+    panel.classList.add('tc-enc-feature');
+    const reserve=panel.querySelector('.tc-panel-refresh');
+    if(reserve&&!reserve.dataset.tcStyled){
+      reserve.dataset.tcStyled='1';reserve.classList.add('tc-satchel-card','here');
+      const count=Number(smithingData(state)[key]||0);
+      const kicker=reserve.querySelector('.tc-kicker');
+      const top=document.createElement('div');top.className='tc-satchel-top';
+      top.innerHTML=`<span class="tc-forge-seal">${typeof tcSatchelSigil==='function'?tcSatchelSigil(kind):''}<b>${count}</b></span><div><strong>${label}</strong><p>${line}</p></div>`;
+      if(kicker)kicker.replaceWith(top);else reserve.prepend(top);
+      const btn=reserve.querySelector('[data-use-boon]');
+      if(btn){btn.classList.add('tc-satchel-act');btn.textContent=kind==='chaos'?'Rewrite the decree':'Rewrite the Rite';}
+    }
+    if(!panel.querySelector('.tc-enc-record')){
+      const text=tcEncounterRecordLine(state,kind);
+      if(text)panel.insertAdjacentHTML('beforeend',`<p class="tc-enc-record">${h(text)}</p>`);
+    }
+  });
+}
+const tcRenderEncounterBeforeStyle=renderEncounter;
+renderEncounter=function(){tcRenderEncounterBeforeStyle();try{tcDecorateEncounterStyle();}catch(error){console.warn('Encounter style skipped',error);}};
+if(!window.__tcEncStyleBound){
+  window.__tcEncStyleBound=true;
+  let queued=false;
+  const run_=()=>{queued=false;try{tcDecorateEncounterStyle();}catch(error){console.warn('Encounter style skipped',error);}};
+  const start=()=>new MutationObserver(()=>{if(queued||!app.querySelector('.tc-encounter-shell'))return;queued=true;requestAnimationFrame(run_);}).observe(document.body,{childList:true,subtree:true});
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+}
+/* --- End Encounter style --- */
+
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261125-codex-1';
+const TC_BUILD_ID='20261125-encounter-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -11757,6 +11841,65 @@ html.tc-saved :is(#app,html) .tc-sync::after{content:'✓';display:inline-block;
 :is(#app,html) .tc-codex-card.done .tc-codex-status{color:#e8c27a}
 :is(#app,html) .tc-codex-card.here .tc-codex-status{color:#ffb867}
 :is(#app,html) .tc-codex-card small{display:block;margin-top:4px;font-size:13px;line-height:1.3;color:#8e806c}
+
+/* --- Encounter tabs in the Ledger/Forge style --- */
+:is(#app,html) .tc-enc-style .tc-encounter-sticky strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:16px;color:#f0ddb2;letter-spacing:.02em}
+:is(#app,html) .tc-enc-style .tc-encounter-sticky span{font-family:var(--serif)!important;--tc-ff:var(--serif);text-transform:none!important;letter-spacing:0!important;font-size:14px!important;font-style:italic;color:#e0703a!important}
+/* Boss: one hero */
+:is(#app,html) .tc-enc-boss{display:grid!important;grid-template-columns:minmax(0,1fr);grid-template-areas:"hero" "act";align-content:start;row-gap:12px;overflow-x:hidden}
+:is(#app,html) .tc-enc-boss>*{grid-column:1;min-width:0}
+:is(#app,html) .tc-enc-boss>.tc-boss-art{grid-area:hero;height:clamp(250px,40svh,380px)!important;min-height:0!important;max-height:none!important;margin:0!important;width:100%!important;border-radius:3px;border:1px solid rgba(201,162,92,.22);flex:none!important}
+:is(#app,html) .tc-enc-boss>.tc-brief-head{grid-area:hero;align-self:end;z-index:2;margin:0!important;padding:60px 16px 16px!important;text-align:left!important;background:linear-gradient(180deg,rgba(10,8,6,0),rgba(10,8,6,.82) 45%,rgba(10,8,6,.96));border-radius:0 0 3px 3px}
+:is(#app,html) .tc-enc-boss .tc-brief-head .tc-kicker{text-align:left!important;font-family:var(--serif)!important;--tc-ff:var(--serif);text-transform:none!important;letter-spacing:0!important;font-size:13.5px!important;font-style:italic;color:#c9a25c!important}
+:is(#app,html) .tc-enc-boss .tc-brief-head .tc-kicker::before,:is(#app,html) .tc-enc-boss .tc-brief-head .tc-kicker::after{display:none!important}
+:is(#app,html) .tc-enc-boss .tc-brief-boss{text-align:left!important;font-size:clamp(26px,8vw,34px)!important;line-height:1.05!important;margin:2px 0 4px!important;color:#f3e2bd!important;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+:is(#app,html) .tc-enc-boss .tc-brief-region{text-align:left!important;color:#cdbfa6!important;font-size:14px!important}
+:is(#app,html) .tc-enc-boss .tc-brief-head .tc-wiki-link{margin-top:6px!important;justify-content:flex-start!important}
+:is(#app,html) .tc-enc-boss>.tc-encounter-actions{grid-area:act;margin:0!important}
+/* World seals */
+:is(#app,html) .tc-enc-style .tc-world-clear-card{padding:12px 4px 4px!important;border:0!important;background:none!important}
+:is(#app,html) .tc-enc-style .tc-world-clear-head strong{--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:16px;color:#e8c27a}
+:is(#app,html) .tc-enc-style .tc-world-clear-note{font-size:13.5px!important;font-style:italic;color:#a89880!important}
+:is(#app,html) .tc-enc-style .tc-world-clear-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;margin-top:10px}
+:is(#app,html) .tc-world-seal{display:grid!important;justify-items:center;gap:6px;min-height:0!important;height:auto!important;padding:10px 6px!important;border:0!important;background:none!important;box-shadow:none!important;white-space:normal!important}
+:is(#app,html) .tc-seal-disc{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#5c4f3e;background:radial-gradient(circle at 38% 32%,#2a221b,#16110d 70%);border:2px dashed rgba(201,162,92,.45);transition:transform .25s ease}
+:is(#app,html) .tc-seal-disc svg{width:34px;height:34px}
+:is(#app,html) .tc-world-seal:not(:disabled):active .tc-seal-disc{transform:scale(.94)}
+:is(#app,html) .tc-world-seal.done .tc-seal-disc{border:2px solid #f3dfb4;color:#2a1a0c;background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);box-shadow:0 0 18px rgba(255,200,120,.5)}
+:is(#app,html) .tc-seal-name{--tc-ff:var(--display);font-family:var(--display);font-size:14px;color:#f0ddb2;line-height:1.15;text-align:center}
+:is(#app,html) .tc-world-seal small{font-size:12.5px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-world-seal.done small{color:#e8c27a}
+:is(#app,html) .tc-world-seal:disabled{opacity:1!important}
+/* Weapons */
+:is(#app,html) .tc-enc-weapons .tc-loadouts{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+:is(#app,html) .tc-enc-weapons .tc-loadout{display:grid;align-content:start;gap:6px;padding:14px 12px!important;border:1px solid rgba(201,162,92,.28)!important;border-radius:3px;background:radial-gradient(120% 80% at 50% 0%,rgba(255,140,60,.08),transparent 60%),linear-gradient(180deg,#1d1712,#120e0b)!important;min-width:0}
+:is(#app,html) .tc-enc-weapons .tc-loadout>.tc-kicker{font-family:var(--serif)!important;--tc-ff:var(--serif);text-transform:none!important;letter-spacing:0!important;font-size:13.5px!important;font-style:italic;color:#a89880!important;text-align:left!important}
+:is(#app,html) .tc-enc-weapons .tc-loadout>.tc-kicker::before,:is(#app,html) .tc-enc-weapons .tc-loadout>.tc-kicker::after{display:none!important}
+:is(#app,html) .tc-enc-weapons .tc-loadout-name{font-size:18px!important;line-height:1.15!important;color:#f0ddb2!important;text-align:left!important}
+:is(#app,html) .tc-enc-weapons .tc-weapon-job{display:block!important;font-size:13.5px!important;font-style:italic;color:#b9a98f!important}
+:is(#app,html) .tc-enc-weapons .tc-weapon-job b{display:none}
+:is(#app,html) .tc-enc-weapons .tc-loadout .tc-wiki-link{justify-content:flex-start!important;font-size:12px!important}
+:is(#app,html) .tc-prov-row{display:flex;flex-wrap:wrap;gap:4px}
+:is(#app,html) .tc-prov{font-size:11.5px;padding:2px 7px;border-radius:2px;border:1px solid rgba(255,190,110,.4);color:#ffd79a}
+:is(#app,html) .tc-prov.shop{border-color:rgba(185,154,224,.5);color:#d5c2f0}
+:is(#app,html) .tc-enc-weapons .tc-penalty-summary{margin-top:12px!important;border:1px solid rgba(208,103,90,.45)!important;border-radius:3px;background:linear-gradient(180deg,#241310,#160c0a)!important}
+:is(#app,html) .tc-enc-weapons .tc-penalty-summary>summary{--tc-ff:var(--display);font-family:var(--display);font-size:14px!important;letter-spacing:.03em!important;text-transform:none!important;color:#f0b2a5!important;padding:10px 12px!important}
+:is(#app,html) .tc-enc-weapons .curse-section>.section-kicker,:is(#app,html) .tc-enc-weapons .curse-head{display:none!important}
+:is(#app,html) .tc-enc-weapons .penance-item{border-left:2px solid #d0675a!important;margin:0 12px 8px!important;padding:6px 10px!important;background:rgba(208,103,90,.06)!important}
+:is(#app,html) .tc-enc-weapons #appealOpen{min-height:46px!important;border:1px solid rgba(232,194,122,.55)!important;background:linear-gradient(180deg,rgba(255,190,110,.12),rgba(255,140,60,.04))!important;color:#f0d79e!important;--tc-ff:var(--display);font-family:var(--display)!important;font-size:15px!important;letter-spacing:.04em}
+:is(#app,html) .tc-enc-weapons [data-open-weapon-recall]{border:1px dashed rgba(201,162,92,.4)!important;background:none!important;color:#d9c08a!important}
+:is(#app,html) .tc-enc-hold{margin:6px 2px 4px;font-size:13.5px;font-style:italic;color:#a89880;line-height:1.3}
+/* Chaos and Rite reserve + record */
+:is(#app,html) .tc-enc-feature .tc-panel-refresh.tc-satchel-card{margin-top:12px!important;grid-template-rows:auto auto auto}
+:is(#app,html) .tc-enc-feature .tc-panel-refresh .tc-satchel-top{grid-template-columns:auto 1fr;align-items:center;gap:14px}
+:is(#app,html) .tc-enc-feature .tc-panel-refresh [data-use-boon]{width:100%;text-transform:none!important}
+:is(#app,html) .tc-enc-record{margin:14px 4px 6px;font-size:14px;font-style:italic;color:#8e806c;text-align:center}
+
+:is(#app,html) .tc-enc-weapons .tc-penalty-summary>summary{padding-left:40px!important}
+:is(#app,html) .tc-enc-feature .tc-panel-refresh.tc-satchel-card{padding:12px!important;border:1px solid rgba(201,162,92,.28)!important;border-radius:3px!important;background:linear-gradient(180deg,#1d1712,#120e0b)!important}
+:is(#app,html) .tc-enc-style .tc-world-seal{padding:4px 6px!important}
+:is(#app,html) .tc-enc-style .tc-seal-disc{width:64px;height:64px}
+:is(#app,html) .tc-enc-feature .tc-panel-refresh .tc-satchel-top{column-gap:22px!important}
 </style>
 </body>
 </html>
