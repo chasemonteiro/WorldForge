@@ -1644,3 +1644,20 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 :is(#app,html) .tc-dossier-remark{margin:0 0 8px;text-align:left}
 :is(#app,html) .tc-build-quip{margin:8px 2px 0}
 :is(#app,html) .tc-set-footer{margin:22px 0 6px!important;font-size:12.5px!important}
+
+/* --- Progress: road fits its frame; the rune ring turns --- */
+:is(#app,html) .tc-progress-new .tc-road{padding:10px 0 10px 8px!important;scroll-snap-type:y proximity;scroll-padding-top:10px;-webkit-mask-image:linear-gradient(180deg,transparent 0,transparent 7px,#000 16px,#000 calc(100% - 16px),transparent calc(100% - 7px))!important;mask-image:linear-gradient(180deg,transparent 0,transparent 7px,#000 16px,#000 calc(100% - 16px),transparent calc(100% - 7px))!important}
+:is(#app,html) .tc-progress-new .tc-road::before{left:33px}
+:is(#app,html) .tc-progress-new .tc-road-stop{scroll-snap-align:start}
+:is(#app,html) .tc-rune-ring svg{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;overflow:visible}
+:is(#app,html) .tc-rune-ring svg:active{cursor:grabbing}
+:is(#app,html) .tc-rune-ring svg:focus-visible{outline:2px solid #e8c27a;outline-offset:4px;border-radius:50%}
+:is(#app,html) .tc-ring-notch{fill:#e8c27a;filter:drop-shadow(0 0 4px rgba(255,200,120,.6))}
+:is(#app,html) .tc-rune-mark:focus,:is(#app,html) .tc-rune-mark:focus-visible{outline:none}
+:is(#app,html) .tc-rune-mark.focus circle{stroke:#fff3d6;stroke-width:2.2}
+:is(#app,html) .tc-rune-mark.focus{filter:drop-shadow(0 0 7px rgba(255,210,140,.9))}
+:is(#app,html) .tc-rune-mark:not(.got).focus path{stroke:#cdbfa6}
+:is(#app,html) .tc-rune-caption{margin:12px 0 4px;padding:10px 12px;min-height:68px;border-left:2px solid rgba(255,190,110,.5);background:rgba(255,200,130,.05)}
+:is(#app,html) .tc-rune-caption strong{display:block;margin-bottom:3px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2;color:#f0ddb2}
+:is(#app,html) .tc-rune-caption p{margin:2px 0 0;font-size:14.5px;line-height:1.35;color:#d9cbb2}
+:is(#app,html) .tc-rune-caption .tc-rune-hint{font-style:italic;color:#8e806c}

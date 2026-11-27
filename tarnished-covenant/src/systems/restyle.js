@@ -141,7 +141,7 @@ if(!window.__tcSwipePagingBound){
   };
   document.addEventListener('touchstart',event=>{
     const track=trackOf(event.target);
-    if(!track||event.touches.length!==1||event.target.closest('input,select,textarea')){tcSwipe=null;return;}
+    if(!track||event.touches.length!==1||event.target.closest('input,select,textarea,[data-no-swipe]')){tcSwipe=null;return;}
     const t=event.touches[0];tcSwipe={track,x:t.clientX,y:t.clientY,done:false};
   },{passive:true,capture:true});
   document.addEventListener('touchmove',event=>decide(event.touches[0],false),{passive:true,capture:true});
