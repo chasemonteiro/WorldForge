@@ -14,7 +14,7 @@ def forbid(needle):
 for needle in [
     "p_expected_revision: expectedRevision",
     "supabase.rpc('update_covenant_state'",
-    "supabase.rpc('restart_covenant_run_guarded'",
+    "supabase.rpc('archive_and_restart_covenant_run'",
     'backend.restartRun(run.id, run.revision, buildFreshState(run.state))',
 ]: require(needle)
 

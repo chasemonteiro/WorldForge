@@ -1367,6 +1367,7 @@ function createLocalBackend(warning = '') {
       }
       const revision = Number(expectedRevision ?? current?.revision ?? 0) + 1;
       const restarted = { ...(current || {}), id: runId, state, revision };
+      if (typeof tcLocalArchivePush === 'function') tcLocalArchivePush(current);
       saveLocalRun(restarted);
       if (listener) queueMicrotask(() => listener(restarted));
       return { success:true, ...restarted };
@@ -1379,6 +1380,8 @@ function createLocalBackend(warning = '') {
       if (listener) queueMicrotask(() => listener(run));
       return { success: true, ...run };
     },
+    async listArchives() { return (typeof tcLocalArchives === 'function' ? tcLocalArchives() : []).map(({state, ...rest}) => rest); },
+    async getArchive(id) { return (typeof tcLocalArchives === 'function' ? tcLocalArchives() : []).find(a => a.id === id) || null; },
     subscribe(_runId, fn) { listener = fn; return () => { listener = null; }; }
   };
 }
@@ -1430,10 +1433,13 @@ function createSupabaseBackend(supabase) {
       };
     },
     async restartRun(runId, expectedRevision, state) {
-      const { data, error } = await supabase.rpc('restart_covenant_run_guarded', {
+      // The server saves its copy of the run to run_archives in the same
+      // transaction that starts the new one, so nothing is erased unsaved.
+      const { data, error } = await supabase.rpc('archive_and_restart_covenant_run', {
         p_run_id: runId,
         p_expected_revision: expectedRevision,
-        p_new_state: state
+        p_new_state: state,
+        p_summary: typeof tcArchiveSummary === 'function' ? tcArchiveSummary(run?.state) : {}
       });
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
@@ -1443,6 +1449,22 @@ function createSupabaseBackend(supabase) {
         state: row.state,
         revision: Number(row.revision)
       };
+    },
+    async listArchives(runId) {
+      const { data, error } = await supabase.from('run_archives')
+        .select('id, archived_at, archived_revision, summary')
+        .eq('run_id', runId)
+        .order('archived_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    async getArchive(id) {
+      const { data, error } = await supabase.from('run_archives')
+        .select('id, archived_at, archived_revision, summary, state')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      return data;
     },
     subscribe(runId, fn) {
       if (channel) supabase.removeChannel(channel);
@@ -2698,11 +2720,11 @@ function showRestart() {
   box.innerHTML = `<div class="confirm restart-confirm">
     <div class="section-kicker redtext">restart covenant</div>
     <h3>Restart this Covenant?</h3>
-    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
+    <div class="rtext">This Covenant is saved to Past Covenants first, then bosses, regions, Chaos, Rites, history and penalties start fresh. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
     <div class="grid2 restart-grid">
       <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
     </div>
-    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Erase Run & Restart</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
+    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Save it &amp; begin anew</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
   </div>`;
   document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
   document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
@@ -2749,7 +2771,7 @@ function showRestart() {
       console.error(error);
       setToast(error.message || 'Restart failed. Try again.');
       const retry = document.querySelector('#confirmRestart');
-      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
+      if (retry) { retry.disabled = false; retry.textContent = 'Save it & begin anew'; }
     }
   });
 }
@@ -5219,8 +5241,11 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 
 {{src/systems/personality.js}}
 
+
+{{src/systems/archive.js}}
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261127-ring-1';
+const TC_BUILD_ID='20261127-archive-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
