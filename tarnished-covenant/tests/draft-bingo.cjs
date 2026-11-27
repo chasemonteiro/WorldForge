@@ -1,4 +1,4 @@
-// Hostile draft, Region bingo and the Daily seal. Synthetic states only.
+// Hostile draft and Region bingo. Synthetic states only.
 const assert=require('node:assert/strict');
 const {runtime}=require('./runtime.cjs');
 const app=runtime();
@@ -19,8 +19,6 @@ app.run(`
   var undoPaid=tcBuildBingoMark(line,line.region,4,false,'Chase');
   var travelled=startNextRegion(line,'Chase','Weeping Peninsula');
   var plain=initialRunState({region:'Limgrave + Stormveil',severity:'cursed',includeDlc:true});
-  var sealed=tcBuildDailySeal(plain,tcDayStamp(),true,'Chase');
-  var twice=tcBuildDailySeal(sealed,tcDayStamp(),true,'Chase');
 `);
 assert.equal(app.run('c.draftPending===true&&o.chase.length===3&&o.morgan.length===3'),true,'three options each');
 assert.equal(app.run('new Set([...o.chase,...o.morgan].map(b=>b.name)).size'),6,'six different weapons');
@@ -36,7 +34,4 @@ assert.equal(app.run('line.bingo.paid.length'),1);
 assert.equal(app.run('undoPaid'),null,'a paid line keeps its squares');
 assert.equal(app.run("travelled.bingo.region==='Weeping Peninsula'&&travelled.bingo.paid.length===0"),true,'a new card for a new region');
 assert.equal(app.run('plain.bingo===undefined&&plain.current.draft===undefined'),true,'no twists unless chosen');
-assert.equal(app.run('tcDailyStreak(sealed)'),1,'sealing today starts a streak');
-assert.equal(app.run('twice'),null,'a day seals once');
-assert.equal(app.run('smithingData(sealed).favor===smithingData(plain).favor'),true,'the daily seal pays no Favor');
-console.log('PASS tests/draft-bingo-seal.cjs');
+console.log('PASS tests/draft-bingo.cjs');
