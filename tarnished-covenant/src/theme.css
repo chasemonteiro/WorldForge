@@ -1759,11 +1759,12 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 :is(#app,html) .tc-bingo-cell.free{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c;font-family:var(--display)}
 
 /* --- Daily seal --- */
-:is(#app,html) .tc-grace-refresh{grid-template-areas:"hero" "next" "daily" "memo" "soap"!important}
-:is(#app,html) .tc-daily-box{grid-area:daily}
-:is(#app,html) .tc-daily{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;margin:0 6px;padding:12px;border:1px solid rgba(201,162,92,.28);border-radius:3px;background:linear-gradient(180deg,#1b1511,#110d0a)}
-:is(#app,html) .tc-daily-seal{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08);color:#f2c9a8;font-size:18px;box-shadow:0 2px 0 rgba(0,0,0,.5)}
-:is(#app,html) .tc-daily.done .tc-daily-seal{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c}
-:is(#app,html) .tc-daily-text span{font-family:var(--serif)!important;font-size:13px;font-style:italic;color:#c9a25c;text-transform:none;letter-spacing:0}
-:is(#app,html) .tc-daily-text p{margin:2px 0 0;font-family:var(--serif)!important;font-size:15.5px;line-height:1.35;color:#e9dcc2;text-transform:none;letter-spacing:0}
-:is(#app,html) .tc-daily-text small{display:block;margin-top:3px;font-size:12.5px;font-style:italic;color:#8e806c}
+:is(#app,html) .tc-daily-box{grid-area:hero;justify-self:end;align-self:end;position:relative;z-index:6;margin:0 12px 12px 0}
+:is(#app,html) .tc-daily-badge{display:grid;justify-items:center;gap:3px;padding:0;border:0;background:none;color:inherit;cursor:pointer;position:relative}
+:is(#app,html) .tc-daily-wax{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08);color:#f2c9a8;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.18)}
+:is(#app,html) .tc-daily-badge:not(.done) .tc-daily-wax{animation:tcDailyPulse 2.8s ease-in-out infinite}
+:is(#app,html) .tc-daily-badge.done .tc-daily-wax{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c}
+:is(#app,html) .tc-daily-label{font-family:var(--serif)!important;font-size:11.5px;font-style:italic;color:#f0ddb2;text-shadow:0 1px 4px rgba(0,0,0,.9);text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-daily-badge i{position:absolute;top:-4px;right:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#e8c27a;color:#2a1a0c;font-style:normal;font-family:var(--display);font-size:11px;line-height:20px}
+@keyframes tcDailyPulse{0%,100%{box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.18)}50%{box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.18),0 0 14px 3px rgba(230,110,70,.55)}}
+@media(prefers-reduced-motion:reduce){:is(#app,html) .tc-daily-badge .tc-daily-wax{animation:none!important}}

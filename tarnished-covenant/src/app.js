@@ -5271,7 +5271,7 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 {{src/systems/daily-seal.js}}
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261127-v2.0';
+const TC_BUILD_ID='20261127-v2.0.1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
