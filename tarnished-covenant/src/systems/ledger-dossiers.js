@@ -23,11 +23,12 @@ function tcDossierRow(entry,index,state){
     chaos?'<span class="m chaos" title="Chaos broke loose">✶</span>':'',
     rite?`<span class="m rite ${rite}" title="Odd Rite ${rite}">${rite==='honored'?'◆':'◇'}</span>`:'',
     penalties?`<span class="m pen" title="${penalties} Appeal ${penalties===1?'penalty':'penalties'}">⚖${penalties}</span>`:'',
+    entry?.deaths&&(entry.deaths.chase+entry.deaths.morgan)?`<span class="m death" title="${entry.deaths.chase+entry.deaths.morgan} deaths">☠${entry.deaths.chase+entry.deaths.morgan}</span>`:'',
     favor?`<span class="m favor" title="Favor earned">+${favor}</span>`:''
   ].join('');
   return `<details class="tc-dossier-row ${capstone?'capstone':''}" ${capstone?'data-capstone':''} ${chaos?'data-chaos':''} ${penalties?'data-penalty':''}>
     <summary><span class="tc-dr-date">${h(date||'')}</span><span class="tc-dr-main"><strong>${h(entry?.name||'Unknown foe')}</strong><small>${weapons||'No weapons on record'}</small></span><span class="tc-dr-marks">${marks}</span></summary>
-    <div class="tc-dr-evidence">${typeof tcDossierRemark==='function'?tcQuip(tcDossierRemark(entry),'tc-dossier-remark'):''}${tcDossierEvidence(entry,index,state)}</div>
+    <div class="tc-dr-evidence">${typeof tcDossierRemark==='function'?tcQuip(tcDossierRemark(entry),'tc-dossier-remark'):''}${entry?.kit?`<p class="tc-dr-kit">Talismans worn: ${h(names[0])} — ${h((entry.kit.chase||[]).join(', ')||'none')}; ${h(names[1])} — ${h((entry.kit.morgan||[]).join(', ')||'none')}.</p>`:''}${tcDossierEvidence(entry,index,state)}</div>
   </details>`;
 }
 function tcDossierChapters(state){
