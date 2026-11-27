@@ -7,7 +7,7 @@
    shared run. The only shared writes here are renaming the players (a revision-
    checked commit) and the existing restart. Difficulty and ruleset stay fixed. */
 const TC_PREFS_KEY='tc-phone-prefs-v1';
-let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,quiet:false,hideDaily:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
+let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,quiet:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
 function tcSavePrefs(){try{localStorage.setItem(TC_PREFS_KEY,JSON.stringify(tcPrefs));}catch(_){}}
 function tcApplyPrefs(){
   const root=document.documentElement;
@@ -75,7 +75,6 @@ const TC_WHATS_NEW=[
   ['Twists for a new Covenant','Kit roll (two talismans a fight), Strikes (a third death re-draws your weapon), Hostile draft (you pick your partner’s weapon) and Region bingo (5×5 cards that pay Favor).'],
   ['Bounty board','Pick your fight from three posted bounties, old regions included. They pay Favor, grow while they wait, and expire.'],
   ['Themes','Lore runs for five factions, or dealt characters that limit each of you to their weapon classes.'],
-  ['Daily seal','One small shared challenge a day on Site of Grace, with a streak.'],
   ['Past Covenants','Beginning a new Covenant saves the old one first. Open it any time from Settings.'],
   ['Progress','The rune ring turns under your finger and tells you about each remembrance.'],
   ['Personality','Soapstone messages, Hewg’s grumbling and the clerk’s remarks. Switch them off in Settings if you like.'],
@@ -119,7 +118,6 @@ renderSettings=function(){
       ${tcToggle('battery','Battery saver','Pauses background animation. The reel and seals still move.')}
       ${tcToggle('large','Larger text','Makes everything a little bigger.')}
       <button type="button" class="tc-set-row toggle" role="switch" aria-checked="${!tcPrefs.quiet}" data-pref="quiet" data-pref-inverse><span><strong>Covenant commentary</strong><small>Small asides from the clerk, Hewg and the soapstone.</small></span><i class="tc-switch ${tcPrefs.quiet?'':'on'}" aria-hidden="true"></i></button>
-      <button type="button" class="tc-set-row toggle" role="switch" aria-checked="${!tcPrefs.hideDaily}" data-pref="hideDaily" data-pref-inverse><span><strong>Daily seal</strong><small>Show today’s shared challenge on Site of Grace.</small></span><i class="tc-switch ${tcPrefs.hideDaily?'':'on'}" aria-hidden="true"></i></button>
     </div>
     <h4 class="tc-forge-h">The Covenant</h4>
     <div class="tc-set-group">
