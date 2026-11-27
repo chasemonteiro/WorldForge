@@ -1722,3 +1722,17 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 :is(#app,html) .tc-grace-board .tc-board-names{display:grid;gap:4px;margin:8px 0 4px}
 :is(#app,html) .tc-grace-board .tc-board-names p{margin:0;font-family:var(--serif);font-size:16px;color:#e9dcc2}
 :is(#app,html) .tc-grace-board .tc-board-names b{display:inline-block;min-width:34px;font-family:var(--display);font-weight:500;color:#e8c27a}
+
+/* --- Themed runs --- */
+:is(#app,html) .tc-theme-pick{padding-bottom:12px}
+:is(#app,html) .tc-theme-chips{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 4px}
+:is(#app,html) .tc-theme-chip{min-height:38px;padding:6px 12px;border:1px solid rgba(201,162,92,.35);border-radius:20px;background:none;color:#cdbfa6;font-family:var(--serif);font-size:15px}
+:is(#app,html) .tc-theme-chip.on{border-color:#e8c27a;background:rgba(232,194,122,.14);color:#ffe2a6}
+:is(#app,html) .tc-theme-help{margin:8px 14px 0;font-family:var(--serif);font-size:14px;font-style:italic;line-height:1.4;color:#a89880;text-transform:none}
+:is(#app,html) .tc-theme-box:empty{display:none}
+:is(#app,html) .tc-theme-box{margin:8px 0 4px;display:grid;gap:8px}
+:is(#app,html) .tc-theme-card{padding:10px 12px;border:1px solid rgba(160,130,200,.35);border-radius:3px;background:linear-gradient(180deg,rgba(60,40,80,.22),rgba(20,14,24,.5))}
+:is(#app,html) .tc-theme-card h5{margin:0 0 4px;font-family:var(--display);font-weight:500;font-size:14px;letter-spacing:.04em;color:#d8c4f0;text-transform:none}
+:is(#app,html) .tc-theme-card p{margin:2px 0 0;font-family:var(--serif)!important;font-size:14.5px;line-height:1.4;color:#d9cbb2;text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-theme-card .tc-theme-rules{font-style:italic;color:#a89880}
+:is(#app,html) .tc-theme-card .tc-theme-off{color:#e08a7a;font-style:italic}
