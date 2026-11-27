@@ -51,7 +51,7 @@ renderPostBattleReport=function(){
     <div class="tc-report-banner" style="${art?`--tc-report-art:url('${art}')`:''}"><span>Victory</span><h2>${h(c.target?.name||'Enemy felled')}</h2><p>${who}</p>${typeof tcReportQuip==='function'?tcQuip(tcReportQuip(c),'tc-report-quip'):''}</div>
     ${tcReportQuestion('rite','Odd Rite',c.weirdness?.name||'',c.weirdness?.text||'No Rite this fight.',riteDraws,true,postBattleReport.rite,['Honored','Broken'])}
     ${tcReportQuestion('chaos','Chaos',chaosAvailable?tcStableChaosName(c.chaosConsequence||''):'',chaosAvailable?personalizePlayers(c.chaosConsequence||'',state):'The seal never broke.',chaosDraws,chaosAvailable,postBattleReport.chaos,['Endured','Broken'])}
-    <div class="tc-receipt"><h4>This fight pays</h4><div><span>Smithing Favor</span><b>${guaranteedText}</b></div><div><span>Reward draws${reportReady?'':' so far'}</span><b>${preview.draws}</b></div></div>
+    <div class="tc-receipt"><h4>This fight pays</h4><div><span>Smithing Favor</span><b>${guaranteedText}</b></div>${c.bounty?.value?`<div><span>Bounty on ${h(c.bounty.name)}</span><b>+${Number(c.bounty.value)}</b></div>`:''}<div><span>Reward draws${reportReady?'':' so far'}</span><b>${preview.draws}</b></div></div>
     ${credits>0?tcReportWeaponCards(state):''}
     <div class="tc-report-file"><button id="finishBattleReport" class="btn gold" ${reportReady?'':'disabled'}>${c.target?.exit?'File report and draw rewards':'File report, draw rewards and roll the next fight'}</button><p>${reportReady?'Filing pays the Favor and opens the reward.':`Answer ${missing} first.`}</p></div>
   </section>`;
