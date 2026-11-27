@@ -1736,3 +1736,34 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 :is(#app,html) .tc-theme-card p{margin:2px 0 0;font-family:var(--serif)!important;font-size:14.5px;line-height:1.4;color:#d9cbb2;text-transform:none;letter-spacing:0}
 :is(#app,html) .tc-theme-card .tc-theme-rules{font-style:italic;color:#a89880}
 :is(#app,html) .tc-theme-card .tc-theme-off{color:#e08a7a;font-style:italic}
+
+/* --- Hostile draft --- */
+:is(#app,html) .tc-draft .tc-forge-h{margin:14px 0 8px}
+:is(#app,html) .tc-draft-options{display:grid;gap:10px}
+:is(#app,html) .tc-draft-option{display:grid;gap:3px;width:100%;min-height:64px;padding:12px 14px;border:1px solid rgba(201,162,92,.35);border-radius:3px;background:linear-gradient(180deg,#1d1712,#120e0b);color:inherit;text-align:left;cursor:pointer}
+:is(#app,html) .tc-draft-option:active{background:rgba(255,190,110,.08)}
+:is(#app,html) .tc-draft-option strong{font-family:var(--display);font-weight:500;font-size:18px;color:#f0ddb2;text-transform:none}
+:is(#app,html) .tc-draft-option small{font-family:var(--serif);font-size:14px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-draft-done{margin:14px 0 4px;padding:12px 14px;border-left:2px solid rgba(255,190,110,.5);background:rgba(255,200,130,.05)}
+:is(#app,html) .tc-draft-done strong{font-family:var(--serif);font-weight:400;font-size:17px;color:#f0ddb2}
+:is(#app,html) .tc-draft-done p,:is(#app,html) .tc-draft-wait{margin:4px 0 0;font-family:var(--serif);font-size:15px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-draft-wait{margin-top:14px}
+
+/* --- Region bingo --- */
+:is(#app,html) .tc-bingo-box{margin:6px 0 14px}
+:is(#app,html) .tc-bingo-help{margin:0 0 10px;font-family:var(--serif);font-size:14.5px;font-style:italic;color:#a89880}
+:is(#app,html) .tc-bingo{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+:is(#app,html) .tc-bingo-cell{aspect-ratio:1;min-width:0;padding:3px;border:1px solid rgba(201,162,92,.28);border-radius:2px;background:#16110d;color:#cdbfa6;font-family:var(--serif);font-size:11.5px;line-height:1.15;overflow-wrap:anywhere;display:grid;place-items:center;text-align:center;cursor:pointer}
+:is(#app,html) .tc-bingo-cell.done{background:radial-gradient(circle at 50% 45%,rgba(196,69,44,.55),rgba(80,20,12,.85) 70%);border-color:rgba(232,140,110,.6);color:#ffe8dc}
+:is(#app,html) .tc-bingo-cell.line{box-shadow:inset 0 0 0 2px #e8c27a;color:#fff3d6}
+:is(#app,html) .tc-bingo-cell.free{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c;font-family:var(--display)}
+
+/* --- Daily seal --- */
+:is(#app,html) .tc-grace-refresh{grid-template-areas:"hero" "next" "daily" "memo" "soap"!important}
+:is(#app,html) .tc-daily-box{grid-area:daily}
+:is(#app,html) .tc-daily{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;margin:0 6px;padding:12px;border:1px solid rgba(201,162,92,.28);border-radius:3px;background:linear-gradient(180deg,#1b1511,#110d0a)}
+:is(#app,html) .tc-daily-seal{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08);color:#f2c9a8;font-size:18px;box-shadow:0 2px 0 rgba(0,0,0,.5)}
+:is(#app,html) .tc-daily.done .tc-daily-seal{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c}
+:is(#app,html) .tc-daily-text span{font-family:var(--serif)!important;font-size:13px;font-style:italic;color:#c9a25c;text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-daily-text p{margin:2px 0 0;font-family:var(--serif)!important;font-size:15.5px;line-height:1.35;color:#e9dcc2;text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-daily-text small{display:block;margin-top:3px;font-size:12.5px;font-style:italic;color:#8e806c}

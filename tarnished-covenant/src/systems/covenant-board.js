@@ -120,12 +120,12 @@ function tcBoardMarkup(state){
 function tcDecorateBoard(){
   const state=run?.state,c=state?.current,shell=app.querySelector('.tc-encounter-shell');if(!shell)return;
   const pending=Boolean(c?.bountyPending&&tcBoardOn(state));
-  shell.classList.toggle('tc-board-open',pending);
-  let board=shell.querySelector('.tc-board');
+  shell.classList.toggle('tc-board-open',pending||Boolean(c?.draftPending&&c?.draft&&state?.rules?.draft));
+  let board=shell.querySelector('.tc-board:not(.tc-draft)');
   if(!pending){board?.remove();return;}
   const html=tcBoardMarkup(state);
   if(!board){const wrap=document.createElement('div');wrap.innerHTML=html;board=wrap.firstElementChild;board.dataset.sig=html;shell.prepend(board);}
-  else if(board.dataset.sig!==html){board.outerHTML=html;shell.querySelector('.tc-board').dataset.sig=html;}
+  else if(board.dataset.sig!==html){board.outerHTML=html;shell.querySelector('.tc-board:not(.tc-draft)').dataset.sig=html;}
 }
 function tcConfirmBounty(postId){
   const state=run.state,post=(state.board?.posts||[]).find(p=>p.id===postId);if(!post)return;
