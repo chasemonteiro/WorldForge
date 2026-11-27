@@ -1710,6 +1710,7 @@ function renderNewRun(identity) {
         <label class="label" for="ruleset">remembrance ruleset</label>
         <select id="ruleset"><option value="base" selected>Base Game · All Remembrances</option><option value="dlc">Base + Shadow of the Erdtree · All Remembrances</option></select>
       </div>
+      ${typeof tcTwistsMarkup === 'function' ? tcTwistsMarkup() : ''}
       <button class="btn gold" id="createRun" type="button">Begin Covenant</button>
       <button class="btn text-btn" id="back" type="button">Back</button>
     </section>`;
@@ -1725,7 +1726,8 @@ function renderNewRun(identity) {
       severity: 'cursed',
       includeDlc: document.querySelector('#ruleset').value === 'dlc',
       playerNames: [one, two],
-      createdBy: identity
+      createdBy: identity,
+      rules: typeof tcReadTwists === 'function' ? tcReadTwists() : undefined
     });
     try {
       const created = await backend.createRun(identity, state);
@@ -2724,12 +2726,14 @@ function showRestart() {
     <div class="grid2 restart-grid">
       <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
     </div>
+    ${typeof tcTwistsMarkup === 'function' ? tcTwistsMarkup() : ''}
     <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Save it &amp; begin anew</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
   </div>`;
   document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
   document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
     const region = document.querySelector('#restartRegion')?.value || state.region;
     const severity = 'cursed';
+    const twists = typeof tcReadTwists === 'function' ? tcReadTwists(box) : undefined;
     const button = document.querySelector('#confirmRestart');
     if (button) { button.disabled = true; button.textContent = 'Restarting…'; }
 
@@ -2739,7 +2743,8 @@ function showRestart() {
         severity,
         includeDlc: Boolean(latestState?.includeDlc ?? state.includeDlc),
         playerNames: latestState?.playerNames || state.playerNames || ['Tarnished One','Tarnished Two'],
-        createdBy: latestState?.createdBy || state.createdBy || playerName()
+        createdBy: latestState?.createdBy || state.createdBy || playerName(),
+        rules: twists
       });
       fresh.lastAction = `${playerName()} restarted the Covenant.`;
       return fresh;
@@ -5244,8 +5249,11 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 
 {{src/systems/archive.js}}
 
+
+{{src/systems/covenant-rules.js}}
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261127-archive-1';
+const TC_BUILD_ID='20261127-rules-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);

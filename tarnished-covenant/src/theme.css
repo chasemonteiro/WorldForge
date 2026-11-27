@@ -1675,3 +1675,29 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 .tc-past-tabs{display:flex;gap:8px;margin:16px 0 12px}
 .tc-past-tabs button{flex:1;min-height:44px;border:1px solid rgba(201,162,92,.3);border-radius:3px;background:none;color:#a89880;font-family:var(--display);font-size:13px;letter-spacing:.08em}
 .tc-past-tabs button.active{border-color:#e8c27a;color:#ffe2a6;background:rgba(232,194,122,.08)}
+
+/* --- Covenant twists: setup toggles, kit and strikes --- */
+:is(#app,html) .tc-twists{margin:14px 0 8px;border:1px solid rgba(201,162,92,.26);border-radius:4px;background:linear-gradient(180deg,#1b1511,#110d0a);overflow:hidden}
+:is(#app,html) .tc-twists>.label{display:block;padding:10px 14px 0}
+:is(#app,html) .tc-twists .tc-set-row{border-top:1px solid rgba(201,162,92,.14)}
+:is(#app,html) .tc-twists .tc-set-row:first-of-type{border-top:0}
+:is(#app,html) .tc-kit-box:empty{display:none}
+:is(#app,html) .tc-kit-box{margin:8px 0 4px;padding:10px 12px;border:1px solid rgba(201,162,92,.22);border-radius:3px;background:rgba(0,0,0,.22)}
+:is(#app,html) .tc-kit-player+.tc-kit-player{margin-top:12px;padding-top:12px;border-top:1px solid rgba(201,162,92,.18)}
+:is(#app,html) .tc-kit-player h5{margin:0 0 8px;font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.06em;color:#c9a25c;text-transform:none}
+:is(#app,html) .tc-kit,:is(#app,html) .tc-strikes{display:grid;gap:6px}
+:is(#app,html) .tc-strikes{grid-template-columns:auto auto 1fr auto;align-items:center;gap:10px}
+:is(#app,html) .tc-kit+.tc-strikes{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(201,162,92,.2)}
+:is(#app,html) .tc-kit-label{font-family:var(--serif)!important;font-size:13px;font-style:italic;color:#8e806c;text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-kit-item{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px}
+:is(#app,html) .tc-kit-disc{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22)}
+:is(#app,html) .tc-kit-disc .tc-forge-sigil{width:18px;height:18px;color:#3a240e}
+:is(#app,html) .tc-kit-item strong{font-family:var(--serif)!important;font-weight:400;font-size:16px;line-height:1.25;color:#f0ddb2;text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-kit-swap{min-height:36px;padding:4px 6px;border:0;background:none;color:#a89880;font:italic 13px/1.2 var(--serif);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+:is(#app,html) .tc-strike-pips{display:flex;gap:6px}
+:is(#app,html) .tc-strike-pips i{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(208,103,90,.6);background:transparent}
+:is(#app,html) .tc-strike-pips i.on{background:radial-gradient(circle at 38% 32%,#e0705a,#8e2416 70%);border-color:#e08a7a}
+:is(#app,html) .tc-strike-add{justify-self:start;min-height:36px;padding:4px 12px;border:1px solid rgba(208,103,90,.5);border-radius:3px;background:rgba(110,24,16,.25);color:#f0b2a5;font-family:var(--serif);font-size:14px}
+:is(#app,html) .tc-strikes small{grid-column:1/-1;font-size:12.5px;font-style:italic;color:#e08a7a}
+:is(#app,html) .tc-dr-kit{margin:0 0 8px;font-size:13.5px;font-style:italic;color:#a89880}
+:is(#app,html) .m.death{color:#e08a7a}
