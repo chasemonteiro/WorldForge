@@ -11695,10 +11695,17 @@ function tcBuildDailySeal(latest,day,sealed,actor){
   next.updatedAt=new Date().toISOString();
   return next;
 }
+// A wax seal in the corner of the region painting; tapping it opens today's challenge.
 function tcDailySealMarkup(state){
   const day=tcDayStamp(),done=state?.dailySeal?.days?.[day],streak=tcDailyStreak(state);
-  return `<div class="tc-daily ${done?'done':''}"><div class="tc-daily-seal">${done?'✓':'✦'}</div><div class="tc-daily-text"><span>Daily seal${streak?` · ${streak}-day streak`:''}</span><p>${h(tcDailySealText(state,day))}</p>${done?`<small>Sealed by ${h(personalizePlayers(done.by||'',state))}. A new one tomorrow.</small>`:''}</div><button type="button" class="tc-satchel-act" data-daily="${done?'0':'1'}">${done?'Undo':'Done it'}</button></div>`;
+  return `<button type="button" class="tc-daily-badge ${done?'done':''}" data-daily-open aria-label="Daily seal${done?', sealed today':', not sealed yet'}${streak?`, ${streak}-day streak`:''}"><span class="tc-daily-wax">${done?'✓':'✦'}</span><span class="tc-daily-label">${done?'Sealed':'Daily seal'}</span>${streak?`<i>${streak}</i>`:''}</button>`;
 }
+function tcOpenDailySeal(){
+  const state=run.state,day=tcDayStamp(),done=state?.dailySeal?.days?.[day],streak=tcDailyStreak(state);
+  const s=tcSettingsSheet('Daily seal',`<p class="tc-set-p">${h(tcDailySealText(state,day))}</p><p class="tc-set-p muted">${done?`Sealed by ${h(personalizePlayers(done.by||'',state))}. A new one tomorrow.`:'The same challenge on both phones today. Either of you can seal it.'}${streak?` ${streak}-day streak.`:''}</p><button type="button" class="btn ${done?'ghost':'gold'}" data-daily="${done?'0':'1'}">${done?'Undo today’s seal':'We did it'}</button>`);
+  s.el.querySelector('[data-daily]')?.addEventListener('click',()=>setTimeout(()=>s.close(),0));
+}
+document.addEventListener('click',event=>{if(event.target.closest('[data-daily-open]')){event.preventDefault();tcOpenDailySeal();}});
 function tcDecorateDailySeal(){
   const panel=app.querySelector('.tc-sanctuary-panel.tc-grace-refresh');if(!panel||!run?.state)return;
   let el=panel.querySelector('.tc-daily-box');
@@ -11725,7 +11732,7 @@ if(!window.__tcDailyBound){
 
 
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261127-v2.0';
+const TC_BUILD_ID='20261127-v2.0.1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -14020,14 +14027,15 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 :is(#app,html) .tc-bingo-cell.free{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c;font-family:var(--display)}
 
 /* --- Daily seal --- */
-:is(#app,html) .tc-grace-refresh{grid-template-areas:"hero" "next" "daily" "memo" "soap"!important}
-:is(#app,html) .tc-daily-box{grid-area:daily}
-:is(#app,html) .tc-daily{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:12px;margin:0 6px;padding:12px;border:1px solid rgba(201,162,92,.28);border-radius:3px;background:linear-gradient(180deg,#1b1511,#110d0a)}
-:is(#app,html) .tc-daily-seal{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08);color:#f2c9a8;font-size:18px;box-shadow:0 2px 0 rgba(0,0,0,.5)}
-:is(#app,html) .tc-daily.done .tc-daily-seal{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c}
-:is(#app,html) .tc-daily-text span{font-family:var(--serif)!important;font-size:13px;font-style:italic;color:#c9a25c;text-transform:none;letter-spacing:0}
-:is(#app,html) .tc-daily-text p{margin:2px 0 0;font-family:var(--serif)!important;font-size:15.5px;line-height:1.35;color:#e9dcc2;text-transform:none;letter-spacing:0}
-:is(#app,html) .tc-daily-text small{display:block;margin-top:3px;font-size:12.5px;font-style:italic;color:#8e806c}
+:is(#app,html) .tc-daily-box{grid-area:hero;justify-self:end;align-self:end;position:relative;z-index:6;margin:0 12px 12px 0}
+:is(#app,html) .tc-daily-badge{display:grid;justify-items:center;gap:3px;padding:0;border:0;background:none;color:inherit;cursor:pointer;position:relative}
+:is(#app,html) .tc-daily-wax{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 32%,#c4452c,#7a1c12 60%,#3d0c08);color:#f2c9a8;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.18)}
+:is(#app,html) .tc-daily-badge:not(.done) .tc-daily-wax{animation:tcDailyPulse 2.8s ease-in-out infinite}
+:is(#app,html) .tc-daily-badge.done .tc-daily-wax{background:radial-gradient(circle at 38% 32%,#ffe2a6,#d9a650 58%,#8a5a22);color:#2a1a0c}
+:is(#app,html) .tc-daily-label{font-family:var(--serif)!important;font-size:11.5px;font-style:italic;color:#f0ddb2;text-shadow:0 1px 4px rgba(0,0,0,.9);text-transform:none;letter-spacing:0}
+:is(#app,html) .tc-daily-badge i{position:absolute;top:-4px;right:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#e8c27a;color:#2a1a0c;font-style:normal;font-family:var(--display);font-size:11px;line-height:20px}
+@keyframes tcDailyPulse{0%,100%{box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.18)}50%{box-shadow:0 3px 8px rgba(0,0,0,.6),inset 0 0 0 3px rgba(0,0,0,.18),0 0 14px 3px rgba(230,110,70,.55)}}
+@media(prefers-reduced-motion:reduce){:is(#app,html) .tc-daily-badge .tc-daily-wax{animation:none!important}}
 </style>
 </body>
 </html>

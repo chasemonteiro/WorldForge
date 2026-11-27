@@ -37,10 +37,17 @@ function tcBuildDailySeal(latest,day,sealed,actor){
   next.updatedAt=new Date().toISOString();
   return next;
 }
+// A wax seal in the corner of the region painting; tapping it opens today's challenge.
 function tcDailySealMarkup(state){
   const day=tcDayStamp(),done=state?.dailySeal?.days?.[day],streak=tcDailyStreak(state);
-  return `<div class="tc-daily ${done?'done':''}"><div class="tc-daily-seal">${done?'✓':'✦'}</div><div class="tc-daily-text"><span>Daily seal${streak?` · ${streak}-day streak`:''}</span><p>${h(tcDailySealText(state,day))}</p>${done?`<small>Sealed by ${h(personalizePlayers(done.by||'',state))}. A new one tomorrow.</small>`:''}</div><button type="button" class="tc-satchel-act" data-daily="${done?'0':'1'}">${done?'Undo':'Done it'}</button></div>`;
+  return `<button type="button" class="tc-daily-badge ${done?'done':''}" data-daily-open aria-label="Daily seal${done?', sealed today':', not sealed yet'}${streak?`, ${streak}-day streak`:''}"><span class="tc-daily-wax">${done?'✓':'✦'}</span><span class="tc-daily-label">${done?'Sealed':'Daily seal'}</span>${streak?`<i>${streak}</i>`:''}</button>`;
 }
+function tcOpenDailySeal(){
+  const state=run.state,day=tcDayStamp(),done=state?.dailySeal?.days?.[day],streak=tcDailyStreak(state);
+  const s=tcSettingsSheet('Daily seal',`<p class="tc-set-p">${h(tcDailySealText(state,day))}</p><p class="tc-set-p muted">${done?`Sealed by ${h(personalizePlayers(done.by||'',state))}. A new one tomorrow.`:'The same challenge on both phones today. Either of you can seal it.'}${streak?` ${streak}-day streak.`:''}</p><button type="button" class="btn ${done?'ghost':'gold'}" data-daily="${done?'0':'1'}">${done?'Undo today’s seal':'We did it'}</button>`);
+  s.el.querySelector('[data-daily]')?.addEventListener('click',()=>setTimeout(()=>s.close(),0));
+}
+document.addEventListener('click',event=>{if(event.target.closest('[data-daily-open]')){event.preventDefault();tcOpenDailySeal();}});
 function tcDecorateDailySeal(){
   const panel=app.querySelector('.tc-sanctuary-panel.tc-grace-refresh');if(!panel||!run?.state)return;
   let el=panel.querySelector('.tc-daily-box');
