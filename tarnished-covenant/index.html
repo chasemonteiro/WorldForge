@@ -3279,6 +3279,7 @@ function createLocalBackend(warning = '') {
       }
       const revision = Number(expectedRevision ?? current?.revision ?? 0) + 1;
       const restarted = { ...(current || {}), id: runId, state, revision };
+      if (typeof tcLocalArchivePush === 'function') tcLocalArchivePush(current);
       saveLocalRun(restarted);
       if (listener) queueMicrotask(() => listener(restarted));
       return { success:true, ...restarted };
@@ -3291,6 +3292,8 @@ function createLocalBackend(warning = '') {
       if (listener) queueMicrotask(() => listener(run));
       return { success: true, ...run };
     },
+    async listArchives() { return (typeof tcLocalArchives === 'function' ? tcLocalArchives() : []).map(({state, ...rest}) => rest); },
+    async getArchive(id) { return (typeof tcLocalArchives === 'function' ? tcLocalArchives() : []).find(a => a.id === id) || null; },
     subscribe(_runId, fn) { listener = fn; return () => { listener = null; }; }
   };
 }
@@ -3342,10 +3345,13 @@ function createSupabaseBackend(supabase) {
       };
     },
     async restartRun(runId, expectedRevision, state) {
-      const { data, error } = await supabase.rpc('restart_covenant_run_guarded', {
+      // The server saves its copy of the run to run_archives in the same
+      // transaction that starts the new one, so nothing is erased unsaved.
+      const { data, error } = await supabase.rpc('archive_and_restart_covenant_run', {
         p_run_id: runId,
         p_expected_revision: expectedRevision,
-        p_new_state: state
+        p_new_state: state,
+        p_summary: typeof tcArchiveSummary === 'function' ? tcArchiveSummary(run?.state) : {}
       });
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
@@ -3355,6 +3361,22 @@ function createSupabaseBackend(supabase) {
         state: row.state,
         revision: Number(row.revision)
       };
+    },
+    async listArchives(runId) {
+      const { data, error } = await supabase.from('run_archives')
+        .select('id, archived_at, archived_revision, summary')
+        .eq('run_id', runId)
+        .order('archived_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    async getArchive(id) {
+      const { data, error } = await supabase.from('run_archives')
+        .select('id, archived_at, archived_revision, summary, state')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      return data;
     },
     subscribe(runId, fn) {
       if (channel) supabase.removeChannel(channel);
@@ -4610,11 +4632,11 @@ function showRestart() {
   box.innerHTML = `<div class="confirm restart-confirm">
     <div class="section-kicker redtext">restart covenant</div>
     <h3>Restart this Covenant?</h3>
-    <div class="rtext">Bosses, regional progress, Chaos, rituals, history, and weapon penalties will reset. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
+    <div class="rtext">This Covenant is saved to Past Covenants first, then bosses, regions, Chaos, Rites, history and penalties start fresh. ${backend.mode === 'shared' ? 'The shared run resets for both players. The room code stays the same.' : 'This phone starts fresh.'}</div>
     <div class="grid2 restart-grid">
       <div><label class="label" for="restartRegion">starting region</label><select id="restartRegion">${options}</select></div>
     </div>
-    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Erase Run & Restart</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
+    <div class="confirm-actions"><button id="confirmRestart" class="btn curse" type="button">Save it &amp; begin anew</button><button id="cancelRestart" class="btn ghost" type="button">Cancel</button></div>
   </div>`;
   document.querySelector('#cancelRestart')?.addEventListener('click',()=>{ box.innerHTML=''; });
   document.querySelector('#confirmRestart')?.addEventListener('click', async () => {
@@ -4661,7 +4683,7 @@ function showRestart() {
       console.error(error);
       setToast(error.message || 'Restart failed. Try again.');
       const retry = document.querySelector('#confirmRestart');
-      if (retry) { retry.disabled = false; retry.textContent = 'Erase Run & Restart'; }
+      if (retry) { retry.disabled = false; retry.textContent = 'Save it & begin anew'; }
     }
   });
 }
@@ -10567,6 +10589,7 @@ renderSettings=function(){
     <div class="tc-set-group">
       <button type="button" class="tc-set-row" data-set="ruleset"><span><strong>${state.includeDlc?'Base game + Shadow of the Erdtree':'Base game'}</strong><small>Every remembrance required. Set when the Covenant began.</small></span><em>About</em></button>
       <button type="button" class="tc-set-row" data-set="difficulty"><span><strong>${h(diff[0])}</strong><small>Difficulty. Set when the Covenant began.</small></span><em>About</em></button>
+      <button type="button" class="tc-set-row" data-set="archive"><span><strong>Past Covenants</strong><small>Finished runs, with their remembrances and case files.</small></span><em>Open</em></button>
       <button type="button" class="tc-set-row" data-set="rules"><span><strong>How the Covenant works</strong><small>Appeals, Favor, Masterworks, Chaos, Rites and rewards.</small></span><em>Read</em></button>
     </div>
     <h4 class="tc-forge-h">Your data</h4>
@@ -10581,7 +10604,7 @@ renderSettings=function(){
     <h4 class="tc-forge-h danger">Danger zone</h4>
     <div class="tc-set-group danger">
       <button type="button" class="tc-set-row" data-set="leave"><span><strong>Leave this run</strong><small>Back to the opening screen. The run itself is kept.</small></span></button>
-      <button type="button" class="tc-set-row" data-set="restart"><span><strong>Restart the Covenant</strong><small>Erases all progress${backend?.mode==='shared'?' for both of you':''}.</small></span></button>
+      <button type="button" class="tc-set-row" data-set="restart"><span><strong>Begin a new Covenant</strong><small>This run is saved to Past Covenants, then a fresh run starts${backend?.mode==='shared'?' for both of you':''}.</small></span></button>
       <div id="restartConfirm"></div>
     </div>
     ${tcSettingsFooter(state)}
@@ -10643,6 +10666,8 @@ function tcSettingsAction(kind){
   }else if(kind==='difficulty'){
     const d=TC_DIFFICULTY[state.severity]||TC_DIFFICULTY.cursed;
     tcSettingsSheet(d[0],`<p class="tc-set-p">${h(d[1])}</p><p class="tc-set-p muted">Chosen when the Covenant began. It stays fixed so the run’s rules don’t move under you.</p>`);
+  }else if(kind==='archive'){
+    void tcOpenArchiveList();
   }else if(kind==='rules'){
     tcSettingsSheet('How the Covenant works',tcRulesMarkup());
   }else if(kind==='backup'){
@@ -10653,7 +10678,7 @@ function tcSettingsAction(kind){
     const s=tcSettingsSheet('Leave this run?',`<p class="tc-set-p">You’ll go back to the opening screen. The run is kept${backend?.mode==='shared'?', and you can rejoin with the room code':''}.</p><button type="button" class="btn ghost" data-confirm-leave>Leave the run</button>`);
     s.el.querySelector('[data-confirm-leave]').addEventListener('click',()=>{s.close();unsubscribe?.();run=null;clearSession();session=null;renderHome();});
   }else if(kind==='restart'){
-    const s=tcSettingsSheet('Restart the Covenant?',`<p class="tc-set-p">This erases bosses, regions, history, Favor and everything in the Satchel${backend?.mode==='shared'?' for both of you':''}. It can’t be undone.</p><label class="tc-set-label" for="tcRestartWord">Type RESTART to continue</label><input id="tcRestartWord" class="tc-pick-search" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="btn curse" data-confirm-restart disabled>Continue</button>`);
+    const s=tcSettingsSheet('Begin a new Covenant?',`<p class="tc-set-p">This run is saved to Past Covenants, where you can open it any time. Then bosses, regions, Favor and the Satchel start fresh${backend?.mode==='shared'?' for both of you':''}. The saved run can be read but not resumed.</p><label class="tc-set-label" for="tcRestartWord">Type RESTART to continue</label><input id="tcRestartWord" class="tc-pick-search" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="btn curse" data-confirm-restart disabled>Continue</button>`);
     const input=s.el.querySelector('#tcRestartWord'),go=s.el.querySelector('[data-confirm-restart]');
     input.addEventListener('input',()=>{go.disabled=input.value.trim().toUpperCase()!=='RESTART';});
     go.addEventListener('click',()=>{s.close();showRestart();document.querySelector('#restartConfirm')?.scrollIntoView({block:'center',behavior:'smooth'});});
@@ -10829,8 +10854,95 @@ if(!window.__tcPersonalityBound){
 /* --- End personality --- */
 
 
+
+/* --- Past Covenants (the archive) ---
+   Beginning a new Covenant saves the old one first. On the shared backend the
+   server copies its own copy of the run into public.run_archives in the same
+   transaction that starts the new run (archive_and_restart_covenant_run); in
+   local mode the run is copied into localStorage (TC_LOCAL_ARCHIVE_KEY) before
+   it is replaced. Archived runs are read-only: they are opened, never resumed.
+   The viewer reuses the Remembrances codex and Dossiers markup, which are pure
+   functions of a state, on a normalized copy of the archived state. */
+const TC_LOCAL_ARCHIVE_KEY='tarnished-covenant-archive-v1';
+function tcArchiveSummary(state){
+  if(!state)return {};
+  const history=Array.isArray(state.history)?state.history:[];
+  const times=history.map(x=>Date.parse(x?.completedAt)).filter(Number.isFinite);
+  let req=[],done=0;
+  try{req=requiredRemembrances(state);done=req.filter(n=>hasRemembrance(state,n)).length;}catch(_){}
+  return {
+    names:covenantNames(state),region:state.region||'',includeDlc:Boolean(state.includeDlc),severity:state.severity||'',
+    fights:history.length,chaos:history.filter(x=>x?.chaosTriggered).length,rites:history.filter(x=>x?.riteOutcome==='Honored').length,
+    masterworks:(()=>{try{return smithingData(state).masterworks.length;}catch(_){return 0;}})(),
+    remembrances:[done,req.length],lastBoss:history[0]?.name||'',
+    startedAt:times.length?new Date(Math.min(...times)).toISOString():(state.current?.createdAt||null),
+    endedAt:new Date().toISOString()
+  };
+}
+function tcLocalArchives(){try{const list=JSON.parse(localStorage.getItem(TC_LOCAL_ARCHIVE_KEY)||'[]');return Array.isArray(list)?list:[];}catch(_){return [];}}
+function tcLocalArchivePush(oldRun){
+  if(!oldRun?.state)return;
+  const list=tcLocalArchives();
+  list.unshift({id:crypto.randomUUID(),run_id:oldRun.id,archived_at:new Date().toISOString(),archived_revision:Number(oldRun.revision||0),summary:tcArchiveSummary(oldRun.state),state:oldRun.state});
+  // localStorage throws when full; never let that block the restart's own save.
+  try{localStorage.setItem(TC_LOCAL_ARCHIVE_KEY,JSON.stringify(list));}catch(error){console.warn('Local archive full',error);throw new Error('This phone is out of space to keep the old run. Download a backup in Settings first.');}
+}
+async function tcListArchives(){
+  if(typeof backend?.listArchives!=='function')return [];
+  return backend.listArchives(run?.id);
+}
+function tcArchiveDates(s){
+  const f=v=>{const t=Date.parse(v);return Number.isFinite(t)?new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';};
+  const a=f(s?.startedAt),b=f(s?.endedAt);return a&&b?`${a} – ${b}`:(b||a||'');
+}
+function tcArchiveLine(s){
+  const parts=[s?.region?`Reached ${String(s.region).replace(/ · DLC$/,'')}`:'',`${s?.fights||0} ${s?.fights===1?'fight':'fights'}`,Array.isArray(s?.remembrances)?`${s.remembrances[0]} of ${s.remembrances[1]} remembrances`:''];
+  return parts.filter(Boolean).join(' · ');
+}
+async function tcOpenArchiveList(){
+  const sheet=tcSettingsSheet('Past Covenants','<p class="tc-set-p muted">Opening the archive…</p>');
+  const body=sheet.el.querySelector('.tc-set-sheet-body');
+  let list=[];
+  try{list=await tcListArchives();}catch(error){console.warn(error);body.innerHTML='<p class="tc-set-p">The archive couldn’t be reached. Check your connection and try again.</p>';return;}
+  if(!list.length){body.innerHTML=`<p class="tc-set-p">No past Covenants yet.</p><p class="tc-set-p muted">When you begin a new Covenant, this one is saved here first, with its remembrances and every case file.</p>${tcQuipSafe('The clerk has cleared a shelf.')}`;return;}
+  body.innerHTML=`<div class="tc-past-list">${list.map(a=>`<button type="button" class="tc-set-row" data-archive-id="${h(a.id)}"><span><strong>${h(tcArchiveDates(a.summary)||'A past Covenant')}</strong><small>${h(tcArchiveLine(a.summary))}</small></span><em>Open</em></button>`).join('')}</div>`;
+  body.querySelectorAll('[data-archive-id]').forEach(btn=>btn.addEventListener('click',async()=>{
+    btn.disabled=true;const em=btn.querySelector('em');if(em)em.textContent='Opening…';
+    try{const rec=await backend.getArchive(btn.dataset.archiveId);sheet.close();tcOpenArchiveView(rec);}
+    catch(error){console.warn(error);if(em)em.textContent='Try again';btn.disabled=false;}
+  }));
+}
+function tcQuipSafe(text){return typeof tcQuip==='function'?tcQuip(text):'';}
+function tcOpenArchiveView(rec){
+  if(!rec?.state)return setToast('That Covenant couldn’t be opened.');
+  const state=tcNormalizeRunState(structuredClone(rec.state)),s=rec.summary&&Object.keys(rec.summary).length?rec.summary:tcArchiveSummary(state);
+  document.querySelector('.tc-past-view')?.remove();
+  const view=document.createElement('section');view.className='tc-past-view';view.setAttribute('role','dialog');view.setAttribute('aria-modal','true');
+  const names=Array.isArray(s.names)?s.names:covenantNames(state);
+  view.innerHTML=`<div class="tc-past-inner">
+    <div class="tc-past-top"><button type="button" class="tc-pick-close" data-past-close aria-label="Close">✕</button><span>Past Covenant</span></div>
+    <h2>${h(names[0]||'')} &amp; ${h(names[1]||'')}</h2>
+    <p class="tc-past-dates">${h(tcArchiveDates(s))}</p>
+    <div class="tc-dossier-tally"><span><b>${s.fights||0}</b>fights</span><span><b>${Array.isArray(s.remembrances)?s.remembrances[0]:0}</b>remembrances</span><span><b>${s.chaos||0}</b>Chaos</span><span><b>${s.masterworks||0}</b>Masterworks</span></div>
+    <p class="tc-past-line">${h(tcArchiveLine(s))}${s.lastBoss?`. Last felled: ${h(s.lastBoss)}.`:''}</p>
+    ${tcQuipSafe('Filed, sealed and shelved. The clerk does not lend these out.')}
+    <div class="tc-ledger-tabs tc-past-tabs"><button type="button" class="active" data-past-tab="rem">Remembrances</button><button type="button" data-past-tab="dos">Dossiers</button></div>
+    <div class="tc-past-body" data-past-pane="rem">${tcRemembranceCodexMarkup(state)}</div>
+    <div class="tc-past-body" data-past-pane="dos" hidden>${compendiumLedgerMarkup(state)}</div>
+  </div>`;
+  document.body.appendChild(view);
+  try{tcDossierFilter='all';tcApplyDossierFilter(view.querySelector('.tc-dossiers'));}catch(_){}
+  view.querySelectorAll('[data-past-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+    view.querySelectorAll('[data-past-tab]').forEach(b=>b.classList.toggle('active',b===btn));
+    view.querySelectorAll('[data-past-pane]').forEach(p=>{p.hidden=p.dataset.pastPane!==btn.dataset.pastTab;});
+  }));
+  view.querySelector('[data-past-close]').addEventListener('click',()=>view.remove());
+}
+/* --- End archive --- */
+
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261127-ring-1';
+const TC_BUILD_ID='20261127-archive-1';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
@@ -13027,6 +13139,20 @@ html.tc-pref-quiet .tc-quip{display:none!important}
 :is(#app,html) .tc-rune-caption strong{display:block;margin-bottom:3px;--tc-ff:var(--display);font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2;color:#f0ddb2}
 :is(#app,html) .tc-rune-caption p{margin:2px 0 0;font-size:14.5px;line-height:1.35;color:#d9cbb2}
 :is(#app,html) .tc-rune-caption .tc-rune-hint{font-style:italic;color:#8e806c}
+
+/* --- Past Covenants --- */
+.tc-past-list .tc-set-row{border-top:1px solid rgba(201,162,92,.14)}
+.tc-past-list .tc-set-row:first-child{border-top:0}
+.tc-past-view{position:fixed;inset:0;z-index:85;overflow-y:auto;overscroll-behavior:contain;background:radial-gradient(ellipse at 50% 0,rgba(255,170,90,.07),transparent 60%),#0d0a08;padding:calc(14px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+.tc-past-inner{max-width:560px;margin:0 auto;overflow-x:hidden}
+.tc-past-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.tc-past-top span{font-family:var(--display);font-size:12px;letter-spacing:.2em;color:#c9a25c}
+.tc-past-view h2{margin:4px 0 2px;font-family:var(--display);font-weight:500;font-size:clamp(22px,7vw,28px);line-height:1.15;color:#f0ddb2;text-transform:none}
+.tc-past-dates{margin:0 0 12px;font-family:var(--serif);font-style:italic;font-size:15px;color:#a89880}
+.tc-past-line{margin:10px 0 0;font-family:var(--serif);font-size:15px;line-height:1.4;color:#cdbfa6}
+.tc-past-tabs{display:flex;gap:8px;margin:16px 0 12px}
+.tc-past-tabs button{flex:1;min-height:44px;border:1px solid rgba(201,162,92,.3);border-radius:3px;background:none;color:#a89880;font-family:var(--display);font-size:13px;letter-spacing:.08em}
+.tc-past-tabs button.active{border-color:#e8c27a;color:#ffe2a6;background:rgba(232,194,122,.08)}
 </style>
 </body>
 </html>

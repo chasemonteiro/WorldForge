@@ -126,6 +126,7 @@ renderSettings=function(){
     <div class="tc-set-group">
       <button type="button" class="tc-set-row" data-set="ruleset"><span><strong>${state.includeDlc?'Base game + Shadow of the Erdtree':'Base game'}</strong><small>Every remembrance required. Set when the Covenant began.</small></span><em>About</em></button>
       <button type="button" class="tc-set-row" data-set="difficulty"><span><strong>${h(diff[0])}</strong><small>Difficulty. Set when the Covenant began.</small></span><em>About</em></button>
+      <button type="button" class="tc-set-row" data-set="archive"><span><strong>Past Covenants</strong><small>Finished runs, with their remembrances and case files.</small></span><em>Open</em></button>
       <button type="button" class="tc-set-row" data-set="rules"><span><strong>How the Covenant works</strong><small>Appeals, Favor, Masterworks, Chaos, Rites and rewards.</small></span><em>Read</em></button>
     </div>
     <h4 class="tc-forge-h">Your data</h4>
@@ -140,7 +141,7 @@ renderSettings=function(){
     <h4 class="tc-forge-h danger">Danger zone</h4>
     <div class="tc-set-group danger">
       <button type="button" class="tc-set-row" data-set="leave"><span><strong>Leave this run</strong><small>Back to the opening screen. The run itself is kept.</small></span></button>
-      <button type="button" class="tc-set-row" data-set="restart"><span><strong>Restart the Covenant</strong><small>Erases all progress${backend?.mode==='shared'?' for both of you':''}.</small></span></button>
+      <button type="button" class="tc-set-row" data-set="restart"><span><strong>Begin a new Covenant</strong><small>This run is saved to Past Covenants, then a fresh run starts${backend?.mode==='shared'?' for both of you':''}.</small></span></button>
       <div id="restartConfirm"></div>
     </div>
     ${tcSettingsFooter(state)}
@@ -202,6 +203,8 @@ function tcSettingsAction(kind){
   }else if(kind==='difficulty'){
     const d=TC_DIFFICULTY[state.severity]||TC_DIFFICULTY.cursed;
     tcSettingsSheet(d[0],`<p class="tc-set-p">${h(d[1])}</p><p class="tc-set-p muted">Chosen when the Covenant began. It stays fixed so the run’s rules don’t move under you.</p>`);
+  }else if(kind==='archive'){
+    void tcOpenArchiveList();
   }else if(kind==='rules'){
     tcSettingsSheet('How the Covenant works',tcRulesMarkup());
   }else if(kind==='backup'){
@@ -212,7 +215,7 @@ function tcSettingsAction(kind){
     const s=tcSettingsSheet('Leave this run?',`<p class="tc-set-p">You’ll go back to the opening screen. The run is kept${backend?.mode==='shared'?', and you can rejoin with the room code':''}.</p><button type="button" class="btn ghost" data-confirm-leave>Leave the run</button>`);
     s.el.querySelector('[data-confirm-leave]').addEventListener('click',()=>{s.close();unsubscribe?.();run=null;clearSession();session=null;renderHome();});
   }else if(kind==='restart'){
-    const s=tcSettingsSheet('Restart the Covenant?',`<p class="tc-set-p">This erases bosses, regions, history, Favor and everything in the Satchel${backend?.mode==='shared'?' for both of you':''}. It can’t be undone.</p><label class="tc-set-label" for="tcRestartWord">Type RESTART to continue</label><input id="tcRestartWord" class="tc-pick-search" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="btn curse" data-confirm-restart disabled>Continue</button>`);
+    const s=tcSettingsSheet('Begin a new Covenant?',`<p class="tc-set-p">This run is saved to Past Covenants, where you can open it any time. Then bosses, regions, Favor and the Satchel start fresh${backend?.mode==='shared'?' for both of you':''}. The saved run can be read but not resumed.</p><label class="tc-set-label" for="tcRestartWord">Type RESTART to continue</label><input id="tcRestartWord" class="tc-pick-search" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="btn curse" data-confirm-restart disabled>Continue</button>`);
     const input=s.el.querySelector('#tcRestartWord'),go=s.el.querySelector('[data-confirm-restart]');
     input.addEventListener('input',()=>{go.disabled=input.value.trim().toUpperCase()!=='RESTART';});
     go.addEventListener('click',()=>{s.close();showRestart();document.querySelector('#restartConfirm')?.scrollIntoView({block:'center',behavior:'smooth'});});
