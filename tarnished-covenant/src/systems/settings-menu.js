@@ -7,7 +7,7 @@
    shared run. The only shared writes here are renaming the players (a revision-
    checked commit) and the existing restart. Difficulty and ruleset stay fixed. */
 const TC_PREFS_KEY='tc-phone-prefs-v1';
-let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,quiet:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
+let tcPrefs=(()=>{try{return {still:false,battery:false,large:false,awake:false,quiet:false,hideDaily:false,...JSON.parse(localStorage.getItem(TC_PREFS_KEY)||'{}')};}catch(_){return {still:false,battery:false,large:false,awake:false};}})();
 function tcSavePrefs(){try{localStorage.setItem(TC_PREFS_KEY,JSON.stringify(tcPrefs));}catch(_){}}
 function tcApplyPrefs(){
   const root=document.documentElement;
@@ -70,13 +70,17 @@ const TC_DIFFICULTY={
   hard:['Maidenless','Chaos decrees grow harsher as the run goes on. Maidenless gives them a small head start, so the nastier ones turn up a little sooner.'],
   cursed:['Miyazaki Has Noticed You','Chaos decrees grow harsher as the run goes on. Miyazaki Has Noticed You gives them the biggest head start, so mid- and late-run decrees turn up much sooner.']
 };
+const TC_VERSION='2.0';
 const TC_WHATS_NEW=[
-  ['Build screen','Weapon plate, scaling bars, a Level seal, and a talisman pouch with searchable pickers. No more Save button.'],
-  ['Rewards','Sealed lot to crack open, an iron reel with gold symbols, and results that say how many you hold and where they’re used.'],
-  ['Battle report','Victory banner, Rite and Chaos seals, a Favor receipt, and Masterwork one weapon at a time with a confirm.'],
-  ['Encounter','World seals for each player’s victory, weapon marks, and what you hold under each action.'],
-  ['Ledger','Remembrances codex, Dossiers by region, and the Satchel.'],
-  ['Hewg’s Forge','Bell Bearing hunt, then Hewg’s Surplus once every bearing is home.']
+  ['Twists for a new Covenant','Kit roll (two talismans a fight), Strikes (a third death re-draws your weapon), Hostile draft (you pick your partner’s weapon) and Region bingo (5×5 cards that pay Favor).'],
+  ['Bounty board','Pick your fight from three posted bounties, old regions included. They pay Favor, grow while they wait, and expire.'],
+  ['Themes','Lore runs for five factions, or dealt characters that limit each of you to their weapon classes.'],
+  ['Daily seal','One small shared challenge a day on Site of Grace, with a streak.'],
+  ['Past Covenants','Beginning a new Covenant saves the old one first. Open it any time from Settings.'],
+  ['Progress','The rune ring turns under your finger and tells you about each remembrance.'],
+  ['Personality','Soapstone messages, Hewg’s grumbling and the clerk’s remarks. Switch them off in Settings if you like.'],
+  ['Settings','A real settings menu: screen awake, reduce motion, battery saver, larger text, backups.'],
+  ['Earlier in 2.0','New Build screen, sealed reward lots and the iron reel, the battle report, Encounter world seals, the Ledger’s Satchel, Dossiers and codex, and Hewg’s Forge and Surplus.']
 ];
 function tcRulesMarkup(){
   const rows=[
@@ -115,6 +119,7 @@ renderSettings=function(){
       ${tcToggle('battery','Battery saver','Pauses background animation. The reel and seals still move.')}
       ${tcToggle('large','Larger text','Makes everything a little bigger.')}
       <button type="button" class="tc-set-row toggle" role="switch" aria-checked="${!tcPrefs.quiet}" data-pref="quiet" data-pref-inverse><span><strong>Covenant commentary</strong><small>Small asides from the clerk, Hewg and the soapstone.</small></span><i class="tc-switch ${tcPrefs.quiet?'':'on'}" aria-hidden="true"></i></button>
+      <button type="button" class="tc-set-row toggle" role="switch" aria-checked="${!tcPrefs.hideDaily}" data-pref="hideDaily" data-pref-inverse><span><strong>Daily seal</strong><small>Show today’s shared challenge on Site of Grace.</small></span><i class="tc-switch ${tcPrefs.hideDaily?'':'on'}" aria-hidden="true"></i></button>
     </div>
     <h4 class="tc-forge-h">The Covenant</h4>
     <div class="tc-set-group">
@@ -135,8 +140,8 @@ renderSettings=function(){
     </div>
     <h4 class="tc-forge-h">App</h4>
     <div class="tc-set-group">
-      <button type="button" class="tc-set-row" id="refreshApp"><span><strong>Build ${h(typeof TC_BUILD_ID!=='undefined'?TC_BUILD_ID:'')}</strong><small>Load the latest version. You stay connected.</small></span><em>Refresh</em></button>
-      <button type="button" class="tc-set-row" data-set="news"><span><strong>What’s new</strong><small>${h(TC_WHATS_NEW[0][0])}, ${h(TC_WHATS_NEW[1][0].toLowerCase())} and more.</small></span><em>Read</em></button>
+      <button type="button" class="tc-set-row" id="refreshApp"><span><strong>Version ${h(TC_VERSION)}</strong><small>Build ${h(typeof TC_BUILD_ID!=='undefined'?TC_BUILD_ID:'')}. Refresh to load the latest; you stay connected.</small></span><em>Refresh</em></button>
+      <button type="button" class="tc-set-row" data-set="news"><span><strong>What’s new</strong><small>Version ${h(TC_VERSION)}: twists, bounties, themes and more.</small></span><em>Read</em></button>
     </div>
     <h4 class="tc-forge-h danger">Danger zone</h4>
     <div class="tc-set-group danger">
@@ -159,7 +164,7 @@ function tcSettingsFooter(state){
   const times=(state.history||[]).map(x=>Date.parse(x?.completedAt)).filter(Number.isFinite);
   const start=times.length?Math.min(...times):Date.parse(state.current?.createdAt);
   const est=Number.isFinite(start)?new Date(start).toLocaleDateString(undefined,{month:'long',year:'numeric'}):'';
-  return `<p class="tc-quip tc-set-footer">Tarnished Covenant${est?` · est. ${h(est)}`:''} · no maidens were consulted</p>`;
+  return `<p class="tc-quip tc-set-footer">Tarnished Covenant ${h(TC_VERSION)}${est?` · est. ${h(est)}`:''} · no maidens were consulted</p>`;
 }
 async function tcRenamePlayers(one,two){
   const build=latest=>{if(!latest)return null;const next=structuredClone(latest);next.playerNames=[one,two];next.lastAction=`${playerName()} renamed the Tarnished.`;next.updatedAt=new Date().toISOString();return next;};

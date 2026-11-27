@@ -5261,8 +5261,17 @@ if(!window.__tcAppealBossRecordBound){window.__tcAppealBossRecordBound=true;docu
 
 {{src/systems/covenant-themes.js}}
 
+
+{{src/systems/covenant-draft.js}}
+
+
+{{src/systems/covenant-bingo.js}}
+
+
+{{src/systems/daily-seal.js}}
+
 /* --- Home Screen freshness guard --- */
-const TC_BUILD_ID='20261127-themes-1';
+const TC_BUILD_ID='20261127-v2.0';
 let tcFreshnessCheckRunning=false;
 function tcForceFreshNavigation(){
   const url=new URL(location.href);
